@@ -1,0 +1,184 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title - Quản trị VNVC</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+    <link href="@Url.Content("~/Styles/_Layout_admin.css")" rel="stylesheet" />
+
+    @RenderSection("Styles", required: false)
+
+    <style>
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 1029; /* Dưới sidebar */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+        /* Khi sidebar mobile mở */
+        .sidebar.show + .sidebar-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="~/Contents/images/logo-vnvc.png" alt="VNVC Logo" class="sidebar-logo" />
+            <h6 class="sidebar-title">Quản trị VNVC</h6>
+        </div>
+
+        <nav class="nav flex-column sidebar-nav">
+
+            @{
+                int maChucVu = (Session["MaChucVu"] != null) ? (int)Session["MaChucVu"] : 0;
+                // ID 1, 20 = Quản trị hệ thống (Full quyền)
+                // ID 8 = Nhân viên kho
+                // ID 3 = Thu ngân
+            }
+
+
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Dashboard" ? "active" : "")" href="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
+                    <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+                </a>
+
+
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "KhachHang" ? "active" : "")" href="@Url.Action("Index", "KhachHang", new { area = "Admin" })">
+                    <i class="bi bi-person-badge"></i> <span>Quản lý khách hàng</span>
+                </a>
+                
+
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Kho" ? "active" : "")" href="@Url.Action("Index", "Kho", new { area = "Admin" })">
+                    <i class="bi bi-box-seam"></i> <span>Quản lý kho</span>
+                </a>
+                <a class="nav-link" href="@Url.Action("DanhSachPhieuNhap", "Kho", new { area = "Admin" })">
+                    <i class="bi bi-box-arrow-in-down"></i> Phiếu nhập kho
+                </a>
+
+
+
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "HoaDon" ? "active" : "")" href="@Url.Action("Index", "HoaDon", new { area = "Admin" })">
+                    <i class="bi bi-receipt"></i> <span>Hóa đơn</span>
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "NhanVien" ? "active" : "")" href="@Url.Action("DanhSachNhanVien", "NhanVien", new { area = "Admin" })">
+                    <i class="bi bi-people"></i> <span>Quản lý nhân viên</span>
+                </a>
+  
+
+            <a class="nav-link logout-link" href="@Url.Action("Logout", "Account", new { area = "" })">
+                <i class="bi bi-box-arrow-right"></i> <span>Đăng xuất</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="main-content" id="main-content">
+        <header class="admin-header">
+            <div class="d-flex align-items-center flex-shrink-0">
+                <button class="toggle-btn me-2" id="toggleSidebar"><i class="bi bi-list"></i></button>
+                <h5 class="header-title mb-0">@ViewBag.Title</h5>
+            </div>
+            <div class="user-info flex-shrink-0">
+                <i class="bi bi-person-circle me-1"></i>
+                <span>Xin chào, <strong>@(Session["HoTen"] ?? "Admin")</strong></span>
+            </div>
+        </header>
+
+        <main class="page-content">
+            @RenderBody()
+            <div class="notifications"></div>
+        </main>
+
+        <footer class="admin-footer">
+            <p>&copy; @DateTime.Now.Year Trung tâm Tiêm chủng VNVC.</p>
+            <p>Phát triển bởi <a href="#">Nhóm của bạn</a></p>
+        </footer>
+
+        <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 2000;">
+            <div id="toast-container" class="toast-container">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Scripts/toast-utility.js"></script>
+
+    <script>$(document).ready(function () {
+            const toggleBtn = $('#toggleSidebar');
+            const sidebar = $('#sidebar');
+            const mainContent = $('#main-content');
+            const sidebarOverlay = $('#sidebarOverlay');
+            const sidebarStateKey = 'sidebarCollapsed';
+
+            function applySidebarState() {
+                const isCollapsed = localStorage.getItem(sidebarStateKey) === 'true';
+
+                if ($(window).width() > 992) {
+                    // DESKTOP
+                    sidebar.removeClass('show'); // Tắt chế độ mobile
+                    if (isCollapsed) {
+                        sidebar.addClass('collapsed');
+                        mainContent.addClass('expanded');
+                    } else {
+                        sidebar.removeClass('collapsed');
+                        mainContent.removeClass('expanded');
+                    }
+                } else {
+                    // MOBILE
+                    sidebar.removeClass('collapsed');
+                    mainContent.removeClass('expanded');
+                }
+            }
+
+            function toggleSidebar() {
+                if ($(window).width() > 992) {
+                    // DESKTOP
+                    sidebar.toggleClass('collapsed');
+                    mainContent.toggleClass('expanded');
+                    localStorage.setItem(sidebarStateKey, sidebar.hasClass('collapsed'));
+                } else {
+                    // MOBILE
+                    sidebar.toggleClass('show');
+                    // Hiện lớp phủ
+                    if (sidebar.hasClass('show')) {
+                        $('body').append(sidebarOverlay);
+                        sidebarOverlay.show();
+                    } else {
+                        sidebarOverlay.hide();
+                    }
+                }
+            }
+
+            toggleBtn.on('click', toggleSidebar);
+
+            // Đóng sidebar mobile khi bấm vào lớp phủ
+            sidebarOverlay.on('click', function () {
+                sidebar.removeClass('show');
+                $(this).hide();
+            });
+
+            $(window).on('resize', applySidebarState);
+            applySidebarState(); // Áp dụng trạng thái khi tải trang
+        });
+
+     </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
