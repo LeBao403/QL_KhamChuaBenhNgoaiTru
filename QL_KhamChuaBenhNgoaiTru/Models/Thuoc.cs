@@ -37,58 +37,47 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         [Key]
         [DisplayName("Mã thuốc")]
         [Required(ErrorMessage = "Mã thuốc không được để trống")]
+        [StringLength(10, ErrorMessage = "Mã thuốc không được dài quá 10 ký tự")]
         public string MaThuoc { get; set; }
 
         [DisplayName("Tên thuốc")]
         [Required(ErrorMessage = "Tên thuốc là bắt buộc")]
+        [StringLength(200, ErrorMessage = "Tên thuốc không được dài quá 200 ký tự")]
         public string TenThuoc { get; set; }
 
         [DisplayName("Quy cách")]
+        [StringLength(100, ErrorMessage = "Quy cách không được dài quá 100 ký tự")]
         public string QuyCach { get; set; }
 
         [DisplayName("Đơn vị cơ bản")]
-        [Required]
+        [Required(ErrorMessage = "Đơn vị cơ bản là bắt buộc")]
+        [StringLength(20)]
         public string DonViCoBan { get; set; }
 
         [DisplayName("Loại thuốc")]
+        [StringLength(10)]
         public string MaLoaiThuoc { get; set; }
 
         [DisplayName("Đường dùng")]
+        [StringLength(50)]
         public string DuongDung { get; set; }
 
         [DisplayName("Giá bán")]
         [DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal? GiaBan { get; set; }
 
+        [DisplayName("Có BHYT")]
+        public bool CoBHYT { get; set; }
+
+        [DisplayName("Giá BHYT quy định")]
+        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public decimal? GiaBHYT { get; set; }
+
         [DisplayName("Nhà sản xuất")]
         public int? MaNSX { get; set; }
 
         [DisplayName("Trạng thái")]
         public bool? TrangThai { get; set; }
-    }
-
-    public class DonViQuyDoi
-    {
-        [Key]
-        public int MaQuyDoi { get; set; }
-
-        [DisplayName("Mã thuốc")]
-        [Required]
-        public string MaThuoc { get; set; }
-
-        [DisplayName("Tên đơn vị (Hộp/Vỉ)")]
-        [Required]
-        public string TenDonVi { get; set; }
-
-        [DisplayName("Tỷ lệ quy đổi")]
-        [Required]
-        public int TyLeQuyDoi { get; set; }
-
-        [DisplayName("Giá bán quy đổi")]
-        public decimal? GiaBanQuyDoi { get; set; }
-
-        [DisplayName("Cấp độ hiển thị")]
-        public int? CapDo { get; set; }
     }
 
     public class ThanhPhanThuoc

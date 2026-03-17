@@ -1,0 +1,148 @@
+﻿@{
+    ViewBag.Title = "Quản lý bệnh nhân";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.BenhNhanManageViewModel>
+
+<style>
+    .password-toggle-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        max-width: 200px;
+    }
+
+    .password-field {
+        padding-right: 2.5rem !important;
+        background-color: transparent !important;
+        border: none !important;
+        cursor: default;
+        user-select: none;
+    }
+
+        .password-field:focus {
+            box-shadow: none !important;
+        }
+
+    .toggle-password-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 text-primary fw-bold">
+                <i class="bi bi-people me-2"></i> Danh sách bệnh nhân
+            </h4>
+            <a href="@Url.Action("Create", "BenhNhan", new { area = "Admin" })"
+               class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Thêm bệnh nhân
+            </a>
+        </div>
+
+        <div class="card-body">
+            <div class="mb-3">
+                <input type="text" class="form-control live-search"
+                       data-url="@Url.Action("Search", "BenhNhan", new { area = "Admin" })"
+                       data-target="#bnResult"
+                       placeholder="Tìm bệnh nhân theo Mã, Họ tên hoặc SĐT...">
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped align-middle bg-white">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Mã KH</th>
+                            <th>Họ tên</th>
+                            <th>Email</th>
+                            <th>SĐT</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th class="text-center" style="width: 120px;">Trạng thái</th>
+                            <th class="text-center" style="width: 170px; white-space: nowrap;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bnResult">
+                        @Html.Partial("_BenhNhanTable", Model)
+                    </tbody>
+                </table>
+            </div>
+
+            @Html.Partial("_Pagination")
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Scripts/live-search.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Ẩn hiện mật khẩu
+            $('#bnResult').on('click', '.toggle-password-icon', function () {
+                var icon = $(this);
+                var input = icon.siblings('.password-field');
+                var type = input.attr('type');
+
+                if (type === 'password') {
+                    input.attr('type', 'text');
+                    input.css('user-select', 'auto');
+                    icon.removeClass('bi-eye-slash').addClass('bi-eye');
+                } else {
+                    input.attr('type', 'password');
+                    input.css('user-select', 'none');
+                    icon.removeClass('bi-eye').addClass('bi-eye-slash');
+                }
+            });
+
+            // Xác nhận Khóa/Mở tài khoản
+            $('#bnResult').on('click', '.btn-lock-tk', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                var isLocking = $(this).data('isactive') === 'True';
+
+                Swal.fire({
+                    title: isLocking ? 'Xác nhận Khóa?' : 'Xác nhận Mở khóa?',
+                    text: isLocking ? 'Khách hàng này sẽ không thể đăng nhập được nữa.' : 'Khách hàng có thể đăng nhập bình thường.',
+                    icon: isLocking ? 'warning' : 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: isLocking ? '#dc3545' : '#198754',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: isLocking ? 'Đồng ý khóa' : 'Đồng ý mở'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+
+            // Xác nhận Xóa
+            $('#bnResult').on('click', '.btn-delete-kh', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+
+                Swal.fire({
+                    title: 'Bạn chắc chắn muốn xóa?',
+                    text: "Khách hàng này sẽ bị xóa vĩnh viễn khỏi hệ thống!",
+                    icon: 'error',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Xóa ngay',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

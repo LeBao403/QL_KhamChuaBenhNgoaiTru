@@ -6,21 +6,24 @@ using System.Web;
 
 namespace QL_KhamChuaBenhNgoaiTru.Models
 {
-    public class KhachHang
+    public class BenhNhan
     {
-        public string MaKH { get; set; }
+        [StringLength(10)]
+        public string MaBN { get; set; }
 
         [Required(ErrorMessage = "Họ tên khách hàng là bắt buộc.")]
         [StringLength(100, ErrorMessage = "Họ tên không được dài quá 100 ký tự.")]
         public string HoTen { get; set; }
 
-        [StringLength(20)]
+        [StringLength(20, ErrorMessage = "CCCD không được dài quá 20 ký tự.")]
         public string CCCD { get; set; }
 
         [Phone(ErrorMessage = "SĐT không hợp lệ.")]
+        [StringLength(15, ErrorMessage = "SĐT không được dài quá 15 ký tự.")]
         public string SDT { get; set; }
 
         [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
+        [StringLength(100, ErrorMessage = "Email không được dài quá 100 ký tự.")]
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Ngày sinh là bắt buộc.")]
@@ -28,13 +31,29 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public DateTime NgaySinh { get; set; }
 
         [Required(ErrorMessage = "Giới tính là bắt buộc.")]
+        [StringLength(10)]
         public string GioiTinh { get; set; }
 
         [Required(ErrorMessage = "Địa chỉ là bắt buộc.")]
+        [StringLength(200, ErrorMessage = "Địa chỉ không được dài quá 200 ký tự.")]
         public string DiaChi { get; set; }
+
+        // --- CÁC TRƯỜNG THÔNG TIN BẢO HIỂM Y TẾ ---
         public bool BHYT { get; set; }
+
+        [StringLength(50, ErrorMessage = "Số thẻ BHYT không được dài quá 50 ký tự.")]
+        public string SoTheBHYT { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime? HanSuDungBHYT { get; set; } // Phải để nullable (DateTime?) vì nếu không có BHYT thì trường này rỗng
+
+        [StringLength(50)]
+        public string TuyenKham { get; set; }
+
+        public int? MucHuongBHYT { get; set; } // Phải để nullable (int?) vì nếu không có BHYT thì trường này rỗng
+
         public int? MaTK { get; set; }
-        public string MaNGH { get; set; }
+
     }
 
 
@@ -47,50 +66,21 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
     public class TienSuYTeBenhNhan
     {
         public string MaTSYT { get; set; }
-        public string MaKH { get; set; }
+        public string MaBN { get; set; }
     }
 
-    public class NguoiGiamHo : IValidatableObject
+    
+
+    public class BenhNhanManageViewModel
     {
-        public string MaNGH { get; set; }
-
-        public string HoTen { get; set; }
-        public DateTime? NgaySinh { get; set; }
-        public string GioiTinh { get; set; }
-        public string SDT { get; set; }
-        public string DiaChi { get; set; }
-        public string MoiQuanHe { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            // Nếu người giám hộ có nhập ít nhất 1 trường
-            if (!string.IsNullOrWhiteSpace(HoTen) || !string.IsNullOrWhiteSpace(SDT) ||
-                !string.IsNullOrWhiteSpace(DiaChi) || !string.IsNullOrWhiteSpace(GioiTinh) || !string.IsNullOrWhiteSpace(MoiQuanHe))
-            {
-                if (string.IsNullOrWhiteSpace(HoTen))
-                    yield return new ValidationResult("Họ tên người giám hộ bắt buộc nếu điền thông tin.", new[] { nameof(HoTen) });
-
-                if (string.IsNullOrWhiteSpace(SDT))
-                    yield return new ValidationResult("SĐT người giám hộ bắt buộc nếu điền thông tin.", new[] { nameof(SDT) });
-
-                if (string.IsNullOrWhiteSpace(DiaChi))
-                    yield return new ValidationResult("Địa chỉ người giám hộ bắt buộc nếu điền thông tin.", new[] { nameof(DiaChi) });
-            }
-        }
-    }
-
-    public class KhachHangManageViewModel
-    {
-        public KhachHang KhachHang { get; set; } = new KhachHang();
-
-        public NguoiGiamHo NguoiGiamHo { get; set; } = new NguoiGiamHo();
+        public BenhNhan BenhNhan { get; set; } = new BenhNhan();
 
         public TaiKhoan TaiKhoan { get; set; } = new TaiKhoan();
     }
     //===============PROFILE===================
     public class ProfileViewModel
     {
-        public string MaKH { get; set; }
+        public string MaBN { get; set; }
 
         [Display(Name = "Họ tên")]
         [Required(ErrorMessage = "Vui lòng nhập họ tên")]

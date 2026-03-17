@@ -11,8 +11,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         [Key]
         public int MaPhieuKhamBenh { get; set; }
         public int? MaPhieuDK { get; set; }
-        public string MaKH { get; set; }
+        public string MaBN { get; set; }
         public int? STT { get; set; }
+        public string LyDoDenKham { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime? NgayLap { get; set; }
@@ -21,7 +22,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string TrieuChung { get; set; }
         public string KetLuan { get; set; }
         public string MaBacSiKham { get; set; }
-        public int? MaPhieuKhamSL { get; set; }
         public int? MaPhong { get; set; }
     }
 

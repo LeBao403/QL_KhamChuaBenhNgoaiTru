@@ -28,8 +28,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string ReturnUrl { get; set; }
     }
 
-    // ĐÃ ĐỔI TÊN ĐỂ TRÁNH TRÙNG LẶP VỚI KhachHangCreateViewModel cũ
-    public class KhachHangRegisterModel
+    public class BenhNhanRegisterModel
     {
 
         [Required(ErrorMessage = "Vui lòng nhập họ và tên.")]
@@ -68,7 +67,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public int? MaPhong { get; set; }
     }
 
-    public class KhachHangAuthInfo
+    public class BenhNhanAuthInfo
     {
         public string MaKH { get; set; }
         public int MaTK { get; set; }

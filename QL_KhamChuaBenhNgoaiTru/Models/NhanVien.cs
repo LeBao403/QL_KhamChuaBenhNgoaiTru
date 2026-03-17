@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 using System.Linq;
 using System.Web;
 
@@ -18,6 +20,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public bool TrangThai { get; set; }
         public int? MaTK { get; set; }
         public int? MaPhong { get; set; }
+        public int? MaKhoa { get; set; }
     }
 
     public class ChucVu
@@ -29,9 +32,27 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
     {
         public int MaPhong { get; set; }
         public string TenPhong { get; set; }
-        public int MaCoSo { get; set; }
-        public string LoaiPhong { get; set; } // "Khám sàng lọc" / "Tiêm chủng"
+        public string LoaiPhong { get; set; }
         public bool TrangThai { get; set; }
+        public int? MaKhoa { get; set; }
+    }
+
+    public class Khoa
+    {
+        [Key]
+        [DisplayName("Mã khoa")]
+        public int MaKhoa { get; set; }
+
+        [Required(ErrorMessage = "Tên khoa là bắt buộc")]
+        [StringLength(100, ErrorMessage = "Tên khoa không được dài quá 100 ký tự")]
+        [DisplayName("Tên khoa")]
+        public string TenKhoa { get; set; }
+
+        [DisplayName("Mô tả")]
+        public string MoTa { get; set; }
+
+        [DisplayName("Trạng thái")]
+        public bool? TrangThai { get; set; }
     }
 
     public class NhanVienViewModel

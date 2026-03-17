@@ -122,9 +122,9 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
-    <Compile Include="Areas\Admin\Controllers\KhachHangController.cs" />
+    <Compile Include="Areas\Admin\Controllers\BenhNhanController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="DBContext\KhachHangDB.cs" />
+    <Compile Include="DBContext\BenhNhanDB.cs" />
     <Compile Include="DBContext\NhanVienDB.cs" />
     <Compile Include="DBContext\TaiKhoanDB.cs" />
     <Compile Include="Global.asax.cs">
@@ -135,7 +135,7 @@
     <Compile Include="Models\DichVu.cs" />
     <Compile Include="Models\DonThuoc.cs" />
     <Compile Include="Models\HoaDon.cs" />
-    <Compile Include="Models\KhachHang.cs" />
+    <Compile Include="Models\BenhNhan.cs" />
     <Compile Include="Models\Kho.cs" />
     <Compile Include="Models\NhanVien.cs" />
     <Compile Include="Models\PagerViewModel.cs" />
@@ -175,8 +175,11 @@
     <Content Include="Areas\Admin\Views\web.config" />
     <Content Include="Areas\Admin\Views\Shared\_Layout_Admin.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\_Pagination.cshtml" />
-    <Content Include="Areas\Admin\Views\KhachHang\Index.cshtml" />
-    <Content Include="Areas\Admin\Views\KhachHang\_KhachHangTable.cshtml" />
+    <Content Include="Areas\Admin\Views\BenhNhan\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\BenhNhan\_BenhNhanTable.cshtml" />
+    <Content Include="Areas\Admin\Views\BenhNhan\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\BenhNhan\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\BenhNhan\Edit_KH.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -187,6 +190,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\live-search.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Styles\_Layout_admin.css" />
     <Content Include="Web.config" />
@@ -209,7 +213,6 @@
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Views\BaseAdmin\" />
-    <Folder Include="Areas\Admin\Views\NhanVien\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

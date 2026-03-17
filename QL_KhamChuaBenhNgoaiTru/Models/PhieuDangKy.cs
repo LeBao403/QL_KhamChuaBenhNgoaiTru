@@ -17,6 +17,5 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
 
         public string HinhThucDangKy { get; set; } // Online/Offline
         public string TrangThai { get; set; }      // Chờ xử lý/Đã xác nhận...
-        public bool DaGuiMailNhac { get; set; }
     }
 }

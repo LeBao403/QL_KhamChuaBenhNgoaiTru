@@ -174,112 +174,92 @@ VALUES
 -- ===========================================================================================================================
 ---------------------------------------------------- THÔNG TIN KHÁCH HÀNG ----------------------------------------------------
 -- ===========================================================================================================================
-INSERT INTO NGUOIGIAMHO (MaNGH, HoTen, NgaySinh, GioiTinh, SDT, DiaChi, MoiQuanHe)
-VALUES
-('GH001', N'Nguyễn Văn Hùng', '1980-03-15', N'Nam', '0909123456', N'Quận 1, TP.HCM', N'Cha'),
-('GH002', N'Trần Thị Lan', '1982-07-22', N'Nữ', '0912345678', N'Hà Đông, Hà Nội', N'Mẹ'),
-('GH003', N'Lê Văn Dũng', '1979-11-10', N'Nam', '0987654321', N'Hải Châu, Đà Nẵng', N'Cha'),
-('GH004', N'Phạm Thị Hạnh', '1983-05-18', N'Nữ', '0908765432', N'Ngô Quyền, Hải Phòng', N'Mẹ'),
-('GH005', N'Hoàng Văn Nam', '1981-01-30', N'Nam', '0910987654', N'Bình Thủy, Cần Thơ', N'Cha'),
-('GH006', N'Võ Thị Mai', '1985-02-14', N'Nữ', '0909876543', N'TP. Vinh, Nghệ An', N'Mẹ'),
-('GH007', N'Đặng Văn Hùng', '1980-12-05', N'Nam', '0912340987', N'Thủ Dầu Một, Bình Dương', N'Cha'),
-('GH008', N'Ngô Thị Bích', '1982-06-20', N'Nữ', '0901234567', N'TP. Nha Trang, Khánh Hòa', N'Mẹ'),
-('GH009', N'Bùi Văn Quang', '1981-09-15', N'Nam', '0913456789', N'TP. Huế, Thừa Thiên Huế', N'Cha'),
-('GH010', N'Đỗ Thị Lan', '1984-04-25', N'Nữ', '0902345678', N'TP. Biên Hòa, Đồng Nai', N'Mẹ'),
-('GH011', N'Phan Văn Tuấn', '1978-05-12', N'Nam', '0903456789', N'Quận 3, TP.HCM', N'Cha'),
-('GH012', N'Nguyễn Thị Hồng', '1980-09-20', N'Nữ', '0914567890', N'Hà Đông, Hà Nội', N'Mẹ'),
-('GH013', N'Lê Thị Kim', '1983-11-05', N'Nữ', '0905678901', N'Hải Châu, Đà Nẵng', N'Mẹ'),
-('GH014', N'Đinh Văn Phúc', '1979-07-30', N'Nam', '0916789012', N'Ngô Quyền, Hải Phòng', N'Cha'),
-('GH015', N'Hoàng Thị Lan', '1982-03-18', N'Nữ', '0907890123', N'Bình Thủy, Cần Thơ', N'Mẹ');
-
-
-
 
 -- ================== NGƯỜI LỚN ==================
-INSERT INTO KHACHHANG (MaKH, HoTen, NgaySinh, GioiTinh, CCCD, SDT, Email, DiaChi, BHYT, MaTK, MaNGH)
+INSERT INTO BENHNHAN (MaBN, HoTen, NgaySinh, GioiTinh, CCCD, SDT, Email, DiaChi, BHYT, MaTK)
 VALUES
 -- NGƯỜI LỚN
-('KH0001', N'Nguyễn Văn Hùng', '1985-03-12', N'Nam', '012345678901', '0908000001', 'hung.nguyen@vnvc.vn', N'Quận 1, TP.HCM', 1, 87, null),
-('KH0002', N'Trần Thị Lan', '1990-07-22', N'Nữ', '012345678902', '0908000002', 'lan.tran@vnvc.vn', N'Quận Hai Bà Trưng, Hà Nội', 1, 88, null),
-('KH0003', N'Lê Văn Minh', '1982-11-10', N'Nam', '012345678903', '0908000003', 'minh.le@vnvc.vn', N'Hải Châu, Đà Nẵng', 0, 89, null),
-('KH0004', N'Phạm Thị Hoa', '1995-05-09', N'Nữ', '012345678904', '0908000004', 'hoa.pham@vnvc.vn', N'Bình Thủy, Cần Thơ', 1, 90, null),
-('KH0005', N'Hoàng Văn Tuấn', '1989-09-15', N'Nam', '012345678905', '0908000005', 'tuan.hoang@vnvc.vn', N'Ngô Quyền, Hải Phòng', 0, 91, null),
-('KH0006', N'Võ Thị Hạnh', '1987-12-01', N'Nữ', '012345678906', '0908000006', 'hanh.vo@vnvc.vn', N'TP. Vinh, Nghệ An', 1, 92, null),
-('KH0007', N'Đặng Văn Long', '1984-04-18', N'Nam', '012345678907', '0908000007', 'long.dang@vnvc.vn', N'Thủ Dầu Một, Bình Dương', 0, 93, null),
-('KH0008', N'Ngô Thị Mai', '1991-06-25', N'Nữ', '012345678908', '0908000008', 'mai.ngo@vnvc.vn', N'TP. Nha Trang, Khánh Hòa', 1, 94, null),
-('KH0009', N'Bùi Văn Khánh', '1986-08-30', N'Nam', '012345678909', '0908000009', 'khanh.bui@vnvc.vn', N'TP. Huế, Thừa Thiên Huế', 0, 95, null),
-('KH0010', N'Đỗ Thị Yến', '1993-01-19', N'Nữ', '012345678910', '0908000010', 'yen.do@vnvc.vn', N'TP. Biên Hòa, Đồng Nai', 1, 96, null),
+('KH0001', N'Nguyễn Văn Hùng', '1985-03-12', N'Nam', '012345678901', '0908000001', 'hung.nguyen@vnvc.vn', N'Quận 1, TP.HCM', 1, 87),
+('KH0002', N'Trần Thị Lan', '1990-07-22', N'Nữ', '012345678902', '0908000002', 'lan.tran@vnvc.vn', N'Quận Hai Bà Trưng, Hà Nội', 1, 88),
+('KH0003', N'Lê Văn Minh', '1982-11-10', N'Nam', '012345678903', '0908000003', 'minh.le@vnvc.vn', N'Hải Châu, Đà Nẵng', 0, 89),
+('KH0004', N'Phạm Thị Hoa', '1995-05-09', N'Nữ', '012345678904', '0908000004', 'hoa.pham@vnvc.vn', N'Bình Thủy, Cần Thơ', 1, 90),
+('KH0005', N'Hoàng Văn Tuấn', '1989-09-15', N'Nam', '012345678905', '0908000005', 'tuan.hoang@vnvc.vn', N'Ngô Quyền, Hải Phòng', 0, 91),
+('KH0006', N'Võ Thị Hạnh', '1987-12-01', N'Nữ', '012345678906', '0908000006', 'hanh.vo@vnvc.vn', N'TP. Vinh, Nghệ An', 1, 92),
+('KH0007', N'Đặng Văn Long', '1984-04-18', N'Nam', '012345678907', '0908000007', 'long.dang@vnvc.vn', N'Thủ Dầu Một, Bình Dương', 0, 93),
+('KH0008', N'Ngô Thị Mai', '1991-06-25', N'Nữ', '012345678908', '0908000008', 'mai.ngo@vnvc.vn', N'TP. Nha Trang, Khánh Hòa', 1, 94),
+('KH0009', N'Bùi Văn Khánh', '1986-08-30', N'Nam', '012345678909', '0908000009', 'khanh.bui@vnvc.vn', N'TP. Huế, Thừa Thiên Huế', 0, 95),
+('KH0010', N'Đỗ Thị Yến', '1993-01-19', N'Nữ', '012345678910', '0908000010', 'yen.do@vnvc.vn', N'TP. Biên Hòa, Đồng Nai', 1, 96),
 
-('KH0011', N'Nguyễn Thị Hương', '1988-06-14', N'Nữ', '012345678911', '0908000011', 'huong.nguyen@vnvc.vn', N'Nam Từ Liêm, Hà Nội', 1, 97, null),
-('KH0012', N'Trần Văn Nam', '1981-02-21', N'Nam', '012345678912', '0908000012', 'nam.tran@vnvc.vn', N'Quận 3, TP.HCM', 0, 98, null),
-('KH0013', N'Lê Thị Thu', '1996-08-09', N'Nữ', '012345678913', '0908000013', 'thu.le@vnvc.vn', N'Quận 7, TP.HCM', 1, 99, null),
-('KH0014', N'Phạm Văn Hoàng', '1983-04-27', N'Nam', '012345678914', '0908000014', 'hoang.pham@vnvc.vn', N'Hồng Bàng, Hải Phòng', 1, 100, null),
-('KH0015', N'Hoàng Thị Mai', '1989-10-13', N'Nữ', '012345678915', '0908000015', 'mai.hoang@vnvc.vn', N'Thanh Khê, Đà Nẵng', 0, 101, null),
-('KH0016', N'Vũ Văn Dũng', '1986-07-19', N'Nam', '012345678916', '0908000016', 'dung.vu@vnvc.vn', N'Thủ Đức, TP.HCM', 1, 102, null),
-('KH0017', N'Đinh Thị Hòa', '1992-03-05', N'Nữ', '012345678917', '0908000017', 'hoa.dinh@vnvc.vn', N'Hồng Bàng, Hải Phòng', 0, 103, null),
-('KH0018', N'Nguyễn Văn Lâm', '1987-09-11', N'Nam', '012345678918', '0908000018', 'lam.nguyen@vnvc.vn', N'Cẩm Lệ, Đà Nẵng', 1, 104, null),
-('KH0019', N'Trần Thị Ngọc', '1994-05-24', N'Nữ', '012345678919', '0908000019', 'ngoc.tran@vnvc.vn', N'Cầu Giấy, Hà Nội', 0, 105, null),
-('KH0020', N'Lê Văn Thành', '1985-12-30', N'Nam', '012345678920', '0908000020', 'thanh.le@vnvc.vn', N'Huế', 1, 106, null),
+('KH0011', N'Nguyễn Thị Hương', '1988-06-14', N'Nữ', '012345678911', '0908000011', 'huong.nguyen@vnvc.vn', N'Nam Từ Liêm, Hà Nội', 1, 97),
+('KH0012', N'Trần Văn Nam', '1981-02-21', N'Nam', '012345678912', '0908000012', 'nam.tran@vnvc.vn', N'Quận 3, TP.HCM', 0, 98),
+('KH0013', N'Lê Thị Thu', '1996-08-09', N'Nữ', '012345678913', '0908000013', 'thu.le@vnvc.vn', N'Quận 7, TP.HCM', 1, 99),
+('KH0014', N'Phạm Văn Hoàng', '1983-04-27', N'Nam', '012345678914', '0908000014', 'hoang.pham@vnvc.vn', N'Hồng Bàng, Hải Phòng', 1, 100),
+('KH0015', N'Hoàng Thị Mai', '1989-10-13', N'Nữ', '012345678915', '0908000015', 'mai.hoang@vnvc.vn', N'Thanh Khê, Đà Nẵng', 0, 101),
+('KH0016', N'Vũ Văn Dũng', '1986-07-19', N'Nam', '012345678916', '0908000016', 'dung.vu@vnvc.vn', N'Thủ Đức, TP.HCM', 1, 102),
+('KH0017', N'Đinh Thị Hòa', '1992-03-05', N'Nữ', '012345678917', '0908000017', 'hoa.dinh@vnvc.vn', N'Hồng Bàng, Hải Phòng', 0, 103),
+('KH0018', N'Nguyễn Văn Lâm', '1987-09-11', N'Nam', '012345678918', '0908000018', 'lam.nguyen@vnvc.vn', N'Cẩm Lệ, Đà Nẵng', 1, 104),
+('KH0019', N'Trần Thị Ngọc', '1994-05-24', N'Nữ', '012345678919', '0908000019', 'ngoc.tran@vnvc.vn', N'Cầu Giấy, Hà Nội', 0, 105),
+('KH0020', N'Lê Văn Thành', '1985-12-30', N'Nam', '012345678920', '0908000020', 'thanh.le@vnvc.vn', N'Huế', 1, 106),
 
-('KH0021', N'Đoàn Minh Phúc', '1985-11-20', N'Nam', '026985001234', '0915789456', 'minhphuc.doan@example.com', N'25 Lê Lợi, Hà Nội', 1, 107, NULL),
-('KH0022', N'Lê Hải Yến', '1991-04-10', N'Nữ', '034896752134', '0902349876', 'haiyen.le@example.com', N'88 Nguyễn Văn Cừ, Bắc Ninh', 0, 108, NULL),
-('KH0023', N'Trần Nhật Nam', '1978-07-05', N'Nam', '021548963215', '0984563217', 'nhatnam.tran@example.com', N'15 Lạch Tray, Hải Phòng', 1, 109, NULL),
-('KH0024', N'Nguyễn Thị Mỹ Duyên', '1989-12-12', N'Nữ', '025489631254', '0932145896', 'myduyen.nguyen@example.com', N'42 Trần Quang Diệu, Hà Nội', 0, 110, NULL),
-('KH0025', N'Phạm Văn Khánh', '1993-09-14', N'Nam', '028945632541', '0916325478', 'vankhanh.pham@example.com', N'19 Hùng Vương, Đà Nẵng', 1, 111, NULL),
-('KH0026', N'Hoàng Lan Chi', '1986-06-18', N'Nữ', '037894562315', '0978456321', 'lanchi.hoang@example.com', N'67 Nguyễn Chí Thanh, Hà Nội', 0, 112, NULL),
-('KH0027', N'Nguyễn Quang Huy', '1990-02-27', N'Nam', '022145896321', '0931458796', 'quanghuy.nguyen@example.com', N'8 Đường 30/4, Cần Thơ', 1, 113, NULL),
-('KH0028', N'Lý Thị Bảo Ngọc', '1992-05-22', N'Nữ', '029875463215', '0907856321', 'baongoc.ly@example.com', N'33 Võ Thị Sáu, TP.HCM', 0, 114, NULL),
-('KH0029', N'Phan Hoàng Long', '1981-03-03', N'Nam', '027894562317', '0917458963', 'hoanglong.phan@example.com', N'12 Phan Bội Châu, Đà Nẵng', 1, 115, NULL),
-('KH0030', N'Vũ Thu Trang', '1995-08-28', N'Nữ', '024785693214', '0932147856', 'thutrang.vu@example.com', N'55 Nguyễn Du, Hà Nội', 0, 116, NULL),
+('KH0021', N'Đoàn Minh Phúc', '1985-11-20', N'Nam', '026985001234', '0915789456', 'minhphuc.doan@example.com', N'25 Lê Lợi, Hà Nội', 1, 107),
+('KH0022', N'Lê Hải Yến', '1991-04-10', N'Nữ', '034896752134', '0902349876', 'haiyen.le@example.com', N'88 Nguyễn Văn Cừ, Bắc Ninh', 0, 108),
+('KH0023', N'Trần Nhật Nam', '1978-07-05', N'Nam', '021548963215', '0984563217', 'nhatnam.tran@example.com', N'15 Lạch Tray, Hải Phòng', 1, 109),
+('KH0024', N'Nguyễn Thị Mỹ Duyên', '1989-12-12', N'Nữ', '025489631254', '0932145896', 'myduyen.nguyen@example.com', N'42 Trần Quang Diệu, Hà Nội', 0, 110),
+('KH0025', N'Phạm Văn Khánh', '1993-09-14', N'Nam', '028945632541', '0916325478', 'vankhanh.pham@example.com', N'19 Hùng Vương, Đà Nẵng', 1, 111),
+('KH0026', N'Hoàng Lan Chi', '1986-06-18', N'Nữ', '037894562315', '0978456321', 'lanchi.hoang@example.com', N'67 Nguyễn Chí Thanh, Hà Nội', 0, 112),
+('KH0027', N'Nguyễn Quang Huy', '1990-02-27', N'Nam', '022145896321', '0931458796', 'quanghuy.nguyen@example.com', N'8 Đường 30/4, Cần Thơ', 1, 113),
+('KH0028', N'Lý Thị Bảo Ngọc', '1992-05-22', N'Nữ', '029875463215', '0907856321', 'baongoc.ly@example.com', N'33 Võ Thị Sáu, TP.HCM', 0, 114),
+('KH0029', N'Phan Hoàng Long', '1981-03-03', N'Nam', '027894562317', '0917458963', 'hoanglong.phan@example.com', N'12 Phan Bội Châu, Đà Nẵng', 1, 115),
+('KH0030', N'Vũ Thu Trang', '1995-08-28', N'Nữ', '024785693214', '0932147856', 'thutrang.vu@example.com', N'55 Nguyễn Du, Hà Nội', 0, 116),
 
-('KH0031', N'Nguyễn Hữu Toàn', '1979-01-10', N'Nam', '023654987521', '0987456321', 'huutoan.nguyen@example.com', N'9 Phạm Văn Đồng, TP.HCM', 1, 117, NULL),
-('KH0032', N'Trịnh Mai Phương', '1987-10-17', N'Nữ', '035214789652', '0978562143', 'maiphuong.trinh@example.com', N'21 Nguyễn Trãi, Hà Nội', 0, 118, NULL),
-('KH0033', N'Tạ Văn Cường', '1984-04-21', N'Nam', '038965214785', '0912348756', 'vancuong.ta@example.com', N'18 Lê Lợi, Thanh Hóa', 1, 119, NULL),
-('KH0034', N'Nguyễn Kim Oanh', '1991-09-19', N'Nữ', '022154789632', '0907854213', 'kimoanh.nguyen@example.com', N'70 Cách Mạng Tháng 8, TP.HCM', 0, 120, NULL),
-('KH0035', N'Đỗ Quang Minh', '1983-06-25', N'Nam', '021478965321', '0914789562', 'quangminh.do@example.com', N'32 Hoàng Hoa Thám, Hà Nội', 1, 121, NULL),
-('KH0036', N'Lưu Thanh Hà', '1988-07-07', N'Nữ', '026321547896', '0932654789', 'thanhha.luu@example.com', N'11 Ngô Quyền, Hải Phòng', 0, 122, NULL),
-('KH0037', N'Ngô Văn An', '1990-05-05', N'Nam', '024789632154', '0907896541', 'vann.an@example.com', N'23 Nguyễn Văn Linh, Đà Nẵng', 1, 123, NULL),
-('KH0038', N'Trần Thị Thu Hằng', '1992-11-15', N'Nữ', '027896321547', '0978456213', 'thuhang.tran@example.com', N'101 Hai Bà Trưng, Hà Nội', 0, 124, NULL),
-('KH0039', N'Nguyễn Đức Mạnh', '1985-12-30', N'Nam', '025478963215', '0912354789', 'ducmanh.nguyen@example.com', N'14 Điện Biên Phủ, TP.HCM', 1, 125, NULL),
-('KH0040', N'Phạm Thị Hòa', '1989-03-08', N'Nữ', '021547896325', '0932145879', 'thihoa.pham@example.com', N'7 Nguyễn Huệ, Huế', 0, 126, NULL),
+('KH0031', N'Nguyễn Hữu Toàn', '1979-01-10', N'Nam', '023654987521', '0987456321', 'huutoan.nguyen@example.com', N'9 Phạm Văn Đồng, TP.HCM', 1, 117),
+('KH0032', N'Trịnh Mai Phương', '1987-10-17', N'Nữ', '035214789652', '0978562143', 'maiphuong.trinh@example.com', N'21 Nguyễn Trãi, Hà Nội', 0, 118),
+('KH0033', N'Tạ Văn Cường', '1984-04-21', N'Nam', '038965214785', '0912348756', 'vancuong.ta@example.com', N'18 Lê Lợi, Thanh Hóa', 1, 119),
+('KH0034', N'Nguyễn Kim Oanh', '1991-09-19', N'Nữ', '022154789632', '0907854213', 'kimoanh.nguyen@example.com', N'70 Cách Mạng Tháng 8, TP.HCM', 0, 120),
+('KH0035', N'Đỗ Quang Minh', '1983-06-25', N'Nam', '021478965321', '0914789562', 'quangminh.do@example.com', N'32 Hoàng Hoa Thám, Hà Nội', 1, 121),
+('KH0036', N'Lưu Thanh Hà', '1988-07-07', N'Nữ', '026321547896', '0932654789', 'thanhha.luu@example.com', N'11 Ngô Quyền, Hải Phòng', 0, 122),
+('KH0037', N'Ngô Văn An', '1990-05-05', N'Nam', '024789632154', '0907896541', 'vann.an@example.com', N'23 Nguyễn Văn Linh, Đà Nẵng', 1, 123),
+('KH0038', N'Trần Thị Thu Hằng', '1992-11-15', N'Nữ', '027896321547', '0978456213', 'thuhang.tran@example.com', N'101 Hai Bà Trưng, Hà Nội', 0, 124),
+('KH0039', N'Nguyễn Đức Mạnh', '1985-12-30', N'Nam', '025478963215', '0912354789', 'ducmanh.nguyen@example.com', N'14 Điện Biên Phủ, TP.HCM', 1, 125),
+('KH0040', N'Phạm Thị Hòa', '1989-03-08', N'Nữ', '021547896325', '0932145879', 'thihoa.pham@example.com', N'7 Nguyễn Huệ, Huế', 0, 126),
 
-('KH0041', N'Nguyễn Văn Thắng', '1986-09-12', N'Nam', '023654789521', '0914785963', 'vanthang.nguyen@example.com', N'5 Hoàng Văn Thụ, Hà Nội', 1, 127, NULL),
-('KH0042', N'Trần Ngọc Ánh', '1993-01-29', N'Nữ', '029875641325', '0901452369', 'ngocanh.tran@example.com', N'77 Bạch Đằng, Đà Nẵng', 0, 128, NULL),
-('KH0043', N'Lê Minh Quân', '1980-02-02', N'Nam', '028974563215', '0987451236', 'minhquan.le@example.com', N'28 Trần Hưng Đạo, TP.HCM', 1, 129, NULL),
-('KH0044', N'Nguyễn Thanh Mai', '1987-08-18', N'Nữ', '025478963214', '0932147852', 'thanhmai.nguyen@example.com', N'44 Nguyễn Khuyến, Hà Nội', 0, 130, NULL),
-('KH0045', N'Phan Văn Đức', '1982-05-09', N'Nam', '026325478965', '0912564789', 'vanduc.phan@example.com', N'35 Nguyễn Thị Minh Khai, Huế', 1, 131, NULL),
-('KH0046', N'Hồ Thị Yến Nhi', '1994-04-14', N'Nữ', '037854621354', '0903248756', 'yennhi.ho@example.com', N'10 Bùi Thị Xuân, Đà Nẵng', 0, 132, NULL),
-('KH0047', N'Nguyễn Văn Hải', '1983-03-30', N'Nam', '021478563219', '0978563214', 'vanhai.nguyen@example.com', N'60 Lý Thường Kiệt, Hà Nội', 1, 133, NULL),
-('KH0048', N'Đinh Thị Thảo', '1988-10-22', N'Nữ', '024789653214', '0914785632', 'thithao.dinh@example.com', N'17 Trần Cao Vân, TP.HCM', 0, 134, NULL),
-('KH0049', N'Võ Quang Khải', '1981-06-06', N'Nam', '023698745123', '0902147856', 'quangkhai.vo@example.com', N'19 Nguyễn Công Trứ, Đà Nẵng', 1, 135, NULL),
-('KH0050', N'Lê Mỹ Linh', '1990-12-19', N'Nữ', '022541236985', '0987456325', 'mylinh.le@example.com', N'82 Nguyễn Trường Tộ, Hà Nội', 0, 136, NULL),
+('KH0041', N'Nguyễn Văn Thắng', '1986-09-12', N'Nam', '023654789521', '0914785963', 'vanthang.nguyen@example.com', N'5 Hoàng Văn Thụ, Hà Nội', 1, 127),
+('KH0042', N'Trần Ngọc Ánh', '1993-01-29', N'Nữ', '029875641325', '0901452369', 'ngocanh.tran@example.com', N'77 Bạch Đằng, Đà Nẵng', 0, 128),
+('KH0043', N'Lê Minh Quân', '1980-02-02', N'Nam', '028974563215', '0987451236', 'minhquan.le@example.com', N'28 Trần Hưng Đạo, TP.HCM', 1, 129),
+('KH0044', N'Nguyễn Thanh Mai', '1987-08-18', N'Nữ', '025478963214', '0932147852', 'thanhmai.nguyen@example.com', N'44 Nguyễn Khuyến, Hà Nội', 0, 130),
+('KH0045', N'Phan Văn Đức', '1982-05-09', N'Nam', '026325478965', '0912564789', 'vanduc.phan@example.com', N'35 Nguyễn Thị Minh Khai, Huế', 1, 131),
+('KH0046', N'Hồ Thị Yến Nhi', '1994-04-14', N'Nữ', '037854621354', '0903248756', 'yennhi.ho@example.com', N'10 Bùi Thị Xuân, Đà Nẵng', 0, 132),
+('KH0047', N'Nguyễn Văn Hải', '1983-03-30', N'Nam', '021478563219', '0978563214', 'vanhai.nguyen@example.com', N'60 Lý Thường Kiệt, Hà Nội', 1, 133),
+('KH0048', N'Đinh Thị Thảo', '1988-10-22', N'Nữ', '024789653214', '0914785632', 'thithao.dinh@example.com', N'17 Trần Cao Vân, TP.HCM', 0, 134),
+('KH0049', N'Võ Quang Khải', '1981-06-06', N'Nam', '023698745123', '0902147856', 'quangkhai.vo@example.com', N'19 Nguyễn Công Trứ, Đà Nẵng', 1, 135),
+('KH0050', N'Lê Mỹ Linh', '1990-12-19', N'Nữ', '022541236985', '0987456325', 'mylinh.le@example.com', N'82 Nguyễn Trường Tộ, Hà Nội', 0, 136),
 
 -- 20 TRẺ EM
-('KH0051', N'Nguyễn Anh Tuấn', '2015-04-10', N'Nam', NULL, NULL, NULL, N'Quận 1, TP.HCM', 1, NULL, 'GH001'),
-('KH0052', N'Trần Ngọc Bích', '2017-08-22', N'Nữ', NULL, NULL, NULL, N'Hà Đông, Hà Nội', 0, NULL, 'GH002'),
-('KH0053', N'Lê Đức Huy', '2014-12-30', N'Nam', NULL, NULL, NULL, N'Hải Châu, Đà Nẵng', 1, NULL, 'GH003'),
-('KH0054', N'Phạm Thảo Nhi', '2016-03-05', N'Nữ', NULL, NULL, NULL, N'Ngô Quyền, Hải Phòng', 0, NULL, 'GH004'),
-('KH0055', N'Hoàng Gia Bảo', '2013-11-15', N'Nam', NULL, NULL, NULL, N'Bình Thủy, Cần Thơ', 1, NULL, 'GH005'),
-('KH0056', N'Võ Minh Quân', '2018-01-25', N'Nam', NULL, NULL, NULL, N'TP. Vinh, Nghệ An', 0, NULL, 'GH006'),
-('KH0057', N'Đặng Khánh Linh', '2019-09-07', N'Nữ', NULL, NULL, NULL, N'Thủ Dầu Một, Bình Dương', 1, NULL, 'GH007'),
-('KH0058', N'Ngô Hoài Nam', '2014-02-18', N'Nam', NULL, NULL, NULL, N'TP. Nha Trang, Khánh Hòa', 0, NULL, 'GH008'),
-('KH0059', N'Bùi Thanh Thảo', '2016-10-21', N'Nữ', NULL, NULL, NULL, N'TP. Huế, Thừa Thiên Huế', 1, NULL, 'GH009'),
-('KH0060', N'Đỗ Minh Anh', '2012-07-14', N'Nam', NULL, NULL, NULL, N'TP. Biên Hòa, Đồng Nai', 0, NULL, 'GH010'),
+('KH0051', N'Nguyễn Anh Tuấn', '2015-04-10', N'Nam', NULL, NULL, NULL, N'Quận 1, TP.HCM', 1, NULL),
+('KH0052', N'Trần Ngọc Bích', '2017-08-22', N'Nữ', NULL, NULL, NULL, N'Hà Đông, Hà Nội', 0, NULL),
+('KH0053', N'Lê Đức Huy', '2014-12-30', N'Nam', NULL, NULL, NULL, N'Hải Châu, Đà Nẵng', 1, NULL),
+('KH0054', N'Phạm Thảo Nhi', '2016-03-05', N'Nữ', NULL, NULL, NULL, N'Ngô Quyền, Hải Phòng', 0, NULL),
+('KH0055', N'Hoàng Gia Bảo', '2013-11-15', N'Nam', NULL, NULL, NULL, N'Bình Thủy, Cần Thơ', 1, NULL),
+('KH0056', N'Võ Minh Quân', '2018-01-25', N'Nam', NULL, NULL, NULL, N'TP. Vinh, Nghệ An', 0, NULL),
+('KH0057', N'Đặng Khánh Linh', '2019-09-07', N'Nữ', NULL, NULL, NULL, N'Thủ Dầu Một, Bình Dương', 1, NULL),
+('KH0058', N'Ngô Hoài Nam', '2014-02-18', N'Nam', NULL, NULL, NULL, N'TP. Nha Trang, Khánh Hòa', 0, NULL),
+('KH0059', N'Bùi Thanh Thảo', '2016-10-21', N'Nữ', NULL, NULL, NULL, N'TP. Huế, Thừa Thiên Huế', 1, NULL),
+('KH0060', N'Đỗ Minh Anh', '2012-07-14', N'Nam', NULL, NULL, NULL, N'TP. Biên Hòa, Đồng Nai', 0, NULL),
 
-('KH0061', N'Nguyễn Phương Thảo', '2015-06-02', N'Nữ', NULL, NULL, NULL, N'Quận 5, TP.HCM', 1, NULL, 'GH011'),
-('KH0062', N'Trần Hoàng Nam', '2013-11-09', N'Nam', NULL, NULL, NULL, N'Nam Từ Liêm, Hà Nội', 0, NULL, 'GH011'),
-('KH0063', N'Lê Khánh Vy', '2017-02-25', N'Nữ', NULL, NULL, NULL, N'Hải Châu, Đà Nẵng', 1, NULL, 'GH012'),
-('KH0064', N'Phạm Anh Dũng', '2014-08-19', N'Nam', NULL, NULL, NULL, N'Ngô Quyền, Hải Phòng', 0, NULL, 'GH012'),
-('KH0065', N'Hoàng Bảo Ngọc', '2016-12-28', N'Nữ', NULL, NULL, NULL, N'Bình Thủy, Cần Thơ', 1, NULL, 'GH013'),
-('KH0066', N'Võ Hữu Tài', '2015-10-10', N'Nam', NULL, NULL, NULL, N'TP. Vinh, Nghệ An', 0, NULL, 'GH013'),
-('KH0067', N'Đặng Ngọc Hân', '2018-04-23', N'Nữ', NULL, NULL, NULL, N'Thủ Dầu Một, Bình Dương', 1, NULL, 'GH014'),
-('KH0068', N'Ngô Minh Đức', '2013-01-07', N'Nam', NULL, NULL, NULL, N'TP. Nha Trang, Khánh Hòa', 0, NULL, 'GH014'),
-('KH0069', N'Bùi Hồng Anh', '2017-09-17', N'Nữ', NULL, NULL, NULL, N'TP. Huế, Thừa Thiên Huế', 1, NULL, 'GH015'),
-('KH0070', N'Đỗ Quốc Khánh', '2014-05-12', N'Nam', NULL, NULL, NULL, N'TP. Biên Hòa, Đồng Nai', 0, NULL, 'GH015'),
+('KH0061', N'Nguyễn Phương Thảo', '2015-06-02', N'Nữ', NULL, NULL, NULL, N'Quận 5, TP.HCM', 1, NULL),
+('KH0062', N'Trần Hoàng Nam', '2013-11-09', N'Nam', NULL, NULL, NULL, N'Nam Từ Liêm, Hà Nội', 0, NULL),
+('KH0063', N'Lê Khánh Vy', '2017-02-25', N'Nữ', NULL, NULL, NULL, N'Hải Châu, Đà Nẵng', 1, NULL),
+('KH0064', N'Phạm Anh Dũng', '2014-08-19', N'Nam', NULL, NULL, NULL, N'Ngô Quyền, Hải Phòng', 0, NULL),
+('KH0065', N'Hoàng Bảo Ngọc', '2016-12-28', N'Nữ', NULL, NULL, NULL, N'Bình Thủy, Cần Thơ', 1, NULL),
+('KH0066', N'Võ Hữu Tài', '2015-10-10', N'Nam', NULL, NULL, NULL, N'TP. Vinh, Nghệ An', 0, NULL),
+('KH0067', N'Đặng Ngọc Hân', '2018-04-23', N'Nữ', NULL, NULL, NULL, N'Thủ Dầu Một, Bình Dương', 1, NULL),
+('KH0068', N'Ngô Minh Đức', '2013-01-07', N'Nam', NULL, NULL, NULL, N'TP. Nha Trang, Khánh Hòa', 0, NULL),
+('KH0069', N'Bùi Hồng Anh', '2017-09-17', N'Nữ', NULL, NULL, NULL, N'TP. Huế, Thừa Thiên Huế', 1, NULL),
+('KH0070', N'Đỗ Quốc Khánh', '2014-05-12', N'Nam', NULL, NULL, NULL, N'TP. Biên Hòa, Đồng Nai', 0, NULL),
 
-('KH0071', N'Lê Quân Bảo', '2004-03-04', N'Nam', NULL, '0383156689', 'baocenzo@gmail.com', N'TP. Huế, Thừa Thiên Huế', 1, 137, NULL),
-('KH0072', N'Đinh Đỗ Quỳnh Như', '2004-09-01', N'Nữ', NULL, '0976865715', 'dinhdoquynhnhuss@gmail.com', N'TP. Biên Hòa, Đồng Nai', 0, 138, NULL),
-('KH0073', N'Lại Phước Thịnh', '2004-09-01', N'Nam', NULL, '0978610519', 'laiphuocthinh.bp@gmail.com', N'TP. Biên Hòa, Đồng Nai', 1, 139, NULL);
+('KH0071', N'Lê Quân Bảo', '2004-03-04', N'Nam', NULL, '0383156689', 'baocenzo@gmail.com', N'TP. Huế, Thừa Thiên Huế', 1, 137),
+('KH0072', N'Đinh Đỗ Quỳnh Như', '2004-09-01', N'Nữ', NULL, '0976865715', 'dinhdoquynhnhuss@gmail.com', N'TP. Biên Hòa, Đồng Nai', 0, 138),
+('KH0073', N'Lại Phước Thịnh', '2004-09-01', N'Nam', NULL, '0978610519', 'laiphuocthinh.bp@gmail.com', N'TP. Biên Hòa, Đồng Nai', 1, 139);
 
 
 
@@ -397,7 +377,7 @@ INSERT INTO DANHMUC_TIENSU_YTE VALUES
 	('TSYT111', N'Bệnh nghề nghiệp liên quan hóa chất');
 
 
-INSERT INTO TIENSU_YTE_BENHNHAN (MaTSYT, MaKH)
+INSERT INTO TIENSU_YTE_BENHNHAN (MaTSYT, MaBN)
 VALUES
 -- KH0001 - Nguyễn Văn Hùng: có 3 tiền sử
 ('TSYT012', 'KH0001'), -- Tăng huyết áp
@@ -687,112 +667,133 @@ VALUES
 	(N'Nhân viên tạp vụ');
 GO
 
+INSERT INTO KHOA (TenKhoa, MoTa, TrangThai)
+VALUES
+(N'Khoa Khám bệnh', N'Tiếp nhận, khám ban đầu, phân loại bệnh nhân và điều trị ngoại trú.', 1), -- ID: 1
+(N'Khoa Nội tổng hợp', N'Khám và điều trị các bệnh lý nội khoa: tim mạch, tiêu hóa, hô hấp, nội tiết...', 1), -- ID: 2
+(N'Khoa Ngoại tổng hợp', N'Khám và xử lý các tiểu phẫu, chấn thương nhẹ, các bệnh lý cần can thiệp ngoại khoa cơ bản.', 1), -- ID: 3
+(N'Khoa Nhi', N'Khám, tư vấn dinh dưỡng và điều trị các bệnh lý ở trẻ em và trẻ sơ sinh.', 1), -- ID: 4
+(N'Khoa Sản - Phụ khoa', N'Khám thai, tư vấn sinh sản, khám và điều trị các bệnh lý phụ khoa.', 1), -- ID: 5
+(N'Khoa Tai Mũi Họng', N'Khám, nội soi và điều trị các bệnh lý về Tai, Mũi, Họng.', 1), -- ID: 6
+(N'Khoa Răng Hàm Mặt', N'Khám, nhổ răng, nha chu, phục hình răng và các bệnh lý răng miệng.', 1), -- ID: 7
+(N'Khoa Mắt', N'Đo thị lực, khám và điều trị các bệnh lý về mắt.', 1), -- ID: 8
+(N'Khoa Da liễu', N'Khám và điều trị các bệnh về da, tóc, móng và thẩm mỹ da.', 1), -- ID: 9
+(N'Khoa Chẩn đoán hình ảnh', N'Thực hiện siêu âm, X-quang, MRI, CT cắt lớp phục vụ chẩn đoán.', 1), -- ID: 10
+(N'Khoa Xét nghiệm', N'Thực hiện các xét nghiệm sinh hóa, huyết học, vi sinh, miễn dịch.', 1), -- ID: 11
+(N'Khoa Dược', N'Quản lý kho thuốc, cấp phát thuốc BHYT và bán thuốc dịch vụ.', 1); -- ID: 12
+GO
 
-INSERT INTO PHONG (TenPhong, LoaiPhong, TrangThai) VALUES 
--- Khu vực hành chính & Tiếp nhận (1 phòng/sảnh)
-(N'Sảnh tiếp đón & Đăng ký', N'Phòng khám', 1), -- Chuyển từ Kho sang Phòng khám để nhân viên login
-(N'Quầy thu ngân & Thanh toán', N'Thu ngân', 1),
 
--- Khu vực khám chuyên khoa (Tối thiểu 2 phòng mỗi loại)
-(N'Phòng khám Nội tổng quát 01', N'Phòng khám', 1),
-(N'Phòng khám Nội tổng quát 02', N'Phòng khám', 1),
-(N'Phòng khám Ngoại tổng hợp 01', N'Phòng khám', 1),
-(N'Phòng khám Ngoại tổng hợp 02', N'Phòng khám', 1),
-(N'Phòng khám Sản phụ khoa 01', N'Phòng khám', 1),
-(N'Phòng khám Sản phụ khoa 02', N'Phòng khám', 1),
-(N'Phòng khám Nhi khoa 01', N'Phòng khám', 1),
-(N'Phòng khám Nhi khoa 02', N'Phòng khám', 1),
-(N'Phòng khám Tai Mũi Họng 01', N'Phòng khám', 1),
-(N'Phòng khám Tai Mũi Họng 02', N'Phòng khám', 1),
-(N'Phòng khám Răng Hàm Mặt 01', N'Phòng khám', 1),
-(N'Phòng khám Răng Hàm Mặt 02', N'Phòng khám', 1),
 
--- Khu vực Cận lâm sàng (1 phòng mỗi loại là đủ)
-(N'Phòng Xét nghiệm máu & Sinh hóa', N'Phòng xét nghiệm', 1),
-(N'Phòng Siêu âm tổng quát', N'Phòng siêu âm', 1),
-(N'Phòng Chụp X-Quang kỹ thuật số', N'Phòng X-Quang', 1),
+INSERT INTO PHONG (TenPhong, LoaiPhong, TrangThai, MaKhoa) VALUES 
+-- Khu vực hành chính & Tiếp nhận
+(N'Sảnh tiếp đón & Đăng ký', N'Phòng khám', 1, 1), -- Thuộc Khoa Khám bệnh (ID 1)
+(N'Quầy thu ngân & Thanh toán', N'Thu ngân', 1, NULL), -- Thu ngân tách riêng (Phòng kế toán) nên để NULL
+
+-- Khu vực khám chuyên khoa
+(N'Phòng khám Nội tổng quát 01', N'Phòng khám', 1, 2),
+(N'Phòng khám Nội tổng quát 02', N'Phòng khám', 1, 2),
+(N'Phòng khám Ngoại tổng hợp 01', N'Phòng khám', 1, 3),
+(N'Phòng khám Ngoại tổng hợp 02', N'Phòng khám', 1, 3),
+(N'Phòng khám Nhi khoa 01', N'Phòng khám', 1, 4),
+(N'Phòng khám Nhi khoa 02', N'Phòng khám', 1, 4),
+(N'Phòng khám Sản phụ khoa 01', N'Phòng khám', 1, 5),
+(N'Phòng khám Sản phụ khoa 02', N'Phòng khám', 1, 5),
+(N'Phòng khám Tai Mũi Họng 01', N'Phòng khám', 1, 6),
+(N'Phòng khám Tai Mũi Họng 02', N'Phòng khám', 1, 6),
+(N'Phòng khám Răng Hàm Mặt 01', N'Phòng khám', 1, 7),
+(N'Phòng khám Răng Hàm Mặt 02', N'Phòng khám', 1, 7),
+
+-- [Bổ sung] Phòng khám cho Khoa Mắt (ID 8) và Da Liễu (ID 9)
+(N'Phòng khám Mắt 01', N'Phòng khám', 1, 8),
+(N'Phòng khám Da liễu 01', N'Phòng khám', 1, 9),
+
+-- Khu vực Cận lâm sàng
+(N'Phòng Xét nghiệm máu & Sinh hóa', N'Phòng xét nghiệm', 1, 11), -- Thuộc Khoa Xét nghiệm (ID 11)
+(N'Phòng Siêu âm tổng quát', N'Phòng siêu âm', 1, 10),           -- Thuộc Khoa CĐHA (ID 10)
+(N'Phòng Chụp X-Quang kỹ thuật số', N'Phòng X-Quang', 1, 10),      -- Thuộc Khoa CĐHA (ID 10)
 
 -- Khu vực Dược & Kho 
-(N'Nhà thuốc 01', N'Nhà thuốc', 1),
-(N'Nhà thuốc 02', N'Nhà thuốc', 1),
-(N'Nhà thuốc 03', N'Nhà thuốc', 1),
-(N'Nhà thuốc 04', N'Nhà thuốc', 1),
-(N'Nhà thuốc 05', N'Nhà thuốc', 1),
-(N'Kho tổng dược phẩm', N'Kho', 1);
+(N'Nhà thuốc 01', N'Nhà thuốc', 1, 12), -- Thuộc Khoa Dược (ID 12)
+(N'Nhà thuốc 02', N'Nhà thuốc', 1, 12),
+(N'Nhà thuốc 03', N'Nhà thuốc', 1, 12),
+(N'Nhà thuốc 04', N'Nhà thuốc', 1, 12),
+(N'Nhà thuốc 05', N'Nhà thuốc', 1, 12),
+(N'Kho tổng dược phẩm', N'Kho', 1, 12);
+GO
 
 GO
 
 -- Chức vụ: 1-Giám đốc, 2-Admin, 3-Trưởng khoa, 4-BS điều trị, 5-Điều dưỡng, 
 --          6-KTV CLS, 7-Dược sĩ, 8-Tiếp đón, 9-Thu ngân, 10-Bảo vệ, 11-Tạp vụ.
--- Phòng: 1-Sảnh, 2-Thu ngân, 3-6:Phòng khám Nội/Ngoại/Sản, 15-17:CLS, 18-22:Nhà thuốc...
+-- Khoa: 1-Khám bệnh, 2-Nội, 3-Ngoại, 4-Nhi, 5-Sản, 6-TMH, 7-RHM, 8-Mắt, 9-Da liễu, 10-CĐHA, 11-Xét nghiệm, 12-Dược.
 
-INSERT INTO NHANVIEN (MaNV, HoTen, NgaySinh, GioiTinh, SDT, Email, DiaChi, MaChucVu, TrangThai, MaTK, MaPhong)
+INSERT INTO NHANVIEN (MaNV, HoTen, NgaySinh, GioiTinh, SDT, Email, DiaChi, MaChucVu, TrangThai, MaTK, MaKhoa, MaPhong)
 VALUES
--- Nhóm Quản lý & Admin
-('NV001', N'Nguyễn Văn An', '1985-03-12', N'Nam', '0901123451', 'an.nguyen@vnvc.vn', N'Quận 1, TP.HCM', 1, 1, 1, NULL), -- Giám đốc (Ko cần phòng cụ thể)
-('NV002', N'Trần Thị Bích', '1990-07-22', N'Nữ', '0902123452', 'bich.tran@vnvc.vn', N'Quận Hai Bà Trưng, Hà Nội', 2, 1, 2, NULL), -- Admin
+-- Nhóm Quản lý & Admin (Khối hành chính -> Khoa = NULL)
+('NV001', N'Nguyễn Văn An', '1985-03-12', N'Nam', '0901123451', 'an.nguyen@vnvc.vn', N'Quận 1, TP.HCM', 1, 1, 1, NULL, NULL), 
+('NV002', N'Trần Thị Bích', '1990-07-22', N'Nữ', '0902123452', 'bich.tran@vnvc.vn', N'Quận Hai Bà Trưng, Hà Nội', 2, 1, 2, NULL, NULL), 
 
 -- Nhóm Bác sĩ (Phân bổ vào các phòng khám 3,4,5,6...)
-('NV003', N'Lê Văn Cường', '1987-11-10', N'Nam', '0903123453', 'cuong.le@vnvc.vn', N'Hải Châu, Đà Nẵng', 3, 1, 3, 3), -- Trưởng khoa (Ngồi PK Nội 1)
-('NV004', N'Phạm Thị Dung', '1992-05-09', N'Nữ', '0904123454', 'dung.pham@vnvc.vn', N'Bình Thuỷ, Cần Thơ', 4, 1, 4, 3), -- BS điều trị (PK Nội 1)
-('NV005', N'Hoàng Văn Đông', '1989-09-15', N'Nam', '0905123455', 'dong.hoang@vnvc.vn', N'Ngô Quyền, Hải Phòng', 4, 1, 5, 4), -- BS điều trị (PK Nội 2)
-('NV006', N'Võ Thị Hạnh', '1993-12-01', N'Nữ', '0906123456', 'hanh.vo@vnvc.vn', N'TP. Vinh, Nghệ An', 4, 1, 6, 5), -- BS điều trị (PK Ngoại 1)
-('NV007', N'Đặng Văn Hòa', '1984-04-18', N'Nam', '0907123457', 'hoa.dang@vnvc.vn', N'Thủ Dầu Một, Bình Dương', 4, 1, 7, 6), -- BS điều trị (PK Ngoại 2)
-('NV008', N'Ngô Thị Hương', '1991-06-25', N'Nữ', '0908123458', 'huong.ngo@vnvc.vn', N'TP. Nha Trang, Khánh Hòa', 4, 1, 8, 7), -- BS điều trị (PK Sản 1)
-('NV009', N'Bùi Văn Khánh', '1986-08-30', N'Nam', '0909123459', 'khanh.bui@vnvc.vn', N'TP. Huế, Thừa Thiên Huế', 4, 1, 9, 8), -- BS điều trị (PK Sản 2)
-('NV010', N'Đỗ Thị Lan', '1995-01-19', N'Nữ', '0910123460', 'lan.do@vnvc.vn', N'TP. Biên Hòa, Đồng Nai', 4, 1, 10, 9), -- BS điều trị (PK Nhi 1)
+('NV003', N'Lê Văn Cường', '1987-11-10', N'Nam', '0903123453', 'cuong.le@vnvc.vn', N'Hải Châu, Đà Nẵng', 3, 1, 3, 2, 3), -- Trưởng khoa (Khoa Nội - PK Nội 1)
+('NV004', N'Phạm Thị Dung', '1992-05-09', N'Nữ', '0904123454', 'dung.pham@vnvc.vn', N'Bình Thuỷ, Cần Thơ', 4, 1, 4, 2, 3), -- BS điều trị (Khoa Nội - PK Nội 1)
+('NV005', N'Hoàng Văn Đông', '1989-09-15', N'Nam', '0905123455', 'dong.hoang@vnvc.vn', N'Ngô Quyền, Hải Phòng', 4, 1, 5, 2, 4), -- BS điều trị (Khoa Nội - PK Nội 2)
+('NV006', N'Võ Thị Hạnh', '1993-12-01', N'Nữ', '0906123456', 'hanh.vo@vnvc.vn', N'TP. Vinh, Nghệ An', 4, 1, 6, 3, 5), -- BS điều trị (Khoa Ngoại - PK Ngoại 1)
+('NV007', N'Đặng Văn Hòa', '1984-04-18', N'Nam', '0907123457', 'hoa.dang@vnvc.vn', N'Thủ Dầu Một, Bình Dương', 4, 1, 7, 3, 6), -- BS điều trị (Khoa Ngoại - PK Ngoại 2)
+('NV008', N'Ngô Thị Hương', '1991-06-25', N'Nữ', '0908123458', 'huong.ngo@vnvc.vn', N'TP. Nha Trang, Khánh Hòa', 4, 1, 8, 5, 7), -- BS điều trị (Khoa Sản - PK Sản 1)
+('NV009', N'Bùi Văn Khánh', '1986-08-30', N'Nam', '0909123459', 'khanh.bui@vnvc.vn', N'TP. Huế, Thừa Thiên Huế', 4, 1, 9, 5, 8), -- BS điều trị (Khoa Sản - PK Sản 2)
+('NV010', N'Đỗ Thị Lan', '1995-01-19', N'Nữ', '0910123460', 'lan.do@vnvc.vn', N'TP. Biên Hòa, Đồng Nai', 4, 1, 10, 4, 9), -- BS điều trị (Khoa Nhi - PK Nhi 1)
 
--- Nhóm Điều dưỡng (Hỗ trợ tại các phòng khám)
-('NV011', N'Nguyễn Văn Long', '1982-02-14', N'Nam', '0911123461', 'long.nguyen@vnvc.vn', N'Hà Đông, Hà Nội', 5, 1, 11, 3), 
-('NV012', N'Trần Thị Mai', '1990-05-27', N'Nữ', '0912123462', 'mai.tran@vnvc.vn', N'Quận 1, TP.HCM', 5, 1, 12, 4),
-('NV013', N'Phan Văn Mạnh', '1988-03-08', N'Nam', '0913123463', 'manh.phan@vnvc.vn', N'Hai Bà Trưng, Hà Nội', 5, 1, 13, 5),
-('NV014', N'Lê Thị Minh', '1994-06-13', N'Nữ', '0914123464', 'minh.le@vnvc.vn', N'Hải Châu, Đà Nẵng', 5, 1, 14, 6),
-('NV015', N'Hoàng Văn Nam', '1986-09-22', N'Nam', '0915123465', 'nam.hoang@vnvc.vn', N'Cần Thơ', 5, 1, 15, 7),
+-- Nhóm Điều dưỡng (Hỗ trợ tại các phòng khám, theo khoa tương ứng)
+('NV011', N'Nguyễn Văn Long', '1982-02-14', N'Nam', '0911123461', 'long.nguyen@vnvc.vn', N'Hà Đông, Hà Nội', 5, 1, 11, 2, 3), 
+('NV012', N'Trần Thị Mai', '1990-05-27', N'Nữ', '0912123462', 'mai.tran@vnvc.vn', N'Quận 1, TP.HCM', 5, 1, 12, 2, 4),
+('NV013', N'Phan Văn Mạnh', '1988-03-08', N'Nam', '0913123463', 'manh.phan@vnvc.vn', N'Hai Bà Trưng, Hà Nội', 5, 1, 13, 3, 5),
+('NV014', N'Lê Thị Minh', '1994-06-13', N'Nữ', '0914123464', 'minh.le@vnvc.vn', N'Hải Châu, Đà Nẵng', 5, 1, 14, 3, 6),
+('NV015', N'Hoàng Văn Nam', '1986-09-22', N'Nam', '0915123465', 'nam.hoang@vnvc.vn', N'Cần Thơ', 5, 1, 15, 5, 7),
 
 -- Nhóm Kỹ thuật viên CLS (Phòng 15, 16, 17)
-('NV016', N'Vũ Thị Ngọc', '1991-12-04', N'Nữ', '0916123466', 'ngoc.vu@vnvc.vn', N'Hải Phòng', 6, 1, 16, 15), -- KTV XN Máu
-('NV017', N'Đinh Văn Phát', '1985-10-16', N'Nam', '0917123467', 'phat.dinh@vnvc.vn', N'Nghệ An', 6, 1, 17, 15), -- KTV XN Máu
-('NV018', N'Nguyễn Thị Phương', '1992-04-07', N'Nữ', '0918123468', 'phuong.nguyen@vnvc.vn', N'Bình Dương', 6, 1, 18, 16), -- KTV Siêu âm
-('NV019', N'Phạm Văn Quân', '1989-07-28', N'Nam', '0919123469', 'quan.pham@vnvc.vn', N'Nha Trang', 6, 1, 19, 16), -- KTV Siêu âm
-('NV020', N'Trương Thị Quỳnh', '1996-11-11', N'Nữ', '0920123470', 'quynh.truong@vnvc.vn', N'Huế', 6, 1, 20, 17), -- KTV X-Quang
+('NV016', N'Vũ Thị Ngọc', '1991-12-04', N'Nữ', '0916123466', 'ngoc.vu@vnvc.vn', N'Hải Phòng', 6, 1, 16, 11, 15), -- KTV Xét nghiệm (Khoa XN)
+('NV017', N'Đinh Văn Phát', '1985-10-16', N'Nam', '0917123467', 'phat.dinh@vnvc.vn', N'Nghệ An', 6, 1, 17, 11, 15), -- KTV Xét nghiệm (Khoa XN)
+('NV018', N'Nguyễn Thị Phương', '1992-04-07', N'Nữ', '0918123468', 'phuong.nguyen@vnvc.vn', N'Bình Dương', 6, 1, 18, 10, 16), -- KTV Siêu âm (Khoa CĐHA)
+('NV019', N'Phạm Văn Quân', '1989-07-28', N'Nam', '0919123469', 'quan.pham@vnvc.vn', N'Nha Trang', 6, 1, 19, 10, 16), -- KTV Siêu âm (Khoa CĐHA)
+('NV020', N'Trương Thị Quỳnh', '1996-11-11', N'Nữ', '0920123470', 'quynh.truong@vnvc.vn', N'Huế', 6, 1, 20, 10, 17), -- KTV X-Quang (Khoa CĐHA)
 
--- Nhóm Dược sĩ (Nhà thuốc 18-22 và Kho 23)
-('NV021', N'Đỗ Bảo Trâm', '1990-07-21', N'Nữ', '0903200111', 'tram.db@vnvc.vn', N'39 Nguyễn Huệ, Quận 1, TP.HCM', 7, 1, 21, 18), -- Nhà thuốc 1
-('NV022', N'Võ Văn Quân', '1993-01-12', N'Nam', '0903222333', 'quan.vv@vnvc.vn', N'15 Lê Lợi, Quận 1, TP.HCM', 7, 1, 22, 19), -- Nhà thuốc 2
-('NV023', N'Lý Thị Lan', '1996-08-19', N'Nữ', '0903555666', 'lan.lt@vnvc.vn', N'60 Pasteur, Quận 3, TP.HCM', 7, 1, 23, 20), -- Nhà thuốc 3
-('NV024', N'Trần Thanh Tú', '1992-11-30', N'Nam', '0903888999', 'tu.tt@vnvc.vn', N'72 Hai Bà Trưng, Quận 1, TP.HCM', 7, 1, 24, 21), -- Nhà thuốc 4
-('NV025', N'Hoàng Mỹ Dung', '1994-03-03', N'Nữ', '0903111000', 'dung.hm@vnvc.vn', N'25 Cách Mạng Tháng 8, Quận 10, TP.HCM', 7, 1, 25, 22), -- Nhà thuốc 5
-('NV026', N'Đinh Quốc Thịnh', '1987-12-17', N'Nam', '0903444555', 'thinh.dq@vnvc.vn', N'27 Lê Quang Định, Bình Thạnh, TP.HCM', 7, 1, 26, 23), -- Thủ kho (Kho tổng)
+-- Nhóm Dược sĩ (Thuộc Khoa Dược - ID 12)
+('NV021', N'Đỗ Bảo Trâm', '1990-07-21', N'Nữ', '0903200111', 'tram.db@vnvc.vn', N'39 Nguyễn Huệ, Quận 1, TP.HCM', 7, 1, 21, 12, 18), 
+('NV022', N'Võ Văn Quân', '1993-01-12', N'Nam', '0903222333', 'quan.vv@vnvc.vn', N'15 Lê Lợi, Quận 1, TP.HCM', 7, 1, 22, 12, 19), 
+('NV023', N'Lý Thị Lan', '1996-08-19', N'Nữ', '0903555666', 'lan.lt@vnvc.vn', N'60 Pasteur, Quận 3, TP.HCM', 7, 1, 23, 12, 20), 
+('NV024', N'Trần Thanh Tú', '1992-11-30', N'Nam', '0903888999', 'tu.tt@vnvc.vn', N'72 Hai Bà Trưng, Quận 1, TP.HCM', 7, 1, 24, 12, 21), 
+('NV025', N'Hoàng Mỹ Dung', '1994-03-03', N'Nữ', '0903111000', 'dung.hm@vnvc.vn', N'25 Cách Mạng Tháng 8, Quận 10, TP.HCM', 7, 1, 25, 12, 22), 
+('NV026', N'Đinh Quốc Thịnh', '1987-12-17', N'Nam', '0903444555', 'thinh.dq@vnvc.vn', N'27 Lê Quang Định, Bình Thạnh, TP.HCM', 7, 1, 26, 12, 23), 
 
--- Nhóm Tiếp đón (Sảnh - Phòng 1)
-('NV027', N'Nguyễn Ngọc Hiếu', '1989-06-22', N'Nam', '0903777888', 'hieu.nn@vnvc.vn', N'140 Điện Biên Phủ, Quận Bình Thạnh, TP.HCM', 8, 1, 27, 1),
-('NV028', N'Trương Hồng Phúc', '1991-04-05', N'Nam', '0903999111', 'phuc.th@vnvc.vn', N'20 Nguyễn Trãi, Quận 5, TP.HCM', 8, 1, 28, 1),
-('NV029', N'Nguyễn Thuỳ Linh', '1993-09-25', N'Nữ', '0903666999', 'linh.nt@vnvc.vn', N'55 Hai Bà Trưng, Hoàn Kiếm, Hà Nội', 8, 1, 29, 1),
+-- Nhóm Tiếp đón (Thuộc Khoa Khám bệnh - ID 1)
+('NV027', N'Nguyễn Ngọc Hiếu', '1989-06-22', N'Nam', '0903777888', 'hieu.nn@vnvc.vn', N'140 Điện Biên Phủ, Quận Bình Thạnh, TP.HCM', 8, 1, 27, 1, 1),
+('NV028', N'Trương Hồng Phúc', '1991-04-05', N'Nam', '0903999111', 'phuc.th@vnvc.vn', N'20 Nguyễn Trãi, Quận 5, TP.HCM', 8, 1, 28, 1, 1),
+('NV029', N'Nguyễn Thuỳ Linh', '1993-09-25', N'Nữ', '0903666999', 'linh.nt@vnvc.vn', N'55 Hai Bà Trưng, Hoàn Kiếm, Hà Nội', 8, 1, 29, 1, 1),
 
--- Nhóm Thu ngân (Quầy thu ngân - Phòng 2)
-('NV030', N'Phạm Hoàng Vũ', '1988-02-18', N'Nam', '0903444666', 'vu.ph@vnvc.vn', N'12 Trần Quang Khải, Hoàn Kiếm, Hà Nội', 9, 1, 30, 2),
-('NV031', N'Ngô Thị Quỳnh', '1995-05-14', N'Nữ', '0903999222', 'quynh.ntq@vnvc.vn', N'18 Cầu Giấy, Cầu Giấy, Hà Nội', 9, 1, 31, 2),
+-- Nhóm Thu ngân (Khối hành chính -> Khoa = NULL)
+('NV030', N'Phạm Hoàng Vũ', '1988-02-18', N'Nam', '0903444666', 'vu.ph@vnvc.vn', N'12 Trần Quang Khải, Hoàn Kiếm, Hà Nội', 9, 1, 30, NULL, 2),
+('NV031', N'Ngô Thị Quỳnh', '1995-05-14', N'Nữ', '0903999222', 'quynh.ntq@vnvc.vn', N'18 Cầu Giấy, Cầu Giấy, Hà Nội', 9, 1, 31, NULL, 2),
 
--- Nhóm Bảo vệ & Tạp vụ (Không cần phòng cố định hoặc Sảnh)
-('NV032', N'Lương Minh Tâm', '1990-08-08', N'Nam', '0903777999', 'tam.lm@vnvc.vn', N'75 Nguyễn Chí Thanh, Đống Đa, Hà Nội', 10, 1, 32, 1), -- Bảo vệ
-('NV033', N'Tạ Thị Bích Ngọc', '1994-12-10', N'Nữ', '0903555777', 'ngoc.tb@vnvc.vn', N'200 Xuân Thuỷ, Cầu Giấy, Hà Nội', 11, 1, 33, NULL), -- Tạp vụ
+-- Nhóm Bảo vệ & Tạp vụ (Khối hành chính -> Khoa = NULL)
+('NV032', N'Lương Minh Tâm', '1990-08-08', N'Nam', '0903777999', 'tam.lm@vnvc.vn', N'75 Nguyễn Chí Thanh, Đống Đa, Hà Nội', 10, 1, 32, NULL, 1), 
+('NV033', N'Tạ Thị Bích Ngọc', '1994-12-10', N'Nữ', '0903555777', 'ngoc.tb@vnvc.vn', N'200 Xuân Thuỷ, Cầu Giấy, Hà Nội', 11, 1, 33, NULL, NULL), 
 
--- Bổ sung thêm Bác sĩ cho các phòng còn thiếu (Nhi 2, TMH, RHM...)
-('NV034', N'Phan Văn Khôi', '1986-09-09', N'Nam', '0903222111', 'khoi.pv@vnvc.vn', N'180 Tây Sơn, Đống Đa, Hà Nội', 4, 1, 34, 10), -- PK Nhi 2
-('NV035', N'Trần Hồng Mai', '1997-07-07', N'Nữ', '0903888777', 'mai.th@vnvc.vn', N'22 Nguyễn Khuyến, Đống Đa, Hà Nội', 4, 1, 35, 11), -- PK TMH 1
-('NV036', N'Bùi Văn Thành', '1991-10-20', N'Nam', '0903000333', 'thanh.bv@vnvc.vn', N'10 Hùng Vương, Ba Đình, Hà Nội', 4, 1, 36, 12), -- PK TMH 2
-('NV037', N'Lê Ngọc Bảo', '1989-01-15', N'Nam', '0903111222', 'bao.ln@vnvc.vn', N'30 Kim Mã, Ba Đình, Hà Nội', 4, 1, 37, 13), -- PK RHM 1
-('NV038', N'Huỳnh Thị Hương', '1992-02-22', N'Nữ', '0903444777', 'huong.ht@vnvc.vn', N'42 Giải Phóng, Hoàng Mai, Hà Nội', 4, 1, 38, 14), -- PK RHM 2
+-- Bổ sung thêm Bác sĩ cho các phòng còn thiếu
+('NV034', N'Phan Văn Khôi', '1986-09-09', N'Nam', '0903222111', 'khoi.pv@vnvc.vn', N'180 Tây Sơn, Đống Đa, Hà Nội', 4, 1, 34, 4, 10), -- Khoa Nhi (PK Nhi 2)
+('NV035', N'Trần Hồng Mai', '1997-07-07', N'Nữ', '0903888777', 'mai.th@vnvc.vn', N'22 Nguyễn Khuyến, Đống Đa, Hà Nội', 4, 1, 35, 6, 11), -- Khoa TMH (PK TMH 1)
+('NV036', N'Bùi Văn Thành', '1991-10-20', N'Nam', '0903000333', 'thanh.bv@vnvc.vn', N'10 Hùng Vương, Ba Đình, Hà Nội', 4, 1, 36, 6, 12), -- Khoa TMH (PK TMH 2)
+('NV037', N'Lê Ngọc Bảo', '1989-01-15', N'Nam', '0903111222', 'bao.ln@vnvc.vn', N'30 Kim Mã, Ba Đình, Hà Nội', 4, 1, 37, 7, 13), -- Khoa RHM (PK RHM 1)
+('NV038', N'Huỳnh Thị Hương', '1992-02-22', N'Nữ', '0903444777', 'huong.ht@vnvc.vn', N'42 Giải Phóng, Hoàng Mai, Hà Nội', 4, 1, 38, 7, 14), -- Khoa RHM (PK RHM 2)
 
--- Nhân viên dự phòng (Status = 0 hoặc 1 tùy ý)
-('NV039', N'Đỗ Văn Phú', '1985-03-13', N'Nam', '0903555999', 'phu.dv@vnvc.vn', N'95 Nguyễn Thái Học, Hà Nội', 4, 1, 39, NULL),
-('NV040', N'Nguyễn Khánh An', '1994-04-04', N'Nữ', '0903666000', 'an.nk@vnvc.vn', N'12 Điện Biên Phủ, Hải Châu, Đà Nẵng', 5, 1, 40, NULL),
-('NV041', N'Vũ Thị Thanh', '1996-05-28', N'Nữ', '0903777000', 'thanh.vt@vnvc.vn', N'80 Nguyễn Văn Linh, Hải Châu, Đà Nẵng', 5, 1, 41, NULL),
-('NV042', N'Nguyễn Minh Đức', '1987-06-16', N'Nam', '0903888000', 'duc.nm@vnvc.vn', N'40 Bạch Đằng, Hải Châu, Đà Nẵng', 6, 1, 42, NULL),
-('NV043', N'Hồ Văn Tài', '1992-07-07', N'Nam', '0903999000', 'tai.hv@vnvc.vn', N'90 Trần Phú, Hải Châu, Đà Nẵng', 6, 1, 43, NULL),
-('NV044', N'Phạm Thị Thuỷ', '1990-08-19', N'Nữ', '0903111333', 'thuy.pt@vnvc.vn', N'15 Lê Duẩn, Hải Châu, Đà Nẵng', 8, 1, 44, 1),
-('NV045', N'Trần Quốc Việt', '1993-09-30', N'Nam', '0903222555', 'viet.tq@vnvc.vn', N'110 Nguyễn Văn Linh, Hải Châu, Đà Nẵng', 8, 0, 45, NULL); -- Đã nghỉ việc
-
+-- Nhân viên dự phòng (Có Khoa chuyên môn nhưng chưa có Phòng cố định)
+('NV039', N'Đỗ Văn Phú', '1985-03-13', N'Nam', '0903555999', 'phu.dv@vnvc.vn', N'95 Nguyễn Thái Học, Hà Nội', 4, 1, 39, 2, NULL), -- BS Khoa Nội
+('NV040', N'Nguyễn Khánh An', '1994-04-04', N'Nữ', '0903666000', 'an.nk@vnvc.vn', N'12 Điện Biên Phủ, Hải Châu, Đà Nẵng', 5, 1, 40, 4, NULL), -- Điều dưỡng Khoa Nhi
+('NV041', N'Vũ Thị Thanh', '1996-05-28', N'Nữ', '0903777000', 'thanh.vt@vnvc.vn', N'80 Nguyễn Văn Linh, Hải Châu, Đà Nẵng', 5, 1, 41, 5, NULL), -- Điều dưỡng Khoa Sản
+('NV042', N'Nguyễn Minh Đức', '1987-06-16', N'Nam', '0903888000', 'duc.nm@vnvc.vn', N'40 Bạch Đằng, Hải Châu, Đà Nẵng', 6, 1, 42, 11, NULL), -- KTV Khoa Xét nghiệm
+('NV043', N'Hồ Văn Tài', '1992-07-07', N'Nam', '0903999000', 'tai.hv@vnvc.vn', N'90 Trần Phú, Hải Châu, Đà Nẵng', 6, 1, 43, 10, NULL), -- KTV Khoa CĐHA
+('NV044', N'Phạm Thị Thuỷ', '1990-08-19', N'Nữ', '0903111333', 'thuy.pt@vnvc.vn', N'15 Lê Duẩn, Hải Châu, Đà Nẵng', 8, 1, 44, 1, 1), -- Tiếp đón Khoa Khám bệnh
+('NV045', N'Trần Quốc Việt', '1993-09-30', N'Nam', '0903222555', 'viet.tq@vnvc.vn', N'110 Nguyễn Văn Linh, Hải Châu, Đà Nẵng', 8, 0, 45, 1, NULL); -- Đã nghỉ việc
 GO
 
 INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive) 
