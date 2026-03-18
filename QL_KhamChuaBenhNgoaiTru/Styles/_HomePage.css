@@ -1,0 +1,81 @@
+﻿/* =========================================================
+   HỆ THỐNG Y TẾ MEDICHUB - HOME PAGE STYLE
+   ========================================================= */
+
+/* --- HERO BANNER (SLIDER) --- */
+.hero-section {
+    position: relative;
+}
+
+.hero-img-wrapper img {
+    border-radius: 20px;
+    border: 6px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    transition: var(--transition-fast);
+}
+
+    /* Ghi đè transform inline khi hover */
+    .hero-img-wrapper img:hover {
+        transform: rotate(0deg) scale(1.02) !important;
+    }
+
+.quick-access-container {
+    margin-top: -60px;
+    position: relative;
+    z-index: 10;
+}
+
+/* --- HIỂN THỊ HÌNH ẢNH & TEXT --- */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.card-doctor img {
+    height: 280px;
+    object-fit: cover;
+    object-position: top;
+    border-bottom: 3px solid var(--light-blue);
+}
+
+.news-img {
+    height: 220px;
+    object-fit: cover;
+    transition: var(--transition-fast);
+}
+
+.card:hover .news-img {
+    transform: scale(1.05);
+}
+
+.img-overflow-hidden {
+    overflow: hidden;
+    border-radius: calc(1rem - 1px) calc(1rem - 1px) 0 0;
+}
+
+/* --- TIÊU ĐỀ CÁC SECTION --- */
+.section-title-wrapper {
+    margin-bottom: 3rem;
+}
+
+.section-subtitle {
+    color: var(--primary-blue);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 0.9rem;
+}
+
+.section-line {
+    width: 60px;
+    height: 4px;
+    background-color: var(--primary-blue);
+    margin: 15px auto 0;
+    border-radius: 4px;
+}
+/* --- LÀM MƯỢT SLIDER (Cuộn êm ái 1.2s thay vì 0.6s mặc định) --- */
+.carousel-item {
+    transition: transform 1.2s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 1.2s ease-out !important;
+}

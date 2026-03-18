@@ -1,0 +1,55 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.Khoa
+
+@{
+    ViewBag.Title = "Thêm Khoa mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0 text-primary fw-bold">
+                        <i class="bi bi-plus-circle me-2"></i>Thêm Khoa Khám Bệnh
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("Create", "Khoa", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Tên Khoa <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(m => m.TenKhoa, new { @class = "form-control form-control-lg", placeholder = "VD: Khoa Nội tổng hợp..." })
+                            @Html.ValidationMessageFor(m => m.TenKhoa, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Mô tả chức năng</label>
+                            @Html.TextAreaFor(m => m.MoTa, new { @class = "form-control", rows = "5", placeholder = "Nhập nhiệm vụ, chức năng của khoa..." })
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold d-block">Trạng thái hoạt động</label>
+                            <div class="form-check form-switch">
+                                @Html.CheckBox("TrangThai", Model.TrangThai ?? true, new { @class = "form-check-input", role = "switch", id = "statusSwitch" })
+                                <label class="form-check-label" for="statusSwitch">Kích hoạt ngay khi tạo</label>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("Index", "Khoa")" class="btn btn-secondary px-4">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save me-1"></i> Lưu thông tin
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

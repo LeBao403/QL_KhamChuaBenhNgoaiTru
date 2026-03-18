@@ -28,12 +28,31 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public int MaChucVu { get; set; }
         public string TenChucVu { get; set; }
     }
+
+    // [Thêm mới] Class cho bảng Danh Mục Loại Phòng
+    public class DanhMucLoaiPhong
+    {
+        public int MaLoaiPhong { get; set; }
+        public string TenLoaiPhong { get; set; }
+    }
+
     public class Phong
     {
+        [Key]
         public int MaPhong { get; set; }
+
+        [Required(ErrorMessage = "Tên phòng không được để trống")]
+        [DisplayName("Tên phòng")]
         public string TenPhong { get; set; }
-        public string LoaiPhong { get; set; }
+
+        // [Sửa đổi] Đổi từ chuỗi LoaiPhong sang Khóa ngoại MaLoaiPhong
+        [DisplayName("Loại phòng")]
+        public int? MaLoaiPhong { get; set; }
+
+        [DisplayName("Trạng thái")]
         public bool TrangThai { get; set; }
+
+        [DisplayName("Khoa trực thuộc")]
         public int? MaKhoa { get; set; }
     }
 
@@ -55,6 +74,15 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public bool? TrangThai { get; set; }
     }
 
+    public class KhoaManageViewModel
+    {
+        public Khoa Khoa { get; set; }
+        public List<PhongManageViewModel> DanhSachPhong { get; set; }
+        public List<NhanVienManageViewModel> DanhSachNhanVien { get; set; }
+        public List<PhongManageViewModel> DanhSachPhongKhaDung { get; set; }
+        public List<NhanVienManageViewModel> DanhSachNhanVienKhaDung { get; set; }
+    }
+
     public class NhanVienViewModel
     {
         public string MaNV { get; set; }
@@ -62,7 +90,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string TenChucVu { get; set; }
         public string SDT { get; set; }
     }
-
 
     public class NhanVienManageViewModel
     {
@@ -78,5 +105,31 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string PasswordHash { get; set; } // Mật khẩu gốc từ TAIKHOAN
         public bool TrangThai { get; set; } // Trạng thái làm việc
         public string TenPhong { get; set; }
+    }
+
+    // Dùng để hiển thị ở trang Danh sách (Index)
+    public class PhongManageViewModel
+    {
+        public int MaPhong { get; set; }
+        public string TenPhong { get; set; }
+
+        // [Sửa đổi] Tách ra mã và tên để tiện hiển thị và xử lý logic
+        public int? MaLoaiPhong { get; set; }
+        public string TenLoaiPhong { get; set; } // Lấy từ lệnh JOIN với bảng DANHMUC_LOAIPHONG
+
+        public bool TrangThai { get; set; }
+
+        public int? MaKhoa { get; set; }
+        public string TenKhoa { get; set; } // Lấy từ lệnh JOIN với bảng KHOA
+
+        public int SoLuongNV { get; set; }  // Đếm số nhân viên đang trực thuộc
+    }
+
+    // Dùng cho trang Details Phòng
+    public class PhongDetailsViewModel
+    {
+        public PhongManageViewModel Phong { get; set; }
+        public List<NhanVienManageViewModel> DanhSachNhanVien { get; set; }
+        public List<NhanVienManageViewModel> DanhSachNhanVienKhaDung { get; set; } // NV chưa có phòng để thêm vào
     }
 }

@@ -1,0 +1,483 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.KhoaManageViewModel
+
+@{
+    ViewBag.Title = "Chi tiết Khoa - " + Model.Khoa.TenKhoa;
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<style>
+    /* Trau chuốt CSS cho Tabs và Bảng */
+    .nav-tabs {
+        border-bottom: 2px solid #dee2e6;
+    }
+
+        .nav-tabs .nav-link {
+            color: #6c757d;
+            font-weight: 500;
+            padding: 12px 24px;
+            border: none;
+            transition: 0.2s;
+            position: relative;
+        }
+
+            .nav-tabs .nav-link:hover {
+                color: #0d6efd;
+                background-color: #f8f9fa;
+                border-radius: 8px 8px 0 0;
+            }
+
+            .nav-tabs .nav-link.active {
+                color: #0d6efd;
+                background-color: transparent;
+                font-weight: 700;
+                border: none;
+            }
+
+                .nav-tabs .nav-link.active::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -2px;
+                    left: 0;
+                    right: 0;
+                    height: 3px;
+                    background-color: #0d6efd;
+                    border-radius: 3px 3px 0 0;
+                }
+
+    .link-detail {
+        text-decoration: none;
+        color: #212529;
+        transition: color 0.2s;
+    }
+
+        .link-detail:hover {
+            color: #0d6efd;
+            text-decoration: underline;
+        }
+
+    .search-box-custom {
+        max-width: 350px;
+    }
+
+        .search-box-custom .input-group-text {
+            background-color: #fff;
+            border-right: none;
+            color: #6c757d;
+        }
+
+        .search-box-custom .form-control {
+            border-left: none;
+            box-shadow: none;
+            padding-left: 0;
+        }
+
+            .search-box-custom .form-control:focus {
+                border-color: #ced4da;
+            }
+</style>
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-primary mb-2">
+                <i class="bi bi-hospital me-2"></i>@Model.Khoa.TenKhoa
+            </h3>
+            <div class="text-muted">
+                <span class="me-3">Mã Khoa: <strong class="text-dark">KHOA-@Model.Khoa.MaKhoa.ToString("D3")</strong></span>
+                @if (Model.Khoa.TrangThai == true)
+                {
+                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Đang hoạt động</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger"><i class="bi bi-lock me-1"></i>Đã tạm ngưng</span>
+                }
+            </div>
+        </div>
+        <div>
+            <a href="@Url.Action("Index", "Khoa", new { area = "Admin" })" class="btn btn-secondary me-2">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại
+            </a>
+            <a href="@Url.Action("Edit", "Khoa", new { area = "Admin", id = Model.Khoa.MaKhoa })" class="btn btn-warning">
+                <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle text-primary me-2"></i>Mô tả chức năng:</h6>
+            <p class="mb-0 text-muted" style="text-align: justify; line-height: 1.6;">
+                @(string.IsNullOrEmpty(Model.Khoa.MoTa) ? "Chưa có thông tin mô tả cho khoa này." : Model.Khoa.MoTa)
+            </p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-5">
+        <div class="card-header bg-white pt-3 pb-0 border-bottom-0">
+            <ul class="nav nav-tabs" id="khoaTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="nhansu-tab" data-bs-toggle="tab" data-bs-target="#nhansu" type="button" role="tab" aria-selected="true">
+                        <i class="bi bi-person-lines-fill text-success me-2"></i>Nhân sự trực thuộc (@Model.DanhSachNhanVien.Count)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="phong-tab" data-bs-toggle="tab" data-bs-target="#phong" type="button" role="tab" aria-selected="false">
+                        <i class="bi bi-door-open text-info me-2"></i>Danh sách Phòng ban (@Model.DanhSachPhong.Count)
+                    </button>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body p-4 border-top">
+            <div class="tab-content" id="khoaTabsContent">
+
+                <div class="tab-pane fade show active" id="nhansu" role="tabpanel" aria-labelledby="nhansu-tab">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="input-group search-box-custom">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" id="searchInputNV" class="form-control" placeholder="Tìm kiếm nhân viên...">
+                        </div>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAddNhanVien">
+                            <i class="bi bi-person-plus-fill me-1"></i> Thêm nhân sự vào Khoa
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped align-middle mb-0" id="tableNV">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="ps-3" style="width: 100px;">Mã NV</th>
+                                    <th>Họ và Tên</th>
+                                    <th>Chức vụ</th>
+                                    <th>Vị trí / Phòng</th>
+                                    <th>Liên hệ</th>
+                                    <th class="text-center" style="width: 120px;">Trạng thái</th>
+                                    <th class="text-center" style="width: 140px;">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyNV">
+                                @if (Model.DanhSachNhanVien.Count > 0)
+                                {
+                                    foreach (var nv in Model.DanhSachNhanVien)
+                                    {
+                                        <tr>
+                                            <td class="ps-3"><strong>@nv.MaNV</strong></td>
+                                            <td>
+                                                <a href="@Url.Action("Details", "NhanVien", new { area = "Admin", id = nv.MaNV.Trim() })" class="fw-bold link-detail" title="Xem hồ sơ">@nv.HoTen</a>
+                                                <div class="small text-muted">@nv.GioiTinh</div>
+                                            </td>
+                                            <td><span class="badge bg-secondary">@nv.TenChucVu</span></td>
+                                            <td>
+                                                @if (nv.TenPhong == "Chưa xếp phòng")
+                                                {
+                                                    <span class="text-muted fst-italic">@nv.TenPhong</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-primary fw-bold">@nv.TenPhong</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="small"><i class="bi bi-telephone-fill text-muted me-1"></i>@nv.SDT</div>
+                                            </td>
+                                            <td class="text-center">
+                                                @if (nv.TrangThai)
+                                                {<span class="badge bg-success">Làm việc</span> }
+                                                else
+                                                { <span class="badge bg-danger">Đã nghỉ</span>}
+                                            </td>
+                                            <td class="text-center">
+                                                <form method="post" action="@Url.Action("RemoveNhanVien", "Khoa", new { area = "Admin" })" class="m-0 p-0">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="maNV" value="@nv.MaNV" />
+                                                    <input type="hidden" name="maKhoa" value="@Model.Khoa.MaKhoa" />
+                                                    <button type="button" class="btn btn-sm btn-danger btn-remove-nv" title="Rút khỏi Khoa">
+                                                        <i class="bi bi-person-dash"></i> Rút khỏi khoa
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted py-5">
+                                            <i class="bi bi-people fs-2 d-block mb-2"></i> Chưa có nhân viên nào trực thuộc khoa này.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="phong" role="tabpanel" aria-labelledby="phong-tab">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="input-group search-box-custom">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" id="searchInputPhong" class="form-control" placeholder="Tìm kiếm phòng ban...">
+                        </div>
+                        <button class="btn btn-info text-white" data-bs-toggle="modal" data-bs-target="#modalAddPhong">
+                            <i class="bi bi-door-open-fill me-1"></i> Thêm phòng vào Khoa
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped align-middle mb-0" id="tablePhong">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th class="ps-3 text-center" style="width: 80px;">Mã</th>
+                                    <th>Tên Phòng</th>
+                                    <th>Loại Phòng</th>
+                                    <th class="text-center">Nhân sự</th>
+                                    <th class="text-center" style="width: 150px;">Trạng thái</th>
+                                    <th class="text-center" style="width: 140px;">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyPhong">
+                                @if (Model.DanhSachPhong.Count > 0)
+                                {
+                                    foreach (var p in Model.DanhSachPhong)
+                                    {
+                                        <tr>
+                                            <td class="ps-3 text-center fw-bold text-muted">PH-@p.MaPhong.ToString("D3")</td>
+                                            <td>
+                                                <a href="@Url.Action("Details", "Phong", new { area = "Admin", id = p.MaPhong })" class="fw-bold link-detail" title="Xem thông tin phòng">@p.TenPhong</a>
+                                            </td>
+                                            <td>@p.TenLoaiPhong</td>
+                                            <td class="text-center">
+                                                <span class="badge bg-secondary rounded-pill">@p.SoLuongNV người</span>
+                                            </td>
+                                            <td class="text-center">
+                                                @if (p.TrangThai == true)
+                                                {<span class="badge bg-success">Mở cửa</span> }
+                                                else
+                                                { <span class="badge bg-danger">Đóng cửa</span>}
+                                            </td>
+                                            <td class="text-center">
+                                                <form method="post" action="@Url.Action("RemovePhong", "Khoa", new { area = "Admin" })" class="m-0 p-0">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="maPhong" value="@p.MaPhong" />
+                                                    <input type="hidden" name="maKhoa" value="@Model.Khoa.MaKhoa" />
+                                                    <button type="button" class="btn btn-sm btn-danger btn-remove-phong" title="Rút khỏi Khoa">
+                                                        <i class="bi bi-dash-square"></i> Tách độc lập
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-5">
+                                            <i class="bi bi-door-closed fs-2 d-block mb-2"></i> Khoa này chưa có phòng nào.
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAddNhanVien" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-person-plus-fill me-2"></i> Kéo nhân sự tự do vào Khoa</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-3 bg-light border-bottom">
+                    <input type="text" id="searchNVKhaDung" class="form-control" placeholder="Tìm kiếm nhân viên...">
+                </div>
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-bordered table-hover align-middle mb-0">
+                        <thead class="table-light position-sticky top-0 shadow-sm" style="z-index: 1;">
+                            <tr>
+                                <th class="ps-3" style="width: 100px;">Mã NV</th>
+                                <th>Họ và Tên</th>
+                                <th>Chức vụ</th>
+                                <th class="text-center" style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyNVKhaDung">
+                            @if (Model.DanhSachNhanVienKhaDung.Count > 0)
+                            {
+                                foreach (var nv in Model.DanhSachNhanVienKhaDung)
+                                {
+                                    <tr>
+                                        <td class="ps-3"><strong>@nv.MaNV</strong></td>
+                                        <td class="fw-bold">@nv.HoTen</td>
+                                        <td><span class="badge bg-secondary">@nv.TenChucVu</span></td>
+                                        <td class="text-center">
+                                            <form method="post" action="@Url.Action("AddNhanVien", "Khoa", new { area = "Admin" })" class="m-0 p-0">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="maNV" value="@nv.MaNV" />
+                                                <input type="hidden" name="maKhoa" value="@Model.Khoa.MaKhoa" />
+                                                <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-plus-circle"></i> Kéo về</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" class="text-center text-muted py-5">Không có nhân viên tự do nào để thêm.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalAddPhong" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-door-open-fill me-2"></i> Kéo phòng độc lập vào Khoa</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="p-3 bg-light border-bottom">
+                    <input type="text" id="searchPhongKhaDung" class="form-control" placeholder="Tìm kiếm phòng ban...">
+                </div>
+                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-bordered table-hover align-middle mb-0">
+                        <thead class="table-light position-sticky top-0 shadow-sm" style="z-index: 1;">
+                            <tr>
+                                <th class="ps-3" style="width: 100px;">Mã PH</th>
+                                <th>Tên Phòng</th>
+                                <th>Loại</th>
+                                <th class="text-center" style="width: 100px;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyPhongKhaDung">
+                            @if (Model.DanhSachPhongKhaDung.Count > 0)
+                            {
+                                foreach (var p in Model.DanhSachPhongKhaDung)
+                                {
+                                    <tr>
+                                        <td class="ps-3"><strong>PH-@p.MaPhong.ToString("D3")</strong></td>
+                                        <td class="fw-bold">@p.TenPhong</td>
+                                        <td><span class="badge bg-secondary">@p.TenLoaiPhong</span></td>
+                                        <td class="text-center">
+                                            <form method="post" action="@Url.Action("AddPhong", "Khoa", new { area = "Admin" })" class="m-0 p-0">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="maPhong" value="@p.MaPhong" />
+                                                <input type="hidden" name="maKhoa" value="@Model.Khoa.MaKhoa" />
+                                                <button type="submit" class="btn btn-sm btn-info text-white"><i class="bi bi-plus-circle"></i> Kéo về</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" class="text-center text-muted py-5">Không có phòng độc lập nào để thêm.</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+
+            // ==========================================
+            // 0. BẮT THÔNG BÁO TỪ SERVER BẰNG SWEETALERT
+            // ==========================================
+            @if (TempData["Error"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Không thể thực hiện!',
+                    text: '@Html.Raw(TempData["Error"])',
+                    confirmButtonColor: '#dc3545'
+                });
+                </text>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: '@Html.Raw(TempData["Success"])',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+                </text>
+            }
+
+            // ==========================================
+            // 1. JS LỌC BẢNG (SEARCH)
+            // ==========================================
+            function setupSearch(inputId, tableBodyId) {
+                $(inputId).on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $(tableBodyId + " tr").filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            }
+            setupSearch("#searchInputNV", "#tbodyNV");
+            setupSearch("#searchInputPhong", "#tbodyPhong");
+            setupSearch("#searchNVKhaDung", "#tbodyNVKhaDung");
+            setupSearch("#searchPhongKhaDung", "#tbodyPhongKhaDung");
+
+            // ==========================================
+            // 2. CẢNH BÁO KHI RÚT NHÂN VIÊN/PHÒNG
+            // ==========================================
+            $('.btn-remove-nv').on('click', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Rút nhân sự khỏi khoa?',
+                    text: "Nhân viên này sẽ trở thành tự do, đồng thời tự động bị rút khỏi phòng đang trực thuộc (nếu có)!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Đồng ý rút'
+                }).then((result) => {
+                    if (result.isConfirmed) form.submit();
+                });
+            });
+
+            $('.btn-remove-phong').on('click', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Tách phòng thành độc lập?',
+                    text: "Chỉ có thể thực hiện nếu phòng đang KHÔNG CÓ nhân viên nào. Phòng sẽ tách khỏi Khoa hiện tại.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Đồng ý tách'
+                }).then((result) => {
+                    if (result.isConfirmed) form.submit();
+                });
+            });
+        });
+    </script>
+}

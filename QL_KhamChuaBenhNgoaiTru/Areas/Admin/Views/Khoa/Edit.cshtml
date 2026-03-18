@@ -1,0 +1,58 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.Khoa
+
+@{
+    ViewBag.Title = "Chỉnh sửa Khoa";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 text-warning fw-bold">
+                        <i class="bi bi-pencil-square me-2"></i>Chỉnh sửa Khoa
+                    </h4>
+                    <span class="badge bg-light text-dark border">ID: KHOA-@Model.MaKhoa.ToString("D3")</span>
+                </div>
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("Edit", "Khoa", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.MaKhoa)
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Tên Khoa <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(m => m.TenKhoa, new { @class = "form-control form-control-lg" })
+                            @Html.ValidationMessageFor(m => m.TenKhoa, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Mô tả chức năng</label>
+                            @Html.TextAreaFor(m => m.MoTa, new { @class = "form-control", rows = "5" })
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold d-block">Trạng thái hoạt động</label>
+                            <div class="form-check form-switch">
+                                @Html.CheckBox("TrangThai", Model.TrangThai ?? false, new { @class = "form-check-input", role = "switch", id = "statusSwitch" })
+                                <label class="form-check-label" for="statusSwitch">Cho phép khoa hoạt động</label>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("Index", "Khoa")" class="btn btn-secondary px-4">Quay lại</a>
+                            <button type="submit" class="btn btn-warning px-4 text-white">
+                                <i class="bi bi-check-lg me-1"></i> Cập nhật thay đổi
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

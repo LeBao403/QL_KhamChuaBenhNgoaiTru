@@ -1,0 +1,154 @@
+﻿@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.PhongManageViewModel>
+@{
+    ViewBag.Title = "Quản lý Phòng ban";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<div class="container-fluid py-2">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 text-primary fw-bold">
+                <i class="bi bi-door-open me-2"></i> Danh sách Phòng ban
+            </h4>
+            <a href="@Url.Action("Create", "Phong", new { area = "Admin" })" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Thêm Phòng mới
+            </a>
+        </div>
+
+        <div class="card-body">
+            <div class="row mb-3 g-2">
+                <div class="col-md-4">
+                    <input type="text" id="filterKeyword" class="form-control filter-trigger" placeholder="Tìm phòng theo Tên hoặc Mã...">
+                </div>
+
+                <div class="col-md-4">
+                    @Html.DropDownList("filterMaKhoa", ViewBag.MaKhoa as SelectList, "-- Tất cả các Khoa --", new { @class = "form-select filter-trigger", id = "filterMaKhoa" })
+                </div>
+
+                <div class="col-md-4">
+                    @Html.DropDownList("filterMaLoaiPhong", ViewBag.MaLoaiPhong as SelectList, "-- Tất cả loại phòng --", new { @class = "form-select filter-trigger", id = "filterMaLoaiPhong" })
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped align-middle bg-white mb-0">
+                    <thead class="table-primary">
+                        <tr>
+                            <th style="width: 100px;">Mã Phòng</th>
+                            <th style="width: 250px;">Tên Phòng</th>
+                            <th>Loại Phòng</th>
+                            <th>Khoa trực thuộc</th>
+                            <th class="text-center" style="width: 100px;">Nhân sự</th>
+                            <th class="text-center" style="width: 120px;">Trạng thái</th>
+                            <th class="text-center" style="width: 160px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="phongResult">
+                        @Html.Partial("_PhongTable", Model)
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            // ==========================================
+            // 0. BẮT THÔNG BÁO TỪ SERVER (TEMP DATA)
+            // ==========================================
+            @if (TempData["Error"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Không thể thực hiện!',
+                    text: '@Html.Raw(TempData["Error"])',
+                    confirmButtonColor: '#dc3545',
+                    confirmButtonText: 'Đã hiểu'
+                });
+                </text>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: '@Html.Raw(TempData["Success"])',
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+                </text>
+            }
+
+            // ==========================================
+            // 1. XỬ LÝ LỌC DỮ LIỆU (AJAX LIVE SEARCH)
+            // ==========================================
+            var delayTimer;
+            $('.filter-trigger').on('input change', function () {
+                clearTimeout(delayTimer);
+                delayTimer = setTimeout(function () {
+                    var kw = $('#filterKeyword').val();
+                    var mk = $('#filterMaKhoa').val();
+                    var mlp = $('#filterMaLoaiPhong').val();
+
+                    $.ajax({
+                        url: '@Url.Action("Index", "Phong", new { area = "Admin" })',
+                        type: 'GET',
+                        data: { keyword: kw, maKhoa: mk, maLoaiPhong: mlp },
+                        success: function (res) {
+                            $('#phongResult').html(res);
+                        },
+                        error: function () {
+                            console.log("Lỗi khi tải dữ liệu lọc.");
+                        }
+                    });
+                }, 300);
+            });
+
+            // ==========================================
+            // 2. XÁC NHẬN KHÓA / XÓA BẰNG SWEETALERT2
+            // ==========================================
+            $('#phongResult').on('click', '.btn-lock-phong', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                var isLocking = $(this).data('isactive') === 'True';
+
+                Swal.fire({
+                    title: isLocking ? 'Xác nhận Khóa?' : 'Mở lại phòng này?',
+                    text: isLocking ? 'Phòng này sẽ bị ẩn đi trong các chức năng chọn phòng.' : 'Phòng sẽ hoạt động trở lại bình thường.',
+                    icon: isLocking ? 'warning' : 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: isLocking ? '#dc3545' : '#198754',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: isLocking ? 'Đồng ý Khóa' : 'Mở hoạt động'
+                }).then((result) => {
+                    if (result.isConfirmed) form.submit();
+                });
+            });
+
+            $('#phongResult').on('click', '.btn-delete-phong', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+
+                Swal.fire({
+                    title: 'Xóa vĩnh viễn?',
+                    text: "Bạn có chắc chắn muốn xóa phòng này khỏi hệ thống?",
+                    icon: 'error',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Xóa ngay',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) form.submit();
+                });
+            });
+        });
+    </script>
+}

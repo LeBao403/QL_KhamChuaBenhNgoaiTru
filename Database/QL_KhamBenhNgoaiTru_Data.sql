@@ -683,46 +683,54 @@ VALUES
 (N'Khoa Dược', N'Quản lý kho thuốc, cấp phát thuốc BHYT và bán thuốc dịch vụ.', 1); -- ID: 12
 GO
 
+INSERT INTO DANHMUC_LOAIPHONG (TenLoaiPhong)
+VALUES 
+    (N'Phòng khám'), 
+    (N'Phòng xét nghiệm'), 
+    (N'Phòng X-Quang'), 
+    (N'Phòng siêu âm'), 
+    (N'Nhà thuốc'), 
+    (N'Thu ngân'), 
+    (N'Kho');
+GO
 
-
-INSERT INTO PHONG (TenPhong, LoaiPhong, TrangThai, MaKhoa) VALUES 
+INSERT INTO PHONG (TenPhong, MaLoaiPhong, TrangThai, MaKhoa) VALUES 
 -- Khu vực hành chính & Tiếp nhận
-(N'Sảnh tiếp đón & Đăng ký', N'Phòng khám', 1, 1), -- Thuộc Khoa Khám bệnh (ID 1)
-(N'Quầy thu ngân & Thanh toán', N'Thu ngân', 1, NULL), -- Thu ngân tách riêng (Phòng kế toán) nên để NULL
+(N'Sảnh tiếp đón & Đăng ký', 1, 1, 1), -- Thuộc Khoa Khám bệnh (ID 1)
+(N'Quầy thu ngân & Thanh toán', 6, 1, NULL), -- Thu ngân tách riêng (Phòng kế toán) nên để NULL
 
 -- Khu vực khám chuyên khoa
-(N'Phòng khám Nội tổng quát 01', N'Phòng khám', 1, 2),
-(N'Phòng khám Nội tổng quát 02', N'Phòng khám', 1, 2),
-(N'Phòng khám Ngoại tổng hợp 01', N'Phòng khám', 1, 3),
-(N'Phòng khám Ngoại tổng hợp 02', N'Phòng khám', 1, 3),
-(N'Phòng khám Nhi khoa 01', N'Phòng khám', 1, 4),
-(N'Phòng khám Nhi khoa 02', N'Phòng khám', 1, 4),
-(N'Phòng khám Sản phụ khoa 01', N'Phòng khám', 1, 5),
-(N'Phòng khám Sản phụ khoa 02', N'Phòng khám', 1, 5),
-(N'Phòng khám Tai Mũi Họng 01', N'Phòng khám', 1, 6),
-(N'Phòng khám Tai Mũi Họng 02', N'Phòng khám', 1, 6),
-(N'Phòng khám Răng Hàm Mặt 01', N'Phòng khám', 1, 7),
-(N'Phòng khám Răng Hàm Mặt 02', N'Phòng khám', 1, 7),
+(N'Phòng khám Nội tổng quát 01', 1, 1, 2),
+(N'Phòng khám Nội tổng quát 02', 1, 1, 2),
+(N'Phòng khám Ngoại tổng hợp 01', 1, 1, 3),
+(N'Phòng khám Ngoại tổng hợp 02', 1, 1, 3),
+(N'Phòng khám Nhi khoa 01', 1, 1, 4),
+(N'Phòng khám Nhi khoa 02', 1, 1, 4),
+(N'Phòng khám Sản phụ khoa 01', 1, 1, 5),
+(N'Phòng khám Sản phụ khoa 02', 1, 1, 5),
+(N'Phòng khám Tai Mũi Họng 01', 1, 1, 6),
+(N'Phòng khám Tai Mũi Họng 02', 1, 1, 6),
+(N'Phòng khám Răng Hàm Mặt 01', 1, 1, 7),
+(N'Phòng khám Răng Hàm Mặt 02', 1, 1, 7),
 
 -- [Bổ sung] Phòng khám cho Khoa Mắt (ID 8) và Da Liễu (ID 9)
-(N'Phòng khám Mắt 01', N'Phòng khám', 1, 8),
-(N'Phòng khám Da liễu 01', N'Phòng khám', 1, 9),
+(N'Phòng khám Mắt 01', 1, 1, 8),
+(N'Phòng khám Da liễu 01', 1, 1, 9),
 
 -- Khu vực Cận lâm sàng
-(N'Phòng Xét nghiệm máu & Sinh hóa', N'Phòng xét nghiệm', 1, 11), -- Thuộc Khoa Xét nghiệm (ID 11)
-(N'Phòng Siêu âm tổng quát', N'Phòng siêu âm', 1, 10),           -- Thuộc Khoa CĐHA (ID 10)
-(N'Phòng Chụp X-Quang kỹ thuật số', N'Phòng X-Quang', 1, 10),      -- Thuộc Khoa CĐHA (ID 10)
+(N'Phòng Xét nghiệm máu & Sinh hóa', 2, 1, 11), -- Thuộc Khoa Xét nghiệm (ID 11)
+(N'Phòng Siêu âm tổng quát', 4, 1, 10),            -- Thuộc Khoa CĐHA (ID 10)
+(N'Phòng Chụp X-Quang kỹ thuật số', 3, 1, 10),      -- Thuộc Khoa CĐHA (ID 10)
 
 -- Khu vực Dược & Kho 
-(N'Nhà thuốc 01', N'Nhà thuốc', 1, 12), -- Thuộc Khoa Dược (ID 12)
-(N'Nhà thuốc 02', N'Nhà thuốc', 1, 12),
-(N'Nhà thuốc 03', N'Nhà thuốc', 1, 12),
-(N'Nhà thuốc 04', N'Nhà thuốc', 1, 12),
-(N'Nhà thuốc 05', N'Nhà thuốc', 1, 12),
-(N'Kho tổng dược phẩm', N'Kho', 1, 12);
+(N'Nhà thuốc 01', 5, 1, 12), -- Thuộc Khoa Dược (ID 12)
+(N'Nhà thuốc 02', 5, 1, 12),
+(N'Nhà thuốc 03', 5, 1, 12),
+(N'Nhà thuốc 04', 5, 1, 12),
+(N'Nhà thuốc 05', 5, 1, 12),
+(N'Kho tổng dược phẩm', 7, 1, 12);
 GO
 
-GO
 
 -- Chức vụ: 1-Giám đốc, 2-Admin, 3-Trưởng khoa, 4-BS điều trị, 5-Điều dưỡng, 
 --          6-KTV CLS, 7-Dược sĩ, 8-Tiếp đón, 9-Thu ngân, 10-Bảo vệ, 11-Tạp vụ.

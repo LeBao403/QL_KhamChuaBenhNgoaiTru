@@ -5,11 +5,10 @@ body {
     margin: 0;
     display: flex;
     min-height: 100vh;
-    transition: margin-left 0.3s ease;
     overflow-x: hidden;
 }
 
-/* === SIDEBAR === */
+/* === SIDEBAR (Tone Xanh chuẩn) === */
 .sidebar {
     width: 260px;
     background: linear-gradient(180deg, #0050b3 0%, #003780 100%);
@@ -17,7 +16,7 @@ body {
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.15);
     transition: width 0.3s ease, transform 0.3s ease;
     position: fixed;
     height: 100vh;
@@ -26,32 +25,35 @@ body {
     top: 0;
 }
 
-/* ... (CSS sidebar header, title, nav giữ nguyên) ... */
 .sidebar-header {
-    padding: 18px 15px;
+    padding: 18px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    text-align: center;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
 }
 
 .sidebar-logo {
-    height: 38px;
+    height: 40px;
+    width: 40px;
     background: #fff;
-    border-radius: 5px;
-    padding: 3px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0050b3;
+    font-size: 1.3rem;
     flex-shrink: 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .sidebar-title {
     color: #fff;
-    font-weight: 600;
+    font-weight: 700;
     margin: 0;
-    font-size: 1rem;
+    font-size: 1.1rem;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
     opacity: 1;
     transition: opacity 0.3s ease;
 }
@@ -59,25 +61,49 @@ body {
 .sidebar-nav {
     flex-grow: 1;
     overflow-y: auto;
-    padding-top: 15px;
+    padding-top: 10px;
+    padding-bottom: 20px;
 }
 
+    /* Tùy chỉnh thanh cuộn cho đẹp */
+    .sidebar-nav::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb {
+        background-color: rgba(255,255,255,0.2);
+        border-radius: 4px;
+    }
+
+/* Tiêu đề phân mục Menu (Fix lỗi dính lề) */
+.nav-section-title {
+    padding: 20px 20px 5px 20px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: #8bb4e7;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Nút Nav Menu */
 .sidebar .nav-link {
     color: #ced4da;
     font-weight: 500;
     padding: 12px 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
     transition: all 0.2s ease-in-out;
     text-decoration: none;
-    border-left: 3px solid transparent;
     white-space: nowrap;
+    border-left: 4px solid transparent; /* Chuẩn bị cho hiệu ứng active */
 }
 
     .sidebar .nav-link i {
-        font-size: 1.1rem;
-        width: 20px;
+        font-size: 1.2rem;
+        width: 24px;
         text-align: center;
     }
 
@@ -86,94 +112,96 @@ body {
         transition: opacity 0.3s ease;
     }
 
-
     .sidebar .nav-link:hover {
         background-color: rgba(255, 255, 255, 0.08);
         color: #fff;
-        border-left-color: #f9c404;
+        border-left-color: rgba(255, 255, 255, 0.3);
     }
 
-    /* Quan trọng: Style này đảm bảo hover và active hoạt động */
+    /* Trạng thái đang chọn (Active) */
     .sidebar .nav-link.active {
-        background-color: #003780;
+        background-color: rgba(255, 255, 255, 0.15);
         color: #fff;
         font-weight: 600;
-        border-left-color: #f9c404;
+        border-left-color: #f9c404; /* Vạch màu vàng nổi bật bên trái */
     }
 
 .logout-link {
-    margin-top: auto;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffcccc !important;
+    margin-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 15px !important;
 }
 
-/* --- Trạng thái Thu gọn Sidebar (Desktop) --- */
+    .logout-link:hover {
+        background-color: rgba(220, 53, 69, 0.2) !important;
+        color: #fff !important;
+    }
+
+/* === THU GỌN SIDEBAR (COLLAPSED) === */
 .sidebar.collapsed {
-    width: 70px;
+    width: 75px;
 }
 
-    .sidebar.collapsed .sidebar-title {
-        opacity: 0;
-        width: 0;
+    .sidebar.collapsed .sidebar-title,
+    .sidebar.collapsed .nav-section-title,
+    .sidebar.collapsed .nav-link span {
+        display: none;
     }
 
     .sidebar.collapsed .sidebar-header {
         justify-content: center;
-        padding: 18px 10px;
-    }
-
-    .sidebar.collapsed .nav-link span {
-        opacity: 0;
-        width: 0;
-        overflow: hidden;
+        padding: 18px 0;
     }
 
     .sidebar.collapsed .nav-link {
         justify-content: center;
-        padding: 12px 10px;
+        padding: 15px 0;
+        border-left: none;
     }
 
+        .sidebar.collapsed .nav-link i {
+            margin: 0;
+            font-size: 1.4rem;
+        }
 
-/* === MAIN CONTENT (Đã sửa) === */
+        .sidebar.collapsed .nav-link.active {
+            border-left: none;
+            background-color: #f9c404;
+            color: #003780;
+            border-radius: 8px;
+            margin: 0 10px;
+        }
+
+/* === MAIN CONTENT === */
 .main-content {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    margin-left: 260px; /* Bằng sidebar mở */
-    /* ===== THÊM: Tính toán width và ẩn overflow ===== */
+    margin-left: 260px;
     width: calc(100% - 260px);
-    overflow-x: hidden; /* Ngăn nội dung tràn ra ngoài */
-    /* ============================================= */
-    transition: margin-left 0.3s ease, width 0.3s ease; /* Thêm transition cho width */
+    transition: margin-left 0.3s ease, width 0.3s ease;
     background-color: #f8f9fa;
 }
-    /* Khi sidebar thu gọn */
-    .main-content.expanded {
-        margin-left: 70px; /* Bằng sidebar thu gọn */
-        /* ===== THÊM: Tính toán lại width ===== */
-        width: calc(100% - 70px);
-        /* ================================== */
-    }
 
+    .main-content.expanded {
+        margin-left: 75px;
+        width: calc(100% - 75px);
+    }
 
 /* === ADMIN HEADER === */
 .admin-header {
     background-color: #ffffff;
-    padding: 12px 25px;
+    padding: 12px 30px;
     border-bottom: 1px solid #e3e6f0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
     position: sticky;
     top: 0;
     z-index: 1020;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
-
-    .admin-header > div {
-        flex-shrink: 0;
-    }
 
 .toggle-btn {
     background: none;
@@ -183,46 +211,30 @@ body {
     cursor: pointer;
     padding: 5px;
     line-height: 1;
+    transition: 0.2s;
 }
 
     .toggle-btn:hover {
         color: #003780;
+        transform: scale(1.1);
     }
-
 
 .header-title {
     color: #2c3e50;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 1.25rem;
     margin: 0;
 }
 
-.user-info {
-    color: #5a5c69;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-}
-
-    .user-info i {
-        color: #0050b3;
-        font-size: 1.2rem;
-    }
-
-    .user-info strong {
-        color: #003780;
-    }
-
-/* === PAGE CONTENT (MAIN) === */
+/* === PAGE CONTENT === */
 .page-content {
     padding: 30px;
     flex-grow: 1;
-    background-color: #f8f9fa;
 }
 
-/* === ADMIN FOOTER === */
+/* === FOOTER === */
 .admin-footer {
-    background-color: #e9ecef;
+    background-color: #fff;
     color: #6c757d;
     padding: 15px 25px;
     font-size: 0.85rem;
@@ -231,57 +243,36 @@ body {
     flex-shrink: 0;
 }
 
-    .admin-footer p {
-        margin-bottom: 3px;
-    }
-
     .admin-footer a {
         color: #0050b3;
         text-decoration: none;
-        font-weight: 500;
+        font-weight: 600;
     }
 
         .admin-footer a:hover {
-            color: #003780;
             text-decoration: underline;
         }
-
 
 /* === RESPONSIVE (MOBILE) === */
 @media (max-width: 992px) {
     .sidebar {
         transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        box-shadow: none;
     }
 
         .sidebar.show {
             transform: translateX(0);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
-    .main-content {
-        margin-left: 0 !important; /* Quan trọng: Ghi đè margin trên mobile */
-        width: 100% !important; /* Quan trọng: Chiếm 100% width trên mobile */
+    .main-content, .main-content.expanded {
+        margin-left: 0 !important;
+        width: 100% !important;
     }
-
-        /* Bỏ expanded trên mobile nếu còn */
-        .main-content.expanded {
-            margin-left: 0 !important;
-            width: 100% !important;
-        }
-
 
     .admin-header {
-        padding: 12px 15px;
+        padding: 12px 20px;
     }
 
-    .header-title {
-        font-size: 1.1rem;
-    }
-
-    .admin-footer {
+    .page-content {
         padding: 15px;
-        font-size: 0.8rem;
     }
 }

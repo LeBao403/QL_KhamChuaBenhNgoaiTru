@@ -1,0 +1,97 @@
+﻿@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.Khoa>
+@{
+    ViewBag.Title = "Quản lý Khoa Khám Bệnh";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 text-primary fw-bold">
+                <i class="bi bi-hospital me-2"></i> Danh sách Khoa Khám Bệnh
+            </h4>
+            <a href="@Url.Action("Create", "Khoa", new { area = "Admin" })" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Thêm Khoa mới
+            </a>
+        </div>
+
+        <div class="card-body">
+            <div class="mb-3">
+                <input type="text" class="form-control live-search"
+                       data-url="@Url.Action("Search", "Khoa", new { area = "Admin" })"
+                       data-target="#khoaResult"
+                       placeholder="Tìm khoa theo Tên hoặc Mã Khoa...">
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped align-middle bg-white">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Mã Khoa</th>
+                            <th>Tên Khoa</th>
+                            <th>Mô tả chức năng</th>
+                            <th class="text-center" style="width: 120px;">Trạng thái</th>
+                            <th class="text-center" style="width: 160px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="khoaResult">
+                        @Html.Partial("_KhoaTable", Model)
+                    </tbody>
+                </table>
+            </div>
+
+            @* @Html.Partial("_Pagination") *@
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Scripts/live-search.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // 1. Xác nhận KHÓA / MỞ KHOA
+            $('#khoaResult').on('click', '.btn-lock-khoa', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                var isLocking = $(this).data('isactive') === 'True';
+
+                Swal.fire({
+                    title: isLocking ? 'Xác nhận Khóa?' : 'Mở lại Khoa này?',
+                    text: isLocking ? 'Khoa sẽ bị ẩn đi trong các chức năng tạo lịch khám mới.' : 'Khoa sẽ hoạt động trở lại bình thường.',
+                    icon: isLocking ? 'warning' : 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: isLocking ? '#dc3545' : '#198754',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: isLocking ? 'Đồng ý Khóa' : 'Mở hoạt động'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+
+            // 2. Xác nhận XÓA KHOA
+            $('#khoaResult').on('click', '.btn-delete-khoa', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+
+                Swal.fire({
+                    title: 'Xóa vĩnh viễn?',
+                    text: "Khoa sẽ bị xóa khỏi hệ thống. Chỉ xóa được khi không có nhân viên hay phòng ban nào trực thuộc!",
+                    icon: 'error',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Xóa ngay',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}

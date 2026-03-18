@@ -1,0 +1,68 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.Phong
+
+@{
+    ViewBag.Title = "Thêm Phòng ban mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<div class="container-fluid py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h4 class="mb-0 text-primary fw-bold">
+                        <i class="bi bi-plus-circle me-2"></i>Thêm Phòng ban mới
+                    </h4>
+                </div>
+
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("Create", "Phong", FormMethod.Post, new { @class = "needs-validation" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Tên phòng ban <span class="text-danger">*</span></label>
+                                @Html.TextBoxFor(model => model.TenPhong, new { @class = "form-control", placeholder = "VD: Phòng khám Nội 01, Sảnh chờ...", required = "required" })
+                                @Html.ValidationMessageFor(model => model.TenPhong, "", new { @class = "text-danger small mt-1 d-block" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Loại phòng <span class="text-danger">*</span></label>
+                                @Html.DropDownListFor(model => model.MaLoaiPhong, ViewBag.MaLoaiPhong as SelectList, "-- Chọn loại phòng --", new { @class = "form-select", required = "required" })
+                                @Html.ValidationMessageFor(model => model.MaLoaiPhong, "", new { @class = "text-danger small mt-1 d-block" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Khoa chủ quản</label>
+                                @Html.DropDownListFor(model => model.MaKhoa, ViewBag.MaKhoa as SelectList, "-- Độc lập (Không thuộc Khoa) --", new { @class = "form-select" })
+                                <div class="form-text small">Để trống nếu phòng này không trực thuộc khoa nào (VD: Thu ngân, Hành chính).</div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold d-block">Trạng thái hoạt động</label>
+                                <div class="form-check form-switch form-check-inline mt-1">
+                                    @Html.CheckBoxFor(model => model.TrangThai, new { @class = "form-check-input", role = "switch", id = "switchTrangThai", style = "width: 2.5em; height: 1.2em;" })
+                                    <label class="form-check-label ms-2 pt-1" for="switchTrangThai">Mở cửa hoạt động ngay</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4 text-muted" />
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="@Url.Action("Index", "Phong", new { area = "Admin" })" class="btn btn-secondary px-4">
+                                <i class="bi bi-x-circle me-1"></i> Hủy bỏ
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save me-1"></i> Lưu phòng mới
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

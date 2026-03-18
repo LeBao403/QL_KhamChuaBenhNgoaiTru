@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Hệ thống Y tế MedicHub</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <link href="@Url.Content("~/Styles/_Layout_client.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Styles/_HomePage.css")" rel="stylesheet" />
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-client fixed-top py-3" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="@Url.Action("Index", "Home")">
+                <i class="bi bi-heart-pulse-fill text-primary fs-2 me-2"></i>
+                <span class="fw-bold fs-4 text-primary mt-1">MEDIC<span class="text-dark">HUB</span></span>
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#gioi-thieu">Giới thiệu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#chuyen-khoa">Chuyên khoa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#doi-ngu">Bác sĩ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#tin-tuc">Tin tức</a></li>
+
+                    <li class="nav-item ms-lg-4 mt-3 mt-lg-0">
+                        <a href="@Url.Action("DatLich", "Home")" class="btn-appointment">
+                            <i class="bi bi-calendar-check me-2"></i>Đặt lịch
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+                        <a href="@Url.Action("Login", "Account")" class="btn-login">
+                            <i class="bi bi-person-circle me-2"></i>Đăng nhập
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div style="margin-top: 85px;"></div>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="footer-client mt-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h5 class="fw-bold mb-4 text-white">MEDICHUB HOSPITAL</h5>
+                    <p class="small text-secondary" style="line-height: 1.8;">Hệ thống quản lý y tế thông minh, kết nối bác sĩ và bệnh nhân. Nâng tầm trải nghiệm chăm sóc sức khỏe cho người Việt.</p>
+                    <div class="d-flex gap-3 mt-4">
+                        <a href="#" class="text-white fs-4 hover-up"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white fs-4 hover-up"><i class="bi bi-youtube"></i></a>
+                        <a href="#" class="text-white fs-4 hover-up"><i class="bi bi-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 offset-lg-1">
+                    <h6 class="fw-bold mb-4 text-white">Dịch vụ & Tiện ích</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-link">Đặt lịch khám bệnh</a></li>
+                        <li><a href="#" class="footer-link">Quy trình đi khám</a></li>
+                        <li><a href="#" class="footer-link">Bảng giá dịch vụ</a></li>
+                        <li><a href="#" class="footer-link">Tra cứu kết quả</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="fw-bold mb-4 text-white">Thông tin liên hệ</h6>
+                    <p class="small mb-3"><i class="bi bi-geo-alt-fill me-2 text-primary fs-6"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
+                    <p class="small mb-3"><i class="bi bi-telephone-fill me-2 text-primary fs-6"></i> Hotline cấp cứu: 1900 6789</p>
+                    <p class="small"><i class="bi bi-envelope-fill me-2 text-primary fs-6"></i> contact@medichub.vn</p>
+                </div>
+                <div class="col-lg-2">
+                    <h6 class="fw-bold mb-4 text-white">Ứng dụng di động</h6>
+
+                    <a href="#" class="btn-app">
+                        <i class="bi bi-apple btn-app-icon"></i>
+                        <div class="btn-app-text">
+                            <small>Download on the</small>
+                            <strong>App Store</strong>
+                        </div>
+                    </a>
+
+                    <a href="#" class="btn-app">
+                        <i class="bi bi-google-play btn-app-icon"></i>
+                        <div class="btn-app-text">
+                            <small>GET IT ON</small>
+                            <strong>Google Play</strong>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+            <hr class="mt-5 border-secondary">
+            <div class="text-center small text-secondary">
+                © 2026 Hệ thống Quản lý Y tế MedicHub. Thiết kế bởi LeBao403
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        // Kích hoạt AOS
+        AOS.init({ duration: 800, once: true, offset: 50 });
+
+        // LOGIC NAVBAR LƯỚT MƯỢT (Đã fix triệt để)
+        document.addEventListener("DOMContentLoaded", function () {
+            var lastScrollTop = 0;
+            var navbar = document.getElementById("mainNav");
+
+            window.addEventListener("scroll", function () {
+                var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+                // Cuộn xuống quá 150px thì đẩy thanh nav lên trên (giấu đi)
+                if (scrollTop > lastScrollTop && scrollTop > 150) {
+                    navbar.style.top = "-100px";
+                } else {
+                    // Cuộn lên thì hiện lại
+                    navbar.style.top = "0";
+                }
+
+                // Nếu đang ở đỉnh trang thì bỏ bóng mờ, cuộn xuống thì thêm bóng
+                if (scrollTop > 50) {
+                    navbar.classList.add("shadow-sm");
+                } else {
+                    navbar.classList.remove("shadow-sm");
+                }
+
+                lastScrollTop = scrollTop;
+            });
+        });
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

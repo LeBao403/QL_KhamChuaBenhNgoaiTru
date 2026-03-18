@@ -1,33 +1,355 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.HomeViewModel
+@{
+    ViewBag.Title = "Trang chủ";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
+<section class="hero-section p-0">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+        <div class="carousel-indicators mb-5">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+        </div>
+
+        <div class="carousel-inner">
+
+            <div class="carousel-item active" style="background: linear-gradient(135deg, #0a58ca 0%, #0d6efd 100%); padding: 120px 0 200px 0;">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <div class="badge bg-white text-primary px-3 py-2 rounded-pill mb-3 fw-bold shadow-sm">
+                                <i class="bi bi-shield-check text-success me-1"></i> Bệnh viện Đa khoa Tiêu chuẩn Quốc tế
+                            </div>
+                            <h1 class="display-4 fw-bold mb-4 text-white" style="line-height: 1.2;">Kiến tạo sức khỏe<br />Nâng tầm cuộc sống</h1>
+                            <p class="lead mb-4 text-white-50">Hệ thống đặt lịch thông minh, giảm thiểu thời gian chờ đợi. Kết nối chuyên gia y tế hàng đầu với bạn một cách nhanh chóng.</p>
+                            <div class="d-flex gap-3 mt-4">
+                                <a href="@Url.Action("DatLich", "Home")" class="btn btn-warning btn-lg fw-bold rounded-pill px-4 shadow-lg hover-up text-dark">
+                                    <i class="bi bi-calendar-plus me-2"></i>Đặt lịch khám ngay
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 d-none d-lg-block hero-img-wrapper">
+                            <img src="~/Images/banner-slide-1.jpg" alt="Slide 1" class="img-fluid rounded-4 shadow-lg border border-4 border-white" style="transform: rotate(2deg); height: 400px; width: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item" style="background: linear-gradient(135deg, #145a32 0%, #198754 100%); padding: 120px 0 200px 0;">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <div class="badge bg-white text-success px-3 py-2 rounded-pill mb-3 fw-bold shadow-sm">
+                                <i class="bi bi-building-add text-danger me-1"></i> Cơ sở vật chất khang trang
+                            </div>
+                            <h1 class="display-4 fw-bold mb-4 text-white" style="line-height: 1.2;">Trang thiết bị hiện đại<br />Đạt chuẩn quốc gia</h1>
+                            <p class="lead mb-4 text-white-50">Chúng tôi không ngừng nâng cấp cơ sở vật chất, mang đến môi trường khám chữa bệnh an toàn, tiện nghi và hiệu quả nhất.</p>
+                            <div class="d-flex gap-3 mt-4">
+                                <a href="#chuyen-khoa" class="btn btn-light btn-lg fw-bold rounded-pill px-4 shadow-lg hover-up text-success">
+                                    Khám phá chuyên khoa
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 d-none d-lg-block hero-img-wrapper">
+                            <img src="~/Images/banner-slide-2.jpg" alt="Slide 2" class="img-fluid rounded-4 shadow-lg border border-4 border-white" style="transform: rotate(-2deg); height: 400px; width: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="carousel-item" style="background: linear-gradient(135deg, #052c65 0%, #0a58ca 100%); padding: 120px 0 200px 0;">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6">
+                            <div class="badge bg-white text-primary px-3 py-2 rounded-pill mb-3 fw-bold shadow-sm">
+                                <i class="bi bi-award text-warning me-1"></i> Đội ngũ chuyên gia
+                            </div>
+                            <h1 class="display-4 fw-bold mb-4 text-white" style="line-height: 1.2;">Hơn 200+ Y Bác sĩ<br />Giàu kinh nghiệm</h1>
+                            <p class="lead mb-4 text-white-50">Đội ngũ chuyên gia, giáo sư, tiến sĩ đầu ngành luôn sẵn sàng phục vụ và đồng hành cùng sức khỏe của bạn.</p>
+                            <div class="d-flex gap-3 mt-4">
+                                <a href="#doi-ngu" class="btn btn-warning btn-lg fw-bold rounded-pill px-4 shadow-lg hover-up text-dark">
+                                    Gặp gỡ Bác sĩ
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 d-none d-lg-block hero-img-wrapper">
+                            <img src="~/Images/banner-slide-3.jpg" alt="Slide 3" class="img-fluid rounded-4 shadow-lg border border-4 border-white" style="transform: rotate(1deg); height: 400px; width: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true" style="width: 3rem; height: 3rem;"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true" style="width: 3rem; height: 3rem;"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
     </div>
-</main>
+</section>
+
+<div class="container quick-access-container">
+    <div class="row g-3 justify-content-center">
+        <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+            <a href="@Url.Action("DatLich", "Home")" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm rounded-4 text-center py-4 hover-up">
+                    <div class="mb-2 text-primary display-5"><i class="bi bi-calendar2-check"></i></div>
+                    <h6 class="fw-bold text-dark mb-0">Đặt lịch khám</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+            <a href="#doi-ngu" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm rounded-4 text-center py-4 hover-up">
+                    <div class="mb-2 text-success display-5"><i class="bi bi-person-vcard"></i></div>
+                    <h6 class="fw-bold text-dark mb-0">Tìm Bác sĩ</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+            <a href="#chuyen-khoa" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm rounded-4 text-center py-4 hover-up">
+                    <div class="mb-2 text-info display-5"><i class="bi bi-search"></i></div>
+                    <h6 class="fw-bold text-dark mb-0">Tìm Chuyên khoa</h6>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
+            <a href="#" class="text-decoration-none">
+                <div class="card h-100 border-0 shadow-sm rounded-4 text-center py-4 hover-up">
+                    <div class="mb-2 text-danger display-5"><i class="bi bi-geo-alt"></i></div>
+                    <h6 class="fw-bold text-dark mb-0">Xem bản đồ</h6>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<section id="gioi-thieu" class="py-5 mt-5">
+    <div class="container py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="section-subtitle">Về chúng tôi</span>
+                <h2 class="fw-bold text-dark mt-2 display-6 mb-4">Cơ sở hạ tầng, <br />trang thiết bị hiện đại hàng đầu</h2>
+                <p class="text-muted" style="text-align: justify; line-height: 1.8;">
+                    Bệnh viện MedicHub là một trong những công trình y tế hiện đại tiêu biểu, được đầu tư xây dựng với định hướng kết hợp hài hòa giữa công năng chuyên môn cao, kiến trúc hiện đại và không gian xanh nhân văn, hướng đến mục tiêu chữa lành toàn diện cho người bệnh.
+                </p>
+                <div class="d-flex gap-3 mt-4">
+                    <div class="d-flex align-items-center text-primary fw-bold"><i class="bi bi-check-circle-fill me-2"></i>Không gian xanh</div>
+                    <div class="d-flex align-items-center text-primary fw-bold"><i class="bi bi-check-circle-fill me-2"></i>Trang bị chuẩn Châu Âu</div>
+                </div>
+                <a href="#" class="btn btn-primary rounded-pill px-4 mt-4 fw-bold hover-up text-white">Tìm hiểu thêm <i class="bi bi-arrow-right ms-1"></i></a>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="position-relative">
+                    <img src="~/Images/about-building.jpg" class="img-fluid rounded-4 shadow-lg" alt="Tòa nhà bệnh viện">
+                    <img src="~/Images/about-equipment.jpg" class="img-fluid rounded-4 shadow-lg border border-4 border-white position-absolute" style="width: 55%; bottom: -40px; left: -40px;" alt="Máy MRI/CT">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="chuyen-khoa" class="py-5 mt-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center section-title-wrapper" data-aos="fade-up">
+            <span class="section-subtitle">Viện, Trung tâm, Khoa nổi bật</span>
+            <h2 class="fw-bold text-dark mt-2 display-6">Các Chuyên Khoa</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="row g-4">
+            @if (Model.DanhSachKhoa != null && Model.DanhSachKhoa.Count > 0)
+            {
+                int delay = 100;
+                foreach (var khoa in Model.DanhSachKhoa)
+                {
+                    <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="@delay">
+                        <div class="card border-0 shadow-sm h-100 hover-up rounded-4 overflow-hidden">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="bg-primary-subtle text-primary rounded p-3 me-3">
+                                        <i class="bi bi-heart-pulse fs-3"></i>
+                                    </div>
+                                    <h5 class="fw-bold mb-0 text-dark">@khoa.TenKhoa</h5>
+                                </div>
+                                <p class="text-muted small line-clamp-2 mb-4">@(string.IsNullOrEmpty(khoa.MoTa) ? "Chuyên khoa mũi nhọn của bệnh viện, đáp ứng đầy đủ tiêu chuẩn y tế quốc gia." : khoa.MoTa)</p>
+                                <a href="#" class="text-primary text-decoration-none fw-bold">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    delay += 100;
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-primary text-white" style="background: linear-gradient(45deg, #0d6efd, #0dcaf0);">
+    <div class="container py-5">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="100">
+                <h2 class="fw-bold display-4 mb-0">@Model.ThongKe.TongSoKhoa</h2>
+                <div class="section-line bg-white my-3"></div>
+                <p class="fs-5 mb-0">Khoa & Phòng ban</p>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="200">
+                <h2 class="fw-bold display-4 mb-0">@Model.ThongKe.TongSoNhanVien</h2>
+                <div class="section-line bg-white my-3"></div>
+                <p class="fs-5 mb-0">Y Bác sĩ & Cán bộ</p>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="300">
+                <h2 class="fw-bold display-4 mb-0">@Model.ThongKe.TongSoPhong</h2>
+                <div class="section-line bg-white my-3"></div>
+                <p class="fs-5 mb-0">Phòng khám dịch vụ</p>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="400">
+                <h2 class="fw-bold display-4 mb-0">@Model.ThongKe.TongLuotKham+</h2>
+                <div class="section-line bg-white my-3"></div>
+                <p class="fs-5 mb-0">Lượt khám mỗi năm</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="doi-ngu" class="py-5">
+    <div class="container py-5">
+        <div class="text-center section-title-wrapper" data-aos="fade-up">
+            <span class="section-subtitle">Tận tâm & Giàu kinh nghiệm</span>
+            <h2 class="fw-bold text-dark mt-2 display-6">Đội ngũ Bác sĩ</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            @if (Model.DanhSachBacSi != null && Model.DanhSachBacSi.Count > 0)
+            {
+                int delay = 100;
+                foreach (var bs in Model.DanhSachBacSi)
+                {
+                    <div class="col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="@delay">
+                        <div class="card card-doctor border-0 shadow-sm rounded-4 hover-up h-100">
+                            <div class="img-overflow-hidden">
+                                <img src="@bs.HinhAnh" class="card-img-top w-100" alt="@bs.HoTen">
+                            </div>
+                            <div class="card-body text-center p-4">
+                                <p class="text-muted small mb-1 fw-bold text-uppercase">@bs.TenChucVu</p>
+                                <h5 class="fw-bold text-dark mb-3">@bs.HoTen</h5>
+                                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 border border-primary-subtle">@bs.TenKhoa</span>
+                            </div>
+                        </div>
+                    </div>
+                    delay += 100;
+                }
+            }
+        </div>
+        <div class="text-center mt-5" data-aos="fade-up">
+            <a href="#" class="btn btn-primary text-white btn-lg rounded-pill px-5 shadow hover-up">Xem toàn bộ Bác sĩ</a>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="row bg-white rounded-4 shadow-sm overflow-hidden" data-aos="fade-up">
+            <div class="col-lg-5 p-0 d-none d-lg-block">
+                <img src="~/Images/feedback-cover.jpg" class="w-100 h-100" style="object-fit: cover;" alt="Ghi nhận đánh giá">
+            </div>
+            <div class="col-lg-7 p-5">
+                <span class="text-primary fw-bold text-uppercase tracking-wide">Chất lượng dịch vụ y tế hàng đầu</span>
+                <h2 class="fw-bold text-dark mt-2 mb-4">Đánh giá chất lượng</h2>
+                <p class="text-muted mb-4">Vui lòng cho biết ý kiến của bạn để chúng tôi phục vụ bạn tốt hơn!</p>
+
+                <form>
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+                        <button type="button" class="btn btn-outline-success fw-bold text-dark rounded-pill active">😍 Rất tốt</button>
+                        <button type="button" class="btn btn-outline-primary fw-bold text-dark rounded-pill">😊 Tốt</button>
+                        <button type="button" class="btn btn-outline-warning fw-bold text-dark rounded-pill">😐 Khá</button>
+                        <button type="button" class="btn btn-outline-secondary fw-bold text-dark rounded-pill">😕 Trung bình</button>
+                        <button type="button" class="btn btn-outline-danger fw-bold text-dark rounded-pill">😞 Chưa tốt</button>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control bg-light border-0 py-3" placeholder="Họ và tên">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control bg-light border-0 py-3" placeholder="Số điện thoại">
+                        </div>
+                        <div class="col-12">
+                            <input type="email" class="form-control bg-light border-0 py-3" placeholder="Email">
+                        </div>
+                        <div class="col-12">
+                            <textarea class="form-control bg-light border-0 py-3" rows="3" placeholder="Ghi chú hoặc ý kiến đóng góp..."></textarea>
+                        </div>
+                        <div class="col-12 text-end mt-3">
+                            <button type="button" class="btn btn-primary rounded-pill px-5 py-2 fw-bold hover-up text-white">Gửi nhận xét</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="tin-tuc" class="py-5 bg-white">
+    <div class="container py-5">
+        <div class="text-center section-title-wrapper" data-aos="fade-up">
+            <span class="section-subtitle">Cập nhật liên tục</span>
+            <h2 class="fw-bold text-dark mt-2 display-6">Tin tức & Sự kiện</h2>
+            <div class="section-line"></div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card border-0 shadow-sm rounded-4 hover-up h-100">
+                    <div class="img-overflow-hidden">
+                        <img src="~/Images/news-1.jpg" class="card-img-top news-img w-100" alt="News 1">
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center text-muted small mb-3">
+                            <i class="bi bi-calendar3 me-2 text-primary"></i> 16/03/2026
+                        </div>
+                        <h5 class="fw-bold text-dark mb-3 line-clamp-2"><a href="#" class="text-dark text-decoration-none">MedicHub triển khai hệ thống đặt lịch thông minh</a></h5>
+                        <p class="text-muted small line-clamp-2">Bệnh viện chính thức áp dụng công nghệ số vào quy trình đăng ký khám, giúp người bệnh tiết kiệm thời gian.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card border-0 shadow-sm rounded-4 hover-up h-100">
+                    <div class="img-overflow-hidden">
+                        <img src="~/Images/news-2.jpg" class="card-img-top news-img w-100" alt="News 2">
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center text-muted small mb-3">
+                            <i class="bi bi-calendar3 me-2 text-primary"></i> 13/03/2026
+                        </div>
+                        <h5 class="fw-bold text-dark mb-3 line-clamp-2"><a href="#" class="text-dark text-decoration-none">Cảnh báo dịch sốt xuất huyết đang vào mùa cao điểm</a></h5>
+                        <p class="text-muted small line-clamp-2">Các chuyên gia y tế khuyến cáo người dân chủ động phòng chống muỗi đốt, dọn dẹp vệ sinh môi trường sống.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="card border-0 shadow-sm rounded-4 hover-up h-100">
+                    <div class="img-overflow-hidden">
+                        <img src="~/Images/news-3.jpg" class="card-img-top news-img w-100" alt="News 3">
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center text-muted small mb-3">
+                            <i class="bi bi-calendar3 me-2 text-primary"></i> 08/03/2026
+                        </div>
+                        <h5 class="fw-bold text-dark mb-3 line-clamp-2"><a href="#" class="text-dark text-decoration-none">Hội thảo khoa học: Ứng dụng AI trong chẩn đoán</a></h5>
+                        <p class="text-muted small line-clamp-2">Sự kiện thu hút hơn 200 giáo sư, tiến sĩ và y bác sĩ trong ngành cùng thảo luận về tương lai trí tuệ nhân tạo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,83 @@
+﻿@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.PhongManageViewModel>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <strong>PH-@item.MaPhong.ToString("D3")</strong>
+            </td>
+
+            <td>@item.TenPhong</td>
+
+            <td>@item.TenLoaiPhong</td>
+
+            <td>
+                @if (item.MaKhoa.HasValue)
+                {
+                    @item.TenKhoa
+                }
+                else
+                {
+                    <span class="text-muted fst-italic">Độc lập</span>
+                }
+            </td>
+
+            <td class="text-center">
+                @item.SoLuongNV
+            </td>
+
+            <td class="text-center">
+                @if (item.TrangThai)
+                {
+                    <span class="badge bg-success">Hoạt động</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Đã khóa</span>
+                }
+            </td>
+
+            <td class="text-center">
+                <div class="d-flex justify-content-center align-items-center flex-nowrap">
+
+                    <a href="@Url.Action("Details", "Phong", new { area = "Admin", id = item.MaPhong })"
+                       class="btn btn-sm btn-info me-1" title="Xem chi tiết & Thêm nhân sự">
+                        <i class="bi bi-eye text-white"></i>
+                    </a>
+
+                    <a href="@Url.Action("Edit", "Phong", new { area = "Admin", id = item.MaPhong })"
+                       class="btn btn-sm btn-warning me-1" title="Sửa thông tin">
+                        <i class="bi bi-pencil-square text-white"></i>
+                    </a>
+
+                    <form method="post" action="@Url.Action("ToggleStatus", "Phong", new { area = "Admin" })" class="m-0 p-0 me-1" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.MaPhong" />
+                        <button type="button" class="btn btn-sm btn-lock-phong @(item.TrangThai ? "btn-danger" : "btn-success")"
+                                data-isactive="@(item.TrangThai ? "True" : "False")" title="@(item.TrangThai ? "Khóa phòng" : "Mở phòng")">
+                            <i class="bi @(item.TrangThai ? "bi-lock-fill" : "bi-unlock-fill")"></i>
+                        </button>
+                    </form>
+
+                    <form method="post" action="@Url.Action("Delete", "Phong", new { area = "Admin", id = item.MaPhong })" class="m-0 p-0" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="button" class="btn btn-sm btn-danger btn-delete-phong" title="Xóa Phòng">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="7" class="text-center text-muted p-4">
+            <i class="bi bi-door-closed fs-3 d-block mb-2"></i>
+            Không tìm thấy dữ liệu Phòng
+        </td>
+    </tr>
+}
