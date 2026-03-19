@@ -200,5 +200,71 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             }
             return list;
         }
+
+        // ====================================================================
+        // HÀM LẤY DỮ LIỆU ĐỘNG CHO TRANG GIỚI THIỆU
+        // ====================================================================
+        public GioiThieuViewModel GetGioiThieuData()
+        {
+            var model = new GioiThieuViewModel
+            {
+                GiamDoc = new BacSiHome(),
+                ThongKe = new ThongKeHome()
+            };
+
+            using (SqlConnection conn = new SqlConnection(connectStr)) 
+            {
+                conn.Open();
+
+                // 1. KÉO THÔNG TIN GIÁM ĐỐC 
+                string sqlGiamDoc = @"
+            SELECT TOP 1 NV.MaNV, NV.HoTen, CV.TenChucVu, NV.HinhAnh 
+            FROM NHANVIEN NV
+            LEFT JOIN CHUCVU CV ON NV.MaChucVu = CV.MaChucVu
+            WHERE NV.MaChucVu = 1 AND NV.TrangThai = 1";
+
+                using (SqlCommand cmd = new SqlCommand(sqlGiamDoc, conn))
+                {
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            string imgFileName = dr["HinhAnh"]?.ToString();
+                            string imgPath = !string.IsNullOrEmpty(imgFileName)
+                                             ? $"/Images/doctors/{imgFileName}"
+                                             : "/Images/default-doctor.png";
+
+                            model.GiamDoc.MaNV = dr["MaNV"].ToString();
+                            model.GiamDoc.HoTen = dr["HoTen"].ToString();
+                            model.GiamDoc.TenChucVu = dr["TenChucVu"] != DBNull.Value ? dr["TenChucVu"].ToString() : "Giám đốc bệnh viện";
+                            model.GiamDoc.HinhAnh = imgPath;
+                        }
+                    }
+                }
+
+                // 2. KÉO SỐ LIỆU THỐNG KÊ ĐỂ CHẠY ANIMATION ĐẾM SỐ
+                string sqlStat = @"
+            SELECT 
+                (SELECT COUNT(*) FROM KHOA WHERE TrangThai = 1) AS TongKhoa,
+                (SELECT COUNT(*) FROM PHONG WHERE TrangThai = 1) AS TongPhong,
+                (SELECT COUNT(*) FROM NHANVIEN WHERE TrangThai = 1) AS TongNV";
+
+                using (SqlCommand cmd = new SqlCommand(sqlStat, conn))
+                {
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            model.ThongKe.TongSoKhoa = Convert.ToInt32(dr["TongKhoa"]);
+                            model.ThongKe.TongSoPhong = Convert.ToInt32(dr["TongPhong"]);
+                            model.ThongKe.TongSoNhanVien = Convert.ToInt32(dr["TongNV"]);
+                            model.ThongKe.TongLuotKham = 85420; // Số lượt khám ảo cho hoành tráng
+                        }
+                    }
+                }
+            }
+
+            return model;
+        }
     }
 }

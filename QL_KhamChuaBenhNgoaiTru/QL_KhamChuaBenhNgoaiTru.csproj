@@ -141,6 +141,7 @@
     <Compile Include="Models\DonThuoc.cs" />
     <Compile Include="Models\HoaDon.cs" />
     <Compile Include="Models\BenhNhan.cs" />
+    <Compile Include="Models\Home.cs" />
     <Compile Include="Models\HomeViewModel.cs" />
     <Compile Include="Models\Kho.cs" />
     <Compile Include="Models\NhanVien.cs" />
@@ -173,6 +174,12 @@
     <Content Include="Content\Site.css" />
     <Content Include="Images\about-building.jpg" />
     <Content Include="Images\about-equipment.jpg" />
+    <Content Include="Images\about\about-equipment.jpg" />
+    <Content Include="Images\about\about-hero.jpg" />
+    <Content Include="Images\about\about-it.jpg" />
+    <Content Include="Images\about\csr-1.jpg" />
+    <Content Include="Images\about\csr-2.jpg" />
+    <Content Include="Images\about\csr-3.jpg" />
     <Content Include="Images\banner-slide-1.jpg" />
     <Content Include="Images\banner-slide-2.jpg" />
     <Content Include="Images\banner-slide-3.jpg" />
@@ -193,6 +200,11 @@
     <Content Include="Images\doctors\nv039.jpg" />
     <Content Include="Images\doctors\nv_bao.jpg" />
     <Content Include="Images\feedback-cover.jpg" />
+    <Content Include="Images\insurance\aia.png" />
+    <Content Include="Images\insurance\baoviet.png" />
+    <Content Include="Images\insurance\daiichi.png" />
+    <Content Include="Images\insurance\manulife.png" />
+    <Content Include="Images\insurance\prudential.png" />
     <Content Include="Images\news-1.jpg" />
     <Content Include="Images\news-2.jpg" />
     <Content Include="Images\news-3.jpg" />
@@ -253,6 +265,7 @@
     <Content Include="Views\Home\BacSi.cshtml" />
     <Content Include="Views\Home\_BacSiList.cshtml" />
     <Content Include="Views\Home\ChuyenKhoa.cshtml" />
+    <Content Include="Views\Home\GioiThieu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

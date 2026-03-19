@@ -1,0 +1,347 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.GioiThieuViewModel
+@{
+    ViewBag.Title = "Về chúng tôi - MedicHub";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+}
+
+<style>
+    /* 1. HERO PARALLAX (HÌNH LOCAL) */
+    .about-hero {
+        background: linear-gradient(135deg, rgba(10, 88, 202, 0.85) 0%, rgba(5, 44, 101, 0.9) 100%),
+                    url('/Images/about/about-hero.jpg') no-repeat center center;
+        background-attachment: fixed; /* Parallax siêu mượt */
+        background-size: cover;
+        padding: 180px 0 120px 0;
+        color: white;
+    }
+
+    /* 2. CHỮ GRADIENT TỐI TÂN */
+    .text-gradient {
+        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* 3. THẺ 3D HOVER */
+    .card-3d {
+        border: none;
+        border-radius: 1.5rem;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        height: 100%;
+    }
+    .card-3d:hover {
+        transform: translateY(-15px);
+        box-shadow: 0 20px 40px rgba(13, 110, 253, 0.15);
+    }
+    .icon-wrapper {
+        width: 80px; height: 80px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.5rem; margin-bottom: 1.5rem;
+    }
+
+    /* 4. LỜI NGỎ BAN GIÁM ĐỐC */
+    .director-img {
+        width: 100%; max-width: 400px;
+        border-radius: 2rem;
+        box-shadow: 20px 20px 0px rgba(13, 110, 253, 0.1);
+        object-fit: cover;
+    }
+    .quote-icon {
+        font-size: 4rem; color: rgba(13, 110, 253, 0.2);
+        position: absolute; top: -20px; left: -20px; z-index: -1;
+    }
+
+    /* 5. TIMELINE LỊCH SỬ */
+    .timeline { position: relative; border-left: 3px solid #e9ecef; margin-left: 20px; padding-left: 30px; }
+    .timeline-item { position: relative; margin-bottom: 3rem; }
+    .timeline-item::before {
+        content: ''; position: absolute; left: -42px; top: 0;
+        width: 20px; height: 20px; border-radius: 50%;
+        background: #0d6efd; border: 4px solid #fff; box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+    }
+    .timeline-year { font-size: 1.5rem; font-weight: 800; color: #0d6efd; margin-bottom: 0.5rem; }
+
+    /* 6. HÌNH ẢNH MASONRY / LƯỚI */
+    .img-rounded-lg { border-radius: 1.5rem; object-fit: cover; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+    /* 7. INFINITE SCROLL LOGO */
+    .marquee-container { overflow: hidden; white-space: nowrap; width: 100%; background: #fff; padding: 2rem 0; }
+    .marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
+    .marquee-content img { height: 60px; margin: 0 40px; filter: grayscale(100%); transition: all 0.3s ease; opacity: 0.6; object-fit: contain; }
+    .marquee-content img:hover { filter: grayscale(0%); opacity: 1; }
+    @@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* Fix Content cho dễ đọc */
+    p.text-muted, p.fs-5 { line-height: 1.9 !important; text-align: justify; }
+</style>
+
+<section class="about-hero text-center">
+    <div class="container" data-aos="zoom-in">
+        <span class="badge bg-light text-primary px-4 py-2 rounded-pill mb-4 fw-bold shadow">Khát vọng Y tế Việt</span>
+        <h1 class="display-3 fw-bold mb-4">Lịch Sử & Khát Vọng<br>Vươn Tầm Quốc Tế</h1>
+        <p class="lead text-white-50 mx-auto" style="max-width: 800px;">
+            MedicHub không chỉ là nơi chữa bệnh, mà là Hệ sinh thái y tế thông minh, nơi giao thoa giữa y đức truyền thống và công nghệ tối tân.
+        </p>
+    </div>
+</section>
+
+<section class="py-5 mt-5 bg-white">
+    <div class="container py-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5 text-center text-lg-start" data-aos="fade-right">
+                <img src="@Model.GiamDoc.HinhAnh" class="director-img" alt="Giám đốc MedicHub" onerror="this.src='/Images/default-doctor.png'">
+            </div>
+            <div class="col-lg-7" data-aos="fade-left">
+                <div class="position-relative z-1">
+                    <i class="bi bi-quote quote-icon"></i>
+                    <h2 class="display-6 fw-bold text-dark mb-4">"Tôn chỉ hoạt động<br><span class="text-gradient">Lấy người bệnh làm trung tâm</span>."</h2>
+                    <p class="text-muted fs-5 mb-4">
+                        Chúng tôi hiểu rằng, khi đối mặt với bệnh tật, người bệnh không chỉ cần một phác đồ điều trị chính xác, mà còn cần sự thấu hiểu, sẻ chia và một không gian khám chữa bệnh tiện nghi. Hệ thống MedicHub ra đời nhằm xóa bỏ rào cản chờ đợi, để mỗi phút giây tại viện đều an tâm tuyệt đối.
+                    </p>
+                    <hr class="w-25 border-primary opacity-25 mb-4">
+                    <h4 class="fw-bold text-dark mb-1">@Model.GiamDoc.HoTen</h4>
+                    <p class="text-primary fw-bold text-uppercase tracking-wide">@Model.GiamDoc.TenChucVu MedicHub</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-bold text-dark display-6">Định Hướng Chiến Lược</h2>
+            <div class="section-line mx-auto"></div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-3d p-5 text-center">
+                    <div class="icon-wrapper bg-primary-subtle text-primary mx-auto"><i class="bi bi-eye"></i></div>
+                    <h4 class="fw-bold mb-3">Tầm Nhìn</h4>
+                    <p class="text-muted">Trở thành Hệ thống Y tế tư nhân dẫn đầu khu vực về chất lượng chuyên môn và ứng dụng công nghệ số thông minh.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-3d p-5 text-center">
+                    <div class="icon-wrapper bg-success-subtle text-success mx-auto"><i class="bi bi-bullseye"></i></div>
+                    <h4 class="fw-bold mb-3">Sứ Mệnh</h4>
+                    <p class="text-muted">Cung cấp dịch vụ chăm sóc sức khỏe toàn diện, chuẩn quốc tế với chi phí hợp lý, luôn lấy người bệnh làm trung tâm.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="card-3d p-5 text-center">
+                    <div class="icon-wrapper bg-warning-subtle text-warning mx-auto"><i class="bi bi-gem"></i></div>
+                    <h4 class="fw-bold mb-3">Giá Trị Cốt Lõi</h4>
+                    <p class="text-muted"><strong>Tận tâm</strong> trong chăm sóc.<br><strong>Trí tuệ</strong> trong điều trị.<br><strong>Tiên phong</strong> trong công nghệ.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container py-5">
+        <div class="text-center mb-5 pb-3" data-aos="fade-up">
+            <span class="section-subtitle text-primary fw-bold text-uppercase">Năng lực vượt trội</span>
+            <h2 class="fw-bold text-dark display-6 mt-2">Thế mạnh của MedicHub</h2>
+            <div class="section-line mx-auto bg-primary"></div>
+        </div>
+
+        <div class="row align-items-center g-5 mb-5 pb-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <img src="/Images/about/about-equipment.jpg" class="img-rounded-lg shadow-lg" alt="Trang thiết bị y tế">
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 mb-3 fw-bold">01. CƠ SỞ VẬT CHẤT</span>
+                <h3 class="fw-bold mb-4">Trang thiết bị chuẩn Châu Âu</h3>
+                <p class="text-muted fs-5">Sở hữu hệ thống phòng mổ vô khuẩn một chiều chuẩn y tế quốc gia, máy chụp MRI thế hệ mới, CT đa lát cắt và hệ thống xét nghiệm tự động hóa 100% giúp các bác sĩ đưa ra kết quả chẩn đoán chính xác tuyệt đối trong thời gian ngắn nhất.</p>
+            </div>
+        </div>
+
+        <div class="row align-items-center g-5 flex-lg-row-reverse mb-5 pb-5">
+            <div class="col-lg-6" data-aos="fade-left">
+                <img src="/Images/about/about-it.jpg" class="img-rounded-lg shadow-lg" alt="Công nghệ y tế">
+            </div>
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2 mb-3 fw-bold">02. CHUYỂN ĐỔI SỐ</span>
+                <h3 class="fw-bold mb-4">Hệ thống quản lý Smart-Hospital</h3>
+                <p class="text-muted fs-5">Tự hào là bệnh viện tiên phong triển khai bệnh án điện tử (EMR) và quy trình không giấy tờ. Bệnh nhân có thể tra cứu hồ sơ, đặt lịch khám, chọn đích danh chuyên gia thông qua nền tảng trực tuyến cực kỳ bảo mật và tiện lợi.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-dark text-white" style="background: url('/Images/about/about-hero.jpg') no-repeat center center; background-size: cover; background-attachment: fixed; position: relative;">
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-primary opacity-85"></div>
+    <div class="container py-5 position-relative z-1">
+        <div class="row text-center g-4">
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="100">
+                <i class="bi bi-hospital display-4 mb-3 text-warning"></i>
+                <h2 class="display-4 fw-bold"><span class="counter" data-target="@Model.ThongKe.TongSoKhoa">0</span>+</h2>
+                <p class="fs-5 mb-0">Chuyên Khoa</p>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="200">
+                <i class="bi bi-person-heart display-4 mb-3 text-warning"></i>
+                <h2 class="display-4 fw-bold"><span class="counter" data-target="@Model.ThongKe.TongSoNhanVien">0</span>+</h2>
+                <p class="fs-5 mb-0">Y Bác Sĩ & Cán Bộ</p>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="300">
+                <i class="bi bi-activity display-4 mb-3 text-warning"></i>
+                <h2 class="display-4 fw-bold"><span class="counter" data-target="@Model.ThongKe.TongLuotKham">0</span>+</h2>
+                <p class="fs-5 mb-0">Lượt Khám/Năm</p>
+            </div>
+            <div class="col-6 col-md-3" data-aos="zoom-in" data-aos-delay="400">
+                <i class="bi bi-emoji-smile display-4 mb-3 text-warning"></i>
+                <h2 class="display-4 fw-bold"><span class="counter" data-target="98">0</span>%</h2>
+                <p class="fs-5 mb-0">Hài Lòng Dịch Vụ</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 mt-5">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-subtitle text-danger fw-bold text-uppercase tracking-wider">Niềm tự hào</span>
+            <h2 class="fw-bold text-dark display-6 mt-2 mb-3">Thành Tựu & Giải Thưởng</h2>
+            <div class="section-line mx-auto bg-danger"></div>
+            <p class="text-muted fs-5 mx-auto mt-4" style="max-width: 800px;">Nỗ lực không ngừng được ghi nhận bằng sự tin tưởng của người bệnh và các giải thưởng uy tín từ các tổ chức chuyên môn.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-5" data-aos="fade-up" data-aos-delay="100">
+                <div class="card p-5 border-0 shadow-sm rounded-4 h-100 bg-white hover-up">
+                    <div class="bg-danger-subtle text-danger rounded p-3 mb-4 d-inline-flex mx-auto"><i class="bi bi-award fs-1"></i></div>
+                    <h4 class="fw-bold mb-3 text-center">Chứng nhận ISO 9001:2015</h4>
+                    <p class="text-muted text-center">Hệ thống quản lý chất lượng bệnh viện MedicHub được đánh giá và cấp chứng chỉ đạt chuẩn quốc tế trong quy trình vận hành và chăm sóc người bệnh.</p>
+                </div>
+            </div>
+            <div class="col-md-5" data-aos="fade-up" data-aos-delay="200">
+                <div class="card p-5 border-0 shadow-sm rounded-4 h-100 bg-white hover-up">
+                    <div class="bg-primary-subtle text-primary rounded p-3 mb-4 d-inline-flex mx-auto"><i class="bi bi-trophy fs-1"></i></div>
+                    <h4 class="fw-bold mb-3 text-center">Giải thưởng Chuyển Đổi Số</h4>
+                    <p class="text-muted text-center">Vinh dự nhận giải thưởng bệnh viện thông minh xuất sắc nhất năm 2026 nhờ ứng dụng hệ thống quản lý đặt lịch và hồ sơ bệnh án điện tử liền mạch.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light border-top border-bottom">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4 mb-5" data-aos="fade-right">
+                <h2 class="fw-bold display-6 mb-4">Hành Trình <br><span class="text-gradient">Phát Triển</span></h2>
+                <p class="text-muted fs-5">Từ một phòng khám nhỏ, MedicHub đã vươn lên thành một trong những điểm sáng y tế của khu vực.</p>
+            </div>
+            <div class="col-lg-7 offset-lg-1" data-aos="fade-left">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">2015</div>
+                        <h5 class="fw-bold">Thành lập Phòng khám Đa khoa MedicHub</h5>
+                        <p class="text-muted">Đặt viên gạch đầu tiên với các chuyên khoa mũi nhọn, phục vụ nhu cầu khám chữa bệnh khẩn thiết của người dân.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2020</div>
+                        <h5 class="fw-bold">Nâng cấp thành Bệnh viện Tiêu chuẩn</h5>
+                        <p class="text-muted">Đầu tư quy mô lớn vào cơ sở hạ tầng, mở rộng lên quy mô 100+ giường bệnh nội trú và nhập khẩu thiết bị cận lâm sàng hiện đại.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">2026</div>
+                        <h5 class="fw-bold">Triển khai nền tảng Smart-Hospital</h5>
+                        <p class="text-muted">Chính thức số hóa toàn bộ hệ thống đăng ký khám chữa bệnh, mang đến trải nghiệm không xếp hàng, không giấy tờ cực kỳ tiện ích.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container py-5 text-center">
+        <span class="section-subtitle text-success fw-bold text-uppercase tracking-wider">Thiện nguyện</span>
+        <h2 class="fw-bold display-6 mb-3 mt-2" data-aos="fade-up">Trách Nhiệm Cộng Đồng</h2>
+        <div class="section-line mx-auto bg-success"></div>
+        <p class="text-muted mb-5 mx-auto mt-4" style="max-width: 600px;" data-aos="fade-up" data-aos-delay="100">Hoạt động chuyên môn luôn song hành cùng trách nhiệm xã hội. Mang sức khỏe và nụ cười đến với những nơi khó khăn nhất.</p>
+
+        <div class="row g-3">
+            <div class="col-md-8" data-aos="fade-right" data-aos-delay="200">
+                <img src="/Images/about/csr-1.jpg" class="img-rounded-lg shadow h-100" style="min-height: 300px; object-fit: cover;" alt="Hoạt động cộng đồng">
+            </div>
+            <div class="col-md-4 d-flex flex-column gap-3" data-aos="fade-left" data-aos-delay="300">
+                <img src="/Images/about/csr-2.jpg" class="img-rounded-lg shadow flex-grow-1" style="object-fit: cover;" alt="Khám từ thiện">
+                <img src="/Images/about/csr-3.jpg" class="img-rounded-lg shadow flex-grow-1" style="object-fit: cover;" alt="Trao quà">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-4 bg-white border-top border-bottom">
+    <div class="container text-center mb-3 pt-3">
+        <h6 class="text-muted fw-bold tracking-wide text-uppercase border border-primary-subtle d-inline-flex px-3 py-2 rounded-pill bg-light">Bảo lãnh viện phí cùng các Đối tác Bảo hiểm uy tín</h6>
+    </div>
+    <div class="marquee-container mt-3">
+        <div class="marquee-content">
+            <img src="/Images/insurance/baoviet.png" alt="Bảo Việt">
+            <img src="/Images/insurance/manulife.png" alt="Manulife">
+            <img src="/Images/insurance/prudential.png" alt="Prudential">
+            <img src="/Images/insurance/aia.png" alt="AIA">
+            <img src="/Images/insurance/daiichi.png" alt="Dai-ichi">
+
+            <img src="/Images/insurance/baoviet.png" alt="Bảo Việt">
+            <img src="/Images/insurance/manulife.png" alt="Manulife">
+            <img src="/Images/insurance/prudential.png" alt="Prudential">
+            <img src="/Images/insurance/aia.png" alt="AIA">
+            <img src="/Images/insurance/daiichi.png" alt="Dai-ichi">
+        </div>
+    </div>
+</section>
+
+<section class="py-5" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); color: white;">
+    <div class="container py-5 text-center" data-aos="zoom-in">
+        <h2 class="display-5 fw-bold mb-4">Sẵn Sàng Chăm Sóc Bạn</h2>
+        <p class="lead mb-5 opacity-75">Hệ thống MedicHub luôn trực tuyến 24/7. Hãy chọn chuyên gia và đặt lịch ngay để chúng tôi có cơ hội phục vụ bạn.</p>
+        <a href="@Url.Action("DatLich", "Home")" class="btn btn-warning btn-lg fw-bold rounded-pill px-5 shadow-lg text-dark hover-up" style="transform: scale(1.1);">
+            <i class="bi bi-calendar-check me-2"></i> ĐẶT LỊCH KHÁM
+        </a>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // SCRIPT: HIỆU ỨNG ĐẾM SỐ (COUNT UP) KHI CUỘN CHUỘT TỚI
+        $(document).ready(function () {
+            let hasCounted = false;
+
+            $(window).scroll(function () {
+                // Kiểm tra xem trang có phần tử counter không để tránh lỗi
+                if ($('.counter').length === 0) return;
+
+                let oTop = $('.counter').offset().top - window.innerHeight;
+                if (hasCounted === false && $(window).scrollTop() > oTop) {
+                    $('.counter').each(function () {
+                        let $this = $(this),
+                            countTo = $this.attr('data-target');
+                        $({ countNum: 0 }).animate({
+                            countNum: countTo
+                        },
+                            {
+                                duration: 3500, // Tốc độ chạy số
+                                easing: 'swing',
+                                step: function () {
+                                    $this.text(Math.floor(this.countNum));
+                                },
+                                complete: function () {
+                                    $this.text(this.countNum);
+                                }
+                            });
+                    });
+                    hasCounted = true;
+                }
+            });
+        });
+    </script>
+}

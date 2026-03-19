@@ -133,12 +133,5 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public List<NhanVienManageViewModel> DanhSachNhanVien { get; set; }
         public List<NhanVienManageViewModel> DanhSachNhanVienKhaDung { get; set; } // NV chưa có phòng để thêm vào
     }
-    public class BacSiClientViewModel
-    {
-        public string MaNV { get; set; }
-        public string HoTen { get; set; }
-        public string TenChucVu { get; set; }
-        public string TenKhoa { get; set; }
-        public string HinhAnh { get; set; }
-    }
+    
 }

@@ -18,15 +18,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         }
 
         // =========================================================
-        // 1. TRANG GIỚI THIỆU
-        // =========================================================
-        public ActionResult GioiThieu()
-        {
-            // Nếu rảnh bác truyền biến thống kê qua đây cho View Giới thiệu hiển thị, không thì để trống trả về View()
-            return View();
-        }
-
-        // =========================================================
         // TRANG ĐỘI NGŨ BÁC SĨ (AJAX + Partial View)
         // =========================================================
         public ActionResult BacSi(string searchString, string khoa, int page = 1)
@@ -82,6 +73,19 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             // Gọi DB lấy toàn bộ các Khoa
             var danhSachKhoa = db.GetAllKhoa();
             return View(danhSachKhoa);
+        }
+
+
+        // =========================================================
+        // TRANG GIỚI THIỆU (VỀ CHÚNG TÔI)
+        // =========================================================
+        public ActionResult GioiThieu()
+        {
+            // Gọi hàm kéo thông tin Giám đốc và Thống kê từ DB
+            var model = db.GetGioiThieuData();
+
+            // Trả Model ra View để render
+            return View(model);
         }
     }
 }
