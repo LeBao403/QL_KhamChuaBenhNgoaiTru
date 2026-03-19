@@ -21,6 +21,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public int? MaTK { get; set; }
         public int? MaPhong { get; set; }
         public int? MaKhoa { get; set; }
+        public string HinhAnh { get; set; }
     }
 
     public class ChucVu
@@ -131,5 +132,13 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public PhongManageViewModel Phong { get; set; }
         public List<NhanVienManageViewModel> DanhSachNhanVien { get; set; }
         public List<NhanVienManageViewModel> DanhSachNhanVienKhaDung { get; set; } // NV chưa có phòng để thêm vào
+    }
+    public class BacSiClientViewModel
+    {
+        public string MaNV { get; set; }
+        public string HoTen { get; set; }
+        public string TenChucVu { get; set; }
+        public string TenKhoa { get; set; }
+        public string HinhAnh { get; set; }
     }
 }

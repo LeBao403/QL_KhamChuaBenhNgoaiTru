@@ -176,6 +176,22 @@
     <Content Include="Images\banner-slide-1.jpg" />
     <Content Include="Images\banner-slide-2.jpg" />
     <Content Include="Images\banner-slide-3.jpg" />
+    <Content Include="Images\doctors\nv001.jpg" />
+    <Content Include="Images\doctors\nv003.jpg" />
+    <Content Include="Images\doctors\nv004.jpg" />
+    <Content Include="Images\doctors\nv005.jpg" />
+    <Content Include="Images\doctors\nv006.jpg" />
+    <Content Include="Images\doctors\nv007.jpg" />
+    <Content Include="Images\doctors\nv008.jpg" />
+    <Content Include="Images\doctors\nv009.jpg" />
+    <Content Include="Images\doctors\nv010.jpg" />
+    <Content Include="Images\doctors\nv034.jpg" />
+    <Content Include="Images\doctors\nv035.jpg" />
+    <Content Include="Images\doctors\nv036.jpg" />
+    <Content Include="Images\doctors\nv037.jpg" />
+    <Content Include="Images\doctors\nv038.jpg" />
+    <Content Include="Images\doctors\nv039.jpg" />
+    <Content Include="Images\doctors\nv_bao.jpg" />
     <Content Include="Images\feedback-cover.jpg" />
     <Content Include="Images\news-1.jpg" />
     <Content Include="Images\news-2.jpg" />
@@ -234,6 +250,9 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_Layout_Pagination.cshtml" />
+    <Content Include="Views\Home\BacSi.cshtml" />
+    <Content Include="Views\Home\_BacSiList.cshtml" />
+    <Content Include="Views\Home\ChuyenKhoa.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

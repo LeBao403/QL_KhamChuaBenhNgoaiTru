@@ -55,7 +55,8 @@ CREATE TABLE NHANVIEN (
     TrangThai BIT DEFAULT 1, 
     MaTK INT UNIQUE,
     MaKhoa INT NULL,    
-    MaPhong INT NULL
+    MaPhong INT NULL,
+	HinhAnh NVARCHAR(255) NULL
 );
 
 CREATE TABLE TAIKHOAN (

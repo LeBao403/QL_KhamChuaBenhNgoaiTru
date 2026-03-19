@@ -1,0 +1,189 @@
+﻿@model List<QL_KhamChuaBenhNgoaiTru.Models.BacSiClientViewModel>
+@{
+    ViewBag.Title = "Đội ngũ Bác sĩ";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+}
+
+<style>
+    .doctor-hero {
+        background: linear-gradient(135deg, rgba(10, 88, 202, 0.9) 0%, rgba(13, 110, 253, 0.8) 100%), url('https://images.unsplash.com/photo-1551076805-e1869033e561?q=80&w=1200&auto=format&fit=crop') no-repeat center center;
+        background-size: cover;
+        padding: 100px 0 150px 0;
+    }
+
+    .filter-box {
+        background: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-top: -80px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .doctor-card {
+        border: none;
+        transition: all 0.4s ease;
+    }
+
+        .doctor-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(13, 110, 253, 0.15) !important;
+        }
+
+    .doctor-img-wrap {
+        position: relative;
+        height: 300px;
+    }
+
+        .doctor-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            transition: transform 0.5s ease;
+        }
+
+    .doctor-card:hover .doctor-img-wrap img {
+        transform: scale(1.08);
+    }
+
+    .doctor-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(10, 88, 202, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .doctor-card:hover .doctor-overlay {
+        opacity: 1;
+    }
+
+    .badge-specialty {
+        background-color: var(--light-blue);
+        color: var(--primary-blue);
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+    }
+
+    .doctor-stats i {
+        color: #ffc107;
+    }
+</style>
+
+<section class="doctor-hero text-white text-center">
+    <div class="container" data-aos="fade-down">
+        <h1 class="display-4 fw-bold mb-3">Đội Ngũ Chuyên Gia Y Tế</h1>
+        <p class="lead mb-0 text-white-50" style="max-width: 700px; margin: 0 auto;">Hội tụ hơn 200+ Giáo sư, Tiến sĩ, Bác sĩ chuyên khoa đầu ngành với nhiều năm kinh nghiệm, luôn tận tâm vì sức khỏe người bệnh.</p>
+    </div>
+</section>
+
+<section class="pb-5">
+    <div class="container">
+        <div class="filter-box" data-aos="fade-up" data-aos-delay="100">
+            <form id="filterForm" action="@Url.Action("BacSi", "Home")" method="get">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-5">
+                        <label class="form-label fw-bold text-muted small">TÌM KIẾM THEO TÊN</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" id="searchString" name="searchString" value="@ViewBag.CurrentSearch" class="form-control bg-light border-start-0 py-2" placeholder="Nhập tên bác sĩ...">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold text-muted small">CHUYÊN KHOA</label>
+                        <select id="khoa" name="khoa" class="form-select bg-light py-2 text-muted">
+                            <option value="">-- Tất cả chuyên khoa --</option>
+                            <option value="Nội" @(ViewBag.CurrentKhoa == "Nội" ? "selected" : "")>Khoa Nội</option>
+                            <option value="Ngoại" @(ViewBag.CurrentKhoa == "Ngoại" ? "selected" : "")>Khoa Ngoại</option>
+                            <option value="Nhi" @(ViewBag.CurrentKhoa == "Nhi" ? "selected" : "")>Khoa Nhi</option>
+                            <option value="Sản" @(ViewBag.CurrentKhoa == "Sản" ? "selected" : "")>Khoa Sản</option>
+                            <option value="RHM" @(ViewBag.CurrentKhoa == "RHM" ? "selected" : "")>Răng Hàm Mặt</option>
+                            <option value="TMH" @(ViewBag.CurrentKhoa == "TMH" ? "selected" : "")>Tai Mũi Họng</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mt-md-4 pt-md-2 text-md-end text-center">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 fw-bold w-100">
+                            <i class="bi bi-funnel me-2"></i> Lọc Bác Sĩ
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container">
+        <div id="doctor-result">
+            @Html.Partial("_BacSiList", Model)
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            // Hàm gọi AJAX cập nhật thẻ div #doctor-result
+            function loadData(url, data) {
+                // Thêm hiệu ứng mờ đi khi đang tải
+                $('#doctor-result').css('opacity', '0.5');
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    data: data,
+                    success: function (result) {
+                        $('#doctor-result').html(result);
+                        $('#doctor-result').css('opacity', '1');
+                    },
+                    error: function () {
+                        alert("Đã xảy ra lỗi khi tải dữ liệu.");
+                        $('#doctor-result').css('opacity', '1');
+                    }
+                });
+            }
+
+            // 1. AJAX KHI BẤM NÚT TÌM KIẾM HOẶC NHẤN ENTER
+            $('#filterForm').submit(function (e) {
+                e.preventDefault();
+                loadData($(this).attr('action'), $(this).serialize());
+            });
+
+            // 2. LIVE FILTER: LỌC NGAY KHI ĐỔI DROPDOWN KHOA
+            $('#khoa').change(function () {
+                $('#filterForm').submit();
+            });
+
+            // 3. LIVE SEARCH: GÕ TỚI ĐÂU LỌC TỚI ĐÓ (Delay 500ms chống lag)
+            var typingTimer;
+            $('#searchString').on('keyup', function () {
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(function () {
+                    $('#filterForm').submit();
+                }, 500);
+            });
+
+            // 4. AJAX KHI BẤM CHUYỂN TRANG
+            $(document).on('click', '.ajax-page', function (e) {
+                e.preventDefault();
+                var url = $(this).attr('href');
+                if (url && url !== '#') {
+                    loadData(url, null);
+                    // Cuộn mượt lên đầu danh sách bác sĩ
+                    $('html, body').animate({
+                        scrollTop: $("#doctor-result").offset().top - 150
+                    }, 500);
+                }
+            });
+        });
+    </script>
+}

@@ -21,11 +21,14 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 ThongKe = new ThongKeHome()
             };
 
+            // Nhớ đổi connectStr thành biến chứa chuỗi kết nối SQL của bác nhé
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
                 conn.Open();
 
+                // =========================================================
                 // 1. LẤY 6 KHOA NỔI BẬT (Đang hoạt động)
+                // =========================================================
                 string sqlKhoa = "SELECT TOP 6 * FROM KHOA WHERE TrangThai = 1 ORDER BY TenKhoa";
                 using (SqlCommand cmd = new SqlCommand(sqlKhoa, conn))
                 {
@@ -43,52 +46,60 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     }
                 }
 
-                // 2. LẤY 6 BÁC SĨ TIÊU BIỂU
-                // (Ưu tiên lấy những người có chức vụ chứa chữ 'Bác sĩ', nếu không có thì lấy nhân viên bình thường)
+                // =========================================================
+                // 2. LẤY 6 BÁC SĨ TIÊU BIỂU (CÓ LẤY CỘT HINHANH TỪ DB)
+                // =========================================================
                 string sqlBacSi = @"
-                    SELECT TOP 6 NV.MaNV, NV.HoTen, CV.TenChucVu, K.TenKhoa 
-                    FROM NHANVIEN NV
-                    LEFT JOIN CHUCVU CV ON NV.MaChucVu = CV.MaChucVu
-                    LEFT JOIN KHOA K ON NV.MaKhoa = K.MaKhoa
-                    WHERE NV.TrangThai = 1 AND (CV.TenChucVu LIKE N'%Bác sĩ%' OR CV.TenChucVu IS NOT NULL)
-                    ORDER BY NV.MaNV";
+            SELECT TOP 6 NV.MaNV, NV.HoTen, CV.TenChucVu, K.TenKhoa, NV.HinhAnh 
+            FROM NHANVIEN NV
+            LEFT JOIN CHUCVU CV ON NV.MaChucVu = CV.MaChucVu
+            LEFT JOIN KHOA K ON NV.MaKhoa = K.MaKhoa
+            WHERE NV.TrangThai = 1 
+              AND (CV.TenChucVu LIKE N'%Bác sĩ%' OR CV.TenChucVu LIKE N'%Giám đốc%' OR CV.TenChucVu LIKE N'%Trưởng khoa%')
+            ORDER BY NV.MaNV";
 
-                // Mảng chứa vài link ảnh bác sĩ ngẫu nhiên trên mạng để làm đẹp UI
-                string[] anhBacSi = {
-                    "https://img.freepik.com/free-photo/smiling-asian-male-doctor-pointing-upwards_1262-18321.jpg",
-                    "https://img.freepik.com/free-photo/pleased-young-female-doctor-wearing-medical-robe-stethoscope-around-neck-standing-with-closed-posture_409827-254.jpg",
-                    "https://img.freepik.com/free-photo/portrait-smiling-handsome-male-doctor-man_171337-5055.jpg",
-                    "https://img.freepik.com/free-photo/asian-female-doctor-smiling-looking-camera_1262-18320.jpg",
-                    "https://img.freepik.com/free-photo/handsome-smiling-medical-professional-examining-with-stethoscope-isolated-white_662251-404.jpg",
-                    "https://img.freepik.com/free-photo/beautiful-young-female-doctor-looking-camera-office_1301-7807.jpg"
-                };
-
-                int imgIndex = 0;
                 using (SqlCommand cmd = new SqlCommand(sqlBacSi, conn))
                 {
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
                         {
+                            // Xử lý đường dẫn ảnh từ Database
+                            string imgFileName = dr["HinhAnh"]?.ToString();
+                            string imgPath = "";
+
+                            if (!string.IsNullOrEmpty(imgFileName))
+                            {
+                                // Nối thư mục local vào tên file (vd: /Images/doctors/nv001.jpg)
+                                imgPath = $"/Images/doctors/{imgFileName}";
+                            }
+                            else
+                            {
+                                // Ảnh mặc định nếu CSDL của ông bác sĩ này bị trống
+                                imgPath = "/Images/default-doctor.png";
+                            }
+
+                            // Thêm bác sĩ vào List
                             model.DanhSachBacSi.Add(new BacSiHome
                             {
                                 MaNV = dr["MaNV"].ToString(),
                                 HoTen = dr["HoTen"].ToString(),
                                 TenChucVu = dr["TenChucVu"] != DBNull.Value ? dr["TenChucVu"].ToString() : "Chuyên gia Y tế",
                                 TenKhoa = dr["TenKhoa"] != DBNull.Value ? dr["TenKhoa"].ToString() : "Khoa Khám bệnh",
-                                HinhAnh = anhBacSi[imgIndex % anhBacSi.Length] // Gắn ảnh random xoay vòng
+                                HinhAnh = imgPath 
                             });
-                            imgIndex++;
                         }
                     }
                 }
 
+                // =========================================================
                 // 3. LẤY THỐNG KÊ (Đếm trực tiếp từ DB)
+                // =========================================================
                 string sqlStat = @"
-                    SELECT 
-                        (SELECT COUNT(*) FROM KHOA WHERE TrangThai = 1) AS TongKhoa,
-                        (SELECT COUNT(*) FROM PHONG WHERE TrangThai = 1) AS TongPhong,
-                        (SELECT COUNT(*) FROM NHANVIEN WHERE TrangThai = 1) AS TongNV";
+            SELECT 
+                (SELECT COUNT(*) FROM KHOA WHERE TrangThai = 1) AS TongKhoa,
+                (SELECT COUNT(*) FROM PHONG WHERE TrangThai = 1) AS TongPhong,
+                (SELECT COUNT(*) FROM NHANVIEN WHERE TrangThai = 1) AS TongNV";
 
                 using (SqlCommand cmd = new SqlCommand(sqlStat, conn))
                 {
@@ -99,13 +110,95 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             model.ThongKe.TongSoKhoa = Convert.ToInt32(dr["TongKhoa"]);
                             model.ThongKe.TongSoPhong = Convert.ToInt32(dr["TongPhong"]);
                             model.ThongKe.TongSoNhanVien = Convert.ToInt32(dr["TongNV"]);
-                            model.ThongKe.TongLuotKham = 5420; // Hardcode một số đẹp vì chưa có bảng phiếu khám
+                            model.ThongKe.TongLuotKham = 5420; // Hardcode một số lượt khám cho đẹp
                         }
                     }
                 }
             }
 
             return model;
+        }
+
+        // ====================================================================
+        // 1. HÀM LẤY TOÀN BỘ DANH SÁCH BÁC SĨ (Dành cho trang Đội ngũ Bác sĩ)
+        // ====================================================================
+        public List<BacSiClientViewModel> GetAllBacSi()
+        {
+            List<BacSiClientViewModel> list = new List<BacSiClientViewModel>();
+
+            using (SqlConnection con = new SqlConnection(connectStr))
+            {
+                con.Open();
+                string sql = @"
+            SELECT nv.MaNV, nv.HoTen, cv.TenChucVu, k.TenKhoa, nv.HinhAnh
+            FROM NhanVien nv 
+            LEFT JOIN ChucVu cv ON nv.MaChucVu = cv.MaChucVu 
+            LEFT JOIN Khoa k ON nv.MaKhoa = k.MaKhoa 
+            WHERE cv.TenChucVu LIKE N'%Bác sĩ%' 
+               OR cv.TenChucVu LIKE N'%Trưởng khoa%'
+               OR cv.TenChucVu LIKE N'%Giám đốc%'";
+
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    using (SqlDataReader rd = cmd.ExecuteReader())
+                    {
+                        while (rd.Read())
+                        {
+                            BacSiClientViewModel bs = new BacSiClientViewModel();
+                            bs.MaNV = rd["MaNV"]?.ToString();
+                            bs.HoTen = rd["HoTen"]?.ToString();
+                            bs.TenChucVu = rd["TenChucVu"]?.ToString() != "" ? rd["TenChucVu"].ToString() : "Bác sĩ chuyên khoa";
+                            bs.TenKhoa = rd["TenKhoa"]?.ToString() != "" ? rd["TenKhoa"].ToString() : "Đa khoa";
+
+                            // --- XỬ LÝ HÌNH ẢNH GHÉP CHUỖI ---
+                            string imgFileName = rd["HinhAnh"]?.ToString();
+
+                            if (!string.IsNullOrEmpty(imgFileName))
+                            {
+                                // Ghép thư mục vào trước tên file đã lưu trong SQL
+                                bs.HinhAnh = $"/Images/doctors/{imgFileName}";
+                            }
+                            else
+                            {
+                                // Sinh avatar ảo nếu DB bị null
+                                bs.HinhAnh = "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(bs.HoTen) + "&background=0d6efd&color=fff&size=300";
+                            }
+
+                            list.Add(bs);
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+        // ====================================================================
+        // 2. HÀM LẤY TOÀN BỘ CHUYÊN KHOA (Dành cho trang Chuyên khoa)
+        // ====================================================================
+        public List<Khoa> GetAllKhoa()
+        {
+            List<Khoa> list = new List<Khoa>();
+            using (SqlConnection con = new SqlConnection(connectStr))
+            {
+                con.Open();
+                string sql = "SELECT MaKhoa, TenKhoa, MoTa FROM Khoa WHERE TrangThai = 1"; // Chỉ lấy khoa đang hoạt động
+
+                using (SqlCommand cmd = new SqlCommand(sql, con))
+                {
+                    using (SqlDataReader rd = cmd.ExecuteReader())
+                    {
+                        while (rd.Read())
+                        {
+                            Khoa k = new Khoa();
+                            k.MaKhoa = Convert.ToInt32(rd["MaKhoa"]);
+                            k.TenKhoa = rd["TenKhoa"].ToString();
+                            k.MoTa = rd["MoTa"].ToString();
+                            list.Add(k);
+                        }
+                    }
+                }
+            }
+            return list;
         }
     }
 }

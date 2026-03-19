@@ -1,0 +1,81 @@
+﻿@model List<QL_KhamChuaBenhNgoaiTru.Models.BacSiClientViewModel>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-dark mb-0">Danh sách Bác sĩ</h4>
+    <span class="text-muted">Tìm thấy <strong class="text-primary">@ViewBag.TotalItems</strong> bác sĩ</span>
+</div>
+
+<div class="row g-4">
+    @if (Model != null && Model.Count > 0)
+    {
+        int delay = 0;
+        foreach (var bs in Model)
+        {
+            <div class="col-sm-6 col-lg-3">
+                <div class="doctor-card d-flex flex-column shadow-sm rounded-4 bg-white hover-up overflow-hidden h-100">
+                    <div class="doctor-img-wrap">
+                        <img src="@bs.HinhAnh" alt="@bs.HoTen" onerror="this.src='https://ui-avatars.com/api/?name=@Uri.EscapeDataString(bs.HoTen)&background=0d6efd&color=fff&size=300'">
+                        <div class="doctor-overlay">
+                            <a href="@Url.Action("DatLich", "Home", new { idBs = bs.MaNV })" class="btn btn-light rounded-pill fw-bold text-primary px-4 shadow-lg hover-up">
+                                <i class="bi bi-calendar-check me-2"></i> Đặt lịch ngay
+                            </a>
+                        </div>
+                    </div>
+                    <div class="p-4 text-center d-flex flex-column flex-grow-1">
+                        <span class="badge-specialty mx-auto mb-3">@bs.TenKhoa</span>
+                        <h5 class="fw-bold text-dark mb-1">@bs.HoTen</h5>
+                        <p class="text-muted small mb-3">@bs.TenChucVu</p>
+                        <div class="doctor-stats mb-3 mt-auto">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                            <span class="text-muted small ms-1">(4.8/5)</span>
+                        </div>
+                        <hr class="border-secondary opacity-25 mt-0 mb-3">
+                        <a href="#" class="text-primary text-decoration-none fw-bold small text-uppercase tracking-wide hover-up">
+                            Xem hồ sơ <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            delay += 50;
+        }
+    }
+    else
+    {
+        <div class="col-12 text-center py-5 my-5">
+            <i class="bi bi-search text-muted opacity-25" style="font-size: 5rem;"></i>
+            <h3 class="text-muted mt-3 fw-bold">Không tìm thấy bác sĩ</h3>
+            <p class="text-secondary mb-4">Vui lòng thử lại với từ khóa khác hoặc xóa bộ lọc.</p>
+            <button type="button" class="btn btn-outline-primary rounded-pill px-4 fw-bold" onclick="$('#searchString').val(''); $('#khoa').val(''); $('#filterForm').submit();">
+                <i class="bi bi-arrow-clockwise me-1"></i> Làm mới danh sách
+            </button>
+        </div>
+    }
+</div>
+
+@if (ViewBag.TotalPages > 1)
+{
+    <nav aria-label="Page navigation" class="mt-5">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link border-0 shadow-sm rounded-circle m-1 d-flex align-items-center justify-content-center ajax-page"
+                   href="@Url.Action("BacSi", new { page = ViewBag.CurrentPage - 1, searchString = ViewBag.CurrentSearch, khoa = ViewBag.CurrentKhoa })"
+                   style="width: 40px; height: 40px;"><i class="bi bi-chevron-left"></i></a>
+            </li>
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link border-0 shadow-sm rounded-circle m-1 d-flex align-items-center justify-content-center text-dark ajax-page"
+                       href="@Url.Action("BacSi", new { page = i, searchString = ViewBag.CurrentSearch, khoa = ViewBag.CurrentKhoa })"
+                       style="width: 40px; height: 40px;">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                <a class="page-link border-0 shadow-sm rounded-circle m-1 d-flex align-items-center justify-content-center text-dark ajax-page"
+                   href="@Url.Action("BacSi", new { page = ViewBag.CurrentPage + 1, searchString = ViewBag.CurrentSearch, khoa = ViewBag.CurrentKhoa })"
+                   style="width: 40px; height: 40px;"><i class="bi bi-chevron-right"></i></a>
+            </li>
+        </ul>
+    </nav>
+}

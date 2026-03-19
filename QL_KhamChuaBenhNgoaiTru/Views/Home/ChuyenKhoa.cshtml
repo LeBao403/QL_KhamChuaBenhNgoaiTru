@@ -1,0 +1,193 @@
+﻿@model List<QL_KhamChuaBenhNgoaiTru.Models.Khoa>
+@{
+    ViewBag.Title = "Danh sách Chuyên khoa";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+}
+
+<style>
+    .specialty-hero {
+        background: linear-gradient(135deg, rgba(20, 90, 50, 0.9) 0%, rgba(25, 135, 84, 0.8) 100%), url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=1200&auto=format&fit=crop') no-repeat center center;
+        background-size: cover;
+        padding: 100px 0 100px 0;
+    }
+
+    .specialty-card {
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 1rem;
+        transition: all 0.3s ease;
+        background-color: #fff;
+        height: 100%;
+        overflow: hidden;
+    }
+
+        .specialty-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(25, 135, 84, 0.15);
+            border-color: rgba(25, 135, 84, 0.2);
+        }
+
+    .icon-box {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .specialty-card:hover .icon-box {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* Các màu icon khác nhau cho sinh động */
+    .icon-red {
+        background: #ffe5e5;
+        color: #dc3545;
+    }
+
+    .icon-blue {
+        background: #e5f1ff;
+        color: #0d6efd;
+    }
+
+    .icon-green {
+        background: #e5f6ed;
+        color: #198754;
+    }
+
+    .icon-purple {
+        background: #f0e5ff;
+        color: #6f42c1;
+    }
+
+    .icon-orange {
+        background: #fff0e5;
+        color: #fd7e14;
+    }
+
+    .icon-teal {
+        background: #e5faf8;
+        color: #20c997;
+    }
+</style>
+
+<section class="specialty-hero text-white text-center">
+    <div class="container" data-aos="fade-down">
+        <h1 class="display-4 fw-bold mb-3">Chuyên Khoa Y Tế</h1>
+        <p class="lead mb-0 text-white-50" style="max-width: 700px; margin: 0 auto;">Hệ thống chuyên khoa đa dạng, đáp ứng đầy đủ nhu cầu khám chữa bệnh với trang thiết bị hiện đại và phác đồ điều trị chuẩn quốc tế.</p>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-4">
+
+        <div class="text-center section-title-wrapper mb-5" data-aos="fade-up">
+            <span class="section-subtitle text-success">Viện & Trung tâm</span>
+            <h2 class="fw-bold text-dark mt-2 display-6">Khám Phá Các Chuyên Khoa</h2>
+            <div class="section-line bg-success"></div>
+        </div>
+
+        <div class="row justify-content-center mb-5" data-aos="fade-up" data-aos-delay="100">
+            <div class="col-md-6">
+                <div class="input-group shadow-sm rounded-pill overflow-hidden border bg-white">
+                    <span class="input-group-text bg-transparent border-0 ps-4"><i class="bi bi-search text-muted fs-5"></i></span>
+                    <input type="text" id="searchKhoaInput" class="form-control border-0 py-3 shadow-none fw-bold" placeholder="Nhập tên chuyên khoa (VD: Nội, Nhi, Răng...)">
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4" id="khoaContainer">
+            @if (Model != null && Model.Count > 0)
+            {
+                int delay = 0;
+                string[] colors = { "icon-red", "icon-blue", "icon-green", "icon-purple", "icon-orange", "icon-teal" };
+                int colorIndex = 0;
+
+                foreach (var khoa in Model)
+                {
+                    // Tự động gán Icon Bootstrap cho phù hợp với tên khoa
+                    string iconClass = "bi-heart-pulse"; // Mặc định
+                    if (khoa.TenKhoa.ToLower().Contains("nhi")) { iconClass = "bi-balloon"; }
+                    else if (khoa.TenKhoa.ToLower().Contains("sản")) { iconClass = "bi-gender-female"; }
+                    else if (khoa.TenKhoa.ToLower().Contains("răng") || khoa.TenKhoa.ToLower().Contains("rhm")) { iconClass = "bi-emoji-smile"; }
+                    else if (khoa.TenKhoa.ToLower().Contains("mắt")) { iconClass = "bi-eye"; }
+                    else if (khoa.TenKhoa.ToLower().Contains("ngoại")) { iconClass = "bi-bandaid"; }
+                    else if (khoa.TenKhoa.ToLower().Contains("tai mũi họng") || khoa.TenKhoa.ToLower().Contains("tmh")) { iconClass = "bi-ear"; }
+                    else if (khoa.TenKhoa.ToLower().Contains("dược")) { iconClass = "bi-capsule"; }
+                    else if (khoa.TenKhoa.ToLower().Contains("xét nghiệm")) { iconClass = "bi-droplet-half"; }
+
+                    <div class="col-md-6 col-lg-4 khoa-item" data-aos="fade-up" data-aos-delay="@delay">
+                        <div class="specialty-card p-4 d-flex flex-column">
+                            <div class="icon-box @colors[colorIndex] shadow-sm">
+                                <i class="bi @iconClass"></i>
+                            </div>
+
+                            <h4 class="fw-bold text-dark mb-3">@khoa.TenKhoa</h4>
+
+                            <p class="text-muted line-clamp-3 flex-grow-1 mb-4" style="line-height: 1.6;">
+                                @(string.IsNullOrEmpty(khoa.MoTa) ? "Chuyên khoa mũi nhọn được đầu tư trang thiết bị hiện đại, đội ngũ y bác sĩ tận tâm, mang lại hiệu quả điều trị cao nhất cho bệnh nhân." : khoa.MoTa)
+                            </p>
+
+                            <hr class="border-secondary opacity-10 mb-3">
+
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <a href="@Url.Action("BacSi", "Home", new { khoa = khoa.TenKhoa })" class="btn btn-outline-success rounded-pill px-4 btn-sm fw-bold">
+                                    <i class="bi bi-people me-1"></i> Xem Bác sĩ
+                                </a>
+
+                                <a href="@Url.Action("DatLich", "Home", new { khoa = khoa.TenKhoa })" class="text-success text-decoration-none fw-bold small hover-up">
+                                    Đặt khám <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    delay += 50;
+                    colorIndex = (colorIndex + 1) % colors.Length;
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-5">
+                    <h4 class="text-muted">Chưa có thông tin chuyên khoa nào!</h4>
+                </div>
+            }
+        </div>
+
+    </div>
+</section>
+
+<section class="py-5 bg-white border-top">
+    <div class="container text-center" data-aos="zoom-in">
+        <h3 class="fw-bold mb-3">Bạn chưa biết mình cần khám chuyên khoa nào?</h3>
+        <p class="text-muted mb-4">Đừng lo lắng, hãy liên hệ với chúng tôi để được tư vấn tổng quát và chỉ định khoa khám phù hợp nhất.</p>
+        <a href="tel:19006789" class="btn btn-warning btn-lg rounded-pill px-5 fw-bold shadow-sm">
+            <i class="bi bi-telephone-inbound me-2"></i> Gọi Tư Vấn: 1900 6789
+        </a>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function(){
+            // Live search chuyên khoa (Client-side)
+            $("#searchKhoaInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $(".khoa-item").filter(function() {
+                    // Lọc theo nội dung của thẻ <h4> chứa tên khoa
+                    $(this).toggle($(this).find("h4").text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+    </script>
+}

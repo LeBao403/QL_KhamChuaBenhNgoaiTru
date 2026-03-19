@@ -14,7 +14,6 @@
         </div>
 
         <div class="carousel-inner">
-
             <div class="carousel-item active" style="background: linear-gradient(135deg, #0a58ca 0%, #0d6efd 100%); padding: 120px 0 200px 0;">
                 <div class="container">
                     <div class="row align-items-center">
@@ -47,7 +46,7 @@
                             <h1 class="display-4 fw-bold mb-4 text-white" style="line-height: 1.2;">Trang thiết bị hiện đại<br />Đạt chuẩn quốc gia</h1>
                             <p class="lead mb-4 text-white-50">Chúng tôi không ngừng nâng cấp cơ sở vật chất, mang đến môi trường khám chữa bệnh an toàn, tiện nghi và hiệu quả nhất.</p>
                             <div class="d-flex gap-3 mt-4">
-                                <a href="#chuyen-khoa" class="btn btn-light btn-lg fw-bold rounded-pill px-4 shadow-lg hover-up text-success">
+                                <a href="@Url.Action("ChuyenKhoa", "Home")" class="btn btn-light btn-lg fw-bold rounded-pill px-4 shadow-lg hover-up text-success">
                                     Khám phá chuyên khoa
                                 </a>
                             </div>
@@ -69,7 +68,7 @@
                             <h1 class="display-4 fw-bold mb-4 text-white" style="line-height: 1.2;">Hơn 200+ Y Bác sĩ<br />Giàu kinh nghiệm</h1>
                             <p class="lead mb-4 text-white-50">Đội ngũ chuyên gia, giáo sư, tiến sĩ đầu ngành luôn sẵn sàng phục vụ và đồng hành cùng sức khỏe của bạn.</p>
                             <div class="d-flex gap-3 mt-4">
-                                <a href="#doi-ngu" class="btn btn-warning btn-lg fw-bold rounded-pill px-4 shadow-lg hover-up text-dark">
+                                <a href="@Url.Action("BacSi", "Home")" class="btn btn-warning btn-lg fw-bold rounded-pill px-4 shadow-lg hover-up text-dark">
                                     Gặp gỡ Bác sĩ
                                 </a>
                             </div>
@@ -80,7 +79,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
@@ -105,7 +103,7 @@
             </a>
         </div>
         <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-            <a href="#doi-ngu" class="text-decoration-none">
+            <a href="@Url.Action("BacSi", "Home")" class="text-decoration-none">
                 <div class="card h-100 border-0 shadow-sm rounded-4 text-center py-4 hover-up">
                     <div class="mb-2 text-success display-5"><i class="bi bi-person-vcard"></i></div>
                     <h6 class="fw-bold text-dark mb-0">Tìm Bác sĩ</h6>
@@ -113,7 +111,7 @@
             </a>
         </div>
         <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
-            <a href="#chuyen-khoa" class="text-decoration-none">
+            <a href="@Url.Action("ChuyenKhoa", "Home")" class="text-decoration-none">
                 <div class="card h-100 border-0 shadow-sm rounded-4 text-center py-4 hover-up">
                     <div class="mb-2 text-info display-5"><i class="bi bi-search"></i></div>
                     <h6 class="fw-bold text-dark mb-0">Tìm Chuyên khoa</h6>
@@ -180,13 +178,19 @@
                                     <h5 class="fw-bold mb-0 text-dark">@khoa.TenKhoa</h5>
                                 </div>
                                 <p class="text-muted small line-clamp-2 mb-4">@(string.IsNullOrEmpty(khoa.MoTa) ? "Chuyên khoa mũi nhọn của bệnh viện, đáp ứng đầy đủ tiêu chuẩn y tế quốc gia." : khoa.MoTa)</p>
-                                <a href="#" class="text-primary text-decoration-none fw-bold">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></a>
+                                <a href="@Url.Action("ChuyenKhoa", "Home")" class="text-primary text-decoration-none fw-bold">Xem chi tiết <i class="bi bi-arrow-right ms-1"></i></a>
                             </div>
                         </div>
                     </div>
                     delay += 100;
                 }
             }
+        </div>
+
+        <div class="text-center mt-5" data-aos="fade-up">
+            <a href="@Url.Action("ChuyenKhoa", "Home")" class="btn btn-outline-success btn-lg rounded-pill px-5 fw-bold hover-up">
+                Xem toàn bộ Chuyên khoa <i class="bi bi-arrow-right ms-2"></i>
+            </a>
         </div>
     </div>
 </section>
@@ -235,7 +239,7 @@
                     <div class="col-sm-6 col-lg-4" data-aos="fade-up" data-aos-delay="@delay">
                         <div class="card card-doctor border-0 shadow-sm rounded-4 hover-up h-100">
                             <div class="img-overflow-hidden">
-                                <img src="@bs.HinhAnh" class="card-img-top w-100" alt="@bs.HoTen">
+                                <img src="@bs.HinhAnh" class="card-img-top w-100" style="height: 350px; object-fit: cover; object-position: top;" alt="@bs.HoTen" onerror="this.src='/Images/default-doctor.png'">
                             </div>
                             <div class="card-body text-center p-4">
                                 <p class="text-muted small mb-1 fw-bold text-uppercase">@bs.TenChucVu</p>
@@ -248,8 +252,11 @@
                 }
             }
         </div>
+
         <div class="text-center mt-5" data-aos="fade-up">
-            <a href="#" class="btn btn-primary text-white btn-lg rounded-pill px-5 shadow hover-up">Xem toàn bộ Bác sĩ</a>
+            <a href="@Url.Action("BacSi", "Home")" class="btn btn-primary text-white btn-lg rounded-pill px-5 shadow hover-up">
+                Xem toàn bộ Bác sĩ <i class="bi bi-arrow-right ms-2"></i>
+            </a>
         </div>
     </div>
 </section>
