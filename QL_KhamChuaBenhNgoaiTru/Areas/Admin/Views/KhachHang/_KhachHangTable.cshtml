@@ -1,0 +1,79 @@
+﻿@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.KhachHangManageViewModel>
+
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td><strong>@item.KhachHang.MaKH</strong></td>
+            <td>
+                @*<i class="bi bi-person-circle text-primary me-2"></i>*@
+                @item.KhachHang.HoTen
+            </td>
+            <td>
+                @item.KhachHang.Email
+            </td>
+            <td>
+                @item.KhachHang.SDT
+            </td>
+            <td>
+                @if (item.TaiKhoan != null && !string.IsNullOrEmpty(item.TaiKhoan.Username))
+                {
+                    <span class="badge bg-secondary">@item.TaiKhoan.Username</span>
+                }
+                else
+                {
+                    <span class="text-muted fst-italic">N/A</span>
+                }
+            </td>
+
+            @* === PHẦN SỬA CHO MẬT KHẨU === *@
+            <td>
+                @if (item.TaiKhoan != null && !string.IsNullOrEmpty(item.TaiKhoan.PasswordHash))
+                {
+                    <div class="password-toggle-wrapper">
+                        @* Dùng input type="password" để che đi, và readonly/plaintext để không cho sửa *@
+                        <input type="password" class="form-control-plaintext password-field" value="@item.TaiKhoan.PasswordHash" readonly>
+
+                        @* Icon để bấm vào *@
+                        <i class="bi bi-eye-slash toggle-password-icon"></i>
+                    </div>
+                }
+                else
+                {
+                    <span class="text-muted fst-italic">N/A</span>
+                }
+            </td>
+
+            <td class="text-center">
+                <a href="@Url.Action("Details", "KhachHang", new { area = "Admin", id = item.KhachHang.MaKH.Trim() })"
+                   class="btn btn-sm btn-info me-1" title="Xem chi tiết">
+                    <i class="bi bi-eye"></i>
+                </a>
+
+                <a href="@Url.Action("Edit_KH", "KhachHang", new { area = "Admin", id = item.KhachHang.MaKH.Trim() })"
+                   class="btn btn-sm btn-warning me-1" title="Chỉnh sửa">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+
+                <form method="post" action="@Url.Action("Delete", "KhachHang", new { area = "Admin", id = item.KhachHang.MaKH.Trim() })"
+                      style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn xóa khách hàng này?');">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-sm btn-danger" title="Xóa">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </form>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="7" class="text-center text-muted p-4">
+            <i class="bi bi-person-x fs-3 d-block mb-2"></i>
+            Không tìm thấy khách hàng nào.
+        </td>
+    </tr>
+}
