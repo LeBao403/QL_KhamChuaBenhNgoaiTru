@@ -1,0 +1,61 @@
+﻿@model List<QL_KhamChuaBenhNgoaiTru.Models.LoaiDichVuGroup>
+
+@if (Model != null && Model.Count > 0)
+{
+    foreach (var group in Model)
+    {
+        <div class="category-pane mb-5">
+            <h4 class="fw-bold text-dark mb-3 border-bottom pb-2">
+                <i class="bi bi-bookmark-check text-primary me-2"></i> @group.TenLoaiDV
+            </h4>
+
+            <div class="table-responsive">
+                <table class="table table-hover price-table border">
+                    <thead>
+                        <tr style="background-color: #f1f4f9;">
+                            <th width="45%" class="p-3 text-uppercase" style="color: #052c65;">Tên Dịch Vụ</th>
+                            <th width="15%" class="p-3 text-center text-uppercase" style="color: #052c65;">Đơn vị</th>
+                            <th width="20%" class="p-3 text-end text-uppercase" style="color: #052c65;">Giá Dịch Vụ</th>
+                            <th width="20%" class="p-3 text-end text-uppercase" style="color: #052c65;">Giá BHYT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var dv in group.DanhSachDichVu)
+                        {
+                            <tr>
+                                <td class="p-3">
+                                    <span class="fw-bold text-dark d-block mb-1">@dv.TenDV</span>
+                                    @if (!string.IsNullOrEmpty(dv.MoTa))
+                                    {
+                                        <small class="text-muted"><i class="bi bi-info-circle text-primary me-1"></i> @dv.MoTa</small>
+                                    }
+                                </td>
+                                <td class="p-3 text-center text-muted fw-semibold align-middle">@dv.DonViTinh</td>
+                                <td class="p-3 text-end align-middle" style="font-weight: 800; color: #dc3545; font-size: 1.1rem;">
+                                    @String.Format("{0:N0}", dv.GiaDichVu) đ
+                                </td>
+                                <td class="p-3 text-end align-middle">
+                                    @if (dv.GiaBHYT.HasValue)
+                                    {
+                                        <span class="fw-bold px-2 py-1 rounded" style="color: #198754; background: #e8f5e9;">@String.Format("{0:N0}", dv.GiaBHYT.Value) đ</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-muted border fw-normal px-2 py-1">Không áp dụng</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="text-center py-5">
+        <h4 class="text-muted fw-bold">Không tìm thấy dịch vụ nào!</h4>
+        <p>Vui lòng thử tìm kiếm bằng từ khóa khác.</p>
+    </div>
+}

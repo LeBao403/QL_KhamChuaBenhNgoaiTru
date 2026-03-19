@@ -1,0 +1,429 @@
+﻿@{
+    ViewBag.Title = "Hướng Dẫn & Cẩm Nang Y Khoa - MedicHub";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+}
+
+<style>
+    /* 1. HERO BANNER CÓ THANH SEARCH */
+    .guide-hero {
+        background: linear-gradient(135deg, rgba(10, 88, 202, 0.9) 0%, rgba(5, 44, 101, 0.95) 100%), url('/Images/about/about-hero.jpg') no-repeat center center;
+        background-attachment: fixed;
+        background-size: cover;
+        padding: 150px 0 100px 0;
+        color: white;
+    }
+
+    /* Đã Fix: Thanh Search nổi bật, dễ nhìn, chuẩn UX */
+    .search-guide-box {
+        background: #ffffff;
+        border-radius: 50px;
+        padding: 10px 20px;
+        max-width: 700px;
+        margin: 0 auto;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    /* 2. QUY TRÌNH KHÁM BỆNH (STEPS) */
+    .process-step {
+        position: relative;
+        text-align: center;
+        padding: 2rem 1rem;
+        z-index: 1;
+    }
+
+    .process-icon {
+        width: 80px;
+        height: 80px;
+        background: #fff;
+        border: 3px solid #0d6efd;
+        color: #0d6efd;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 1.5rem auto;
+        box-shadow: 0 10px 20px rgba(13, 110, 253, 0.15);
+        transition: all 0.3s ease;
+    }
+
+    .process-step:hover .process-icon {
+        background: #0d6efd;
+        color: #fff;
+        transform: scale(1.1);
+    }
+
+    /* Đường nối giữa các bước */
+    @@media (min-width: 992px) {
+        .process-step::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            right: -50%;
+            width: 100%;
+            height: 3px;
+            background: #e9ecef;
+            z-index: -1;
+        }
+
+        .process-step.last-step::after {
+            display: none;
+        }
+    }
+
+    /* 3. THẺ LƯU Ý TRƯỚC KHI KHÁM */
+    .prep-card {
+        background: #fff;
+        border-radius: 1rem;
+        border-left: 5px solid #0d6efd;
+        padding: 1.5rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        height: 100%;
+        transition: transform 0.3s;
+    }
+
+    .prep-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .prep-card.blood {
+        border-left-color: #dc3545;
+    }
+
+    .prep-card.ultrasound {
+        border-left-color: #0dcaf0;
+    }
+
+    .prep-card.endo {
+        border-left-color: #fd7e14;
+    }
+
+    /* 4. ACCORDION FAQ TỐI TÂN */
+    .faq-accordion .accordion-item {
+        border: none;
+        border-radius: 1rem !important;
+        margin-bottom: 1rem;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+        overflow: hidden;
+    }
+
+    .faq-accordion .accordion-button {
+        font-weight: 700;
+        color: #052c65;
+        padding: 1.2rem 1.5rem;
+        background-color: #fff;
+        box-shadow: none;
+    }
+
+    .faq-accordion .accordion-button:not(.collapsed) {
+        background-color: #f1f4f9;
+        color: #0d6efd;
+    }
+
+    .faq-accordion .accordion-body {
+        background-color: #fff;
+        padding: 1.5rem;
+        color: #495057;
+        line-height: 1.8;
+    }
+
+    /* 5. CẨM NANG Y KHOA (BLOG CARDS) */
+    .blog-card {
+        border: none;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+
+    .blog-img {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .blog-date {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #0d6efd;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>
+
+<section class="guide-hero text-center">
+    <div class="container" data-aos="fade-down">
+        <span class="badge bg-light text-primary px-4 py-2 rounded-pill mb-3 fw-bold shadow-sm">Trung tâm hỗ trợ bệnh nhân</span>
+        <h1 class="display-4 fw-bold mb-4">Hướng Dẫn & Cẩm Nang Y Khoa</h1>
+        <p class="lead mb-5 text-white-50 mx-auto" style="max-width: 700px;">
+            Mọi thông tin bạn cần biết trước, trong và sau khi đến khám tại MedicHub đều được tổng hợp tại đây để giúp bạn có trải nghiệm suôn sẻ nhất.
+        </p>
+
+        <div class="search-guide-box d-flex align-items-center">
+            <i class="bi bi-search text-primary fs-4"></i>
+            <input type="text" id="faqSearch" class="form-control border-0 bg-transparent text-dark fw-bold shadow-none ms-2 fs-5" placeholder="Tìm câu hỏi (VD: Nhịn ăn, BHYT, Đặt lịch...)">
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-subtitle text-primary fw-bold text-uppercase">Nhanh chóng - Tiện lợi</span>
+            <h2 class="fw-bold text-dark display-6 mt-2">Quy Trình Khám Bệnh Tiêu Chuẩn</h2>
+            <div class="section-line mx-auto bg-primary"></div>
+        </div>
+
+        <div class="row g-0 position-relative mt-5">
+            <div class="col-lg-2 col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="process-step">
+                    <div class="process-icon"><i class="bi bi-calendar-check"></i></div>
+                    <h5 class="fw-bold">1. Đặt lịch</h5>
+                    <p class="text-muted small">Đặt lịch trước qua App/Web để không phải bốc số chờ đợi.</p>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="process-step">
+                    <div class="process-icon"><i class="bi bi-person-vcard"></i></div>
+                    <h5 class="fw-bold">2. Tiếp nhận</h5>
+                    <p class="text-muted small">Xác nhận thông tin tại quầy hoặc Kiosk tự động bằng CCCD.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="process-step">
+                    <div class="process-icon"><i class="bi bi-heart-pulse"></i></div>
+                    <h5 class="fw-bold">3. Khám lâm sàng</h5>
+                    <p class="text-muted small">Gặp Bác sĩ chuyên khoa tại phòng khám để chẩn đoán ban đầu.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6" data-aos="fade-up" data-aos-delay="400">
+                <div class="process-step">
+                    <div class="process-icon"><i class="bi bi-activity"></i></div>
+                    <h5 class="fw-bold">4. Cận lâm sàng</h5>
+                    <p class="text-muted small">Thực hiện Xét nghiệm, Siêu âm, X-Quang theo chỉ định.</p>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6 col-sm-12" data-aos="fade-up" data-aos-delay="500">
+                <div class="process-step last-step">
+                    <div class="process-icon"><i class="bi bi-capsule"></i></div>
+                    <h5 class="fw-bold">5. Nhận thuốc</h5>
+                    <p class="text-muted small">Nghe kết luận, thanh toán viện phí và nhận thuốc ra về.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-bold text-dark display-6">Lưu Ý Quan Trọng Trước Khi Khám</h2>
+            <p class="text-muted fs-5">Chuẩn bị đúng cách giúp kết quả chẩn đoán chính xác tuyệt đối.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="prep-card blood">
+                    <h5 class="fw-bold text-danger mb-3"><i class="bi bi-droplet-fill me-2"></i>Xét nghiệm máu</h5>
+                    <ul class="text-muted ps-3 mb-0" style="line-height: 1.8;">
+                        <li><strong>Nhịn ăn:</strong> Từ 8 - 12 tiếng trước khi lấy máu (đặc biệt xét nghiệm đường huyết, mỡ máu).</li>
+                        <li><strong>Đồ uống:</strong> Chỉ được uống nước lọc, tuyệt đối không uống nước ngọt, sữa, cà phê hay rượu bia.</li>
+                        <li>Nên lấy máu vào buổi sáng sớm.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="prep-card ultrasound">
+                    <h5 class="fw-bold text-info mb-3"><i class="bi bi-broadcast me-2"></i>Siêu âm</h5>
+                    <ul class="text-muted ps-3 mb-0" style="line-height: 1.8;">
+                        <li><strong>Siêu âm ổ bụng:</strong> Nhịn ăn ít nhất 6 tiếng. Cần uống nhiều nước và nhịn tiểu để bàng quang căng, giúp nhìn rõ các tạng vùng chậu.</li>
+                        <li><strong>Siêu âm thai:</strong> Thai dưới 12 tuần cần nhịn tiểu căng. Thai lớn hơn không cần nhịn tiểu.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="prep-card endo">
+                    <h5 class="fw-bold text-warning mb-3"><i class="bi bi-camera-video me-2"></i>Nội soi Dạ dày/Đại tràng</h5>
+                    <ul class="text-muted ps-3 mb-0" style="line-height: 1.8;">
+                        <li><strong>Nhịn ăn:</strong> Tuyệt đối nhịn ăn từ 6 - 8 tiếng.</li>
+                        <li><strong>Nội soi đại tràng:</strong> Cần sử dụng thuốc làm sạch ruột (thuốc xổ) theo hướng dẫn trước khi nội soi.</li>
+                        <li>Nội soi gây mê bắt buộc phải có người nhà đi cùng đưa về.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4 mb-4" data-aos="fade-right">
+                <h2 class="fw-bold text-dark display-6 mb-4">Câu Hỏi<br><span class="text-primary">Thường Gặp</span></h2>
+                <p class="text-muted fs-5 mb-4" style="line-height: 1.8;">Giải đáp nhanh các thắc mắc về Bảo hiểm Y tế, thủ tục giấy tờ và các chính sách dành cho bệnh nhân tại MedicHub.</p>
+                <img src="/Images/about/about-equipment.jpg" class="img-fluid rounded-4 shadow" alt="Hỏi đáp y tế">
+            </div>
+
+            <div class="col-lg-8" data-aos="fade-left">
+                <div class="accordion faq-accordion" id="faqGeneral">
+
+                    <div class="accordion-item faq-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                1. Khám BHYT trái tuyến có được thanh toán không?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqGeneral">
+                            <div class="accordion-body">
+                                <strong>Có.</strong> Hiện tại MedicHub áp dụng chính sách thông tuyến BHYT toàn quốc đối với khám chữa bệnh ngoại trú. Bạn hoàn toàn được hưởng mức thanh toán BHYT đúng tuyến (80% - 100% tùy mã thẻ) mà không cần giấy chuyển viện.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item faq-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                2. Đi khám cần mang theo những giấy tờ gì?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqGeneral">
+                            <div class="accordion-body">
+                                Bạn chỉ cần mang theo <strong>Căn Cước Công Dân (CCCD) gắn chip</strong> đã tích hợp thông tin BHYT, hoặc Thẻ BHYT giấy + CMND/CCCD. Nếu sử dụng ứng dụng VssID hoặc VNeID mức độ 2, bạn không cần mang theo giấy tờ cứng.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item faq-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                3. Tôi lỡ hẹn đặt lịch khám trực tuyến thì sao?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqGeneral">
+                            <div class="accordion-body">
+                                Nếu bạn đến trễ so với giờ đã đặt trước quá 30 phút, hệ thống sẽ tự động hủy số ưu tiên của bạn. Bạn vẫn có thể tiếp tục khám nhưng sẽ phải lấy số thứ tự mới tại Quầy tiếp nhận và chờ theo thứ tự thực tế tại bệnh viện.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item faq-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                4. Bao lâu thì có kết quả xét nghiệm/siêu âm?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqGeneral">
+                            <div class="accordion-body">
+                                <ul class="mb-0 ps-3">
+                                    <li><strong>Xét nghiệm máu/nước tiểu cơ bản:</strong> Trả kết quả sau 60 - 90 phút.</li>
+                                    <li><strong>Siêu âm, X-Quang:</strong> Trả kết quả ngay sau 15 - 30 phút.</li>
+                                    <li><strong>Chụp MRI/CT Scan:</strong> Trả kết quả sau 2 - 3 tiếng do cần Bác sĩ hình ảnh đọc kết quả chi tiết.</li>
+                                </ul>
+                                <em>Lưu ý: Bạn có thể xem kết quả trực tuyến trên App MedicHub mà không cần chờ đợi bản cứng.</em>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-end mb-5" data-aos="fade-up">
+            <div>
+                <span class="section-subtitle text-success fw-bold text-uppercase">Tin Tức Sức Khỏe</span>
+                <h2 class="fw-bold text-dark display-6 mt-2">Cẩm Nang Y Khoa</h2>
+            </div>
+            <a href="#" class="btn btn-outline-primary rounded-pill fw-bold d-none d-md-block">Xem tất cả bài viết <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="card blog-card">
+                    <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?q=80&w=800&auto=format&fit=crop" class="blog-img" alt="Blog 1">
+                    <div class="card-body p-4">
+                        <p class="blog-date mb-2"><i class="bi bi-calendar3 me-1"></i> 18 Tháng 3, 2026</p>
+                        <h5 class="fw-bold mb-3"><a href="#" class="text-dark text-decoration-none hover-primary">Dấu hiệu nhận biết sớm đột quỵ và cách xử trí "Giờ vàng"</a></h5>
+                        <p class="text-muted small mb-0">Đột quỵ não có thể xảy ra bất cứ lúc nào. Việc nhận biết quy tắc F.A.S.T để cấp cứu trong giờ vàng là chìa khóa cứu sống người bệnh...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="card blog-card">
+                    <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=800&auto=format&fit=crop" class="blog-img" alt="Blog 2">
+                    <div class="card-body p-4">
+                        <p class="blog-date mb-2"><i class="bi bi-calendar3 me-1"></i> 15 Tháng 3, 2026</p>
+                        <h5 class="fw-bold mb-3"><a href="#" class="text-dark text-decoration-none hover-primary">Chế độ dinh dưỡng chuẩn cho người bệnh Tiểu đường Tuýp 2</a></h5>
+                        <p class="text-muted small mb-0">Người bệnh tiểu đường không cần nhịn ăn kiêng khem quá mức. Một thực đơn cân bằng chỉ số GI sẽ giúp kiểm soát đường huyết hiệu quả...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="card blog-card">
+                    <img src="https://tamanhhospital.vn/wp-content/uploads/2024/05/vac-xin-cum-phong-ngua-cac-chung-cum.jpg" class="blog-img" alt="Blog 3">
+                    <div class="card-body p-4">
+                        <p class="blog-date mb-2"><i class="bi bi-calendar3 me-1"></i> 10 Tháng 3, 2026</p>
+                        <h5 class="fw-bold mb-3"><a href="#" class="text-dark text-decoration-none hover-primary">Tại sao bạn nên tiêm vắc xin phòng Cúm mùa hàng năm?</a></h5>
+                        <p class="text-muted small mb-0">Cúm mùa không chỉ là cảm lạnh thông thường. Việc chủ động tiêm vắc xin hàng năm giúp giảm 60% nguy cơ biến chứng hô hấp nặng...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5" style="background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%); color: white;">
+    <div class="container py-4 text-center" data-aos="zoom-in">
+        <h2 class="display-5 fw-bold mb-3">Bạn đã sẵn sàng tới khám?</h2>
+        <p class="lead mb-4 opacity-75 mx-auto" style="max-width: 600px;">Hệ thống thông minh MedicHub giúp bạn tiết kiệm đến 50% thời gian chờ đợi. Hãy chủ động đặt lịch ngay hôm nay.</p>
+        <a href="@Url.Action("DatLich", "Home")" class="btn btn-warning btn-lg fw-bold rounded-pill px-5 shadow-lg text-dark hover-up" style="transform: scale(1.1);">
+            <i class="bi bi-calendar2-check me-2"></i> ĐẶT LỊCH TRỰC TUYẾN
+        </a>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // SCRIPT TÌM KIẾM FAQ CỰC NHANH
+            $("#faqSearch").on("keyup", function () {
+                var value = $(this).val().toLowerCase().trim();
+
+                // Nếu có chữ gõ vào, tự động mở hết các thẻ Accordion ra để thấy nội dung
+                if (value.length > 0) {
+                    $(".faq-item .accordion-collapse").addClass("show");
+                    $(".faq-item .accordion-button").removeClass("collapsed");
+                } else {
+                    // Xóa chữ thì đóng lại như cũ (chỉ mở cái đầu tiên)
+                    $(".faq-item .accordion-collapse").removeClass("show");
+                    $(".faq-item .accordion-button").addClass("collapsed");
+                    $("#faq1").addClass("show");
+                    $("#faq1").prev(".accordion-header").find(".accordion-button").removeClass("collapsed");
+                }
+
+                // Lọc hiển thị
+                $(".faq-item").filter(function () {
+                    // Lấy nội dung toàn bộ text (câu hỏi + câu trả lời)
+                    var itemText = $(this).text().toLowerCase();
+                    $(this).toggle(itemText.indexOf(value) > -1);
+                });
+
+                // Cuộn mượt xuống khu vực FAQ nếu đang gõ trên Banner
+                if (value.length === 1) { // Chỉ cuộn ở ký tự đầu tiên
+                    $('html, body').animate({
+                        scrollTop: $("#faqGeneral").offset().top - 150
+                    }, 500);
+                }
+            });
+        });
+    </script>
+}
