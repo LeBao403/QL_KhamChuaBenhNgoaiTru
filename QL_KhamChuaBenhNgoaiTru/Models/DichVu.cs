@@ -12,8 +12,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         [Key]
         public string MaLoaiDV { get; set; }
         public string TenLoaiDV { get; set; }
-        public decimal Gia { get; set; }
-        public string MoTa { get; set; }
+        
     }
     public class DichVu
     {
@@ -51,5 +50,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
 
         [DisplayName("Trạng thái")]
         public bool? TrangThai { get; set; }
+
+        public decimal Gia { get; set; }
+        public string MoTa { get; set; }
     }
 }

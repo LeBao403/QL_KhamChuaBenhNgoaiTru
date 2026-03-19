@@ -813,4 +813,109 @@ VALUES (
 GO
 
 
+-- =========================================================================================
+-- THÊM DỮ LIỆU BẢNG LOAI_DICHVU 
+-- =========================================================================================
+INSERT INTO LOAI_DICHVU (MaLoaiDV, TenLoaiDV) VALUES
+('LDV01', N'Khám bệnh'),
+('LDV02', N'Xét nghiệm'),
+('LDV03', N'Chẩn đoán hình ảnh'),
+('LDV04', N'Thăm dò chức năng'),
+('LDV05', N'Nội soi'),
+('LDV06', N'Thủ thuật Ngoại khoa'),
+('LDV07', N'Dịch vụ Răng Hàm Mặt'),
+('LDV08', N'Dịch vụ Sản Phụ khoa'),
+('LDV09', N'Thủ thuật Mắt - Da liễu');
+GO
 
+
+
+-- =========================================================================================
+-- BỘ DATA DỊCH VỤ Y TẾ KHỔNG LỒ (CHUẨN CÓ CỘT MoTa)
+-- =========================================================================================
+
+INSERT INTO DICHVU (MaDV, TenDV, MaLoaiDV, GiaDichVu, DonViTinh, CoBHYT, GiaBHYT, TrangThai, MoTa) VALUES
+-- ================= NHÓM 1: KHÁM BỆNH (LDV01) =================
+('DV001', N'Khám bệnh Nội tổng quát', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám lâm sàng đánh giá sức khỏe tổng quát, tim mạch, hô hấp cơ bản.'),
+('DV002', N'Khám bệnh Ngoại tổng quát', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám chấn thương, đánh giá chỉ định phẫu thuật ngoại khoa.'),
+('DV003', N'Khám chuyên khoa Nhi', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám, đánh giá thể chất và tư vấn dinh dưỡng cho trẻ dưới 16 tuổi.'),
+('DV004', N'Khám chuyên khoa Phụ Sản', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám thai định kỳ, khám các bệnh lý phụ khoa thường gặp.'),
+('DV005', N'Khám chuyên khoa Tai Mũi Họng', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám lâm sàng tai mũi họng, lấy ráy tai, rửa mũi viêm xoang.'),
+('DV006', N'Khám chuyên khoa Răng Hàm Mặt', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám răng miệng tổng quát, tư vấn nhổ răng, chỉnh nha.'),
+('DV007', N'Khám chuyên khoa Mắt', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám mắt tổng quát, đo nhãn áp, kiểm tra thị lực.'),
+('DV008', N'Khám chuyên khoa Da liễu', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám các bệnh lý ngoài da, dị ứng, viêm da cơ địa.'),
+('DV009', N'Khám bệnh yêu cầu (Chọn Giáo sư/Tiến sĩ)', 'LDV01', 500000, N'Lần', 0, NULL, 1, N'Khám trực tiếp với chuyên gia đầu ngành. Không áp dụng BHYT.'),
+('DV010', N'Khám cấp cứu ngoài giờ', 'LDV01', 250000, N'Lần', 1, 38700, 1, N'Phí khám ban đầu tại phòng cấp cứu ngoài giờ hành chính.'),
+('DV011', N'Khám chuyên khoa Tim mạch', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám chuyên sâu bệnh lý huyết áp, suy tim, thiếu máu cơ tim.'),
+('DV012', N'Khám chuyên khoa Thần kinh', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám rối loạn tiền đình, đau nửa đầu, đau dây thần kinh.'),
+('DV013', N'Khám chuyên khoa Cơ Xương Khớp', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám thoái hóa khớp, gout, loãng xương, viêm đa khớp.'),
+
+-- ================= NHÓM 2: XÉT NGHIỆM (LDV02) =================
+('DV014', N'Tổng phân tích tế bào máu ngoại vi (máy laser)', 'LDV02', 90000, N'Mẫu', 1, 41200, 1, N'Đánh giá tình trạng thiếu máu, nhiễm trùng. Lấy máu đường tĩnh mạch.'),
+('DV015', N'Định lượng Glucose (Đường huyết)', 'LDV02', 40000, N'Mẫu', 1, 21500, 1, N'Bệnh nhân bắt buộc nhịn ăn sáng tối thiểu 8 tiếng trước khi lấy máu.'),
+('DV016', N'Xét nghiệm HbA1c', 'LDV02', 120000, N'Mẫu', 1, 80000, 1, N'Đánh giá chỉ số đường huyết trung bình trong 3 tháng qua (Tầm soát Tiểu đường).'),
+('DV017', N'Định lượng Cholesterol toàn phần', 'LDV02', 45000, N'Mẫu', 1, 26600, 1, N'Xét nghiệm mỡ máu cơ bản. Cần nhịn ăn sáng.'),
+('DV018', N'Định lượng Triglyceride, HDL, LDL (Bộ mỡ máu)', 'LDV02', 120000, N'Mẫu', 1, 75000, 1, N'Đánh giá chi tiết nguy cơ xơ vữa động mạch.'),
+('DV019', N'Đo hoạt độ AST (GOT) / ALT (GPT) (Chức năng gan)', 'LDV02', 45000, N'Mẫu', 1, 21500, 1, N'Đánh giá tổn thương tế bào gan.'),
+('DV020', N'Định lượng Creatinin (Chức năng thận)', 'LDV02', 40000, N'Mẫu', 1, 21500, 1, N'Đánh giá chức năng lọc của thận, tầm soát suy thận.'),
+('DV021', N'Định lượng Acid Uric', 'LDV02', 45000, N'Mẫu', 1, 21500, 1, N'Tầm soát bệnh Gout (Gút).'),
+('DV022', N'Tổng phân tích nước tiểu', 'LDV02', 50000, N'Mẫu', 1, 27400, 1, N'Lấy mẫu nước tiểu giữa dòng vào buổi sáng.'),
+('DV023', N'Xét nghiệm viêm gan B (HBsAg test nhanh)', 'LDV02', 80000, N'Mẫu', 1, 52000, 1, N'Tầm soát kháng nguyên virus viêm gan B.'),
+('DV024', N'Định lượng TSH, FT3, FT4 (Chức năng tuyến giáp)', 'LDV02', 250000, N'Mẫu', 1, 150000, 1, N'Tầm soát basedow, suy giáp, cường giáp.'),
+('DV025', N'Xét nghiệm tầm soát ung thư gan (AFP)', 'LDV02', 250000, N'Mẫu', 0, NULL, 1, N'Marker ung thư gan. Dịch vụ tự nguyện, không áp dụng BHYT.'),
+('DV026', N'Xét nghiệm nhóm máu ABO, Rh', 'LDV02', 100000, N'Mẫu', 1, 65000, 1, N'Định nhóm máu cơ bản.'),
+('DV027', N'Test nhanh Cúm A/B', 'LDV02', 150000, N'Mẫu', 0, NULL, 1, N'Lấy dịch tỵ hầu kiểm tra virus cúm mùa.'),
+('DV028', N'Test nhanh Sốt xuất huyết (Dengue NS1)', 'LDV02', 180000, N'Mẫu', 1, 80000, 1, N'Phát hiện sớm virus sốt xuất huyết trong những ngày đầu.'),
+
+-- ================= NHÓM 3: CHẨN ĐOÁN HÌNH ẢNH (LDV03) =================
+('DV029', N'Siêu âm ổ bụng tổng quát (Màu 4D)', 'LDV03', 250000, N'Lần', 1, 43900, 1, N'Siêu âm đánh giá gan, mật, tụy, thận. Cần nhịn tiểu căng.'),
+('DV030', N'Siêu âm tuyến giáp', 'LDV03', 150000, N'Lần', 1, 43900, 1, N'Siêu âm phát hiện nang, nhân tuyến giáp.'),
+('DV031', N'Siêu âm tuyến vú 2 bên', 'LDV03', 200000, N'Lần', 1, 43900, 1, N'Tầm soát u xơ, nang vú ở nữ giới.'),
+('DV032', N'Siêu âm doppler tim', 'LDV03', 350000, N'Lần', 1, 222000, 1, N'Siêu âm màu đánh giá cấu trúc và chức năng van tim.'),
+('DV033', N'Chụp X-Quang ngực thẳng (Kỹ thuật số)', 'LDV03', 120000, N'Lần', 1, 65400, 1, N'Chụp tim phổi. Phụ nữ có thai KHÔNG được chụp.'),
+('DV034', N'Chụp X-Quang cột sống thắt lưng (2 tư thế)', 'LDV03', 150000, N'Lần', 1, 65400, 1, N'Phát hiện gai cột sống, thoái hóa, xẹp đốt sống.'),
+('DV035', N'Chụp X-Quang sọ não (thẳng, nghiêng)', 'LDV03', 150000, N'Lần', 1, 65400, 1, N'Đánh giá vỡ xương sọ sau chấn thương.'),
+('DV036', N'Chụp cắt lớp vi tính (CT Scan) sọ não không tiêm thuốc', 'LDV03', 1200000, N'Lần', 1, 536000, 1, N'Chẩn đoán đột quỵ não, xuất huyết não cấp.'),
+('DV037', N'Chụp cắt lớp vi tính (CT Scan) lồng ngực', 'LDV03', 1500000, N'Lần', 1, 536000, 1, N'Tầm soát ung thư phổi, tổn thương phổi phức tạp.'),
+('DV038', N'Chụp Cộng hưởng từ (MRI) khớp gối', 'LDV03', 2500000, N'Lần', 1, 1311000, 1, N'Đánh giá rách sụn chêm, đứt dây chằng chéo.'),
+('DV039', N'Chụp Cộng hưởng từ (MRI) cột sống cổ', 'LDV03', 2500000, N'Lần', 1, 1311000, 1, N'Đánh giá thoát vị đĩa đệm chèn ép rễ thần kinh.'),
+
+-- ================= NHÓM 4: THĂM DÒ CHỨC NĂNG (LDV04) =================
+('DV040', N'Đo Điện tâm đồ (ECG)', 'LDV04', 80000, N'Lần', 1, 30500, 1, N'Phát hiện rối loạn nhịp tim, nhồi máu cơ tim.'),
+('DV041', N'Đo chức năng hô hấp', 'LDV04', 150000, N'Lần', 1, 75000, 1, N'Chẩn đoán hen suyễn, bệnh phổi tắc nghẽn mạn tính (COPD).'),
+('DV042', N'Điện não đồ (EEG)', 'LDV04', 180000, N'Lần', 1, 65000, 1, N'Chẩn đoán động kinh, rối loạn giấc ngủ.'),
+('DV043', N'Đo mật độ xương (DEXA) 2 vị trí', 'LDV04', 350000, N'Lần', 0, NULL, 1, N'Đo loãng xương cổ xương đùi và cột sống thắt lưng.'),
+
+-- ================= NHÓM 5: NỘI SOI (LDV05) =================
+('DV044', N'Nội soi Tai Mũi Họng ống mềm', 'LDV05', 200000, N'Lần', 1, 104000, 1, N'Ống nội soi siêu nhỏ không gây buồn nôn, soi rõ dây thanh quản.'),
+('DV045', N'Nội soi dạ dày - tá tràng (không sinh thiết)', 'LDV05', 600000, N'Lần', 1, 244000, 1, N'Nội soi tươi. Bệnh nhân cần nhịn ăn 6 tiếng trước soi.'),
+('DV046', N'Nội soi dạ dày - tá tràng (Gây mê không đau)', 'LDV05', 1800000, N'Lần', 0, NULL, 1, N'Ngủ êm ái trong 15 phút. Cần người nhà đi cùng đưa về.'),
+('DV047', N'Nội soi đại trực tràng (Gây mê)', 'LDV05', 2500000, N'Lần', 0, NULL, 1, N'Bệnh nhân cần uống thuốc xổ làm sạch ruột trước khi soi.'),
+
+-- ================= NHÓM 6: THỦ THUẬT NGOẠI KHOA (LDV06) =================
+('DV048', N'Thay băng, rửa vết thương chiều dài < 15cm', 'LDV06', 80000, N'Lần', 1, 46500, 1, N'Chăm sóc vết thương nhiễm trùng, vết mổ cũ.'),
+('DV049', N'Cắt chỉ vết thương phần mềm', 'LDV06', 50000, N'Lần', 1, 30000, 1, N'Tháo chỉ sau phẫu thuật.'),
+('DV050', N'Khâu vết thương phần mềm tổn thương nông < 5cm', 'LDV06', 250000, N'Lần', 1, 126000, 1, N'Gây tê tại chỗ, khâu thẩm mỹ vết rách.'),
+('DV051', N'Chích rạch áp xe phần mềm', 'LDV06', 300000, N'Lần', 1, 150000, 1, N'Tháo mủ ổ áp xe, đặt dẫn lưu.'),
+('DV052', N'Bó bột cẳng tay/cẳng chân', 'LDV06', 400000, N'Lần', 1, 200000, 1, N'Cố định gãy xương bằng bột thạch cao hoặc bột thủy tinh.'),
+
+-- ================= NHÓM 7: RĂNG HÀM MẶT (LDV07) =================
+('DV053', N'Cạo vôi răng (Lấy cao răng) đánh bóng hai hàm', 'LDV07', 250000, N'Lần', 0, NULL, 1, N'Sử dụng sóng siêu âm làm sạch mảng bám, không tổn thương men răng.'),
+('DV054', N'Nhổ răng vĩnh viễn (Răng 1 đến 7)', 'LDV07', 300000, N'Răng', 1, 150000, 1, N'Gây tê tại chỗ, nhổ răng lung lay, sâu hỏng nặng.'),
+('DV055', N'Nhổ răng khôn (Răng số 8) mọc lệch ngầm', 'LDV07', 1500000, N'Răng', 1, 450000, 1, N'Tiểu phẫu nhổ răng bằng máy Piezotome giảm đau.'),
+('DV056', N'Trám răng thẩm mỹ bằng Composite', 'LDV07', 300000, N'Răng', 1, 115000, 1, N'Hàn răng sâu bằng vật liệu cùng màu răng thật.'),
+('DV057', N'Tẩy trắng răng tại phòng khám (Laser)', 'LDV07', 2500000, N'Lần', 0, NULL, 1, N'Bật từ 2-3 tone màu sau 60 phút thực hiện. Dịch vụ thẩm mỹ.'),
+
+-- ================= NHÓM 8: SẢN PHỤ KHOA (LDV08) =================
+('DV058', N'Siêu âm thai 4D (Ghi hình màu)', 'LDV08', 350000, N'Lần', 0, NULL, 1, N'Khảo sát dị tật thai nhi, thấy rõ khuôn mặt bé. Tặng kèm USB lưu video.'),
+('DV059', N'Đo tim thai (Monitor sản khoa)', 'LDV08', 120000, N'Lần', 1, 55000, 1, N'Đo cơn gò tử cung và nhịp tim thai nhi trong 30 phút.'),
+('DV060', N'Tầm soát ung thư cổ tử cung (Xét nghiệm Pap/HPV)', 'LDV08', 450000, N'Lần', 0, NULL, 1, N'Lấy tế bào cổ tử cung. Cần thực hiện định kỳ hàng năm cho phụ nữ đã quan hệ.'),
+('DV061', N'Cấy que tránh thai Implanon', 'LDV08', 3000000, N'Lần', 0, NULL, 1, N'Cấy que dưới da tay, hiệu quả ngừa thai lên đến 3 năm.'),
+
+-- ================= NHÓM 9: THỦ THUẬT MẮT - DA LIỄU (LDV09) =================
+('DV062', N'Đo khúc xạ mắt bằng máy tự động', 'LDV09', 50000, N'Lần', 1, 25000, 1, N'Đo độ cận, viễn, loạn thị.'),
+('DV063', N'Lấy dị vật giác mạc nông', 'LDV09', 200000, N'Lần', 1, 85000, 1, N'Gây tê bề mặt và gắp dị vật ở lớp nông của mắt.'),
+('DV064', N'Chích lẹo/chắp mắt', 'LDV09', 150000, N'Lần', 1, 75000, 1, N'Rạch tháo mủ mụn lẹo mi mắt.'),
+('DV065', N'Đốt nốt ruồi / mụn thịt bằng Laser CO2', 'LDV09', 300000, N'Nốt', 0, NULL, 1, N'Thẩm mỹ không sẹo. Tự nguyện, không áp dụng BHYT.'),
+('DV066', N'Lấy nhân mụn chuẩn y khoa', 'LDV09', 400000, N'Lần', 0, NULL, 1, N'Làm sạch sâu, nặn mụn vô khuẩn, chiếu đèn sinh học giảm sưng.');
+GO
