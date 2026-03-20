@@ -1,0 +1,211 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.DichVuViewModel
+
+@{
+    ViewBag.Title = "Chi tiết Dịch vụ";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_admin.cshtml";
+}
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "DichVu", new { area = "Admin" })" class="text-decoration-none"><i class="bi bi-house"></i> Dịch vụ viện phí</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Chi tiết dịch vụ</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+            <h5 class="mb-0 text-primary fw-bold">
+                <i class="bi bi-info-circle-fill me-2"></i> Hồ sơ chi tiết dịch vụ
+            </h5>
+
+            <div id="statusBadge" class="badge @(Model.TrangThai ? "bg-success" : "bg-danger") px-3 py-2 rounded-pill fs-6 shadow-sm">
+                <i class="bi @(Model.TrangThai ? "bi-check-circle" : "bi-lock") me-1"></i>
+                <span class="badge-text">@(Model.TrangThai ? "Đang hoạt động" : "Đã khóa")</span>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <h6 class="text-uppercase text-muted fw-bold mb-3 border-bottom pb-2">Thông tin chung</h6>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted fw-semibold">Mã dịch vụ:</div>
+                        <div class="col-sm-8 fw-bold text-dark fs-5">@Model.MaDV</div>
+                    </div>
+
+                    <div class="row mb-3 align-items-start">
+                        <div class="col-sm-4 text-muted fw-semibold pt-1">Tên dịch vụ:</div>
+                        <div class="col-sm-8 fw-bold text-primary fs-5">@Model.TenDV</div>
+                    </div>
+
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-sm-4 text-muted fw-semibold">Danh mục:</div>
+                        <div class="col-sm-8">
+                            <span class="badge bg-info text-dark bg-opacity-25 border border-info px-3 py-2 fs-6">
+                                <i class="bi bi-tags me-1"></i> @Model.TenLoaiDV
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 align-items-start">
+                        <div class="col-sm-4 text-muted fw-semibold">Mô tả chi tiết:</div>
+                        <div class="col-sm-8">
+                            @if (!string.IsNullOrEmpty(Model.MoTa))
+                            {
+                                <div class="p-3 bg-light rounded-3 text-dark border" style="line-height: 1.6;">
+                                    @Html.Raw(Model.MoTa.Replace("\n", "<br/>"))
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">Không có mô tả cho dịch vụ này.</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <h6 class="text-uppercase text-muted fw-bold mb-3 border-bottom pb-2">Chi phí & Viện phí</h6>
+
+                    <div class="card bg-light border-0 shadow-sm rounded-3">
+                        <div class="card-body p-4">
+                            <div class="mb-4">
+                                <p class="text-muted fw-semibold mb-1">Giá thu bệnh nhân (Dịch vụ):</p>
+                                <div class="d-flex align-items-end">
+                                    <h2 class="text-danger fw-bold mb-0 me-2">@String.Format("{0:N0}", Model.GiaDichVu)</h2>
+                                    <span class="fs-5 text-muted mb-1">VNĐ</span>
+                                    @if (!string.IsNullOrEmpty(Model.DonViTinh))
+                                    {
+                                        <span class="fs-5 text-muted mb-1 ms-1">/ @Model.DonViTinh</span>
+                                    }
+                                </div>
+                            </div>
+
+                            <hr class="text-secondary opacity-25" />
+
+                            <div>
+                                <p class="text-muted fw-semibold mb-2">Chế độ Bảo hiểm Y tế (BHYT):</p>
+                                @if (Model.CoBHYT)
+                                {
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 fs-6 me-3">
+                                            <i class="bi bi-shield-check me-1"></i> Có hỗ trợ
+                                        </span>
+                                    </div>
+                                    <div class="bg-white p-3 rounded-2 border border-success border-opacity-25 mt-2">
+                                        <div class="text-muted small mb-1">Mức giá BHYT chi trả:</div>
+                                        <div class="text-success fw-bold fs-4">@String.Format("{0:N0}", Model.GiaBHYT) <span class="fs-6 fw-normal">VNĐ</span></div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary px-3 py-2 fs-6">
+                                        <i class="bi bi-shield-x me-1"></i> Không hỗ trợ BHYT
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer bg-white py-3 border-top d-flex justify-content-between">
+            <a href="@Url.Action("Index", "DichVu", new { area = "Admin" })" class="btn btn-outline-secondary fw-bold px-4">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại
+            </a>
+
+            <div class="d-flex gap-2">
+                <button type="button" class="btn @(Model.TrangThai ? "btn-outline-danger" : "btn-outline-success") fw-bold px-4 btn-toggle-status"
+                        data-id="@Model.MaDV" data-status="@(Model.TrangThai ? "true" : "false")">
+                    <i class="bi @(Model.TrangThai ? "bi-lock" : "bi-unlock") me-1"></i>
+                    <span class="btn-text">@(Model.TrangThai ? "Khóa dịch vụ" : "Mở khóa dịch vụ")</span>
+                </button>
+
+                <a href="@Url.Action("Edit", "DichVu", new { id = Model.MaDV, area = "Admin" })" class="btn btn-warning fw-bold text-dark px-4 shadow-sm">
+                    <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            // LOGIC ĐỔI TRẠNG THÁI NGAY TRONG TRANG CHI TIẾT
+            $('.btn-toggle-status').click(function () {
+                var btn = $(this);
+                var maDV = btn.data('id');
+                var currentStatus = btn.data('status') === true || btn.data('status') === 'True' || btn.data('status') === 'true';
+                var newStatus = !currentStatus;
+
+                var titleText = currentStatus ? 'Khóa dịch vụ này?' : 'Mở khóa dịch vụ?';
+                var msgText = currentStatus ? 'Dịch vụ này sẽ bị tạm ngưng và không thể chọn trong Phiếu khám.' : 'Dịch vụ sẽ được phép hoạt động trở lại.';
+                var confirmColor = currentStatus ? '#dc3545' : '#198754';
+                var confirmIcon = currentStatus ? '<i class="bi bi-lock"></i> Đồng ý khóa' : '<i class="bi bi-unlock"></i> Đồng ý mở';
+
+                Swal.fire({
+                    title: titleText,
+                    text: msgText,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: confirmColor,
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: confirmIcon,
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            // Gọi lại đúng cái hàm ToggleStatus ở Controller
+                            url: '@Url.Action("ToggleStatus", "DichVu", new { area = "Admin" })',
+                            type: 'POST',
+                            data: { id: maDV, status: newStatus },
+                            success: function (res) {
+                                if (res.success) {
+                                    // 1. Cập nhật Badge trên cùng
+                                    var badge = $('#statusBadge');
+                                    if (newStatus) {
+                                        badge.removeClass('bg-danger').addClass('bg-success');
+                                        badge.html('<i class="bi bi-check-circle me-1"></i><span class="badge-text">Đang hoạt động</span>');
+
+                                        // 2. Cập nhật lại Nút bấm ở dưới
+                                        btn.removeClass('btn-outline-success').addClass('btn-outline-danger');
+                                        btn.html('<i class="bi bi-lock me-1"></i><span class="btn-text">Khóa dịch vụ</span>');
+                                    } else {
+                                        badge.removeClass('bg-success').addClass('bg-danger');
+                                        badge.html('<i class="bi bi-lock me-1"></i><span class="badge-text">Đã khóa</span>');
+
+                                        // Cập nhật lại Nút bấm ở dưới
+                                        btn.removeClass('btn-outline-danger').addClass('btn-outline-success');
+                                        btn.html('<i class="bi bi-unlock me-1"></i><span class="btn-text">Mở khóa dịch vụ</span>');
+                                    }
+
+                                    // Lưu lại trạng thái mới cho lần bấm tiếp theo
+                                    btn.data('status', newStatus);
+
+                                    // Bật thông báo nhẹ nhàng
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Thành công!',
+                                        text: 'Đã cập nhật trạng thái dịch vụ.',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                } else {
+                                    Swal.fire('Lỗi', res.message, 'error');
+                                }
+                            },
+                            error: function () {
+                                Swal.fire('Lỗi', 'Không thể kết nối máy chủ!', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

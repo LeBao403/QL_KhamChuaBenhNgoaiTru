@@ -127,9 +127,11 @@
     <Compile Include="Areas\Staff\Controllers\BaseStaffController.cs" />
     <Compile Include="Areas\Staff\Controllers\TiepTanController.cs" />
     <Compile Include="Areas\Staff\StaffAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\DichVuController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TaiKhoanController.cs" />
     <Compile Include="DBContext\BenhNhanDB.cs" />
+    <Compile Include="DBContext\DichVuDB.cs" />
     <Compile Include="DBContext\HomeDB.cs" />
     <Compile Include="DBContext\KhoaDB.cs" />
     <Compile Include="DBContext\NhanVienDB.cs" />
@@ -243,6 +245,11 @@
     <Content Include="Areas\Staff\Views\web.config" />
     <Content Include="Areas\Staff\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Admin\Views\Dashboard\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\DichVu\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\DichVu\_DichVuTable.cshtml" />
+    <Content Include="Areas\Admin\Views\DichVu\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\DichVu\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\DichVu\Edit.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -286,7 +293,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Data\" />
-    <Folder Include="Areas\Admin\Views\BaseAdmin\" />
     <Folder Include="Areas\Staff\Models\" />
     <Folder Include="Areas\Staff\Views\BaseStaff\" />
   </ItemGroup>

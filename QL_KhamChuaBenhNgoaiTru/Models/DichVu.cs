@@ -76,4 +76,33 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         // Chứa danh sách các dịch vụ con nằm trong nhóm này
         public List<DichVuItem> DanhSachDichVu { get; set; } = new List<DichVuItem>();
     }
+
+    public class DichVuViewModel
+    {
+        public string MaDV { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng nhập tên dịch vụ!")]
+        [StringLength(200, ErrorMessage = "Tên dịch vụ không được dài quá 200 ký tự")]
+        public string TenDV { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng chọn danh mục cho dịch vụ!")]
+        public string MaLoaiDV { get; set; }
+
+        public string TenLoaiDV { get; set; } // Phục vụ hiển thị Index
+
+        [Required(ErrorMessage = "Vui lòng nhập giá dịch vụ!")]
+        public decimal GiaDichVu { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng nhập đơn vị tính!")]
+        [StringLength(20, ErrorMessage = "Đơn vị tính không được dài quá 20 ký tự")]
+        public string DonViTinh { get; set; }
+
+        public bool CoBHYT { get; set; }
+
+        public decimal? GiaBHYT { get; set; }
+
+        public bool TrangThai { get; set; }
+
+        public string MoTa { get; set; }
+    }
 }

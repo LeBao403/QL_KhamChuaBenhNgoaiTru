@@ -1,0 +1,93 @@
+﻿@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.DichVuViewModel>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-center align-middle py-3 fw-bold text-secondary">
+                @item.MaDV
+            </td>
+
+            <td class="align-middle py-3">
+                <div class="fw-bold text-dark" style="font-size: 1.05rem;">@item.TenDV</div>
+            </td>
+
+            <td class="align-middle py-3">
+                <span class="badge bg-info text-dark bg-opacity-25 border border-info px-2 py-1">@item.TenLoaiDV</span>
+            </td>
+
+            <td class="text-end align-middle py-3 text-nowrap">
+                <span class="fw-bold text-danger fs-6">@String.Format("{0:N0}", item.GiaDichVu) đ</span>
+                @if (!string.IsNullOrEmpty(item.DonViTinh))
+                {
+                    <span class="text-muted small"> / @item.DonViTinh</span>
+                }
+            </td>
+
+            <td class="text-center align-middle py-3 text-nowrap">
+                @if (item.CoBHYT)
+                {
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success px-2 py-1">
+                        <i class="bi bi-check-circle-fill me-1"></i> Có (@String.Format("{0:N0}", item.GiaBHYT) đ)
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary px-2 py-1">Không</span>
+                }
+            </td>
+
+            <td class="text-center align-middle py-3">
+                @if (item.TrangThai)
+                {
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success px-2 py-1">Đang HĐ</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-2 py-1">Đã khóa</span>
+                }
+            </td>
+
+            <td class="text-center align-middle py-3">
+                <div class="d-flex justify-content-center gap-1">
+                    @* Nút Chi tiết *@
+                    <a href="@Url.Action("Details", "DichVu", new { id = item.MaDV, area = "Admin" })" class="btn btn-sm btn-outline-info" title="Chi tiết">
+                        <i class="bi bi-eye"></i>
+                    </a>
+
+                    @* Nút Chỉnh sửa *@
+                    <a href="@Url.Action("Edit", "DichVu", new { id = item.MaDV, area = "Admin" })" class="btn btn-sm btn-outline-warning" title="Chỉnh sửa">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    @* Nút Khóa/Mở trạng thái (Ajax) *@
+                    <button type="button" class="btn btn-sm @(item.TrangThai ? "btn-outline-secondary" : "btn-outline-success") btn-toggle-status"
+                            data-id="@item.MaDV" data-status="@(item.TrangThai ? "true" : "false")"
+                            title="@(item.TrangThai ? "Khóa dịch vụ" : "Mở khóa dịch vụ")">
+                        <i class="bi @(item.TrangThai ? "bi-lock" : "bi-unlock")"></i>
+                    </button>
+
+                    @* Nút Xóa vĩnh viễn (Đã sửa: Bỏ form, dùng data-id cho Ajax) *@
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-delete-dv"
+                            data-id="@item.MaDV"
+                            title="Xóa vĩnh viễn">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="7" class="text-center py-5">
+            <div class="text-muted">
+                <i class="bi bi-box-seam display-4 d-block mb-3 text-secondary opacity-50"></i>
+                <h5>Không tìm thấy dữ liệu!</h5>
+                <p>Vui lòng thử thay đổi từ khóa hoặc bộ lọc danh mục.</p>
+            </div>
+        </td>
+    </tr>
+}

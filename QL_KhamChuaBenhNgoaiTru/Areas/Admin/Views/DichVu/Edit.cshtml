@@ -1,0 +1,190 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.DichVuViewModel
+@using QL_KhamChuaBenhNgoaiTru.Models
+
+@{
+    ViewBag.Title = "Chỉnh sửa Dịch vụ";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_admin.cshtml";
+
+    // Lấy danh sách danh mục từ ViewBag để đổ vào Dropdown
+    var listLoai = ViewBag.ListLoaiDV as List<LoaiDichVu>;
+    var selectListLoai = new SelectList(listLoai, "MaLoaiDV", "TenLoaiDV");
+}
+
+<div class="container-fluid">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index", "DichVu", new { area = "Admin" })" class="text-decoration-none"><i class="bi bi-house"></i> Dịch vụ viện phí</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Chỉnh sửa dịch vụ</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 text-warning fw-bold text-dark">
+                <i class="bi bi-pencil-square me-2 text-warning"></i> Cập nhật thông tin Dịch vụ
+            </h5>
+            <span class="badge bg-light text-dark border px-3 py-2">Mã DV: @Model.MaDV</span>
+        </div>
+
+        <div class="card-body p-4">
+            @using (Html.BeginForm("Edit", "DichVu", new { area = "Admin" }, FormMethod.Post, new { id = "formEditDichVu" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger p-2 mb-4" })
+
+                @Html.HiddenFor(m => m.MaDV)
+
+                <div class="row g-5">
+                    <div class="col-lg-6">
+                        <h6 class="text-uppercase text-muted fw-bold mb-3 border-bottom pb-2"><i class="bi bi-info-square me-2"></i>Thông tin cơ bản</h6>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Mã dịch vụ</label>
+                            <input type="text" class="form-control bg-light text-secondary fw-bold" value="@Model.MaDV" disabled readonly />
+                            <small class="text-muted"><i class="bi bi-lock me-1"></i>Mã dịch vụ không được phép thay đổi.</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tên dịch vụ <span class="text-danger">*</span></label>
+                            @Html.EditorFor(model => model.TenDV, new { htmlAttributes = new { @class = "form-control fw-bold text-primary", placeholder = "Nhập tên dịch vụ..." } })
+                            @Html.ValidationMessageFor(model => model.TenDV, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Danh mục <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(model => model.MaLoaiDV, selectListLoai, "-- Chọn danh mục --", new { @class = "form-select" })
+                            @Html.ValidationMessageFor(model => model.MaLoaiDV, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Trạng thái hoạt động</label>
+                            <div class="p-2 border rounded-3 bg-light mt-1">
+                                <div class="form-check form-check-inline">
+                                    @Html.RadioButtonFor(m => m.TrangThai, true, new { @id = "statusActive", @class = "form-check-input text-success" })
+                                    <label class="form-check-label text-success fw-bold" for="statusActive">Đang hoạt động</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    @Html.RadioButtonFor(m => m.TrangThai, false, new { @id = "statusLock", @class = "form-check-input text-danger" })
+                                    <label class="form-check-label text-danger fw-bold" for="statusLock">Khóa (Tạm ngưng)</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Mô tả chi tiết</label>
+                            @Html.TextAreaFor(model => model.MoTa, new { @class = "form-control", rows = "3", placeholder = "Nhập lưu ý, hướng dẫn..." })
+                            @Html.ValidationMessageFor(model => model.MoTa, "", new { @class = "text-danger small" })
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <h6 class="text-uppercase text-muted fw-bold mb-3 border-bottom pb-2"><i class="bi bi-cash-coin me-2"></i>Chi phí & Viện phí</h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold">Giá dịch vụ (VNĐ) <span class="text-danger">*</span></label>
+                                @Html.EditorFor(model => model.GiaDichVu, new { htmlAttributes = new { @class = "form-control fw-bold text-danger fs-5", type = "number", min = "0", id = "inputGiaDichVu" } })
+                                @Html.ValidationMessageFor(model => model.GiaDichVu, "", new { @class = "text-danger small" })
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Đơn vị tính <span class="text-danger">*</span></label>
+                                @Html.EditorFor(model => model.DonViTinh, new { htmlAttributes = new { @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.DonViTinh, "", new { @class = "text-danger small" })
+                            </div>
+                        </div>
+
+                        <div class="card bg-light border-0 shadow-sm mt-4">
+                            <div class="card-body">
+                                <label class="form-label fw-semibold text-primary mb-3">Chế độ Bảo hiểm Y tế</label>
+
+                                <div class="form-check form-switch mb-3 fs-5">
+                                    @Html.CheckBoxFor(model => model.CoBHYT, new { @class = "form-check-input shadow-sm", id = "switchBHYT", style = "cursor: pointer;" })
+                                    <label class="form-check-label fs-6 mt-1 ms-2" for="switchBHYT">Dịch vụ này có hỗ trợ BHYT</label>
+                                </div>
+
+                                <div id="boxGiaBHYT" style="@(Model.CoBHYT ? "" : "display: none;")">
+                                    <div class="p-3 bg-white border border-success border-opacity-25 rounded-3">
+                                        <label class="form-label fw-semibold text-success">Mức giá BHYT chi trả (VNĐ) <span class="text-danger">*</span></label>
+                                        @Html.EditorFor(model => model.GiaBHYT, new { htmlAttributes = new { @class = "form-control fw-bold text-success fs-5", type = "number", min = "0", id = "inputGiaBHYT" } })
+                                        @Html.ValidationMessageFor(model => model.GiaBHYT, "", new { @class = "text-danger small" })
+                                        <small class="text-muted d-block mt-2"><i class="bi bi-info-circle me-1"></i>Giá trị này dùng để tính toán mức đồng chi trả.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4 text-secondary opacity-25" />
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="@Url.Action("Index", "DichVu", new { area = "Admin" })" class="btn btn-outline-secondary fw-bold px-4">
+                        <i class="bi bi-x-circle me-1"></i> Hủy bỏ
+                    </a>
+                    <button type="submit" class="btn btn-warning text-dark fw-bold px-5 shadow-sm">
+                        <i class="bi bi-save me-1"></i> Lưu thay đổi
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            // 1. Kiểm tra trạng thái ban đầu lúc vừa load View lên để gắn thuộc tính 'required'
+            if ($('#switchBHYT').is(':checked')) {
+                $('#inputGiaBHYT').attr('required', 'required');
+            }
+
+            // 2. Hiệu ứng ẩn hiện ô giá BHYT khi click
+            $('#switchBHYT').change(function () {
+                var isChecked = $(this).is(':checked');
+
+                if (isChecked) {
+                    $('#boxGiaBHYT').slideDown(250);
+                    $('#inputGiaBHYT').attr('required', 'required');
+                } else {
+                    $('#boxGiaBHYT').slideUp(250);
+                    $('#inputGiaBHYT').val(''); // Xóa trắng dữ liệu đi khi tắt BHYT
+                    $('#inputGiaBHYT').removeAttr('required');
+                }
+            });
+
+            // 3. Chặn nhập số âm
+            $('input[type="number"]').on('input', function () {
+                if ($(this).val() < 0) {
+                    $(this).val(0);
+                }
+            });
+
+            // 4. KIỂM TRA LOGIC TRƯỚC KHI GỬI FORM (Chống lỗi BHYT > Giá Gốc)
+            $('#formEditDichVu').on('submit', function (e) {
+                var isBHYT = $('#switchBHYT').is(':checked');
+
+                var giaDV = parseFloat($('#inputGiaDichVu').val().replace(/,/g, '')) || 0;
+                var giaBHYT = parseFloat($('#inputGiaBHYT').val().replace(/,/g, '')) || 0;
+
+                if (isBHYT) {
+                    if (giaBHYT > giaDV) {
+                        e.preventDefault(); // Dừng không cho gửi form
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Sai logic giá tiền!',
+                            text: 'Mức BHYT chi trả (' + giaBHYT.toLocaleString() + 'đ) không thể lớn hơn Giá dịch vụ gốc (' + giaDV.toLocaleString() + 'đ) được!',
+                            confirmButtonColor: '#0d6efd'
+                        });
+
+                        $('#inputGiaBHYT').focus();
+                    }
+                }
+            });
+        });
+    </script>
+}
