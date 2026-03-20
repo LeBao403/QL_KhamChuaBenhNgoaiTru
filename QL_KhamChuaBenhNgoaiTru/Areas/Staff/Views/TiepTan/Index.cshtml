@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Danh sách Tiếp nhận & Đăng ký khám";
+    Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
+}
+
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 text-primary fw-bold"><i class="bi bi-list-check"></i> Hàng đợi bệnh nhân hôm nay</h5>
+        <button class="btn btn-success fw-bold"><i class="bi bi-plus-circle"></i> Đăng ký khám mới</button>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover table-bordered text-center align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>STT</th>
+                    <th>Mã Bệnh Nhân</th>
+                    <th>Họ và tên</th>
+                    <th>Số điện thoại</th>
+                    <th>Thời gian ĐK</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td class="fw-bold text-primary">BN001</td>
+                    <td>Nguyễn Văn A</td>
+                    <td>0901234567</td>
+                    <td>08:30 - Hôm nay</td>
+                    <td><span class="badge bg-warning text-dark">Chờ tiếp nhận</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary">Xác nhận</button>
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td class="fw-bold text-primary">BN002</td>
+                    <td>Trần Thị B</td>
+                    <td>0987654321</td>
+                    <td>09:00 - Hôm nay</td>
+                    <td><span class="badge bg-info">Đang khám</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" disabled>Đã xử lý</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

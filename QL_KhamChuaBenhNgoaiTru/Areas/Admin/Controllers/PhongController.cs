@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
 {
-    public class PhongController : Controller
+    public class PhongController : BaseAdminController
     {
         PhongDB db = new PhongDB();
         KhoaDB khoaDb = new KhoaDB(); // Dùng để load danh sách Khoa lên Dropdown

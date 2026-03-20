@@ -1,48 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
+using System.Web.Routing;
+using QL_KhamChuaBenhNgoaiTru.Models;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
 {
-    [Authorize]
+    // Kế thừa Controller mặc định
     public class BaseAdminController : Controller
     {
+        // Hàm này sẽ tự động chạy TRƯỚC MỖI ACTION trong khu vực Admin
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var session = filterContext.HttpContext.Session;
+            // 1. Lấy thông tin session nhân viên
+            var nv = Session["NhanVien"] as NhanVien;
 
-            // 1. Kiểm tra Đăng nhập VÀ là Nhân viên
-            if (session["UserType"] == null || session["UserType"].ToString() != "Employee")
+            if (nv == null)
             {
+                // Chưa đăng nhập -> Đá về trang đăng nhập ở bên ngoài (Area = "")
                 filterContext.Result = new RedirectToRouteResult(
-                    new System.Web.Routing.RouteValueDictionary(new
-                    {
-                        controller = "Account",
-                        action = "Login",
-                        area = ""
-                    })
+                    new RouteValueDictionary(new { controller = "TaiKhoan", action = "Login", area = "" })
                 );
-                return; // Dừng thực thi
             }
-
-            // 2. Kiểm tra có Mã Chức Vụ không (Quan trọng)
-            if (session["MaChucVu"] == null || (int)session["MaChucVu"] == 0)
+            else
             {
-                filterContext.Result = new RedirectToRouteResult(
-                   new System.Web.Routing.RouteValueDictionary(new
-                   {
-                       controller = "Account",
-                       action = "Login",
-                       area = "",
-                       message = "Tài khoản nhân viên chưa được phân quyền."
-                   })
-               );
-                return; // Dừng thực thi
-            }
+                // 2. Đã đăng nhập, kiểm tra chức vụ (Phân quyền)
+                // Theo logic của bạn: 1 = Giám đốc, 2 = Admin
+                int chucVu = nv.MaChucVu ?? 0;
 
-            // (Admin không bắt buộc phải có MaCoSo, nên ta bỏ qua kiểm tra đó)
+                if (chucVu != 1 && chucVu != 2)
+                {
+                    // Đăng nhập rồi nhưng không phải Admin/Giám đốc -> Không cho vào
+                    filterContext.Result = new RedirectToRouteResult(
+                        new RouteValueDictionary(new { controller = "Home", action = "Index", area = "" })
+                    );
+                }
+            }
 
             base.OnActionExecuting(filterContext);
         }
