@@ -1,0 +1,334 @@
+﻿@{
+    ViewBag.Title = "Bảng Giá Dịch Vụ Y Tế - MedicHub";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+    var danhSachLoai = ViewBag.MenuLoaiDV as List<QL_KhamChuaBenhNgoaiTru.Models.LoaiDichVuGroup>;
+}
+
+<style>
+    /* 1. HERO BANNER */
+    .pricing-hero {
+        background: linear-gradient(135deg, rgba(5, 44, 101, 0.95) 0%, rgba(13, 110, 253, 0.85) 100%), url('https://images.unsplash.com/photo-1551076805-e1869043e560?q=80&w=1920&auto=format&fit=crop') no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed;
+        padding: 140px 0 100px 0;
+    }
+
+    /* 2. CARD CAM KẾT */
+    .value-card {
+        background: #fff;
+        border-radius: 1rem;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+        height: 100%;
+        border-bottom: 4px solid transparent;
+    }
+
+        .value-card:hover {
+            transform: translateY(-10px);
+            border-bottom: 4px solid #0d6efd;
+        }
+
+    .value-icon {
+        width: 70px;
+        height: 70px;
+        background: #e9ecef;
+        color: #0d6efd;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 1.5rem auto;
+    }
+
+    /* 3. MENU DỌC & SEARCH */
+    .custom-tab-btn {
+        display: block;
+        width: 100%;
+        color: #495057;
+        background-color: #f8f9fa;
+        font-weight: 600;
+        text-align: left;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .custom-tab-btn:hover {
+            background-color: #e9ecef;
+            color: #0d6efd;
+            transform: translateX(5px);
+        }
+
+        .custom-tab-btn.active {
+            background-color: #0d6efd;
+            color: #fff;
+            box-shadow: 0 8px 20px rgba(13,110,253,0.3);
+            transform: translateX(5px);
+        }
+
+    .bg-search-wrap {
+        margin-top: -35px;
+        position: relative;
+        z-index: 10;
+    }
+
+    /* 4. QUY TRÌNH THANH TOÁN */
+    .step-box {
+        position: relative;
+        padding: 2rem;
+        border-radius: 1rem;
+        background: #f8f9fa;
+        border: 1px dashed #dee2e6;
+        text-align: center;
+    }
+
+    .step-number {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 40px;
+        background: #0d6efd;
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        border: 4px solid #fff;
+    }
+
+    /* 5. FAQ ACCORDION */
+    .accordion-button:not(.collapsed) {
+        background-color: #e8f5e9;
+        color: #198754;
+        font-weight: bold;
+    }
+
+    .accordion-button:focus {
+        box-shadow: none;
+    }
+</style>
+
+<section class="pricing-hero text-white text-center">
+    <div class="container" data-aos="fade-down">
+        <span class="badge bg-warning text-dark px-4 py-2 rounded-pill mb-3 fw-bold shadow-sm">Bảng Giá Niêm Yết 2026</span>
+        <h1 class="display-4 fw-bold mb-3">Bảng Giá Dịch Vụ Y Tế</h1>
+        <p class="lead mb-0 text-white-50 mx-auto" style="max-width: 750px;">Minh bạch tài chính, không phụ phí ẩn. Mang đến sự an tâm tuyệt đối cho bạn và gia đình trong suốt quá trình thăm khám và điều trị.</p>
+    </div>
+</section>
+
+<section class="py-5" style="background-color: #fdfdfd;">
+    <div class="container" style="margin-top: -80px; position: relative; z-index: 5;">
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="value-card">
+                    <div class="value-icon"><i class="bi bi-shield-check"></i></div>
+                    <h5 class="fw-bold">100% Công Khai Mức Giá</h5>
+                    <p class="text-muted small mb-0">Tất cả chi phí khám chữa bệnh đều được niêm yết rõ ràng theo khung quy định của Bộ Y Tế.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="value-card">
+                    <div class="value-icon" style="color: #198754; background: #e8f5e9;"><i class="bi bi-credit-card"></i></div>
+                    <h5 class="fw-bold">Thanh Toán Đa Dạng</h5>
+                    <p class="text-muted small mb-0">Hỗ trợ thanh toán qua Tiền mặt, Thẻ tín dụng/Ghi nợ, Chuyển khoản QR Code và Ví điện tử.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="value-card">
+                    <div class="value-icon" style="color: #dc3545; background: #f8d7da;"><i class="bi bi-heart-pulse"></i></div>
+                    <h5 class="fw-bold">Bảo Lãnh Viện Phí</h5>
+                    <p class="text-muted small mb-0">Chấp nhận thẻ BHYT nhà nước và liên kết bảo lãnh trực tiếp với hơn 20 hãng bảo hiểm tư nhân.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light border-top">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-bold text-dark display-6">Tra Cứu Phí Dịch Vụ</h2>
+            <div class="section-line mx-auto bg-primary"></div>
+        </div>
+
+        <div class="row justify-content-center bg-search-wrap mb-5" data-aos="fade-up">
+            <div class="col-md-8 col-lg-7">
+                <div class="input-group shadow rounded-pill border-0 bg-white p-2">
+                    <span class="input-group-text bg-transparent border-0 ps-4"><i class="bi bi-search text-primary fs-4"></i></span>
+                    <input type="text" id="txtSearch" class="form-control border-0 py-3 shadow-none fw-bold text-dark fs-5" placeholder="Gõ tên dịch vụ (VD: Siêu âm, Nhổ răng...)">
+                </div>
+            </div>
+        </div>
+
+        <div class="row bg-white rounded-4 shadow-sm p-4" data-aos="fade-up">
+            <div class="col-lg-3 border-end pe-lg-4 mb-4 mb-lg-0" id="tab-menu-container">
+                <h6 class="text-muted fw-bold text-uppercase mb-4 ms-2">Danh mục Dịch vụ</h6>
+                <button class="custom-tab-btn active btn-filter" data-maloai="">Tất cả dịch vụ</button>
+                @if (danhSachLoai != null)
+                {
+                    foreach (var loai in danhSachLoai)
+                    {
+                        <button class="custom-tab-btn btn-filter" data-maloai="@loai.MaLoaiDV">@loai.TenLoaiDV</button>
+                    }
+                }
+            </div>
+
+            <div class="col-lg-9 ps-lg-4" id="pricing-content">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted fw-bold">Đang tải dữ liệu...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white border-top">
+    <div class="container py-4">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="section-subtitle text-success fw-bold text-uppercase">Nhanh chóng & Tiện lợi</span>
+            <h2 class="fw-bold text-dark display-6 mt-2">Quy Trình Thanh Toán & Bảo Lãnh</h2>
+        </div>
+
+        <div class="row g-4 mt-3">
+            <div class="col-md-4" data-aos="fade-right" data-aos-delay="100">
+                <div class="step-box">
+                    <div class="step-number">1</div>
+                    <h5 class="fw-bold mt-2">Tiếp nhận & Chỉ định</h5>
+                    <p class="text-muted small mb-0">Bác sĩ thăm khám và xuất phiếu chỉ định dịch vụ cận lâm sàng hoặc đơn thuốc trực tiếp trên hệ thống phần mềm.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="step-box">
+                    <div class="step-number">2</div>
+                    <h5 class="fw-bold mt-2">Duyệt Bảo Hiểm (Nếu có)</h5>
+                    <p class="text-muted small mb-0">Quầy thu ngân tự động áp mã BHYT hoặc gửi yêu cầu bảo lãnh viện phí đến hãng bảo hiểm tư nhân để trừ trực tiếp.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-left" data-aos-delay="300">
+                <div class="step-box">
+                    <div class="step-number">3</div>
+                    <h5 class="fw-bold mt-2">Thanh toán Đồng chi trả</h5>
+                    <p class="text-muted small mb-0">Người bệnh chỉ cần thanh toán phần chi phí chênh lệch (nếu có) bằng mã QR Code tiện lợi ngay tại quầy hoặc qua App.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-light">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="fade-up">
+                <h3 class="fw-bold mb-4 text-center">Câu Hỏi Thường Gặp Về Viện Phí</h3>
+                <div class="accordion shadow-sm" id="faqPricing">
+                    <div class="accordion-item border-0 mb-2 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                Tôi có BHYT tuyến Huyện thì khám ở đây có được giảm trừ không?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqPricing">
+                            <div class="accordion-body text-muted">
+                                <strong>Có.</strong> MedicHub tiếp nhận khám chữa bệnh BHYT thông tuyến toàn quốc. Bạn chỉ cần mang theo CCCD gắn chip hoặc thẻ BHYT trên ứng dụng VssID để được hưởng quyền lợi đúng tuyến theo quy định.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item border-0 mb-2 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Bảng giá trên đã bao gồm thuốc chưa?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqPricing">
+                            <div class="accordion-body text-muted">
+                                Bảng giá niêm yết ở trên là <strong>chi phí cho các dịch vụ kỹ thuật, khám bệnh và cận lâm sàng</strong> (Xét nghiệm, X-Quang, Siêu âm...). Chi phí thuốc men và vật tư tiêu hao sẽ được tính riêng theo thực tế sử dụng dựa trên phác đồ của Bác sĩ.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item border-0 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                Bệnh viện có hỗ trợ trả góp viện phí không?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqPricing">
+                            <div class="accordion-body text-muted">
+                                Đối với các ca phẫu thuật lớn hoặc điều trị nội trú dài ngày có chi phí từ 20 triệu VNĐ trở lên, MedicHub có chương trình hỗ trợ <strong>trả góp 0% lãi suất</strong> qua thẻ tín dụng của 25 ngân hàng liên kết.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5" style="background: #0d6efd; color: white;">
+    <div class="container py-4 text-center" data-aos="zoom-in">
+        <h2 class="display-6 fw-bold mb-3">Bạn cần báo giá chi tiết cho ca phẫu thuật?</h2>
+        <p class="lead text-white-50 mb-4 mx-auto" style="max-width: 600px;">
+            Đội ngũ tư vấn viên của chúng tôi luôn sẵn sàng hỗ trợ giải đáp mọi thắc mắc về viện phí 24/7.
+        </p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="tel:19006789" class="btn btn-warning btn-lg fw-bold rounded-pill px-4 hover-up shadow text-dark">
+                <i class="bi bi-telephone-inbound me-2"></i> Gọi Tổng Đài Tạm Ứng
+            </a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // HÀM AJAX LỌC BẢNG GIÁ
+            function loadBangGia() {
+                var keyword = $("#txtSearch").val().trim();
+                var maLoai = $(".btn-filter.active").attr("data-maloai");
+
+                $("#pricing-content").html('<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted fw-bold">Đang tải dữ liệu...</p></div>');
+
+                $.ajax({
+                    url: '@Url.Action("LoadBangGiaPartial", "Home")',
+                    type: 'GET',
+                    data: { tuKhoa: keyword, maLoai: maLoai },
+                    success: function (res) {
+                        $("#pricing-content").html(res);
+                    },
+                    error: function () {
+                        $("#pricing-content").html('<p class="text-danger text-center mt-5">Lỗi kết nối máy chủ!</p>');
+                    }
+                });
+            }
+
+            // Gọi lần đầu
+            loadBangGia();
+
+            // CLICK DANH MỤC
+            $(".btn-filter").click(function () {
+                $(".btn-filter").removeClass("active");
+                $(this).addClass("active");
+                loadBangGia();
+            });
+
+            // LIVE SEARCH
+            var delayTimer;
+            $("#txtSearch").on('input', function () {
+                clearTimeout(delayTimer);
+                delayTimer = setTimeout(function() {
+                    loadBangGia();
+                }, 200);
+            });
+        });
+    </script>
+}

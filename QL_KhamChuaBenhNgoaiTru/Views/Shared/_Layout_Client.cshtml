@@ -29,10 +29,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Home")">Trang chủ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#gioi-thieu">Giới thiệu</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#chuyen-khoa">Chuyên khoa</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#doi-ngu">Bác sĩ</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#tin-tuc">Tin tức</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("GioiThieu", "Home")">Giới thiệu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("BangGia", "Home")">Bảng giá</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("HuongDan", "Home")">Cẩm nang</a></li>
+                    <li class="nav-item"><a class="nav-link" href="@Url.Action("LienHe", "Home")">Liên hệ</a></li>
 
                     <li class="nav-item ms-lg-4 mt-3 mt-lg-0">
                         <a href="@Url.Action("DatLich", "Home")" class="btn-appointment">
@@ -45,7 +45,7 @@
                         {
                             <div class="dropdown">
                                 <a class="btn-login dropdown-toggle text-decoration-none" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person-circle me-1"></i> @Session["Username"]
+                                    <i class="bi bi-person-circle me-1"></i> @Session["HoTenBN"]
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
                                     <li><a class="dropdown-item" href="#">Hồ sơ của tôi</a></li>
@@ -84,24 +84,26 @@
                         <a href="#" class="text-white fs-4 hover-up"><i class="bi bi-tiktok"></i></a>
                     </div>
                 </div>
+
                 <div class="col-lg-2 offset-lg-1">
                     <h6 class="fw-bold mb-4 text-white">Dịch vụ & Tiện ích</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="footer-link">Đặt lịch khám bệnh</a></li>
-                        <li><a href="#" class="footer-link">Quy trình đi khám</a></li>
-                        <li><a href="#" class="footer-link">Bảng giá dịch vụ</a></li>
-                        <li><a href="#" class="footer-link">Tra cứu kết quả</a></li>
+                        <li><a href="@Url.Action("DatLich", "Home")" class="footer-link">Đặt lịch khám bệnh</a></li>
+                        <li><a href="@Url.Action("HuongDan", "Home")" class="footer-link">Quy trình & Cẩm nang</a></li>
+                        <li><a href="@Url.Action("BangGia", "Home")" class="footer-link">Bảng giá dịch vụ</a></li>
+                        <li><a href="@Url.Action("LienHe", "Home")" class="footer-link">Liên hệ hỗ trợ</a></li>
                     </ul>
                 </div>
+
                 <div class="col-lg-3">
                     <h6 class="fw-bold mb-4 text-white">Thông tin liên hệ</h6>
-                    <p class="small mb-3"><i class="bi bi-geo-alt-fill me-2 text-primary fs-6"></i> 123 Đường ABC, Quận 1, TP.HCM</p>
-                    <p class="small mb-3"><i class="bi bi-telephone-fill me-2 text-primary fs-6"></i> Hotline cấp cứu: 1900 6789</p>
-                    <p class="small"><i class="bi bi-envelope-fill me-2 text-primary fs-6"></i> contact@medichub.vn</p>
+                    <p class="small mb-3"><i class="bi bi-geo-alt-fill me-2 text-primary fs-6"></i> 786 Nguyễn Kiệm, Quận Gò Vấp, TP.HCM</p>
+                    <p class="small mb-3"><i class="bi bi-telephone-fill me-2 text-primary fs-6"></i> Hotline cấp cứu: 1900 1175</p>
+                    <p class="small"><i class="bi bi-envelope-fill me-2 text-primary fs-6"></i> cskh@medichub.vn</p>
                 </div>
+
                 <div class="col-lg-2">
                     <h6 class="fw-bold mb-4 text-white">Ứng dụng di động</h6>
-
                     <a href="#" class="btn-app">
                         <i class="bi bi-apple btn-app-icon"></i>
                         <div class="btn-app-text">
@@ -109,15 +111,13 @@
                             <strong>App Store</strong>
                         </div>
                     </a>
-
-                    <a href="#" class="btn-app">
+                    <a href="#" class="btn-app mt-2">
                         <i class="bi bi-google-play btn-app-icon"></i>
                         <div class="btn-app-text">
                             <small>GET IT ON</small>
                             <strong>Google Play</strong>
                         </div>
                     </a>
-
                 </div>
             </div>
             <hr class="mt-5 border-secondary">
@@ -136,7 +136,7 @@
         // Kích hoạt AOS
         AOS.init({ duration: 800, once: true, offset: 50 });
 
-        // LOGIC NAVBAR LƯỚT MƯỢT (Đã fix triệt để)
+        // LOGIC NAVBAR LƯỚT MƯỢT
         document.addEventListener("DOMContentLoaded", function () {
             var lastScrollTop = 0;
             var navbar = document.getElementById("mainNav");

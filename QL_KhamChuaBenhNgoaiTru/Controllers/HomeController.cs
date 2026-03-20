@@ -87,5 +87,34 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             // Trả Model ra View để render
             return View(model);
         }
+
+
+        // =========================================================
+        // TRANG BẢNG GIÁ DỊCH VỤ
+        // =========================================================
+        public ActionResult BangGia()
+        {
+            // Chỉ lấy Menu Loại Dịch Vụ đẩy ra View chính
+            ViewBag.MenuLoaiDV = db.GetMenuLoaiDichVu();
+            return View();
+        }
+
+        // Hàm này để AJAX gọi ngầm lấy dữ liệu
+        public ActionResult LoadBangGiaPartial(string tuKhoa = "", string maLoai = "")
+        {
+            var model = db.GetBangGiaDichVu(tuKhoa, maLoai);
+            return PartialView("_BangGiaPartial", model);
+        }
+
+
+        public ActionResult LienHe()
+        {
+            return View();
+        }
+
+        public ActionResult HuongDan()
+        {
+            return View();
+        }
     }
 }

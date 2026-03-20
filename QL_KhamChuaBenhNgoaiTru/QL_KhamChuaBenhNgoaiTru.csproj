@@ -120,8 +120,10 @@
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\BenhNhanController.cs" />
+    <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Admin\Controllers\KhoaController.cs" />
     <Compile Include="Areas\Admin\Controllers\PhongController.cs" />
+    <Compile Include="Areas\Admin\Controllers\ThuocController.cs" />
     <Compile Include="Areas\Staff\Controllers\BacSiController.cs" />
     <Compile Include="Areas\Staff\Controllers\BaseStaffController.cs" />
     <Compile Include="Areas\Staff\Controllers\TiepTanController.cs" />
@@ -134,6 +136,7 @@
     <Compile Include="DBContext\NhanVienDB.cs" />
     <Compile Include="DBContext\PhongDB.cs" />
     <Compile Include="DBContext\TaiKhoanDB.cs" />
+    <Compile Include="DBContext\ThuocDB.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -156,6 +159,30 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Antlr3.Runtime.dll" />
+    <Content Include="bin\Antlr3.Runtime.pdb" />
+    <Content Include="bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll" />
+    <Content Include="bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml" />
+    <Content Include="bin\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\Newtonsoft.Json.dll" />
+    <Content Include="bin\Newtonsoft.Json.xml" />
+    <Content Include="bin\QL_KhamChuaBenhNgoaiTru.dll" />
+    <Content Include="bin\QL_KhamChuaBenhNgoaiTru.pdb" />
+    <Content Include="bin\System.Web.Helpers.dll" />
+    <Content Include="bin\System.Web.Helpers.xml" />
+    <Content Include="bin\System.Web.Mvc.dll" />
+    <Content Include="bin\System.Web.Mvc.xml" />
+    <Content Include="bin\System.Web.Optimization.dll" />
+    <Content Include="bin\System.Web.Optimization.xml" />
+    <Content Include="bin\System.Web.Razor.dll" />
+    <Content Include="bin\System.Web.Razor.xml" />
+    <Content Include="bin\System.Web.WebPages.Deployment.dll" />
+    <Content Include="bin\System.Web.WebPages.Deployment.xml" />
+    <Content Include="bin\System.Web.WebPages.dll" />
+    <Content Include="bin\System.Web.WebPages.Razor.dll" />
+    <Content Include="bin\System.Web.WebPages.Razor.xml" />
+    <Content Include="bin\System.Web.WebPages.xml" />
+    <Content Include="bin\WebGrease.dll" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
@@ -241,6 +268,13 @@
     <Content Include="Areas\Staff\Views\TiepTan\Index.cshtml" />
     <Content Include="Areas\Staff\Views\web.config" />
     <Content Include="Areas\Staff\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Admin\Views\Dashboard\Index.cshtml" />
+    <Content Include="bin\QL_KhamChuaBenhNgoaiTru.dll.config" />
+    <Content Include="Areas\Admin\Views\Thuoc\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\Thuoc\_ThuocTable.cshtml" />
+    <Content Include="Areas\Admin\Views\Thuoc\Details.cshtml" />
+    <Content Include="Areas\Admin\Views\Thuoc\Create.cshtml" />
+    <Content Include="Areas\Admin\Views\Thuoc\Edit.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -267,14 +301,16 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout_Client.cshtml" />
-    <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Shared\_Layout_Pagination.cshtml" />
     <Content Include="Views\Home\BacSi.cshtml" />
     <Content Include="Views\Home\_BacSiList.cshtml" />
     <Content Include="Views\Home\ChuyenKhoa.cshtml" />
     <Content Include="Views\Home\GioiThieu.cshtml" />
+    <Content Include="Views\Home\BangGia.cshtml" />
+    <Content Include="Views\Home\_BangGiaPartial.cshtml" />
+    <Content Include="Views\Home\LienHe.cshtml" />
+    <Content Include="Views\Home\HuongDan.cshtml" />
     <Content Include="Views\TaiKhoan\Login.cshtml" />
     <Content Include="Views\TaiKhoan\Register.cshtml" />
     <Content Include="Views\Shared\_AuthLayout.cshtml" />

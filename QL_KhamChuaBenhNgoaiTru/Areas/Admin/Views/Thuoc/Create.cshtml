@@ -1,0 +1,175 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.ThuocManageViewModel
+@{
+    ViewBag.Title = "Thêm/Sửa Thông Tin Thuốc";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<style>
+    /* Dùng lại CSS profile-card, section-title của BenhNhan */
+    .profile-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #dee2e6;
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        color: #0d6efd;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="container-fluid mt-4 px-4">
+    <h4 class="fw-bold text-dark mb-4">Quản Lý Danh Mục Thuốc</h4>
+
+    @using (Html.BeginForm("Create", "Thuoc", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <h4 class="section-title"><i class="bi bi-box-seam"></i> 1. Thông tin chung</h4>
+        <div class="profile-card row g-3">
+            <div class="col-md-2">
+                <label class="form-label">Mã thuốc *</label>
+                @Html.EditorFor(m => m.Thuoc.MaThuoc, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">Tên thuốc *</label>
+                @Html.EditorFor(m => m.Thuoc.TenThuoc, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">Quy cách (VD: Hộp 3 vỉ x 10 viên)</label>
+                @Html.EditorFor(m => m.Thuoc.QuyCach, new { htmlAttributes = new { @class = "form-control" } })
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Đơn vị cơ bản (Viên/Chai...)</label>
+                @Html.DropDownListFor(m => m.Thuoc.DonViCoBan, new SelectList(new[] { "Viên", "Chai", "Lọ", "Tuýp", "Gói", "Ống" }), "-- Chọn --", new { @class = "form-select" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Nhóm/Loại thuốc</label>
+                @Html.DropDownListFor(m => m.Thuoc.MaLoaiThuoc, Model.DanhSachLoaiThuoc, "-- Chọn nhóm --", new { @class = "form-select" })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Đường dùng</label>
+                @Html.EditorFor(m => m.Thuoc.DuongDung, new { htmlAttributes = new { @class = "form-control", placeholder = "Uống, bôi..." } })
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Nhà sản xuất</label>
+                @Html.DropDownListFor(m => m.Thuoc.MaNSX, Model.DanhSachNSX, "-- Chọn NSX --", new { @class = "form-select" })
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Giá bán niêm yết</label>
+                @Html.EditorFor(m => m.Thuoc.GiaBan, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <div class="form-check form-switch fs-5">
+                    @Html.CheckBoxFor(m => m.Thuoc.CoBHYT, new { @class = "form-check-input" })
+                    <label class="form-check-label fs-6 mt-1 ms-2">Thuộc danh mục BHYT</label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Giá BHYT quy định</label>
+                @Html.EditorFor(m => m.Thuoc.GiaBHYT, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="section-title mb-0"><i class="bi bi-capsule"></i> 2. Thành phần / Hoạt chất</h4>
+            <button type="button" class="btn btn-sm btn-success" id="btnAddThanhPhan">
+                <i class="bi bi-plus-lg"></i> Thêm thành phần
+            </button>
+        </div>
+
+        <div class="profile-card p-0 overflow-hidden">
+            <table class="table table-bordered mb-0" id="tableThanhPhan">
+                <thead class="table-light">
+                    <tr>
+                        <th width="50%">Hoạt chất</th>
+                        <th width="40%">Hàm lượng</th>
+                        <th width="10%" class="text-center">Xóa</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyThanhPhan">
+                    @* Render các thành phần đã có (khi Edit) hoặc trống (khi Create) *@
+                    @if (Model.DanhSachThanhPhan != null && Model.DanhSachThanhPhan.Count > 0)
+                    {
+                        for (int i = 0; i < Model.DanhSachThanhPhan.Count; i++)
+                        {
+                            <tr class="tp-row">
+                                <td>
+                                    @Html.DropDownListFor(m => m.DanhSachThanhPhan[i].MaHoatChat,
+                                        new SelectList(Model.DanhSachHoatChat.Items, "MaHoatChat", "TenHoatChat", Model.DanhSachThanhPhan[i].MaHoatChat),
+                                        new { @class = "form-select row-hoatchat" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(m => m.DanhSachThanhPhan[i].HamLuong, new { @class = "form-control row-hamluong" })
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-danger btn-remove-row"><i class="bi bi-x-lg"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2 mb-5">
+            <a href="@Url.Action("Index", "Thuoc")" class="btn btn-outline-secondary px-4">Hủy</a>
+            <button type="submit" class="btn btn-primary px-5"><i class="bi bi-save me-1"></i> Lưu thông tin</button>
+        </div>
+    }
+</div>
+
+<select id="hoatChatTemplate" style="display:none;">
+    @foreach (var item in Model.DanhSachHoatChat)
+    {
+        <option value="@item.Value">@item.Text</option>
+    }
+</select>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Logic thêm dòng mới
+            $('#btnAddThanhPhan').click(function () {
+                var options = $('#hoatChatTemplate').html();
+                // Phải đặt name dạng DanhSachThanhPhan[0], [1]... ASP.NET MVC mới bind được thành List
+                var rowCount = $('.tp-row').length;
+
+                var newRow = `
+                    <tr class="tp-row">
+                        <td>
+                            <select name="DanhSachThanhPhan[${rowCount}].MaHoatChat" class="form-select row-hoatchat">
+                                ${options}
+                            </select>
+                        </td>
+                        <td>
+                            <input name="DanhSachThanhPhan[${rowCount}].HamLuong" type="text" class="form-control row-hamluong" placeholder="VD: 500mg" />
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-sm btn-danger btn-remove-row"><i class="bi bi-x-lg"></i></button>
+                        </td>
+                    </tr>`;
+                $('#tbodyThanhPhan').append(newRow);
+            });
+
+            // Logic xóa dòng và cập nhật lại Index mảng (quan trọng để MVC không bị lỗi đứt đoạn index)
+            $('#tbodyThanhPhan').on('click', '.btn-remove-row', function () {
+                $(this).closest('tr').remove();
+
+                // Đánh lại số thứ tự (index) cho các name attribute
+                $('.tp-row').each(function (index) {
+                    $(this).find('.row-hoatchat').attr('name', `DanhSachThanhPhan[${index}].MaHoatChat`);
+                    $(this).find('.row-hamluong').attr('name', `DanhSachThanhPhan[${index}].HamLuong`);
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,266 @@
+﻿@{
+    ViewBag.Title = "Liên Hệ - MedicHub Smart Hospital";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+}
+
+<style>
+    /* 1. HERO BANNER */
+    .contact-hero {
+        background: linear-gradient(135deg, rgba(5, 44, 101, 0.95) 0%, rgba(13, 110, 253, 0.85) 100%),
+                    url('/Images/about/about-hero.jpg') no-repeat center center;
+        background-attachment: fixed;
+        background-size: cover;
+        padding: 140px 0 100px 0;
+        color: white;
+    }
+
+    /* 2. CHỮ GRADIENT */
+    .text-gradient {
+        background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* 3. THẺ THÔNG TIN LIÊN HỆ */
+    .info-card {
+        background: #fff;
+        border-radius: 1rem;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+        border: 1px solid #f1f4f9;
+        height: 100%;
+    }
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(13, 110, 253, 0.1);
+    }
+    .icon-wrapper-contact {
+        width: 60px; height: 60px;
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-size: 2rem; margin-right: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    /* 4. LỊCH LÀM VIỆC (3 THẺ) */
+    .time-card {
+        background: #fff;
+        border-radius: 1rem;
+        padding: 2.5rem 2rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+        text-align: center;
+        height: 100%;
+        border-top: 5px solid transparent;
+        transition: transform 0.3s ease;
+    }
+    .time-card:hover { transform: translateY(-8px); }
+    .emergency-card { border-top-color: #dc3545; }
+    .office-card { border-top-color: #0d6efd; }
+    .extra-card { border-top-color: #198754; }
+    .time-icon { font-size: 3.5rem; margin-bottom: 1.5rem; display: block; }
+
+    /* 5. FORM GỬI TIN & BẢN ĐỒ */
+    .form-line {
+        border-bottom: 2px solid #dee2e6;
+        border-top: none; border-left: none; border-right: none;
+        border-radius: 0; padding: 15px 0;
+        font-weight: 600; color: #212529;
+        box-shadow: none;
+        background-color: transparent;
+    }
+    .form-line:focus {
+        border-bottom-color: #0d6efd;
+        box-shadow: none;
+        background-color: transparent;
+    }
+    .map-frame {
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border: 4px solid #fff;
+    }
+
+    @@media (max-width: 768px) {
+        .time-card { padding: 1.5rem; }
+    }
+</style>
+
+<section class="contact-hero text-center">
+    <div class="container" data-aos="fade-down">
+        <span class="badge bg-light text-primary px-4 py-2 rounded-pill mb-3 fw-bold shadow">Kết nối với chúng tôi</span>
+        <h1 class="display-3 fw-bold mb-3">Liên Hệ</h1>
+        <p class="lead mb-0 text-white-50 mx-auto" style="max-width: 750px; line-height: 1.8;">
+            MedicHub luôn lắng nghe và đồng hành cùng bạn trên hành trình chăm sóc sức khỏe. Hãy để chúng tôi hỗ trợ bạn nhanh chóng nhất.
+        </p>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="mb-5">
+                    <span class="section-subtitle text-primary fw-bold text-uppercase">Tư vấn & Chăm sóc Khách hàng</span>
+                    <h2 class="fw-bold text-dark display-5 mt-2 mb-3">Thông tin <span class="text-gradient">liên hệ</span></h2>
+                    <p class="text-muted fs-5" style="line-height: 1.8;">Đội ngũ chuyên nghiệp luôn sẵn sàng tiếp nhận yêu cầu 24/7 để mang đến trải nghiệm khám chữa bệnh liền mạch.</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="info-card d-flex align-items-center">
+                            <div class="icon-wrapper-contact bg-primary-subtle text-primary"><i class="bi bi-telephone-inbound"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-muted">Hotline 24/7</h6>
+                                <p class="text-dark fs-4 mb-0 fw-bold counter">19001175</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-card d-flex align-items-center">
+                            <div class="icon-wrapper-contact bg-success-subtle text-success"><i class="bi bi-chat-dots"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-muted">Đặt khám qua Zalo</h6>
+                                <p class="text-dark fs-5 mb-0 fw-bold">0399 175 175</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="info-card d-flex align-items-center">
+                            <div class="icon-wrapper-contact bg-danger-subtle text-danger"><i class="bi bi-envelope"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-muted">Email hỗ trợ</h6>
+                                <p class="text-dark fs-5 mb-1 fw-bold">vanthu@medichub.vn</p>
+                                <p class="text-dark fs-5 mb-0 fw-bold">banctxhmedichub@gmail.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 text-center text-lg-end" data-aos="fade-left">
+                <img src="/Images/about/about-it.jpg" class="rounded-4 shadow-lg w-100" style="object-fit: cover; min-height: 500px;" alt="Quầy tiếp tân MedicHub">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 border-top border-bottom" style="background-color: #f8f9fa;">
+    <div class="container py-5">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-bold text-dark display-5">Thời gian làm việc</h2>
+            <div class="section-line mx-auto bg-primary mt-3"></div>
+        </div>
+
+        <div class="row g-4 justify-content-center mt-3">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="time-card emergency-card shadow-sm hover-up">
+                    <i class="bi bi-heart-pulse time-icon text-danger"></i>
+                    <h4 class="fw-bold mb-3 text-dark">Trực cấp cứu</h4>
+                    <p class="text-dark opacity-75 fs-5" style="line-height: 1.8;">Hoạt động <strong class="text-danger">24/24</strong> tất cả các ngày trong tuần, bao gồm cả ngày lễ, Tết.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="time-card office-card shadow-sm hover-up">
+                    <i class="bi bi-calendar-check time-icon text-primary"></i>
+                    <h4 class="fw-bold mb-4 text-dark">Giờ hành chính</h4>
+                    <p class="text-dark mb-3 fs-5"><strong class="fw-bold">Thứ Hai – Thứ Sáu:</strong></p>
+                    <ul class="list-unstyled text-start d-inline-block text-muted fs-5">
+                        <li class="mb-2"><i class="bi bi-dot text-primary fs-4"></i> Sáng: 7h00 – 11h30</li>
+                        <li><i class="bi bi-dot text-primary fs-4"></i> Chiều: 13h30 – 16h30</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="time-card extra-card shadow-sm hover-up">
+                    <i class="bi bi-person-badge time-icon text-success"></i>
+                    <h4 class="fw-bold mb-4 text-dark">Ngoài giờ hành chính</h4>
+
+                    <p class="text-dark mb-2 fs-5"><strong class="fw-bold">Thứ 7:</strong></p>
+                    <ul class="list-unstyled text-start d-inline-block text-muted fs-5 mb-3">
+                        <li class="mb-1"><i class="bi bi-dot text-success fs-4"></i> Sáng: 7h00 – 11h30</li>
+                        <li><i class="bi bi-dot text-success fs-4"></i> Chiều: 13h30 – 16h30</li>
+                    </ul>
+
+                    <p class="text-dark mb-2 fs-5"><strong class="fw-bold">Chủ Nhật:</strong></p>
+                    <ul class="list-unstyled text-start d-inline-block text-muted fs-5 mb-3">
+                        <li><i class="bi bi-dot text-success fs-4"></i> Sáng: 7h00 – 11h30</li>
+                    </ul>
+
+                    <p class="text-dark small mt-2 fw-bold bg-light p-2 rounded border">Địa điểm khám ngoài giờ: Lầu 2, Khu khám bệnh theo yêu cầu MedicHub.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container py-5">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="mb-5">
+                    <h2 class="fw-bold text-dark display-4 mt-2 mb-4" style="color: #198754 !important;">Hãy liên hệ với <br> chúng tôi</h2>
+                </div>
+
+                <form>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control form-line fs-5" placeholder="Họ và tên *">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control form-line fs-5" placeholder="Số điện thoại *">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <input type="email" class="form-control form-line fs-5" placeholder="Email (Nếu có)">
+                    </div>
+                    <div class="mb-5">
+                        <textarea class="form-control form-line fs-5" rows="2" placeholder="Ghi chú *"></textarea>
+                    </div>
+                    <div class="text-start">
+                        <button type="submit" class="btn btn-danger btn-lg px-5 fw-bold shadow-sm hover-up rounded-1">
+                            Gửi cho chúng tôi
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="mb-4">
+                    <p class="fs-5 text-muted" style="line-height: 1.8;">Tuyệt vời! Chúng tôi luôn sẵn lòng lắng nghe bạn và đồng hành để tạo nên điều thật ý nghĩa. Hãy liên hệ với chúng tôi bất cứ khi nào bạn cần được hỗ trợ.</p>
+                </div>
+
+                <div class="map-frame mt-4">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.8576479539345!2d106.67499151526065!3d10.822204061308365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528ffc5a5bc65%3A0xc66c1b3793df65d4!2zQuG7h25oIFZp4buHbiBRdcOibiB5IDE3NQ!5e0!3m2!1svi!2s!4v1680000000000!5m2!1svi!2s"
+                            width="100%"
+                            height="400"
+                            style="border:0;"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+
+                    <div class="p-4 bg-light border-top">
+                        <h6 class="fw-bold mb-2 text-muted">Địa chỉ MedicHub:</h6>
+                        <p class="text-dark fs-5 mb-0 fw-bold">786 Nguyễn Kiệm, Phường 3, Quận Gò Vấp, TP. Hồ Chí Minh.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // SCRIPT: Định dạng hotline 4 số cuối nổi bật
+        $(document).ready(function () {
+            $('.counter').each(function () {
+                let text = $(this).text();
+                if (text.length >= 4) {
+                    let lastFour = text.substr(text.length - 4);
+                    let firstPart = text.substr(0, text.length - 4);
+                    $(this).html(firstPart + '<strong class="text-danger">' + lastFour + '</strong>');
+                }
+            });
+        });
+    </script>
+}

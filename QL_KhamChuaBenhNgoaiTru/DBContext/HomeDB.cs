@@ -266,5 +266,86 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
             return model;
         }
+
+
+        // ====================================================================
+        // HÀM LẤY DỮ LIỆU BẢNG GIÁ THEO NHÓM
+        // ====================================================================
+        // 1. Hàm lấy danh sách Loại Dịch Vụ làm Menu bên trái
+        public List<LoaiDichVuGroup> GetMenuLoaiDichVu()
+        {
+            var list = new List<LoaiDichVuGroup>();
+            using (SqlConnection conn = new SqlConnection(connectStr)) // Sửa connectStr nếu cần
+            {
+                conn.Open();
+                string sql = "SELECT MaLoaiDV, TenLoaiDV FROM LOAI_DICHVU";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(new LoaiDichVuGroup
+                        {
+                            MaLoaiDV = dr["MaLoaiDV"].ToString(),
+                            TenLoaiDV = dr["TenLoaiDV"].ToString()
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        // 2. Hàm lấy dữ liệu Bảng Giá (Có Lọc theo Loại và Tìm kiếm)
+        public List<LoaiDichVuGroup> GetBangGiaDichVu(string tuKhoa = "", string maLoai = "")
+        {
+            var listGroup = new List<LoaiDichVuGroup>();
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                string sql = @"
+            SELECT L.MaLoaiDV, L.TenLoaiDV, D.TenDV, D.GiaDichVu, D.GiaBHYT, D.DonViTinh, D.MoTa
+            FROM LOAI_DICHVU L
+            INNER JOIN DICHVU D ON L.MaLoaiDV = D.MaLoaiDV
+            WHERE D.TrangThai = 1 ";
+
+                // Nối chuỗi SQL nếu có tham số lọc
+                if (!string.IsNullOrEmpty(maLoai)) sql += " AND L.MaLoaiDV = @MaLoai ";
+                if (!string.IsNullOrEmpty(tuKhoa)) sql += " AND D.TenDV LIKE @TuKhoa ";
+
+                sql += " ORDER BY L.MaLoaiDV, D.TenDV";
+
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    if (!string.IsNullOrEmpty(maLoai)) cmd.Parameters.AddWithValue("@MaLoai", maLoai);
+                    if (!string.IsNullOrEmpty(tuKhoa)) cmd.Parameters.AddWithValue("@TuKhoa", "%" + tuKhoa + "%");
+
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            string currentMaLoai = dr["MaLoaiDV"].ToString();
+                            var group = listGroup.FirstOrDefault(g => g.MaLoaiDV == currentMaLoai);
+                            if (group == null)
+                            {
+                                group = new LoaiDichVuGroup { MaLoaiDV = currentMaLoai, TenLoaiDV = dr["TenLoaiDV"].ToString() };
+                                listGroup.Add(group);
+                            }
+
+                            decimal? giaBHYT = dr["GiaBHYT"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBHYT"]) : (decimal?)null;
+
+                            group.DanhSachDichVu.Add(new DichVuItem
+                            {
+                                TenDV = dr["TenDV"].ToString(),
+                                GiaDichVu = Convert.ToDecimal(dr["GiaDichVu"]),
+                                GiaBHYT = giaBHYT,
+                                DonViTinh = dr["DonViTinh"]?.ToString(),
+                                MoTa = dr["MoTa"]?.ToString()
+                            });
+                        }
+                    }
+                }
+            }
+            return listGroup;
+        }
     }
 }

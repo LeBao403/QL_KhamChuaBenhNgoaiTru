@@ -80,5 +80,58 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             }
             return nv;
         }
+
+        public BenhNhan GetBenhNhanByMaTK(int maTK)
+        {
+            BenhNhan bn = null;
+            using (SqlConnection con = new SqlConnection(connectionString)) // Nhớ đổi tên biến kết nối cho đúng với file của bác
+            {
+                string sql = "SELECT * FROM BENHNHAN WHERE MaTK = @MaTK";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@MaTK", maTK);
+
+                con.Open();
+                SqlDataReader rd = cmd.ExecuteReader();
+
+                if (rd.Read())
+                {
+                    bn = new BenhNhan();
+                    bn.MaBN = rd["MaBN"].ToString();
+                    bn.HoTen = rd["HoTen"].ToString();
+
+                    // Mình map sẵn thêm mấy trường này luôn, lỡ sau này qua View bác cần hiển thị SDT, Email hay Profile thì gọi ra xài luôn cho tiện
+                    bn.SDT = rd["SDT"] != DBNull.Value ? rd["SDT"].ToString() : "";
+                    bn.Email = rd["Email"] != DBNull.Value ? rd["Email"].ToString() : "";
+                    bn.CCCD = rd["CCCD"] != DBNull.Value ? rd["CCCD"].ToString() : "";
+                    bn.BHYT = rd["BHYT"] != DBNull.Value ? Convert.ToBoolean(rd["BHYT"]) : false;
+                }
+            }
+            return bn;
+        }
+        // Thêm hàm này vào trong class TaiKhoanDB
+        public TaiKhoan GetTaiKhoanByUsername(string username)
+        {
+            TaiKhoan tk = null;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                // Chỉ tìm theo Username, không gom chung Password và IsActive ở đây
+                string sql = "SELECT * FROM TAIKHOAN WHERE Username = @Username";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@Username", username);
+
+                con.Open();
+                SqlDataReader rd = cmd.ExecuteReader();
+                if (rd.Read())
+                {
+                    tk = new TaiKhoan();
+                    tk.MaTK = Convert.ToInt32(rd["MaTK"]);
+                    tk.Username = rd["Username"].ToString();
+                    tk.PasswordHash = rd["PasswordHash"].ToString();
+                    // Đảm bảo ép kiểu đúng cho cột IsActive (BIT trong SQL Server)
+                    tk.IsActive = rd["IsActive"] != DBNull.Value ? Convert.ToBoolean(rd["IsActive"]) : false;
+                }
+            }
+            return tk;
+        }
     }
 }

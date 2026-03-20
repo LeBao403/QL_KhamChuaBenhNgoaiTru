@@ -1,0 +1,31 @@
+﻿@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.ThuocManageViewModel>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td><strong>@item.Thuoc.MaThuoc</strong></td>
+            <td>@item.Thuoc.TenThuoc <br /><small class="text-muted">@item.Thuoc.QuyCach</small></td>
+            <td>@item.TenLoaiThuoc</td>
+            <td>@item.Thuoc.DonViCoBan</td>
+            <td class="text-end text-danger fw-bold">@(item.Thuoc.GiaBan?.ToString("N0") ?? "0") ₫</td>
+            <td class="text-center">
+                @if (item.Thuoc.TrangThai == true)
+                {<span class="badge bg-success">Đang dùng</span> }
+                else
+                { <span class="badge bg-danger">Ngưng dùng</span>}
+            </td>
+            <td class="text-center">
+                <div class="d-flex justify-content-center flex-nowrap" style="gap: 5px;">
+                    <a href="@Url.Action("Details", "Thuoc", new { id = item.Thuoc.MaThuoc.Trim() })" class="btn btn-sm btn-info"><i class="bi bi-eye"></i></a>
+                    <a href="@Url.Action("Edit", "Thuoc", new { id = item.Thuoc.MaThuoc.Trim() })" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i></a>
+                    <form method="post" action="@Url.Action("Delete", "Thuoc", new { id = item.Thuoc.MaThuoc.Trim() })" class="m-0 p-0">
+                        @Html.AntiForgeryToken()
+                        <button type="button" class="btn btn-sm btn-danger btn-delete-kh"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+    }
+}

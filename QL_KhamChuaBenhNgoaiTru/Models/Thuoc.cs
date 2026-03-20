@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.ComponentModel;
+using System.Web.Mvc;
 
 namespace QL_KhamChuaBenhNgoaiTru.Models
 {
@@ -86,6 +87,33 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string MaThanhPhan { get; set; }
         public string MaThuoc { get; set; }
         public string MaHoatChat { get; set; }
+        public string HamLuong { get; set; }
+    }
+    public class ThuocManageViewModel
+    {
+        public Thuoc Thuoc { get; set; }
+
+        // Danh sách thành phần của thuốc (dùng cho Create/Edit)
+        public List<ThanhPhanThuoc> DanhSachThanhPhan { get; set; }
+
+        // Các SelectList để hiển thị Dropdown
+        public SelectList DanhSachLoaiThuoc { get; set; }
+        public SelectList DanhSachNSX { get; set; }
+
+        // Danh sách tất cả hoạt chất (để load vào dropdown khi thêm dòng thành phần mới)
+        public SelectList DanhSachHoatChat { get; set; }
+
+        // Tên hiển thị thêm cho trang Details/Index
+        public string TenLoaiThuoc { get; set; }
+        public string TenNSX { get; set; }
+        public List<ThanhPhanThuocDisplay> ChiTietThanhPhan { get; set; } // Class phụ hiển thị tên hoạt chất
+    }
+
+    // Class phụ để hiển thị chi tiết có chứa Tên hoạt chất
+    public class ThanhPhanThuocDisplay
+    {
+        public string MaHoatChat { get; set; }
+        public string TenHoatChat { get; set; }
         public string HamLuong { get; set; }
     }
 }

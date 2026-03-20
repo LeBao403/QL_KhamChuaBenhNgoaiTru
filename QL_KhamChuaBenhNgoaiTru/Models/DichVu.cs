@@ -54,4 +54,26 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public decimal Gia { get; set; }
         public string MoTa { get; set; }
     }
+
+
+    // ====================================================================
+    // MODEL DÙNG RIÊNG CHO TRANG BẢNG GIÁ DỊCH VỤ
+    // ====================================================================
+    public class DichVuItem
+    {
+        public string TenDV { get; set; }
+        public decimal GiaDichVu { get; set; }
+        public decimal? GiaBHYT { get; set; } // Nullable (decimal?) vì có dịch vụ KHÔNG có BHYT
+        public string DonViTinh { get; set; }
+        public string MoTa { get; set; }
+    }
+
+    public class LoaiDichVuGroup
+    {
+        public string MaLoaiDV { get; set; }
+        public string TenLoaiDV { get; set; }
+
+        // Chứa danh sách các dịch vụ con nằm trong nhóm này
+        public List<DichVuItem> DanhSachDichVu { get; set; } = new List<DichVuItem>();
+    }
 }
