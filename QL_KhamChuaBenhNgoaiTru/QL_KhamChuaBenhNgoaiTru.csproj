@@ -14,7 +14,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>QL_KhamChuaBenhNgoaiTru</RootNamespace>
     <AssemblyName>QL_KhamChuaBenhNgoaiTru</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -53,11 +54,7 @@
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
@@ -125,7 +122,12 @@
     <Compile Include="Areas\Admin\Controllers\BenhNhanController.cs" />
     <Compile Include="Areas\Admin\Controllers\KhoaController.cs" />
     <Compile Include="Areas\Admin\Controllers\PhongController.cs" />
+    <Compile Include="Areas\Staff\Controllers\BacSiController.cs" />
+    <Compile Include="Areas\Staff\Controllers\BaseStaffController.cs" />
+    <Compile Include="Areas\Staff\Controllers\TiepTanController.cs" />
+    <Compile Include="Areas\Staff\StaffAreaRegistration.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TaiKhoanController.cs" />
     <Compile Include="DBContext\BenhNhanDB.cs" />
     <Compile Include="DBContext\HomeDB.cs" />
     <Compile Include="DBContext\KhoaDB.cs" />
@@ -148,6 +150,7 @@
     <Compile Include="Models\PagerViewModel.cs" />
     <Compile Include="Models\PhieuDangKy.cs" />
     <Compile Include="Models\PhieuKhamBenh.cs" />
+    <Compile Include="Models\PhieuKhamSangLoc.cs" />
     <Compile Include="Models\TaiKhoan.cs" />
     <Compile Include="Models\Thuoc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -232,6 +235,12 @@
     <Content Include="Areas\Admin\Views\Phong\Edit.cshtml" />
     <Content Include="Areas\Admin\Views\Khoa\Create.cshtml" />
     <Content Include="Areas\Admin\Views\Khoa\Edit.cshtml" />
+    <Content Include="Areas\Staff\Views\BacSi\Index.cshtml" />
+    <Content Include="Areas\Staff\Views\Shared\_Layout.cshtml" />
+    <Content Include="Areas\Staff\Views\Shared\_Layout_Staff.cshtml" />
+    <Content Include="Areas\Staff\Views\TiepTan\Index.cshtml" />
+    <Content Include="Areas\Staff\Views\web.config" />
+    <Content Include="Areas\Staff\Views\_ViewStart.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -266,11 +275,16 @@
     <Content Include="Views\Home\_BacSiList.cshtml" />
     <Content Include="Views\Home\ChuyenKhoa.cshtml" />
     <Content Include="Views\Home\GioiThieu.cshtml" />
+    <Content Include="Views\TaiKhoan\Login.cshtml" />
+    <Content Include="Views\TaiKhoan\Register.cshtml" />
+    <Content Include="Views\Shared\_AuthLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Admin\Views\BaseAdmin\" />
+    <Folder Include="Areas\Staff\Models\" />
+    <Folder Include="Areas\Staff\Views\BaseStaff\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

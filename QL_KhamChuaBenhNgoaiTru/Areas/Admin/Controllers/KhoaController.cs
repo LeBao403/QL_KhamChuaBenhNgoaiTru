@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
 {
-    public class KhoaController : Controller
+    public class KhoaController : BaseAdminController
     {
         // Khởi tạo tầng Database Access
         KhoaDB db = new KhoaDB();

@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "Bàn làm việc Bác sĩ";
+    Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white py-3">
+                <h6 class="mb-0 fw-bold"><i class="bi bi-person-lines-fill"></i> Danh sách chờ khám (Phòng 01)</h6>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center bg-light border-start border-4 border-danger">
+                    <div>
+                        <strong>BN001 - Nguyễn Văn A</strong><br />
+                        <small class="text-muted">Lý do: Đau dạ dày, buồn nôn</small>
+                    </div>
+                    <button class="btn btn-sm btn-danger">Khám ngay</button>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>BN005 - Trần Thị B</strong><br />
+                        <small class="text-muted">Lý do: Tái khám định kỳ</small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-primary">Gọi số</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-clipboard2-pulse"></i> Phiếu khám bệnh</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">Vui lòng chọn một bệnh nhân từ danh sách chờ để bắt đầu khám.</div>
+
+                <form>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold">Triệu chứng lâm sàng:</label>
+                            <textarea class="form-control" rows="3" disabled></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Kết luận chẩn đoán:</label>
+                            <textarea class="form-control" rows="3" disabled></textarea>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button class="btn btn-secondary" disabled>Chỉ định Cận lâm sàng</button>
+                        <button class="btn btn-success" disabled>Kê đơn thuốc</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

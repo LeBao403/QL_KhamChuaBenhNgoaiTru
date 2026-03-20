@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
 {
-    public class BenhNhanController : Controller
+    public class BenhNhanController : BaseAdminController
     {
         private readonly BenhNhanDB db = new BenhNhanDB();
 
