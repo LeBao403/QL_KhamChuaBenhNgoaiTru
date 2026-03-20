@@ -804,6 +804,13 @@ VALUES
 ('NV045', N'Trần Quốc Việt', '1993-09-30', N'Nam', '0903222555', 'viet.tq@vnvc.vn', N'110 Nguyễn Văn Linh, Đà Nẵng', 8, 0, 45, 1, NULL, NULL);
 GO
 
+
+
+INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive)
+VALUES
+('baolq', '1', 1);
+
+
 -- 3. CHÈN TÀI KHOẢN VÀ BÁC SĨ QUẢN TRỊ
 INSERT INTO NHANVIEN (MaNV, HoTen, NgaySinh, GioiTinh, SDT, Email, DiaChi, MaChucVu, TrangThai, MaTK, HinhAnh)
 VALUES (

@@ -28,44 +28,36 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             var tk = db.CheckLogin(username, password);
             if (tk != null)
             {
-                // Lưu session chung
+                // 1. Lưu session chung (Dùng cho cả Nhân viên lẫn Bệnh nhân)
                 Session["TaiKhoan"] = tk;
                 Session["Username"] = tk.Username;
                 Session["MaTK"] = tk.MaTK;
 
-                // Kiểm tra xem user này có phải là Nhân viên không
-                // Kiểm tra xem user này có phải là Nhân viên không
+                // 2. Kiểm tra xem user này có phải là Nhân viên không
                 var nv = db.GetNhanVienByMaTK(tk.MaTK);
                 if (nv != null)
                 {
-                    // Lưu session nhân viên
+                    // Lưu session riêng cho Nhân viên
                     Session["NhanVien"] = nv;
                     Session["MaNV"] = nv.MaNV;
-                    Session["HoTenNV"] = nv.HoTen;
+                    Session["HoTenNV"] = nv.HoTen; // Lưu tên để hiển thị góc phải màn hình
                     Session["MaChucVu"] = nv.MaChucVu;
 
-                    // Phân quyền điều hướng dựa vào chức vụ mới
-                    // Phân quyền điều hướng dựa vào chức vụ
                     int chucVu = nv.MaChucVu.Value;
-
                     switch (chucVu)
                     {
                         case 1: // Giám đốc
                         case 2: // Admin
-                                // Vào trang Dashboard của Admin
                             return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
 
                         case 3: // Trưởng khoa
                         case 4: // BS điều trị
-                                // Vào màn hình phòng khám của Bác sĩ
                             return RedirectToAction("Index", "BacSi", new { area = "Staff" });
 
                         case 8: // Tiếp đón
-                                // Vào màn hình tiếp nhận
                             return RedirectToAction("Index", "TiepTan", new { area = "Staff" });
 
                         case 9: // Thu ngân
-                                // Tạm thời điều hướng vào ThuNgan (bạn cần tạo Controller này sau)
                             return RedirectToAction("Index", "ThuNgan", new { area = "Staff" });
 
                         case 5: // Điều dưỡng
@@ -73,18 +65,29 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                         case 7: // Dược sĩ
                         case 10: // Bảo vệ
                         case 11: // Tạp vụ
-                                 // TODO: Bạn có thể tạo thêm Controller (VD: DieuDuongController) trong Area Staff sau.
-                                 // Tạm thời, khi đăng nhập thành công, tạm điều hướng về Trang chủ.
                             return RedirectToAction("Index", "Home", new { area = "" });
 
                         default:
-                            // Các vai trò không xác định hoặc lỗi -> về trang chủ
                             return RedirectToAction("Index", "Home", new { area = "" });
                     }
                 }
+                else
+                {
+                    // 3. Nếu KHÔNG phải Nhân viên -> Đi tìm xem có phải Bệnh Nhân không
+                    // Bác nhớ viết hàm GetBenhNhanByMaTK bên file TaiKhoanDB nhé
+                    var bn = db.GetBenhNhanByMaTK(tk.MaTK);
 
-                // Nếu không phải nhân viên -> Là bệnh nhân, về trang chủ
-                return RedirectToAction("Index", "Home", new { area = "" });
+                    if (bn != null)
+                    {
+                        // Có thông tin bệnh nhân -> Lưu Session Bệnh nhân
+                        Session["BenhNhan"] = bn;
+                        Session["MaBN"] = bn.MaBN;
+                        Session["HoTenBN"] = bn.HoTen; // Giả sử cột tên trong DB của bác là HoTen
+                    }
+
+                    // Cuối cùng, điều hướng Bệnh nhân về trang chủ
+                    return RedirectToAction("Index", "Home", new { area = "" });
+                }
             }
 
             ViewBag.Error = "Tài khoản hoặc mật khẩu không chính xác, hoặc đã bị khóa!";
@@ -136,7 +139,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         // Xử lý Đăng xuất
         public ActionResult Logout()
         {
-            Session.Clear();
+            Session.Clear(); // Xóa sạch mọi Session (cả Bệnh nhân lẫn Nhân viên)
             return RedirectToAction("Login");
         }
     }
