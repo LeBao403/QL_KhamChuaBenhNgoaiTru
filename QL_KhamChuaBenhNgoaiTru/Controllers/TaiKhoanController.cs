@@ -88,8 +88,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                         Session["HoTenBN"] = bn.HoTen; // Giả sử cột tên trong DB của bác là HoTen
                     }
 
-                    // Cuối cùng, điều hướng Bệnh nhân về trang chủ
-                    return RedirectToAction("Index", "Home", new { area = "" });
+                    // Cuối cùng, điều hướng Bệnh nhân về trang Cổng Bệnh nhân
+                    return RedirectToAction("Index", "BenhNhan", new { area = "BenhNhan" });
                 }
             }
 

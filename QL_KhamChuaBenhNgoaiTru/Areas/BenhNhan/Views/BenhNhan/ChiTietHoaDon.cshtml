@@ -1,0 +1,88 @@
+@model QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.HoaDonChiTiet
+@{
+    ViewBag.Title = "Chi tiết hóa đơn";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold mb-0"><i class="bi bi-receipt-cutoff text-primary me-2"></i>Chi tiết hóa đơn #@(Model?.MaHD)</h5>
+    <a href="@Url.Action("HoaDon", "BenhNhan", new { area = "BenhNhan" })" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Quay lại
+    </a>
+</div>
+
+@if (Model == null)
+{
+    <div class="stat-card text-center py-5">
+        <i class="bi bi-exclamation-triangle text-muted" style="font-size:3rem;"></i>
+        <h6 class="text-muted mt-3">Không tìm thấy hóa đơn</h6>
+    </div>
+}
+else
+{
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="stat-card">
+                <h6 class="fw-bold mb-3"><i class="bi bi-info-circle text-primary me-1"></i>Thông tin hóa đơn</h6>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between px-0 border-0">
+                        <span class="text-muted">Mã hóa đơn</span>
+                        <span class="fw-semibold">#@Model.MaHD</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between px-0 border-0">
+                        <span class="text-muted">Ngày thanh toán</span>
+                        <span class="fw-semibold">@(Model.NgayThanhToan?.ToString("dd/MM/yyyy HH:mm") ?? "—")</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between px-0 border-0">
+                        <span class="text-muted">Hình thức</span>
+                        <span class="fw-semibold">@(string.IsNullOrEmpty(Model.HinhThucThanhToan) ? "—" : Model.HinhThucThanhToan)</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between px-0 border-0">
+                        <span class="text-muted">Trạng thái</span>
+                        @if (Model.TrangThaiThanhToan == "Đã thanh toán")
+                        {
+                            <span class="badge badge-done">Đã thanh toán</span>
+                        }
+                        else if (Model.TrangThaiThanhToan == "Chưa thanh toán")
+                        {
+                            <span class="badge badge-cancelled">Chưa thanh toán</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@Model.TrangThaiThanhToan</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="stat-card">
+                <h6 class="fw-bold mb-3"><i class="bi bi-cash-stack text-success me-1"></i>Chi tiết thanh toán</h6>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex justify-content-between px-0 border-0">
+                        <span class="text-muted">Tổng tiền</span>
+                        <span class="fw-bold text-danger fs-5">@Model.TongTien.ToString("N0") đ</span>
+                    </div>
+                    @if (Model.TienBHYTChiTra > 0)
+                    {
+                        <div class="list-group-item d-flex justify-content-between px-0 border-0">
+                            <span class="text-muted">BHYT chi trả</span>
+                            <span class="fw-bold text-success">-@Model.TienBHYTChiTra.ToString("N0") đ</span>
+                        </div>
+                    }
+                    @if (Model.TienBenhNhanTra > 0)
+                    {
+                        <div class="list-group-item d-flex justify-content-between px-0 border-0">
+                            <span class="text-muted">Bệnh nhân trả</span>
+                            <span class="fw-bold">@Model.TienBenhNhanTra.ToString("N0") đ</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button onclick="window.print()" class="btn btn-outline-secondary">
+            <i class="bi bi-printer me-1"></i>In hóa đơn
+        </button>
+    </div>
+}

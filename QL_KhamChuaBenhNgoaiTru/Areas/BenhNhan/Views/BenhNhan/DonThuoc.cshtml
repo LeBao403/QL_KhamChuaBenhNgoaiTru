@@ -1,0 +1,65 @@
+@model List<QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.DonThuocItem>
+@{
+    ViewBag.Title = "Đơn thuốc";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h5 class="fw-bold mb-0"><i class="bi bi-prescription2 text-primary me-2"></i>Danh sách đơn thuốc</h5>
+    <span class="badge bg-primary">@(Model != null ? Model.Count : 0) đơn</span>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="stat-card text-center py-5">
+        <i class="bi bi-prescription2 text-muted" style="font-size:3rem;"></i>
+        <h6 class="text-muted mt-3">Chưa có đơn thuốc nào</h6>
+        <p class="small text-muted">Đơn thuốc sẽ xuất hiện sau khi bác sĩ kê đơn.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-custom mb-0">
+            <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Ngày kê</th>
+                    <th>Ngày khám</th>
+                    <th>Bác sĩ kê</th>
+                    <th>Trạng thái</th>
+                    <th>Chi tiết</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-semibold">#@item.MaDonThuoc</td>
+                        <td>@item.NgayKe.ToString("dd/MM/yyyy")</td>
+                        <td>@item.NgayKham.ToString("dd/MM/yyyy")</td>
+                        <td>@(string.IsNullOrEmpty(item.TenBacSi) ? "—" : "BS. " + item.TenBacSi)</td>
+                        <td>
+                            @if (item.TrangThai == "Chưa phát")
+                            {
+                                <span class="badge badge-pending">Chưa phát</span>
+                            }
+                            else if (item.TrangThai == "Đã phát")
+                            {
+                                <span class="badge badge-done">Đã phát</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@item.TrangThai</span>
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("ChiTietDonThuoc", "BenhNhan", new { area = "BenhNhan", id = item.MaDonThuoc })"
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye me-1"></i>Xem
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

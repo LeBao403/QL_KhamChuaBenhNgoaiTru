@@ -123,6 +123,9 @@
     <Compile Include="Areas\Admin\Controllers\NhanVienController.cs" />
     <Compile Include="Areas\Admin\Controllers\PhongController.cs" />
     <Compile Include="Areas\Admin\Controllers\ThuocController.cs" />
+    <Compile Include="Areas\BenhNhan\BenhNhanAreaRegistration.cs" />
+    <Compile Include="Areas\BenhNhan\Controllers\BaseBenhNhanController.cs" />
+    <Compile Include="Areas\BenhNhan\Controllers\BenhNhanController.cs" />
     <Compile Include="Areas\NhanVienKho\Controllers\BaseNhanVienKhoController.cs" />
     <Compile Include="Areas\NhanVienKho\Controllers\DashboardController.cs" />
     <Compile Include="Areas\NhanVienKho\Controllers\PhieuNhapController.cs" />
@@ -138,6 +141,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TaiKhoanController.cs" />
     <Compile Include="DBContext\BenhNhanDB.cs" />
+    <Compile Include="DBContext\BenhNhanPortalDB.cs" />
     <Compile Include="DBContext\DashboardDB.cs" />
     <Compile Include="DBContext\DichVuDB.cs" />
     <Compile Include="DBContext\HomeDB.cs" />
@@ -287,6 +291,19 @@
     <Content Include="Areas\NhanVienKho\Views\NhaCungCap\Index.cshtml" />
     <Content Include="Areas\NhanVienKho\Views\web.config" />
     <Content Include="Areas\NhanVienKho\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\BenhNhan\ChiTietDonThuoc.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\BenhNhan\ChiTietHoaDon.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\BenhNhan\DatLichKham.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\BenhNhan\DonThuoc.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\BenhNhan\HoaDon.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\BenhNhan\Index.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\BenhNhan\LichKham.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\BenhNhan\LichSuKham.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\BenhNhan\ThongTinCaNhan.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\BenhNhan\TrangThaiKham.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\Shared\_Layout_BenhNhan.cshtml" />
+    <Content Include="Areas\BenhNhan\Views\web.config" />
+    <Content Include="Areas\BenhNhan\Views\_ViewStart.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />

@@ -1,4 +1,4 @@
-﻿using QL_KhamChuaBenhNgoaiTru.DBContext;
+using QL_KhamChuaBenhNgoaiTru.DBContext;
 using QL_KhamChuaBenhNgoaiTru.Models;
 using System;
 using System.Collections.Generic;
@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using BenhNhanModel = QL_KhamChuaBenhNgoaiTru.Models.BenhNhan;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
 {
@@ -79,7 +80,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             var model = new BenhNhanManageViewModel();
 
             // Khởi tạo sẵn object để tránh lỗi Null ở View
-            model.BenhNhan = new BenhNhan();
+            model.BenhNhan = new BenhNhanModel();
             model.TaiKhoan = new TaiKhoan();
 
             model.BenhNhan.MaBN = db.GenerateNextMaBN();
