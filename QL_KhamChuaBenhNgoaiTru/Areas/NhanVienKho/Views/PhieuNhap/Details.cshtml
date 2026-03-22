@@ -1,0 +1,184 @@
+@section Styles {
+    <style>
+        @@media print {
+            .sidebar, .top-navbar, .btn, .alert, nav, footer, .no-print { display: none !important; }
+            body { background: white; }
+            .main-content, .container-fluid { margin: 0 !important; padding: 20px !important; }
+            .card { box-shadow: none !important; border: 1px solid #ddd !important; }
+            a { text-decoration: none; color: black; }
+        }
+    </style>
+}
+
+    var phieu = ViewBag.Phieu as QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.PhieuNhapItem;
+    var chiTiet = ViewBag.ChiTiet as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.CT_PhieuNhapItem>;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-dark mb-0">
+        <i class="bi bi-file-earmark-text text-primary me-2"></i>Chi tiết phiếu nhập
+    </h4>
+    <div class="d-flex gap-2">
+        <a href="@Url.Action("Index", "PhieuNhap", new { area = "NhanVienKho" })" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+        <button onclick="window.print()" class="btn btn-outline-dark">
+            <i class="bi bi-printer me-1"></i> In phiếu nhập
+        </button>
+    </div>
+</div>
+
+@if (phieu == null)
+{
+    <div class="alert alert-danger">Không tìm thấy phiếu nhập!</div>
+    return;
+}
+
+@if (phieu.TrangThai == "Chờ duyệt")
+{
+    <div class="alert alert-warning d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Phiếu này đang chờ duyệt. Bạn có thể <strong>hủy</strong> nếu cần.
+        </div>
+        <a href="@Url.Action("HuyPhieu", "PhieuNhap", new { area = "NhanVienKho", id = phieu.MaPhieuNhap })"
+           class="btn btn-danger btn-sm"
+           onclick="return confirm('Hủy phiếu nhập #@phieu.MaPhieuNhap? Hành động này không thể hoàn tác.')">
+            <i class="bi bi-x-circle me-1"></i> Hủy phiếu này
+        </a>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Thông tin phiếu -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-info-circle text-primary me-2"></i>Thông tin phiếu
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless mb-0">
+                    <tr>
+                        <td class="text-muted" style="width:130px">Mã phiếu:</td>
+                        <td class="fw-bold">#@phieu.MaPhieuNhap</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Nhà cung cấp:</td>
+                        <td>@phieu.TenNSX</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Người lập:</td>
+                        <td>@phieu.TenNV_Lap</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Ngày lập:</td>
+                        <td>@(phieu.NgayLap?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(phieu.GhiChu))
+                    {
+                        <tr>
+                            <td class="text-muted">Ghi chú:</td>
+                            <td>@phieu.GhiChu</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td class="text-muted">Trạng thái:</td>
+                        <td>
+                            @{
+                                string badgeClass = "bg-secondary";
+                                if (phieu.TrangThai == "Chờ duyệt") { badgeClass = "bg-warning text-dark"; }
+                                else if (phieu.TrangThai == "Đã duyệt") { badgeClass = "bg-success"; }
+                                else if (phieu.TrangThai == "Đã hủy") { badgeClass = "bg-danger"; }
+                            }
+                            <span class="badge @badgeClass">@phieu.TrangThai</span>
+                        </td>
+                    </tr>
+                    @if (phieu.TrangThai == "Đã duyệt" || phieu.TrangThai == "Đã hủy")
+                    {
+                        <tr>
+                            <td class="text-muted">Người duyệt:</td>
+                            <td>@phieu.TenNV_Duyet</td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Ngày duyệt:</td>
+                            <td>@(phieu.NgayDuyet?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+        <!-- Tổng tiền -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-body text-center py-4">
+                <div class="text-muted small mb-1">Tổng tiền nhập</div>
+                <div class="text-primary fw-bold" style="font-size:1.8rem">
+                    @((phieu.TongTienNhap ?? 0).ToString("N0")) đ
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chi tiết thuốc -->
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-list-ul text-primary me-2"></i>Danh sách thuốc nhập
+                <span class="badge bg-primary ms-2">@((chiTiet?.Count ?? 0)) loại</span>
+            </div>
+            <div class="card-body p-0">
+                @if (chiTiet == null || !chiTiet.Any())
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+                        Không có chi tiết nào
+                    </div>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Mã thuốc</th>
+                                    <th>Tên thuốc</th>
+                                    <th>Mã lô</th>
+                                    <th>Hạn SD</th>
+                                    <th class="text-end">Số lượng</th>
+                                    <th class="text-end">Đơn giá</th>
+                                    <th class="text-end">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int stt2 = 1; }
+                                @foreach (var item in chiTiet)
+                                {
+                                    <tr>
+                                        <td>@(stt2++)</td>
+                                        <td><code>@item.MaThuoc</code></td>
+                                        <td>@item.TenThuoc</td>
+                                        <td><code>@item.MaLo</code></td>
+                                        <td>@(item.HanSuDung?.ToString("dd/MM/yyyy") ?? "-")</td>
+                                        <td class="text-end fw-bold">@item.SoLuongNhap.ToString("N0")</td>
+                                        <td class="text-end">@((item.DonGiaNhap ?? 0).ToString("N0")) đ</td>
+                                        <td class="text-end fw-bold text-primary">@((item.ThanhTien ?? 0).ToString("N0")) đ</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="6" class="text-end fw-bold">Tổng cộng:</td>
+                                    <td class="text-end fw-bold text-primary fs-5">
+                                        @((chiTiet.Sum(x => x.ThanhTien ?? 0)).ToString("N0")) đ
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

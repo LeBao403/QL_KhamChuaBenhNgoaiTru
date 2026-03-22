@@ -1,0 +1,105 @@
+@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.ThuocManageViewModel>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <td class="text-center align-middle py-3 fw-bold text-secondary">@item.MaThuoc</td>
+
+            <td class="align-middle py-3">
+                <div class="fw-bold text-dark">@item.TenThuoc</div>
+                @if (!string.IsNullOrEmpty(item.TenNSX))
+                {
+                    <small class="text-muted">@item.TenNSX</small>
+                }
+            </td>
+
+            <td class="align-middle py-3">
+                @(string.IsNullOrEmpty(item.QuyCach) ? Html.Raw("<span class='text-muted fst-italic'>N/A</span>") : Html.Raw(item.QuyCach))
+            </td>
+
+            <td class="align-middle py-3">
+                @(string.IsNullOrEmpty(item.DonViCoBan) ? Html.Raw("<span class='text-muted fst-italic'>N/A</span>") : Html.Raw(item.DonViCoBan))
+            </td>
+
+            <td class="align-middle py-3">
+                @(string.IsNullOrEmpty(item.DuongDung) ? Html.Raw("<span class='text-muted fst-italic'>N/A</span>") : Html.Raw(item.DuongDung))
+            </td>
+
+            <td class="text-end align-middle py-3 text-nowrap">
+                @if (item.GiaBan.HasValue)
+                {
+                    <span class="fw-bold text-danger">@String.Format("{0:N0}", item.GiaBan) đ</span>
+                }
+                else
+                {
+                    <span class="text-muted fst-italic">N/A</span>
+                }
+            </td>
+
+            <td class="text-center align-middle py-3">
+                @if (item.CoBHYT)
+                {
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success px-2 py-1">
+                        <i class="bi bi-check-circle-fill me-1"></i> Có
+                    </span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary px-2 py-1">Không</span>
+                }
+            </td>
+
+            <td class="text-center align-middle py-3">
+                @if (item.TrangThai)
+                {
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success px-2 py-1">Đang dùng</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary px-2 py-1">Ngừng dùng</span>
+                }
+            </td>
+
+            <td class="text-center align-middle py-3">
+                <div class="d-flex justify-content-center align-items-center flex-nowrap" style="gap: 5px;">
+
+                    <a href="@Url.Action("Details", "Thuoc", new { area = "Admin", id = item.MaThuoc.Trim() })"
+                       class="btn btn-sm btn-info" title="Chi tiết">
+                        <i class="bi bi-eye"></i>
+                    </a>
+
+                    <a href="@Url.Action("Edit", "Thuoc", new { area = "Admin", id = item.MaThuoc.Trim() })"
+                       class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <button type="button" class="btn btn-sm @(item.TrangThai ? "btn-outline-secondary" : "btn-outline-success") btn-toggle-status"
+                            data-id="@item.MaThuoc" data-status="@(item.TrangThai ? "true" : "false")"
+                            title="@(item.TrangThai ? "Ngừng sử dụng" : "Kích hoạt")">
+                        <i class="bi @(item.TrangThai ? "bi-lock" : "bi-unlock")"></i>
+                    </button>
+
+                    <form method="post" action="@Url.Action("Delete", "Thuoc", new { area = "Admin" })" class="m-0 p-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.MaThuoc.Trim()" />
+                        <button type="button" class="btn btn-sm btn-danger btn-delete-thuoc" title="Xóa">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+
+                </div>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="9" class="text-center text-muted p-4">
+            <i class="bi bi-capsule fs-3 d-block mb-2"></i>
+            Không tìm thấy thuốc nào.
+        </td>
+    </tr>
+}

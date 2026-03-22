@@ -53,11 +53,14 @@ CREATE TABLE NHANVIEN (
     DiaChi NVARCHAR(200),
     MaChucVu INT,
     TrangThai BIT DEFAULT 1, 
-    MaTK INT UNIQUE,
+    MaTK INT NULL,  -- Dùng filtered index để cho phép nhiều NULL
     MaKhoa INT NULL,    
     MaPhong INT NULL,
 	HinhAnh NVARCHAR(255) NULL
 );
+
+-- Cho phép nhiều NULL trong MaTK nhưng không cho phép trùng giá trị cụ thể
+CREATE UNIQUE INDEX IX_NHANVIEN_MaTK ON NHANVIEN(MaTK) WHERE MaTK IS NOT NULL;
 
 CREATE TABLE TAIKHOAN (
     MaTK INT IDENTITY(1,1) PRIMARY KEY,

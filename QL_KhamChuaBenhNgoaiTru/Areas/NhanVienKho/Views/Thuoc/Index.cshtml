@@ -1,0 +1,114 @@
+@{
+    Layout = "~/Areas/NhanVienKho/Views/Shared/_Layout_NhanVienKho.cshtml";
+    ViewBag.Title = "Tra cứu thuốc";
+
+    var dsThuoc = ViewBag.DsThuoc as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.ThuocSearchItem>;
+    var dsLoaiThuoc = ViewBag.DsLoaiThuoc as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.LoaiThuocItem>;
+    string keyword = ViewBag.Keyword ?? "";
+    string maLoaiThuoc = ViewBag.MaLoaiThuoc ?? "";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-dark mb-0">
+        <i class="bi bi-capsule text-primary me-2"></i>Tra cứu thuốc
+    </h4>
+    <div class="text-muted small">
+        <i class="bi bi-info-circle me-1"></i>Chỉ xem thông tin. Không thể chỉnh sửa.
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        @using (Html.BeginForm("Index", "Thuoc", new { area = "NhanVienKho" }, FormMethod.Get, new { @class = "row g-3" }))
+        {
+            <div class="col-md-5">
+                <input type="text" name="keyword" class="form-control" placeholder="Tìm theo tên thuốc, mã thuốc..." value="@keyword" />
+            </div>
+            <div class="col-md-4">
+                <select name="maLoaiThuoc" class="form-select">
+                    <option value="">-- Tất cả loại thuốc --</option>
+                    @if (dsLoaiThuoc != null)
+                    {
+                        foreach (var l in dsLoaiThuoc)
+                        {
+                            <option value="@l.MaLoaiThuoc" @(maLoaiThuoc == l.MaLoaiThuoc.ToString() ? "selected" : "")>@l.TenLoaiThuoc</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="@Url.Action("Index", "Thuoc", new { area = "NhanVienKho" })" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i> Reset
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        @if (dsThuoc == null || !dsThuoc.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-search fs-1 d-block mb-3 opacity-25"></i>
+                <strong>Không tìm thấy thuốc nào</strong>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width:40px">#</th>
+                            <th>Mã thuốc</th>
+                            <th>Tên thuốc</th>
+                            <th>Loại thuốc</th>
+                            <th>Quy cách</th>
+                            <th>Đường dùng</th>
+                            <th>Đơn vị</th>
+                            <th>Nhà sản xuất</th>
+                            <th class="text-end">Giá bán</th>
+                            <th class="text-center">BHYT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int stt = 1; }
+                        @foreach (var item in dsThuoc)
+                        {
+                            <tr>
+                                <td class="text-center text-muted">@(stt++)</td>
+                                <td><code>@item.MaThuoc</code></td>
+                                <td><strong>@item.TenThuoc</strong></td>
+                                <td><span class="badge bg-info">@(string.IsNullOrEmpty(item.TenLoaiThuoc) ? "-" : item.TenLoaiThuoc)</span></td>
+                                <td class="text-muted small">@(string.IsNullOrEmpty(item.QuyCach) ? "-" : item.QuyCach)</td>
+                                <td class="text-muted small">@(string.IsNullOrEmpty(item.DuongDung) ? "-" : item.DuongDung)</td>
+                                <td>@item.DonViCoBan</td>
+                                <td class="small">@(string.IsNullOrEmpty(item.TenNSX) ? "-" : item.TenNSX)</td>
+                                <td class="text-end fw-bold text-primary">@((item.GiaBan ?? 0).ToString("N0")) đ</td>
+                                <td class="text-center">
+                                    @if (item.CoBHYT == true)
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-check-lg"></i></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">-</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer bg-white border-0 text-muted small px-4 py-2">
+                <i class="bi bi-check-circle text-success me-1"></i>Tổng cộng @(dsThuoc != null ? dsThuoc.Count : 0) thuốc
+            </div>
+        }
+    </div>
+</div>

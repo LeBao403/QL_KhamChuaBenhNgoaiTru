@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
@@ -97,15 +97,29 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string MaNV { get; set; }
         public string HoTen { get; set; }
         public string TenChucVu { get; set; }
-        public string TenCoSo { get; set; }
+        public string TenKhoa { get; set; }
         public string GioiTinh { get; set; }
         public string DiaChi { get; set; }
         public string SDT { get; set; }
         public string Email { get; set; }
-        public string Username { get; set; } // Username từ TAIKHOAN
-        public string PasswordHash { get; set; } // Mật khẩu gốc từ TAIKHOAN
-        public bool TrangThai { get; set; } // Trạng thái làm việc
+        public string Username { get; set; }
+        public string PasswordHash { get; set; }
+        public bool TrangThai { get; set; }
         public string TenPhong { get; set; }
+        public int? MaChucVu { get; set; }
+        public int? MaPhong { get; set; }
+        public int? MaKhoa { get; set; }
+        public DateTime? NgaySinh { get; set; }
+        public string HinhAnh { get; set; }
+    }
+
+    // ViewModel dùng cho Create/Edit/Details
+    public class NhanVienManageViewModel2
+    {
+        public NhanVien NhanVien { get; set; } = new NhanVien();
+        public TaiKhoan TaiKhoan { get; set; } = new TaiKhoan();
+        public string TenKhoa { get; set; }
+        public string TenChucVu { get; set; }
     }
 
     // Dùng để hiển thị ở trang Danh sách (Index)

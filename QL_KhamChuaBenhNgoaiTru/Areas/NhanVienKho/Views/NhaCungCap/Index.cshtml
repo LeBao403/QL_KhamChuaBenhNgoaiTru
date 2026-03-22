@@ -1,0 +1,117 @@
+@{
+    Layout = "~/Areas/NhanVienKho/Views/Shared/_Layout_NhanVienKho.cshtml";
+    ViewBag.Title = "Nhà cung cấp";
+
+    var dsNSX = ViewBag.DsNSX as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.NhaCungCapDetailItem>;
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-dark mb-0">
+        <i class="bi bi-truck text-primary me-2"></i>Danh sách nhà cung cấp
+    </h4>
+    <a href="@Url.Action("Create", "NhaCungCap", new { area = "NhanVienKho" })" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Thêm nhà cung cấp
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        @if (dsNSX == null || !dsNSX.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-truck fs-1 d-block mb-3 opacity-25"></i>
+                <strong>Chưa có nhà cung cấp nào</strong>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width:40px">#</th>
+                            <th>Tên nhà cung cấp</th>
+                            <th>Địa chỉ</th>
+                            <th>SĐT</th>
+                            <th>Email</th>
+                            <th class="text-center">Số phiếu nhập</th>
+                            <th class="text-end">Tổng tiền nhập</th>
+                            <th class="text-center" style="width:100px">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int stt = 1; }
+                        @foreach (var item in dsNSX)
+                        {
+                            <tr>
+                                <td class="text-center text-muted">@(stt++)</td>
+                                <td><strong>@item.TenNSX</strong></td>
+                                <td class="text-muted small">@(string.IsNullOrEmpty(item.DiaChi) ? "-" : item.DiaChi)</td>
+                                <td>@(string.IsNullOrEmpty(item.SDT) ? "-" : item.SDT)</td>
+                                <td class="small">@(string.IsNullOrEmpty(item.Email) ? "-" : item.Email)</td>
+                                <td class="text-center">
+                                    @if (item.SoPhieuNhap > 0)
+                                    {
+                                        <span class="badge bg-primary">@item.SoPhieuNhap phiếu</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">0 phiếu</span>
+                                    }
+                                </td>
+                                <td class="text-end fw-bold text-primary">
+                                    @if (item.TongTienNhap > 0)
+                                    {
+                                        @item.TongTienNhap.Value.ToString("N0") <text> đ</text>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a href="@Url.Action("Edit", "NhaCungCap", new { area = "NhanVienKho", id = item.MaNSX })" class="btn btn-sm btn-outline-primary" title="Sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    @if (item.SoPhieuNhap == 0)
+                                    {
+                                        <a href="@Url.Action("Delete", "NhaCungCap", new { area = "NhanVienKho", id = item.MaNSX })"
+                                           class="btn btn-sm btn-outline-danger"
+                                           title="Xóa"
+                                           onclick="return confirm('Bạn có chắc muốn xóa nhà cung cấp \'@item.TenNSX\' không?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-outline-secondary" title="Không thể xóa vì đã có phiếu nhập" disabled>
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer bg-white border-0 text-muted small px-4 py-2">
+                <i class="bi bi-check-circle text-success me-1"></i>Tổng cộng @dsNSX.Count nhà cung cấp
+            </div>
+        }
+    </div>
+</div>

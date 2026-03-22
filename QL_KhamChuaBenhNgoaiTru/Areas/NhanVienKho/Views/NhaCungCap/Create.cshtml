@@ -1,0 +1,59 @@
+@{
+    Layout = "~/Areas/NhanVienKho/Views/Shared/_Layout_NhanVienKho.cshtml";
+    ViewBag.Title = "Thêm nhà cung cấp";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-dark mb-0">
+        <i class="bi bi-truck text-primary me-2"></i>Thêm nhà cung cấp
+    </h4>
+    <a href="@Url.Action("Index", "NhaCungCap", new { area = "NhanVienKho" })" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại
+    </a>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white fw-bold">
+        <i class="bi bi-info-circle text-primary me-2"></i>Thông tin nhà cung cấp
+    </div>
+    <div class="card-body">
+        @using (Html.BeginForm("Create", "NhaCungCap", new { area = "NhanVienKho" }, FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Tên nhà cung cấp <span class="text-danger">*</span></label>
+                    <input type="text" name="TenNSX" class="form-control" placeholder="VD: Công ty Dược phẩm ABC" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">Số điện thoại</label>
+                    <input type="text" name="SDT" class="form-control" placeholder="VD: 0901234567" />
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-bold">Địa chỉ</label>
+                    <input type="text" name="DiaChi" class="form-control" placeholder="VD: 123 Đường ABC, Quận 1, TP.HCM" />
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-bold">Email</label>
+                    <input type="email" name="Email" class="form-control" placeholder="VD: info@duocabc.com" />
+                </div>
+            </div>
+            <div class="mt-4 text-end">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-check-circle me-1"></i> Lưu
+                </button>
+                <a href="@Url.Action("Index", "NhaCungCap", new { area = "NhanVienKho" })" class="btn btn-outline-secondary ms-2">
+                    <i class="bi bi-x-circle me-1"></i> Hủy
+                </a>
+            </div>
+        }
+    </div>
+</div>
