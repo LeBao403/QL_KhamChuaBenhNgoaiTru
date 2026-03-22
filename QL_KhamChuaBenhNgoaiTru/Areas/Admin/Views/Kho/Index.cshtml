@@ -4,7 +4,6 @@
 
     var tongQuan = ViewBag.TongQuan as QL_KhamChuaBenhNgoaiTru.DBContext.KhoTongQuan;
     var dsTonKho = ViewBag.DsTonKho as List<QL_KhamChuaBenhNgoaiTru.DBContext.TonKhoViewModel>;
-    var dsPhong = ViewBag.DsPhong as List<QL_KhamChuaBenhNgoaiTru.DBContext.PhongItem>;
     var dsKho = ViewBag.DsKho as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoItem>;
 
     int page = ViewBag.Page;
@@ -206,19 +205,6 @@
                     }
                 </select>
             </div>
-            <div class="col-xl-2 col-md-3">
-                <label class="form-label small fw-semibold">Phòng/Kho</label>
-                <select name="maPhong" class="form-select" id="ddlPhong">
-                    <option value="">-- Tất cả phòng --</option>
-                    @if (dsPhong != null)
-                    {
-                        foreach (var p in dsPhong)
-                        {
-                            <option value="@p.MaPhong" @(ViewBag.MaPhong == p.MaPhong.ToString() ? "selected" : "")>@p.TenPhong</option>
-                        }
-                    }
-                </select>
-            </div>
             <div class="col-xl-3 col-md-3">
                 <label class="form-label small fw-semibold">Trạng thái tồn kho</label>
                 <select name="trangThaiTon" class="form-select" id="ddlTrangThaiTon">
@@ -256,7 +242,6 @@
                         <th class="text-center">Số lượng</th>
                         <th class="text-end">Giá trị tồn</th>
                         <th>Kho</th>
-                        <th>Phòng/Kho</th>
                         <th class="text-center">Trạng thái</th>
                         <th style="width: 80px;"></th>
                     </tr>
@@ -265,7 +250,7 @@
                     @if (dsTonKho == null || dsTonKho.Count == 0)
                     {
                         <tr>
-                            <td colspan="11" class="text-center text-muted py-5">
+                            <td colspan="10" class="text-center text-muted py-5">
                                 <i class="bi bi-inbox" style="font-size: 48px; opacity: 0.3;"></i>
                                 <p class="mt-2 mb-0">Không có dữ liệu tồn kho</p>
                             </td>
@@ -322,7 +307,6 @@
                                 </td>
                                 <td class="text-end fw-semibold">@item.GiaTriTon.ToString("N0") đ</td>
                                 <td><span class="badge bg-primary">@item.TenKho</span></td>
-                                <td><span class="badge bg-light text-dark">@item.TenPhong</span></td>
                                 <td class="text-center">
                                     @if (item.CoBHYT)
                                     {

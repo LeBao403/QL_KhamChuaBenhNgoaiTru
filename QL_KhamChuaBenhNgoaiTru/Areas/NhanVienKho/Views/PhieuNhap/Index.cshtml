@@ -71,6 +71,7 @@
                         <tr>
                             <th class="text-center" style="width:60px">#</th>
                             <th>Mã phiếu</th>
+                            <th>Kho nhập</th>
                             <th>Nhà cung cấp</th>
                             <th>Người lập</th>
                             <th>Ngày lập</th>
@@ -91,6 +92,7 @@
                             <tr>
                                 <td class="text-center text-muted">@(stt++)</td>
                                 <td><strong>@item.MaPhieuNhap</strong></td>
+                                <td><span class="badge bg-info text-dark">@(string.IsNullOrEmpty(item.TenKho) ? "—" : item.TenKho)</span></td>
                                 <td>@item.TenNSX</td>
                                 <td>@item.TenNV_Lap</td>
                                 <td>@(item.NgayLap.HasValue ? item.NgayLap.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>

@@ -66,6 +66,10 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="mb-3">
+                            <label class="form-label small text-muted">Kho nhập hàng</label>
+                            <div><span class="badge bg-info text-dark fs-6">@(string.IsNullOrEmpty(phieu.TenKho) ? "—" : phieu.TenKho)</span></div>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label small text-muted">Nhà cung cấp</label>
                             <div class="fw-semibold">@phieu.TenNSX</div>
                         </div>
@@ -112,7 +116,11 @@
             <div class="card-body">
                 @if (phieu.TrangThai == "Chờ duyệt")
                 {
-                    <button class="btn btn-success w-100 mb-3" onclick="showDuyetModal()">
+                    <div class="alert alert-info mb-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Phiếu nhập vào kho: <strong>@phieu.TenKho</strong>. Nhấn "Duyệt" để xác nhận cập nhật tồn kho.
+                    </div>
+                    <button class="btn btn-success w-100 mb-3" onclick="duyetPhieu()">
                         <i class="bi bi-check-circle me-1"></i>Duyệt phiếu nhập
                     </button>
                     <button class="btn btn-outline-danger w-100" onclick="huyPhieu()">
@@ -199,68 +207,15 @@
     </div>
 </div>
 
-<!-- ===================== MODAL DUYỆT PHIẾU ===================== -->
-<div class="modal fade" id="modalDuyet" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-check-circle text-success me-2"></i>Duyệt phiếu nhập #@phieu.MaPhieuNhap</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">Chọn kho nhận hàng <span class="text-danger">*</span></label>
-                    <select id="ddlKhoNhan" class="form-select" required>
-                        <option value="">-- Chọn kho --</option>
-                        @{
-                            var dsKho = ViewBag.DsKho as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoItem>;
-                            if (dsKho != null)
-                            {
-                                foreach (var k in dsKho)
-                                {
-                                    <option value="@k.MaKho">@k.TenKho @(string.IsNullOrEmpty(k.LoaiKho) ? "" : $"({k.LoaiKho})")</option>
-                                }
-                            }
-                        }
-                    </select>
-                </div>
-                <div class="alert alert-warning mb-0">
-                    <i class="bi bi-info-circle me-1"></i>
-                    Sau khi duyệt, số lượng thuốc sẽ được cập nhật vào kho tồn.
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-success" onclick="duyetPhieu()">
-                    <i class="bi bi-check me-1"></i>Xác nhận duyệt
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
     <script>
-        let duyetModal;
-        $(document).ready(function () {
-            duyetModal = new bootstrap.Modal(document.getElementById('modalDuyet'));
-        });
-
-        function showDuyetModal() {
-            duyetModal.show();
-        }
-
         function duyetPhieu() {
-            var maKho = $('#ddlKhoNhan').val();
-            if (!maKho) {
-                alert('Vui lòng chọn kho nhận hàng!');
-                return;
-            }
+            if (!confirm('Xác nhận duyệt phiếu nhập #@phieu.MaPhieuNhap? Thuốc sẽ được cập nhật vào kho tồn.')) return;
 
             $.ajax({
                 url: '@Url.Action("DuyetPhieuNhap", "Kho")',
                 type: 'POST',
-                data: { id: @phieu.MaPhieuNhap, maKhoNhan: parseInt(maKho) },
+                data: { id: @phieu.MaPhieuNhap },
                 success: function (res) {
                     if (res.success) {
                         alert('Duyệt thành công!');

@@ -78,6 +78,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             public string TenNV_Lap { get; set; }
             public int MaNSX { get; set; }
             public string TenNSX { get; set; }
+            public int? MaKho { get; set; }
+            public string TenKho { get; set; }
             public DateTime? NgayLap { get; set; }
             public decimal? TongTienNhap { get; set; }
             public string TrangThai { get; set; }
@@ -111,21 +113,46 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 conn.Open();
 
                 using (SqlCommand cmdKho = new SqlCommand(
-                    "SELECT COUNT(*) FROM KHO WHERE TrangThai = 1", conn))
+                    "SELECT COUNT(*) FROM KHO WHERE ISNULL(TrangThai, 1) = 1", conn))
                 {
-                    kq.SoKho = (int)cmdKho.ExecuteScalar();
+                    kq.SoKho = Convert.ToInt32(cmdKho.ExecuteScalar());
                 }
 
+                // Cùng logic với GetTonKho: TONKHO INNER JOIN KHO (có MaKho hợp lệ), THUOC vẫn hiển thị khi ISNULL(TrangThai,1)=1.
+                // Tránh lỗi cũ: FROM THUOC WHERE TrangThai=1 không trả dòng nào => reader không Read được => toàn bộ = 0.
                 string sqlTK = @"
                     SELECT
-                        COUNT(DISTINCT T.MaThuoc) AS SoMatHang,
-                        ISNULL(SUM(TK.SoLuongTon), 0) AS TongSoLuongTon,
-                        ISNULL(SUM(TK.SoLuongTon * ISNULL(T.GiaBan, 0)), 0) AS TongGiaTriTon,
-                        (SELECT COUNT(*) FROM TONKHO WHERE HanSuDung <= DATEADD(day, 30, GETDATE()) AND SoLuongTon > 0) AS SoHetHan,
-                        (SELECT COUNT(*) FROM (SELECT MaThuoc FROM THUOC T INNER JOIN TONKHO TK ON T.MaThuoc = TK.MaThuoc GROUP BY T.MaThuoc HAVING SUM(TK.SoLuongTon) <= 10) AS X) AS SoItHang
-                    FROM THUOC T
-                    LEFT JOIN TONKHO TK ON T.MaThuoc = TK.MaThuoc
-                    WHERE T.TrangThai = 1";
+                        (SELECT COUNT(DISTINCT TK2.MaThuoc)
+                         FROM TONKHO TK2
+                         INNER JOIN THUOC T2 ON TK2.MaThuoc = T2.MaThuoc
+                         INNER JOIN KHO K2 ON TK2.MaKho = K2.MaKho
+                         WHERE ISNULL(T2.TrangThai, 1) = 1 AND ISNULL(K2.TrangThai, 1) = 1 AND TK2.SoLuongTon > 0) AS SoMatHang,
+                        (SELECT ISNULL(SUM(TK2.SoLuongTon), 0)
+                         FROM TONKHO TK2
+                         INNER JOIN THUOC T2 ON TK2.MaThuoc = T2.MaThuoc
+                         INNER JOIN KHO K2 ON TK2.MaKho = K2.MaKho
+                         WHERE ISNULL(T2.TrangThai, 1) = 1 AND ISNULL(K2.TrangThai, 1) = 1) AS TongSoLuongTon,
+                        (SELECT ISNULL(SUM(CAST(TK2.SoLuongTon AS BIGINT) * CAST(ISNULL(TK2.GiaNhap, 0) AS DECIMAL(18,2))), 0)
+                         FROM TONKHO TK2
+                         INNER JOIN THUOC T2 ON TK2.MaThuoc = T2.MaThuoc
+                         INNER JOIN KHO K2 ON TK2.MaKho = K2.MaKho
+                         WHERE ISNULL(T2.TrangThai, 1) = 1 AND ISNULL(K2.TrangThai, 1) = 1) AS TongGiaTriTon,
+                        (SELECT COUNT(*)
+                         FROM TONKHO TK2
+                         INNER JOIN KHO K2 ON TK2.MaKho = K2.MaKho
+                         WHERE ISNULL(K2.TrangThai, 1) = 1
+                           AND TK2.HanSuDung <= DATEADD(day, 30, GETDATE())
+                           AND TK2.SoLuongTon > 0) AS SoHetHan,
+                        (SELECT COUNT(*)
+                         FROM (
+                             SELECT TK2.MaThuoc
+                             FROM TONKHO TK2
+                             INNER JOIN THUOC T2 ON TK2.MaThuoc = T2.MaThuoc
+                             INNER JOIN KHO K2 ON TK2.MaKho = K2.MaKho
+                             WHERE ISNULL(T2.TrangThai, 1) = 1 AND ISNULL(K2.TrangThai, 1) = 1
+                             GROUP BY TK2.MaThuoc
+                             HAVING SUM(TK2.SoLuongTon) > 0 AND SUM(TK2.SoLuongTon) <= 10
+                         ) X) AS SoItHang";
 
                 using (SqlCommand cmdTK = new SqlCommand(sqlTK, conn))
                 using (SqlDataReader dr = cmdTK.ExecuteReader())
@@ -133,24 +160,29 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     if (dr.Read())
                     {
                         kq.SoMatHang = dr["SoMatHang"] != DBNull.Value ? Convert.ToInt32(dr["SoMatHang"]) : 0;
-                        kq.TongSoLuongTon = dr["TongSoLuongTon"] != DBNull.Value ? Convert.ToInt32(dr["TongSoLuongTon"]) : 0;
+                        kq.TongSoLuongTon = dr["TongSoLuongTon"] != DBNull.Value
+                            ? (int)Math.Min(int.MaxValue, Math.Max(int.MinValue, Convert.ToInt64(dr["TongSoLuongTon"])))
+                            : 0;
                         kq.TongGiaTriTon = dr["TongGiaTriTon"] != DBNull.Value ? Convert.ToDecimal(dr["TongGiaTriTon"]) : 0;
                         kq.SoHetHan = dr["SoHetHan"] != DBNull.Value ? Convert.ToInt32(dr["SoHetHan"]) : 0;
                         kq.SoItHang = dr["SoItHang"] != DBNull.Value ? Convert.ToInt32(dr["SoItHang"]) : 0;
                     }
                 }
 
-                using (SqlCommand cmdPN = new SqlCommand(
-                    @"SELECT TrangThai, COUNT(*) AS SoLuong FROM PHIEUNHAP GROUP BY TrangThai", conn))
+                // Đếm phiếu nhập trên SQL (một dòng) — khớp CHECK constraint, tránh lệch mã Unicode C#/DB.
+                using (SqlCommand cmdPN = new SqlCommand(@"
+                    SELECT
+                        COUNT(*) AS Tong,
+                        ISNULL(SUM(CASE WHEN LTRIM(RTRIM(ISNULL(TrangThai, N''))) = N'Chờ duyệt' THEN 1 ELSE 0 END), 0) AS ChoDuyet,
+                        ISNULL(SUM(CASE WHEN LTRIM(RTRIM(ISNULL(TrangThai, N''))) = N'Đã duyệt' THEN 1 ELSE 0 END), 0) AS DaDuyet
+                    FROM PHIEUNHAP", conn))
                 using (SqlDataReader dr = cmdPN.ExecuteReader())
                 {
-                    while (dr.Read())
+                    if (dr.Read())
                     {
-                        string tt = dr["TrangThai"].ToString();
-                        int count = Convert.ToInt32(dr["SoLuong"]);
-                        kq.PhieuNhapTong += count;
-                        if (tt == "Chờ duyệt") kq.PhieuNhapChoDuyet = count;
-                        else if (tt == "Đã duyệt") kq.PhieuNhapDaDuyet = count;
+                        kq.PhieuNhapTong = dr["Tong"] != DBNull.Value ? Convert.ToInt32(dr["Tong"]) : 0;
+                        kq.PhieuNhapChoDuyet = dr["ChoDuyet"] != DBNull.Value ? Convert.ToInt32(dr["ChoDuyet"]) : 0;
+                        kq.PhieuNhapDaDuyet = dr["DaDuyet"] != DBNull.Value ? Convert.ToInt32(dr["DaDuyet"]) : 0;
                     }
                 }
             }
@@ -166,13 +198,15 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             {
                 conn.Open();
                 StringBuilder sql = new StringBuilder(@"
-                    SELECT PN.MaPhieuNhap, PN.MaNV_LapPhieu, NV_HoTen = NV_Lap.HoTen,
-                           PN.MaNSX, NSX.TenNSX, PN.NgayLap, PN.TongTienNhap,
+                    SELECT PN.MaPhieuNhap, PN.MaNV_LapPhieu, NV_Lap.HoTen AS TenNV_Lap,
+                           PN.MaNSX, NSX.TenNSX, PN.MaKho, K.TenKho,
+                           PN.NgayLap, PN.TongTienNhap,
                            PN.TrangThai, PN.GhiChu, PN.MaNV_Duyet, PN.NgayDuyet,
                            NV_Duyet.HoTen AS TenNV_Duyet
                     FROM PHIEUNHAP PN
                     INNER JOIN NHANVIEN NV_Lap ON PN.MaNV_LapPhieu = NV_Lap.MaNV
                     INNER JOIN NHASANXUAT NSX ON PN.MaNSX = NSX.MaNSX
+                    LEFT JOIN KHO K ON PN.MaKho = K.MaKho
                     LEFT JOIN NHANVIEN NV_Duyet ON PN.MaNV_Duyet = NV_Duyet.MaNV
                     WHERE 1=1");
 
@@ -244,13 +278,15 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             {
                 conn.Open();
                 string sql = @"
-                    SELECT PN.MaPhieuNhap, PN.MaNV_LapPhieu, NV_HoTen = NV_Lap.HoTen,
-                           PN.MaNSX, NSX.TenNSX, PN.NgayLap, PN.TongTienNhap,
+                    SELECT PN.MaPhieuNhap, PN.MaNV_LapPhieu, NV_Lap.HoTen AS TenNV_Lap,
+                           PN.MaNSX, NSX.TenNSX, PN.MaKho, K.TenKho,
+                           PN.NgayLap, PN.TongTienNhap,
                            PN.TrangThai, PN.GhiChu, PN.MaNV_Duyet, PN.NgayDuyet,
                            NV_Duyet.HoTen AS TenNV_Duyet
                     FROM PHIEUNHAP PN
                     INNER JOIN NHANVIEN NV_Lap ON PN.MaNV_LapPhieu = NV_Lap.MaNV
                     INNER JOIN NHASANXUAT NSX ON PN.MaNSX = NSX.MaNSX
+                    LEFT JOIN KHO K ON PN.MaKho = K.MaKho
                     LEFT JOIN NHANVIEN NV_Duyet ON PN.MaNV_Duyet = NV_Duyet.MaNV
                     WHERE PN.MaPhieuNhap = @MaPhieuNhap";
 
@@ -317,7 +353,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             public decimal DonGiaNhap { get; set; }
         }
 
-        public bool CreatePhieuNhap(string maNV, int maNSX, string ghiChu, List<CT_PhieuNhap_Insert> chiTiet)
+        public bool CreatePhieuNhap(string maNV, int maNSX, int maKho, string ghiChu, List<CT_PhieuNhap_Insert> chiTiet)
         {
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
@@ -330,12 +366,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         tongTien += ct.SoLuongNhap * ct.DonGiaNhap;
 
                     SqlCommand cmdPN = new SqlCommand(@"
-                        INSERT INTO PHIEUNHAP (MaNV_LapPhieu, MaNSX, TongTienNhap, TrangThai, GhiChu)
-                        VALUES (@MaNV, @MaNSX, @TongTien, N'Chờ duyệt', @GhiChu);
+                        INSERT INTO PHIEUNHAP (MaNV_LapPhieu, MaNSX, MaKho, TongTienNhap, TrangThai, GhiChu)
+                        VALUES (@MaNV, @MaNSX, @MaKho, @TongTien, N'Chờ duyệt', @GhiChu);
                         SELECT SCOPE_IDENTITY();", conn, tran);
 
                     cmdPN.Parameters.AddWithValue("@MaNV", maNV);
                     cmdPN.Parameters.AddWithValue("@MaNSX", maNSX);
+                    cmdPN.Parameters.AddWithValue("@MaKho", maKho);
                     cmdPN.Parameters.AddWithValue("@TongTien", tongTien);
                     cmdPN.Parameters.AddWithValue("@GhiChu", (object)ghiChu ?? DBNull.Value);
 
@@ -598,6 +635,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 TenNV_Lap = dr["TenNV_Lap"] != DBNull.Value ? dr["TenNV_Lap"].ToString() : "",
                 MaNSX = Convert.ToInt32(dr["MaNSX"]),
                 TenNSX = dr["TenNSX"].ToString(),
+                MaKho = dr["MaKho"] != DBNull.Value ? Convert.ToInt32(dr["MaKho"]) : (int?)null,
+                TenKho = dr["TenKho"] != DBNull.Value ? dr["TenKho"].ToString() : "",
                 NgayLap = dr["NgayLap"] != DBNull.Value ? Convert.ToDateTime(dr["NgayLap"]) : (DateTime?)null,
                 TongTienNhap = dr["TongTienNhap"] != DBNull.Value ? Convert.ToDecimal(dr["TongTienNhap"]) : 0,
                 TrangThai = dr["TrangThai"].ToString(),
@@ -696,9 +735,9 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 conn.Open();
                 StringBuilder sql = new StringBuilder(@"
                     SELECT T.MaThuoc, T.TenThuoc, T.DonViCoBan, T.QuyCach, T.DuongDung,
-                           T.MaLoaiThuoc, L.TenLoaiThuoc, NSX.TenNSX, T.GiaBan, T.CoBHYT
+                           T.MaLoaiThuoc, L.TenDanhMuc AS TenLoaiThuoc, NSX.TenNSX, T.GiaBan, T.CoBHYT
                     FROM THUOC T
-                    LEFT JOIN DANHMUC_THUOC L ON T.MaLoaiThuoc = L.MaLoaiThuoc
+                    LEFT JOIN DANHMUC_THUOC L ON T.MaLoaiThuoc = L.MaDanhMuc
                     LEFT JOIN NHASANXUAT NSX ON T.MaNSX = NSX.MaNSX
                     WHERE T.TrangThai = 1");
 
@@ -747,7 +786,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             var list = new List<LoaiThuocItem>();
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
-                string query = "SELECT MaLoaiThuoc, TenLoaiThuoc FROM DANHMUC_THUOC ORDER BY TenLoaiThuoc";
+                string query = "SELECT MaDanhMuc AS MaLoaiThuoc, TenDanhMuc AS TenLoaiThuoc FROM DANHMUC_THUOC ORDER BY TenDanhMuc";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
                 using (SqlDataReader dr = cmd.ExecuteReader())
@@ -756,8 +795,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         list.Add(new LoaiThuocItem
                         {
-                            MaLoaiThuoc = Convert.ToInt32(dr["MaLoaiThuoc"]),
-                            TenLoaiThuoc = dr["TenLoaiThuoc"].ToString()
+                            MaLoaiThuoc = dr["MaLoaiThuoc"] != DBNull.Value ? dr["MaLoaiThuoc"].ToString().Trim() : "",
+                            TenLoaiThuoc = dr["TenLoaiThuoc"] != DBNull.Value ? dr["TenLoaiThuoc"].ToString() : ""
                         });
                     }
                 }
@@ -767,7 +806,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
         public class LoaiThuocItem
         {
-            public int MaLoaiThuoc { get; set; }
+            /// <summary>Mã danh mục thuốc (MaDanhMuc trong DB, khớp THUOC.MaLoaiThuoc)</summary>
+            public string MaLoaiThuoc { get; set; }
             public string TenLoaiThuoc { get; set; }
         }
 
@@ -968,7 +1008,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                            ISNULL(SUM(TK.SoLuongTon), 0) AS TongTon
                     FROM KHO K
                     LEFT JOIN TONKHO TK ON K.MaKho = TK.MaKho
-                    WHERE K.TrangThai = 1
+                    WHERE ISNULL(K.TrangThai, 1) = 1
                     GROUP BY K.MaKho, K.TenKho
                     ORDER BY TongTon DESC";
 
@@ -1001,7 +1041,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     SELECT MONTH(NgayLap) AS Thang,
                            COUNT(*) AS SoPhieu
                     FROM PHIEUNHAP
-                    WHERE YEAR(NgayLap) = @Year AND TrangThai = N'Đã duyệt'
+                    WHERE YEAR(NgayLap) = @Year AND LTRIM(RTRIM(TrangThai)) = N'Đã duyệt'
                     GROUP BY MONTH(NgayLap)
                     ORDER BY MONTH(NgayLap)";
 
@@ -1035,12 +1075,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             {
                 conn.Open();
                 string sql = @"
-                    SELECT ISNULL(L.TenLoaiThuoc, N'Khác') AS TenLoai,
-                           ISNULL(SUM(TK.SoLuongTon), 0) AS TongTon
+                    SELECT L.TenDanhMuc AS TenLoai,
+                           ISNULL(SUM(CASE WHEN K.MaKho IS NOT NULL THEN TK.SoLuongTon ELSE 0 END), 0) AS TongTon
                     FROM DANHMUC_THUOC L
-                    LEFT JOIN THUOC T ON L.MaLoaiThuoc = T.MaLoaiThuoc AND T.TrangThai = 1
+                    LEFT JOIN THUOC T ON L.MaDanhMuc = T.MaLoaiThuoc AND ISNULL(T.TrangThai, 1) = 1
                     LEFT JOIN TONKHO TK ON T.MaThuoc = TK.MaThuoc
-                    GROUP BY L.TenLoaiThuoc
+                    LEFT JOIN KHO K ON TK.MaKho = K.MaKho AND ISNULL(K.TrangThai, 1) = 1
+                    GROUP BY L.MaDanhMuc, L.TenDanhMuc
                     ORDER BY TongTon DESC";
 
                 SqlCommand cmd = new SqlCommand(sql, conn);
@@ -1050,7 +1091,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         list.Add(new ChartDataItem
                         {
-                            Label = dr["TenLoai"].ToString(),
+                            Label = dr["TenLoai"] == DBNull.Value ? "" : dr["TenLoai"].ToString(),
                             Value = Convert.ToInt32(dr["TongTon"])
                         });
                     }

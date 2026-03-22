@@ -17,7 +17,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
         // ===================== INDEX - TỔNG QUAN KHO =====================
         public ActionResult Index(int page = 1,
             string keyword = "",
-            string maPhong = "",
             string maKho = "",
             string trangThaiTon = "")
         {
@@ -27,21 +26,18 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
 
             try
             {
-                // 1. Tổng quan kho
                 int? maKhoFilter = null;
                 if (!string.IsNullOrEmpty(maKho) && int.TryParse(maKho, out int mk))
                     maKhoFilter = mk;
 
                 var dsKho = db.GetAllKho();
                 ViewBag.DsKho = dsKho;
-                ViewBag.DsPhong = db.GetAllPhong();
 
                 var tongQuan = db.GetTongQuanKho(maKhoFilter);
                 ViewBag.TongQuan = tongQuan;
 
-                // 2. Danh sách tồn kho
-                var dsTonKho = db.GetTonKho(page, pageSize, keyword, maPhong, maKho, trangThaiTon);
-                int totalCount = db.GetTonKhoCount(keyword, maPhong, maKho, trangThaiTon);
+                var dsTonKho = db.GetTonKho(page, pageSize, keyword, maKho, trangThaiTon);
+                int totalCount = db.GetTonKhoCount(keyword, maKho, trangThaiTon);
 
                 ViewBag.DsTonKho = dsTonKho;
                 ViewBag.Page = page;
@@ -49,7 +45,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
                 ViewBag.TotalCount = totalCount;
                 ViewBag.TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
                 ViewBag.Keyword = keyword;
-                ViewBag.MaPhong = maPhong;
                 ViewBag.MaKho = maKho;
                 ViewBag.TrangThaiTon = trangThaiTon;
 
@@ -72,20 +67,18 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
         // AJAX: Load bảng tồn kho
         public ActionResult LoadTonKhoTable(int page = 1,
             string keyword = "",
-            string maPhong = "",
             string maKho = "",
             string trangThaiTon = "")
         {
             int pageSize = 15;
-            var dsTonKho = db.GetTonKho(page, pageSize, keyword, maPhong, maKho, trangThaiTon);
-            int totalCount = db.GetTonKhoCount(keyword, maPhong, maKho, trangThaiTon);
+            var dsTonKho = db.GetTonKho(page, pageSize, keyword, maKho, trangThaiTon);
+            int totalCount = db.GetTonKhoCount(keyword, maKho, trangThaiTon);
 
             ViewBag.Page = page;
             ViewBag.PageSize = pageSize;
             ViewBag.TotalCount = totalCount;
             ViewBag.TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
             ViewBag.Keyword = keyword;
-            ViewBag.MaPhong = maPhong;
             ViewBag.MaKho = maKho;
             ViewBag.TrangThaiTon = trangThaiTon;
 
@@ -156,7 +149,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
 
         // ===================== DUYỆT PHIẾU NHẬP =====================
         [HttpPost]
-        public ActionResult DuyetPhieuNhap(int id, int maKhoNhan)
+        public ActionResult DuyetPhieuNhap(int id)
         {
             try
             {
@@ -164,12 +157,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
                 if (nv == null)
                     return Json(new { success = false, message = "Không xác định được nhân viên." });
 
-                bool result = db.DuyetPhieuNhap(id, nv.MaNV, maKhoNhan);
+                bool result = db.DuyetPhieuNhap(id, nv.MaNV);
 
                 if (result)
                     return Json(new { success = true, message = "Duyệt phiếu nhập thành công!" });
                 else
-                    return Json(new { success = false, message = "Không thể duyệt phiếu nhập." });
+                    return Json(new { success = false, message = "Không thể duyệt phiếu nhập. Phiếu có thể chưa chọn kho." });
             }
             catch (Exception ex)
             {

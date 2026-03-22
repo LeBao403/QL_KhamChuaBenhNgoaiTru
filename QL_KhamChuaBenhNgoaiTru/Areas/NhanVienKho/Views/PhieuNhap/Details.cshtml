@@ -63,6 +63,10 @@
                         <td class="fw-bold">#@phieu.MaPhieuNhap</td>
                     </tr>
                     <tr>
+                        <td class="text-muted">Kho nhập:</td>
+                        <td><span class="badge bg-info text-dark">@(string.IsNullOrEmpty(phieu.TenKho) ? "—" : phieu.TenKho)</span></td>
+                    </tr>
+                    <tr>
                         <td class="text-muted">Nhà cung cấp:</td>
                         <td>@phieu.TenNSX</td>
                     </tr>

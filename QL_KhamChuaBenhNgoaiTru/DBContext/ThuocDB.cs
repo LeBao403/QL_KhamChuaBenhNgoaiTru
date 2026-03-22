@@ -65,7 +65,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             var list = new List<KhoNhapDB.LoaiThuocItem>();
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
-                string query = "SELECT MaLoaiThuoc, TenLoaiThuoc FROM DANHMUC_THUOC ORDER BY TenLoaiThuoc";
+                string query = "SELECT MaDanhMuc AS MaLoaiThuoc, TenDanhMuc AS TenLoaiThuoc FROM DANHMUC_THUOC ORDER BY TenDanhMuc";
                 SqlCommand cmd = new SqlCommand(query, conn);
                 conn.Open();
                 using (SqlDataReader dr = cmd.ExecuteReader())
@@ -74,8 +74,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         list.Add(new KhoNhapDB.LoaiThuocItem
                         {
-                            MaLoaiThuoc = dr["MaLoaiThuoc"] != DBNull.Value ? Convert.ToInt32(dr["MaLoaiThuoc"]) : 0,
-                            TenLoaiThuoc = dr["TenLoaiThuoc"].ToString()
+                            MaLoaiThuoc = dr["MaLoaiThuoc"] != DBNull.Value ? dr["MaLoaiThuoc"].ToString().Trim() : "",
+                            TenLoaiThuoc = dr["TenLoaiThuoc"] != DBNull.Value ? dr["TenLoaiThuoc"].ToString() : ""
                         });
                     }
                 }

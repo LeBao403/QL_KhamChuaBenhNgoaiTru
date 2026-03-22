@@ -66,11 +66,18 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.NhanVienKho.Controllers
             try
             {
                 string maNSXStr = form["MaNSX"];
+                string maKhoStr = form["MaKho"];
                 string ghiChu = form["GhiChu"];
 
                 if (string.IsNullOrEmpty(maNSXStr) || !int.TryParse(maNSXStr, out int maNSX))
                 {
                     TempData["Error"] = "Vui lòng chọn nhà cung cấp.";
+                    return RedirectToAction("Create");
+                }
+
+                if (string.IsNullOrEmpty(maKhoStr) || !int.TryParse(maKhoStr, out int maKho))
+                {
+                    TempData["Error"] = "Vui lòng chọn kho nhập hàng.";
                     return RedirectToAction("Create");
                 }
 
@@ -110,11 +117,11 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.NhanVienKho.Controllers
                         DonGiaNhap = donGia
                     };
 
-                    if (!string.IsNullOrWhiteSpace(ngaySXStr))
-                        DateTime.TryParse(ngaySXStr, out DateTime ngaySX);
+                    if (!string.IsNullOrWhiteSpace(ngaySXStr) && DateTime.TryParse(ngaySXStr, out DateTime ngaySX))
+                        ct.NgaySanXuat = ngaySX;
 
-                    if (!string.IsNullOrWhiteSpace(hanSDStr))
-                        DateTime.TryParse(hanSDStr, out DateTime hanSD);
+                    if (!string.IsNullOrWhiteSpace(hanSDStr) && DateTime.TryParse(hanSDStr, out DateTime hanSD))
+                        ct.HanSuDung = hanSD;
 
                     chiTiet.Add(ct);
                 }
@@ -126,7 +133,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.NhanVienKho.Controllers
                 }
 
                 string maNV = Session["MaNV"]?.ToString();
-                bool result = db.CreatePhieuNhap(maNV, maNSX, ghiChu, chiTiet);
+                bool result = db.CreatePhieuNhap(maNV, maNSX, maKho, ghiChu, chiTiet);
 
                 if (result)
                 {

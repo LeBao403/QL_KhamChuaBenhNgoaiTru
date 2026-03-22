@@ -65,7 +65,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         }
 
         // ==================== DANH SÁCH TỒN KHO ====================
-        public List<TonKhoViewModel> GetTonKho(int page, int pageSize, string keyword, string maPhong, string maKho, string trangThaiTon)
+        public List<TonKhoViewModel> GetTonKho(int page, int pageSize, string keyword, string maKho, string trangThaiTon)
         {
             var list = new List<TonKhoViewModel>();
 
@@ -112,12 +112,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 {
                     query += " AND TK.MaKho = @MaKho";
                     cmd.Parameters.AddWithValue("@MaKho", int.Parse(maKho));
-                }
-
-                if (!string.IsNullOrEmpty(maPhong))
-                {
-                    query += " AND TK.MaPhong = @MaPhong";
-                    cmd.Parameters.AddWithValue("@MaPhong", int.Parse(maPhong));
                 }
 
                 if (!string.IsNullOrEmpty(trangThaiTon))
@@ -178,7 +172,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        public int GetTonKhoCount(string keyword, string maPhong, string maKho, string trangThaiTon)
+        public int GetTonKhoCount(string keyword, string maKho, string trangThaiTon)
         {
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
@@ -205,12 +199,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 {
                     query += " AND TK.MaKho = @MaKho";
                     cmd.Parameters.AddWithValue("@MaKho", int.Parse(maKho));
-                }
-
-                if (!string.IsNullOrEmpty(maPhong))
-                {
-                    query += " AND TK.MaPhong = @MaPhong";
-                    cmd.Parameters.AddWithValue("@MaPhong", int.Parse(maPhong));
                 }
 
                 if (!string.IsNullOrEmpty(trangThaiTon))
@@ -435,6 +423,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         PN.MaPhieuNhap,
                         PN.MaNV_LapPhieu,
                         PN.MaNSX,
+                        PN.MaKho,
+                        K.TenKho,
                         PN.NgayLap,
                         PN.TongTienNhap,
                         PN.TrangThai,
@@ -446,6 +436,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     FROM PHIEUNHAP PN
                     INNER JOIN NHANVIEN NV ON PN.MaNV_LapPhieu = NV.MaNV
                     INNER JOIN NHASANXUAT NSX ON PN.MaNSX = NSX.MaNSX
+                    LEFT JOIN KHO K ON PN.MaKho = K.MaKho
                     WHERE 1=1";
 
                 var cmd = new SqlCommand();
@@ -479,6 +470,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             MaPhieuNhap = Convert.ToInt32(dr["MaPhieuNhap"]),
                             MaNV_LapPhieu = dr["MaNV_LapPhieu"].ToString(),
                             MaNSX = Convert.ToInt32(dr["MaNSX"]),
+                            MaKho = dr["MaKho"] != DBNull.Value ? Convert.ToInt32(dr["MaKho"]) : (int?)null,
                             NgayLap = dr["NgayLap"] != DBNull.Value ? Convert.ToDateTime(dr["NgayLap"]) : (DateTime?)null,
                             TongTienNhap = dr["TongTienNhap"] != DBNull.Value ? Convert.ToDecimal(dr["TongTienNhap"]) : 0,
                             TrangThai = dr["TrangThai"] != DBNull.Value ? dr["TrangThai"].ToString() : "",
@@ -486,7 +478,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             MaNV_Duyet = dr["MaNV_Duyet"] != DBNull.Value ? dr["MaNV_Duyet"].ToString() : "",
                             NgayDuyet = dr["NgayDuyet"] != DBNull.Value ? Convert.ToDateTime(dr["NgayDuyet"]) : (DateTime?)null,
                             TenNguoiLap = dr["TenNguoiLap"] != DBNull.Value ? dr["TenNguoiLap"].ToString() : "",
-                            TenNSX = dr["TenNSX"] != DBNull.Value ? dr["TenNSX"].ToString() : ""
+                            TenNSX = dr["TenNSX"] != DBNull.Value ? dr["TenNSX"].ToString() : "",
+                            TenKho = dr["TenKho"] != DBNull.Value ? dr["TenKho"].ToString() : ""
                         });
                     }
                 }
@@ -539,11 +532,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         PN.*,
                         NV.HoTen AS TenNguoiLap,
                         NV_Duyet.HoTen AS TenNguoiDuyet,
-                        NSX.TenNSX
+                        NSX.TenNSX,
+                        K.TenKho
                     FROM PHIEUNHAP PN
                     INNER JOIN NHANVIEN NV ON PN.MaNV_LapPhieu = NV.MaNV
                     INNER JOIN NHASANXUAT NSX ON PN.MaNSX = NSX.MaNSX
                     LEFT JOIN NHANVIEN NV_Duyet ON PN.MaNV_Duyet = NV_Duyet.MaNV
+                    LEFT JOIN KHO K ON PN.MaKho = K.MaKho
                     WHERE PN.MaPhieuNhap = @MaPhieuNhap";
 
                 SqlCommand cmd = new SqlCommand(query, conn);
@@ -558,6 +553,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             MaPhieuNhap = Convert.ToInt32(dr["MaPhieuNhap"]),
                             MaNV_LapPhieu = dr["MaNV_LapPhieu"].ToString(),
                             MaNSX = Convert.ToInt32(dr["MaNSX"]),
+                            MaKho = dr["MaKho"] != DBNull.Value ? Convert.ToInt32(dr["MaKho"]) : (int?)null,
                             NgayLap = dr["NgayLap"] != DBNull.Value ? Convert.ToDateTime(dr["NgayLap"]) : (DateTime?)null,
                             TongTienNhap = dr["TongTienNhap"] != DBNull.Value ? Convert.ToDecimal(dr["TongTienNhap"]) : 0,
                             TrangThai = dr["TrangThai"] != DBNull.Value ? dr["TrangThai"].ToString() : "",
@@ -566,7 +562,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             NgayDuyet = dr["NgayDuyet"] != DBNull.Value ? Convert.ToDateTime(dr["NgayDuyet"]) : (DateTime?)null,
                             TenNguoiLap = dr["TenNguoiLap"] != DBNull.Value ? dr["TenNguoiLap"].ToString() : "",
                             TenNguoiDuyet = dr["TenNguoiDuyet"] != DBNull.Value ? dr["TenNguoiDuyet"].ToString() : "",
-                            TenNSX = dr["TenNSX"] != DBNull.Value ? dr["TenNSX"].ToString() : ""
+                            TenNSX = dr["TenNSX"] != DBNull.Value ? dr["TenNSX"].ToString() : "",
+                            TenKho = dr["TenKho"] != DBNull.Value ? dr["TenKho"].ToString() : ""
                         };
                     }
                 }
@@ -687,7 +684,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         }
 
         // ==================== DUYỆT/HỦY PHIẾU NHẬP ====================
-        public bool DuyetPhieuNhap(int maPhieuNhap, string maNVDuyet, int maKhoNhan)
+        public bool DuyetPhieuNhap(int maPhieuNhap, string maNVDuyet)
         {
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
@@ -696,10 +693,24 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                 try
                 {
-                    // 1. Lấy chi tiết phiếu nhập
+                    // 1. Lấy MaKho đã chọn khi tạo phiếu nhập
+                    SqlCommand cmdPN = new SqlCommand(
+                        "SELECT MaKho FROM PHIEUNHAP WHERE MaPhieuNhap = @MaPhieuNhap", conn, tran);
+                    cmdPN.Parameters.AddWithValue("@MaPhieuNhap", maPhieuNhap);
+                    var maKhoObj = cmdPN.ExecuteScalar();
+
+                    if (maKhoObj == null || maKhoObj == DBNull.Value)
+                    {
+                        tran.Rollback();
+                        return false;
+                    }
+
+                    int maKhoNhan = Convert.ToInt32(maKhoObj);
+
+                    // 2. Lấy chi tiết phiếu nhập
                     var chiTiets = GetCTPhieuNhap(maPhieuNhap);
 
-                    // 2. Cập nhật tồn kho theo kho nhận
+                    // 3. Cập nhật tồn kho theo kho nhận
                     foreach (var ct in chiTiets)
                     {
                         // Kiểm tra đã có lô trong kho chưa
@@ -732,7 +743,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         else
                         {
                             // Thêm mới dòng tồn kho
-                            // Lấy MaPhong mặc định của kho từ PHONG
                             SqlCommand cmdPhong = new SqlCommand(
                                 "SELECT TOP 1 MaPhong FROM PHONG WHERE TrangThai = 1 ORDER BY MaPhong", conn, tran);
                             int maPhongDefault = Convert.ToInt32(cmdPhong.ExecuteScalar());
@@ -753,7 +763,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         }
                     }
 
-                    // 3. Cập nhật phiếu nhập
+                    // 4. Cập nhật phiếu nhập
                     string sqlPN = @"
                         UPDATE PHIEUNHAP
                         SET TrangThai = N'Đã duyệt',
@@ -761,10 +771,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             NgayDuyet = GETDATE()
                         WHERE MaPhieuNhap = @MaPhieuNhap";
 
-                    SqlCommand cmdPN = new SqlCommand(sqlPN, conn, tran);
-                    cmdPN.Parameters.AddWithValue("@MaNVDuyet", maNVDuyet);
-                    cmdPN.Parameters.AddWithValue("@MaPhieuNhap", maPhieuNhap);
-                    cmdPN.ExecuteNonQuery();
+                    SqlCommand cmdUPN = new SqlCommand(sqlPN, conn, tran);
+                    cmdUPN.Parameters.AddWithValue("@MaNVDuyet", maNVDuyet);
+                    cmdUPN.Parameters.AddWithValue("@MaPhieuNhap", maPhieuNhap);
+                    cmdUPN.ExecuteNonQuery();
 
                     tran.Commit();
                     return true;
@@ -857,6 +867,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public int MaPhieuNhap { get; set; }
         public string MaNV_LapPhieu { get; set; }
         public int MaNSX { get; set; }
+        public int? MaKho { get; set; }
         public DateTime? NgayLap { get; set; }
         public decimal TongTienNhap { get; set; }
         public string TrangThai { get; set; }
@@ -867,6 +878,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public string TenNguoiLap { get; set; }
         public string TenNguoiDuyet { get; set; }
         public string TenNSX { get; set; }
+        public string TenKho { get; set; }
 
         public string NgayLapDisplay => NgayLap.HasValue ? NgayLap.Value.ToString("dd/MM/yyyy HH:mm") : "";
         public string NgayDuyetDisplay => NgayDuyet.HasValue ? NgayDuyet.Value.ToString("dd/MM/yyyy HH:mm") : "";

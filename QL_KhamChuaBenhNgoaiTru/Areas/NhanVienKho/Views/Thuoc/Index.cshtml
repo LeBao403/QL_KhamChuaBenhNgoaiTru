@@ -31,7 +31,7 @@
                     {
                         foreach (var l in dsLoaiThuoc)
                         {
-                            <option value="@l.MaLoaiThuoc" @(maLoaiThuoc == l.MaLoaiThuoc.ToString() ? "selected" : "")>@l.TenLoaiThuoc</option>
+                            <option value="@l.MaLoaiThuoc" @(maLoaiThuoc == l.MaLoaiThuoc ? "selected" : "")>@l.TenLoaiThuoc</option>
                         }
                     }
                 </select>
