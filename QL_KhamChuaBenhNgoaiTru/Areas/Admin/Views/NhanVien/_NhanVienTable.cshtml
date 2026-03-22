@@ -1,0 +1,87 @@
+@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.NhanVienManageViewModel>
+
+@{
+    var defaultAvatar = Url.Content("~/Images/nhanvien/default-avatar.png");
+}
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        string avatarUrl = !string.IsNullOrEmpty(item.HinhAnh)
+            ? Url.Content("~/" + item.HinhAnh)
+            : defaultAvatar;
+
+        string initials = !string.IsNullOrEmpty(item.HoTen)
+            ? string.Join("", item.HoTen.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => w[0]))
+            : "?";
+
+        <tr>
+            <td><strong>@item.MaNV</strong></td>
+            <td>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="nv-avatar" style="background: linear-gradient(135deg, #0d6efd, #6610f2);">
+                        @if (!string.IsNullOrEmpty(item.HinhAnh))
+                        {
+                            <img src="@avatarUrl" alt="@item.HoTen" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />
+                        }
+                        else
+                        {
+                            <span style="color:#fff;font-weight:700;font-size:0.85rem;">@initials</span>
+                        }
+                    </div>
+                    <div>
+                        <div class="fw-semibold text-dark">@item.HoTen</div>
+                        <small class="text-muted">@item.SDT</small>
+                    </div>
+                </div>
+            </td>
+            <td><span class="badge bg-info text-dark">@item.TenChucVu</span></td>
+            <td>@item.Email</td>
+
+            <td class="text-center">
+                @if (item.TrangThai)
+                {
+                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Đang làm</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary"><i class="bi bi-clock"></i> Đã nghỉ</span>
+                }
+            </td>
+
+            <td class="text-center">
+                <div class="d-flex justify-content-center align-items-center flex-nowrap" style="gap: 5px;">
+
+                    <a href="@Url.Action("Details", "NhanVien", new { area = "Admin", id = item.MaNV.Trim() })"
+                       class="btn btn-sm btn-info" title="Xem chi tiết">
+                        <i class="bi bi-eye"></i>
+                    </a>
+
+                    <a href="@Url.Action("Edit_NV", "NhanVien", new { area = "Admin", id = item.MaNV.Trim() })"
+                       class="btn btn-sm btn-warning" title="Chỉnh sửa">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <form method="post" action="@Url.Action("Delete", "NhanVien", new { area = "Admin" })" class="m-0 p-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.MaNV.Trim()" />
+                        <button type="button" class="btn btn-sm btn-danger btn-delete-nv" title="Xóa">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+
+                </div>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="6" class="text-center text-muted p-4">
+            <i class="bi bi-person-x fs-3 d-block mb-2"></i>
+            Không tìm thấy nhân viên nào.
+        </td>
+    </tr>
+}

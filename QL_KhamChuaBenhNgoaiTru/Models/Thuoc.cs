@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
@@ -87,5 +87,49 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string MaThuoc { get; set; }
         public string MaHoatChat { get; set; }
         public string HamLuong { get; set; }
+    }
+
+    // ==================== VIEW MODELS ====================
+
+    // ViewModel dùng cho trang Danh sách (Index)
+    public class ThuocManageViewModel
+    {
+        public string MaThuoc { get; set; }
+        public string TenThuoc { get; set; }
+        public string QuyCach { get; set; }
+        public string DonViCoBan { get; set; }
+        public string MaLoaiThuoc { get; set; }
+        public string DuongDung { get; set; }
+        public decimal? GiaBan { get; set; }
+        public bool CoBHYT { get; set; }
+        public decimal? GiaBHYT { get; set; }
+        public int? MaNSX { get; set; }
+        public string TenNSX { get; set; }
+        public bool TrangThai { get; set; }
+        public List<ThanhPhanViewModel> ThanhPhans { get; set; }
+    }
+
+    // ViewModel cho thành phần thuốc (dùng hiển thị)
+    public class ThanhPhanViewModel
+    {
+        public string MaThanhPhan { get; set; }
+        public string MaThuoc { get; set; }
+        public string MaHoatChat { get; set; }
+        public string TenHoatChat { get; set; }
+        public string HamLuong { get; set; }
+    }
+
+    // ViewModel dùng cho trang Details/Edit (chứa Thuoc + TaiKhoan) -- tương tự BenhNhanManageViewModel
+    public class ThuocManageViewModel2
+    {
+        public Thuoc Thuoc { get; set; } = new Thuoc();
+        public List<ThanhPhanThuoc> ThanhPhans { get; set; } = new List<ThanhPhanThuoc>();
+    }
+
+    // Helper class for LoaiThuoc dropdown
+    public class LoaiThuocItem
+    {
+        public string MaLoaiThuoc { get; set; }
+        public string TenLoaiThuoc { get; set; }
     }
 }

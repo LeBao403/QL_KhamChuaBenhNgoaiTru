@@ -1,0 +1,271 @@
+@model QL_KhamChuaBenhNgoaiTru.Models.ThuocManageViewModel2
+@using QL_KhamChuaBenhNgoaiTru.Models
+@{
+    ViewBag.Title = "Chỉnh sửa thuốc";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+    var dsHoatChat = ViewBag.DsHoatChat as List<DanhMucHoatChat>;
+    var dsLoaiThuoc = ViewBag.DsLoaiThuoc as List<LoaiThuocItem>;
+    var dsNSX = ViewBag.DsNSX as List<NhaSanXuat>;
+}
+
+<style>
+    .profile-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #dee2e6;
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        color: #0d6efd;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+        .section-title i { margin-right: 8px; }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .tp-row {
+        background: #f8fbff;
+        border: 1px dashed #0d6efd;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    .text-danger { font-size: 0.85rem; font-style: italic; }
+</style>
+
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-dark mb-0">Chỉnh sửa thuốc</h4>
+        <span class="text-muted">Mã thuốc: <strong class="text-primary">@Model.Thuoc.MaThuoc</strong></span>
+    </div>
+
+    @using (Html.BeginForm("Edit", "Thuoc", FormMethod.Post, new { @class = "needs-validation" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @Html.HiddenFor(m => m.Thuoc.MaThuoc)
+
+        @* ===== THÔNG TIN CƠ BẢN ===== *@
+        <h4 class="section-title"><i class="bi bi-capsule"></i> 1. Thông tin thuốc</h4>
+        <div class="profile-card">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tên thuốc <span class="text-danger">*</span></label>
+                    @Html.EditorFor(m => m.Thuoc.TenThuoc, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.Thuoc.TenThuoc, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Đơn vị cơ bản <span class="text-danger">*</span></label>
+                    @Html.EditorFor(m => m.Thuoc.DonViCoBan, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(m => m.Thuoc.DonViCoBan, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Quy cách</label>
+                    @Html.EditorFor(m => m.Thuoc.QuyCach, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Loại thuốc</label>
+                    <select name="Thuoc.MaLoaiThuoc" class="form-select">
+                        <option value="">-- Chọn loại thuốc --</option>
+                        @if (dsLoaiThuoc != null)
+                        {
+                            foreach (var l in dsLoaiThuoc)
+                            {
+                                <option value="@l.MaLoaiThuoc" @(Model.Thuoc.MaLoaiThuoc == l.MaLoaiThuoc ? "selected" : "")>@l.TenLoaiThuoc</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Đường dùng</label>
+                    @Html.EditorFor(m => m.Thuoc.DuongDung, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Nhà sản xuất</label>
+                    <select name="Thuoc.MaNSX" class="form-select">
+                        <option value="">-- Chọn nhà sản xuất --</option>
+                        @if (dsNSX != null)
+                        {
+                            foreach (var nsx in dsNSX)
+                            {
+                                <option value="@nsx.MaNSX" @(Model.Thuoc.MaNSX == nsx.MaNSX ? "selected" : "")>@nsx.TenNSX</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Giá bán (VNĐ)</label>
+                    @Html.EditorFor(m => m.Thuoc.GiaBan, new { htmlAttributes = new { @class = "form-control", type = "number", min = "0" } })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Trạng thái</label>
+                    <select name="Thuoc.TrangThai" class="form-select">
+                        <option value="True" @(Model.Thuoc.TrangThai == true ? "selected" : "")>Đang sử dụng</option>
+                        <option value="False" @(Model.Thuoc.TrangThai == false ? "selected" : "")>Ngừng sử dụng</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        @* ===== BẢO HIỂM Y TẾ ===== *@
+        <h4 class="section-title"><i class="bi bi-shield-check"></i> 2. Bảo hiểm Y tế</h4>
+        <div class="profile-card">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="form-check form-switch mt-4">
+                        @Html.CheckBoxFor(m => m.Thuoc.CoBHYT, new { @class = "form-check-input", id = "switchBHYT" })
+                        <label class="form-check-label fw-bold" for="switchBHYT">Thuốc có trong danh mục BHYT</label>
+                    </div>
+                </div>
+                <div class="col-md-4" id="areaBHYT" style="@(Model.Thuoc.CoBHYT ? "" : "display:none;")">
+                    <label class="form-label">Giá BHYT quy định (VNĐ)</label>
+                    @Html.EditorFor(m => m.Thuoc.GiaBHYT, new { htmlAttributes = new { @class = "form-control", type = "number", min = "0" } })
+                </div>
+            </div>
+        </div>
+
+        @* ===== THÀNH PHẦN THUỐC ===== *@
+        <h4 class="section-title">
+            <i class="bi bi-flask"></i> 3. Thành phần / Hoạt chất
+        </h4>
+        <div class="profile-card">
+            <div id="thanhPhanList">
+                @if (Model.ThanhPhans != null && Model.ThanhPhans.Any())
+                {
+                    int editIndex = 0;
+                    foreach (var tp in Model.ThanhPhans)
+                    {
+                        <div class="tp-row tp-item">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-8">
+                                    <label class="form-label small">Hoạt chất</label>
+                                    <select name="MaHoatChat_@editIndex" class="form-select">
+                                        <option value="">-- Chọn hoạt chất --</option>
+                                        @if (dsHoatChat != null)
+                                        {
+                                            foreach (var hc in dsHoatChat)
+                                            {
+                                                <option value="@hc.MaHoatChat" @(tp.MaHoatChat == hc.MaHoatChat ? "selected" : "")>@hc.TenHoatChat</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small">Hàm lượng</label>
+                                    <input type="text" name="HamLuong_@editIndex" class="form-control" value="@tp.HamLuong" placeholder="VD: 500mg">
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="button" class="btn btn-danger btn-sm btn-remove-tp w-100" title="Xóa dòng">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        editIndex++;
+                    }
+                }
+                else
+                {
+                    <div class="tp-row tp-item">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-8">
+                                <label class="form-label small">Hoạt chất</label>
+                                <select name="MaHoatChat_0" class="form-select">
+                                    <option value="">-- Chọn hoạt chất --</option>
+                                    @if (dsHoatChat != null)
+                                    {
+                                        foreach (var hc in dsHoatChat)
+                                        {
+                                            <option value="@hc.MaHoatChat">@hc.TenHoatChat</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small">Hàm lượng</label>
+                                <input type="text" name="HamLuong_0" class="form-control" placeholder="VD: 500mg">
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-danger btn-sm btn-remove-tp w-100" title="Xóa dòng">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <button type="button" id="btnAddTp" class="btn btn-outline-primary btn-sm mt-2">
+                <i class="bi bi-plus-circle me-1"></i> Thêm hoạt chất
+            </button>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2 mb-5">
+            <a href="@Url.Action("Details", "Thuoc", new { id = Model.Thuoc.MaThuoc.Trim() })" class="btn btn-secondary px-4">Hủy</a>
+            <button type="submit" class="btn btn-primary px-5 shadow">
+                <i class="bi bi-save me-1"></i> Lưu thay đổi
+            </button>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tpIndex = @((Model.ThanhPhans != null ? Model.ThanhPhans.Count : 0));
+        var dsHoatChat = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+            (dsHoatChat ?? new List<DanhMucHoatChat>())
+            .Select(hc => new { value = hc.MaHoatChat, text = hc.TenHoatChat })));
+
+        function buildTpRow() {
+            var options = '<option value="">-- Chọn hoạt chất --</option>';
+            dsHoatChat.forEach(function(item) {
+                options += '<option value="' + item.value + '">' + item.text + '</option>';
+            });
+            return '<div class="tp-row tp-item">' +
+                '<div class="row g-2 align-items-end">' +
+                '<div class="col-md-8">' +
+                '<label class="form-label small">Hoạt chất</label>' +
+                '<select name="MaHoatChat_' + tpIndex + '" class="form-select">' + options + '</select>' +
+                '</div>' +
+                '<div class="col-md-3">' +
+                '<label class="form-label small">Hàm lượng</label>' +
+                '<input type="text" name="HamLuong_' + tpIndex + '" class="form-control" placeholder="VD: 500mg">' +
+                '</div>' +
+                '<div class="col-md-1">' +
+                '<button type="button" class="btn btn-danger btn-sm btn-remove-tp w-100" title="Xóa dòng"><i class="bi bi-trash"></i></button>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        }
+
+        $('#btnAddTp').on('click', function () {
+            $('#thanhPhanList').append(buildTpRow());
+            tpIndex++;
+        });
+
+        $('#thanhPhanList').on('click', '.btn-remove-tp', function () {
+            if ($('.tp-item').length > 1) {
+                $(this).closest('.tp-row').remove();
+            } else {
+                Swal.fire('Thông báo', 'Phải có ít nhất 1 hoạt chất.', 'info');
+            }
+        });
+
+        // BHYT toggle
+        $('#switchBHYT').on('change', function () {
+            $('#areaBHYT').toggle(this.checked);
+        });
+    });
+</script>

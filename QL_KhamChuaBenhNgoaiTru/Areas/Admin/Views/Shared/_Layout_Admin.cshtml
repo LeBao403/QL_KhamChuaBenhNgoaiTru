@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -74,23 +74,35 @@
                 <i class="bi bi-hospital-fill"></i> <span>Quản lý Khoa - Phòng</span>
             </a>
 
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Thuoc" ? "active" : "")" href="@Url.Action("Index", "Thuoc", new { area = "Admin" })">
+                <i class="bi bi-capsule"></i> <span>Quản lý Thuốc</span>
+            </a>
+
             <div class="nav-section-title"><span>Vật tư & Tài chính</span></div>
 
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Kho" ? "active" : "")" href="@Url.Action("Index", "Kho", new { area = "Admin" })">
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Kho" && (ViewContext.RouteData.Values["action"] == null || ViewContext.RouteData.Values["action"].ToString() == "Index") ? "active" : "")" href="@Url.Action("Index", "Kho", new { area = "Admin" })">
                 <i class="bi bi-box-seam-fill"></i> <span>Kho Dược - Vật tư</span>
             </a>
 
-            <a class="nav-link" href="@Url.Action("DanhSachPhieuNhap", "Kho", new { area = "Admin" })">
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Kho" && ViewContext.RouteData.Values["action"].ToString() == "DanhSachPhieuNhap" ? "active" : "")" href="@Url.Action("DanhSachPhieuNhap", "Kho", new { area = "Admin" })">
                 <i class="bi bi-file-earmark-arrow-down-fill"></i> <span>Phiếu nhập kho</span>
+                @if (ViewBag.PhieuChoDuyet > 0)
+                {
+                    <span class="badge bg-danger ms-2">@ViewBag.PhieuChoDuyet</span>
+                }
             </a>
 
             <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "HoaDon" ? "active" : "")" href="@Url.Action("Index", "HoaDon", new { area = "Admin" })">
                 <i class="bi bi-receipt-cutoff"></i> <span>Thu ngân - Viện phí</span>
             </a>
 
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "DichVu" ? "active" : "")" href="@Url.Action("Index", "DichVu", new { area = "Admin" })">
+                <i class="bi bi-clipboard2-pulse"></i> <span>Dịch vụ viện phí</span>
+            </a>
+
             <div class="nav-section-title"><span>Hệ thống</span></div>
 
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "NhanVien" ? "active" : "")" href="@Url.Action("DanhSachNhanVien", "NhanVien", new { area = "Admin" })">
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "NhanVien" ? "active" : "")" href="@Url.Action("Index", "NhanVien", new { area = "Admin" })">
                 <i class="bi bi-person-badge-fill"></i> <span>Hồ sơ Nhân viên</span>
             </a>
 

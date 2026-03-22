@@ -1,0 +1,284 @@
+@{
+    ViewBag.Title = "Quản lý nhân viên";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.NhanVienManageViewModel>
+
+<style>
+    .password-toggle-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        max-width: 200px;
+    }
+
+    .password-field {
+        padding-right: 2.5rem !important;
+        background-color: transparent !important;
+        border: none !important;
+        cursor: default;
+        user-select: none;
+    }
+
+        .password-field:focus {
+            box-shadow: none !important;
+        }
+
+    .toggle-password-icon {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #6c757d;
+    }
+
+    .nv-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+
+    .filter-card {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 16px 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid #e9ecef;
+        margin-bottom: 16px;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+    }
+
+    .page-size-select {
+        width: 80px;
+        display: inline-block;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 text-primary fw-bold">
+                <i class="bi bi-person-badge me-2"></i> Danh sách nhân viên
+            </h4>
+            <a href="@Url.Action("Create", "NhanVien", new { area = "Admin" })"
+               class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Thêm nhân viên
+            </a>
+        </div>
+
+        <div class="card-body">
+            @* ======= PHẦN FILTER ======= *@
+            <div class="filter-card">
+                <form id="filterForm" method="get" action="@Url.Action("Index", "NhanVien", new { area = "Admin" })">
+                    <input type="hidden" name="page" id="filterPage" value="1" />
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="filter-label">Tìm kiếm</label>
+                            <input type="text" name="keyword" id="searchInput" class="form-control live-search"
+                                   data-url="@Url.Action("Search", "NhanVien", new { area = "Admin" })"
+                                   data-target="#nvResult"
+                                   value="@ViewBag.Keyword"
+                                   placeholder="Mã NV, Họ tên, SĐT...">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="filter-label">Giới tính</label>
+                            <select name="gioiTinh" id="filterGioiTinh" class="form-select">
+                                <option value="">Tất cả</option>
+                                <option value="Nam" @(ViewBag.GioiTinh == "Nam" ? "selected" : "")>Nam</option>
+                                <option value="Nữ" @(ViewBag.GioiTinh == "Nữ" ? "selected" : "")>Nữ</option>
+                                <option value="Khác" @(ViewBag.GioiTinh == "Khác" ? "selected" : "")>Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="filter-label">Chức vụ</label>
+                            <select name="maChucVu" id="filterMaChucVu" class="form-select">
+                                <option value="">Tất cả chức vụ</option>
+                                @if (ViewBag.DsChucVu != null)
+                                {
+                                    foreach (var cv in ViewBag.DsChucVu)
+                                    {
+                                        <option value="@cv.MaChucVu" @(ViewBag.MaChucVu != null && ViewBag.MaChucVu == cv.MaChucVu ? "selected" : "")>@cv.TenChucVu</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="filter-label">Trạng thái</label>
+                            <select name="trangThai" id="filterTrangThai" class="form-select">
+                                <option value="">Tất cả</option>
+                                <option value="true" @(ViewBag.TrangThai != null && ViewBag.TrangThai == true ? "selected" : "")>Đang làm</option>
+                                <option value="false" @(ViewBag.TrangThai != null && ViewBag.TrangThai == false ? "selected" : "")>Đã nghỉ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-funnel me-1"></i> Lọc
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            @* ======= THÔNG TIN PHÂN TRANG ======= *@
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted small">
+                    Tổng cộng: <strong class="text-dark">@ViewBag.TotalCount</strong> nhân viên
+                </span>
+                <div>
+                    <label class="me-1 small text-muted">Hiển thị:</label>
+                    <select id="pageSizeSelect" class="form-select form-select-sm page-size-select" style="display:inline-block; width:70px;">
+                        <option value="10" @(ViewBag.PageSize == 10 ? "selected" : "")>10</option>
+                        <option value="20" @(ViewBag.PageSize == 20 ? "selected" : "")>20</option>
+                        <option value="50" @(ViewBag.PageSize == 50 ? "selected" : "")>50</option>
+                    </select>
+                    <span class="small text-muted ms-1">/ trang</span>
+                </div>
+            </div>
+
+            @* ======= BẢNG DANH SÁCH ======= *@
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped align-middle bg-white">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Mã NV</th>
+                            <th>Nhân viên</th>
+                            <th>Chức vụ</th>
+                            <th>Email</th>
+                            <th class="text-center">Trạng thái</th>
+                            <th class="text-center" style="width: 170px; white-space: nowrap;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="nvResult">
+                        @Html.Partial("_NhanVienTable", Model)
+                    </tbody>
+                </table>
+            </div>
+
+            @Html.Partial("_Pagination")
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Scripts/live-search.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Ẩn/hiện mật khẩu
+            $('#nvResult').on('click', '.toggle-password-icon', function () {
+                var icon = $(this);
+                var input = icon.siblings('.password-field');
+                var type = input.attr('type');
+
+                if (type === 'password') {
+                    input.attr('type', 'text');
+                    input.css('user-select', 'auto');
+                    icon.removeClass('bi-eye-slash').addClass('bi-eye');
+                } else {
+                    input.attr('type', 'password');
+                    input.css('user-select', 'none');
+                    icon.removeClass('bi-eye').addClass('bi-eye-slash');
+                }
+            });
+
+            // Filter Form - khi submit thì reset page về 1
+            $('#filterForm').on('submit', function () {
+                $('#filterPage').val(1);
+                return true;
+            });
+
+            // Khi gõ trong ô search thì update data-url của live-search
+            $('#searchInput').on('input', function () {
+                var keyword = $(this).val();
+                var gioiTinh = $('#filterGioiTinh').val();
+                var maChucVu = $('#filterMaChucVu').val();
+                var trangThai = $('#filterTrangThai').val();
+                var url = $(this).data('url') + '?q=' + encodeURIComponent(keyword)
+                    + '&gioiTinh=' + encodeURIComponent(gioiTinh)
+                    + '&maChucVu=' + encodeURIComponent(maChucVu)
+                    + '&trangThai=' + encodeURIComponent(trangThai);
+                $(this).data('url', url);
+            });
+
+            // Xác nhận Khóa/Mở tài khoản
+            $('#nvResult').on('click', '.btn-lock-tk', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                var isActive = $(this).data('isactive');
+
+                Swal.fire({
+                    title: isActive ? 'Xác nhận Khóa?' : 'Xác nhận Mở khóa?',
+                    text: isActive ? 'Nhân viên này sẽ không thể đăng nhập được nữa.' : 'Nhân viên có thể đăng nhập bình thường.',
+                    icon: isActive ? 'warning' : 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: isActive ? '#dc3545' : '#198754',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: isActive ? 'Đồng ý khóa' : 'Đồng ý mở'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+
+            // Xác nhận Xóa
+            $('#nvResult').on('click', '.btn-delete-nv', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+
+                Swal.fire({
+                    title: 'Bạn chắc chắn muốn xóa?',
+                    text: "Nhân viên này sẽ bị xóa vĩnh viễn khỏi hệ thống!",
+                    icon: 'error',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Xóa ngay',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+
+            // SweetAlert thông báo
+            @if (TempData["Success"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: '@Html.Raw(TempData["Success"])',
+                    timer: 3000,
+                    showConfirmButton: true
+                });
+                </text>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: '@Html.Raw(TempData["Error"])',
+                    showConfirmButton: true
+                });
+                </text>
+            }
+        });
+    </script>
+}

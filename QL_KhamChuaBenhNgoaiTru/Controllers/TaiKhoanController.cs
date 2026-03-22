@@ -1,4 +1,4 @@
-﻿using System.Web.Mvc;
+using System.Web.Mvc;
 using QL_KhamChuaBenhNgoaiTru.Models;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
 
@@ -59,6 +59,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
                         case 9: // Thu ngân
                             return RedirectToAction("Index", "ThuNgan", new { area = "Staff" });
+
+                        case 12: // Nhân viên kho
+                            return RedirectToAction("Index", "Dashboard", new { area = "NhanVienKho" });
 
                         case 5: // Điều dưỡng
                         case 6: // KTV CLS

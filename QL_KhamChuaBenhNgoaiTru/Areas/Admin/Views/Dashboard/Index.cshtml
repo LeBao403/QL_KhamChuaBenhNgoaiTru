@@ -1,8 +1,705 @@
-﻿
+@model QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers.DashboardViewModel
+
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Tổng quan";
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+
+    // Format số tiền
+    Func<decimal, string> formatMoney = (m) => m.ToString("N0");
+
+    // Tính % tăng giảm (mock cho demo)
+    decimal phantramTangGia = 12.5m;
 }
 
-<h2>Index</h2>
+<!-- ===================== CSS RIÊNG CHO DASHBOARD ===================== -->
+@section Styles {
+    <style>
+        .stat-card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+            overflow: hidden;
+        }
 
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .trend-up {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .trend-down {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .card-modern {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+
+        .card-header-modern {
+            background: white;
+            border: none;
+            padding: 20px 24px 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table-modern tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .badge-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .alert-warning-card {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+
+        .alert-danger-card {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+        }
+
+        .nav-chart-tabs .nav-link {
+            border: none;
+            color: #64748b;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-chart-tabs .nav-link.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .text-highlight {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1e293b;
+            line-height: 1;
+        }
+
+        .quick-action-btn {
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            background: white;
+            text-decoration: none;
+            color: #475569;
+            display: block;
+        }
+
+        .quick-action-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+        }
+
+        .quick-action-btn .icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 20px;
+        }
+    </style>
+}
+
+<!-- ===================== THÔNG BÁO ===================== -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>@TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- ===================== 1. THỐNG KÊ TỔNG QUAN ===================== -->
+<div class="row g-4 mb-4">
+    <!-- Bệnh nhân -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Bệnh nhân</p>
+                        <h3 class="text-highlight mb-0">@Model.ThongKe.TongBenhNhan.ToString("N0")</h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <span class="stat-trend trend-up me-2">
+                                <i class="bi bi-arrow-up"></i> @phantramTangGia%
+                            </span>
+                            <small class="text-muted">so với tháng trước</small>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #dbeafe;">
+                        <i class="bi bi-people-fill" style="color: #2563eb;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nhân viên -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Nhân viên</p>
+                        <h3 class="text-highlight mb-0">@Model.ThongKe.TongNhanVien.ToString("N0")</h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <span class="stat-trend trend-up me-2">
+                                <i class="bi bi-check-lg"></i> Đang hoạt động
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #dcfce7;">
+                        <i class="bi bi-person-badge-fill" style="color: #16a34a;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thuốc -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Thuốc trong kho</p>
+                        <h3 class="text-highlight mb-0">@Model.ThongKe.TongThuoc.ToString("N0")</h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <small class="text-muted">@Model.ThongKe.TongKhoa khoa • @Model.ThongKe.TongPhong phòng</small>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #fce7f3;">
+                        <i class="bi bi-capsule" style="color: #db2777;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Khám hôm nay -->
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Khám hôm nay</p>
+                        <h3 class="text-highlight mb-0">@Model.ThongKeKhamBenh.KhamHomNay.ToString("N0")</h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <span class="stat-trend trend-up me-2">
+                                <i class="bi bi-arrow-up"></i> @Model.ThongKeKhamBenh.KhamTuanNay
+                            </span>
+                            <small class="text-muted">lượt/tuần</small>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #fef3c7;">
+                        <i class="bi bi-clipboard2-pulse-fill" style="color: #d97706;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== 2. DOANH THU ===================== -->
+<div class="row g-4 mb-4">
+    <div class="col-xl-4 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Doanh thu tháng @DateTime.Now.ToString("MM/yyyy")</p>
+                        <h3 class="text-highlight mb-0" style="color: #059669;">@formatMoney(Model.DoanhThuThang.TongDoanhThu) <small style="font-size: 14px;">đ</small></h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <span class="stat-trend trend-up me-2">
+                                <i class="bi bi-graph-up-arrow"></i> BHYT: @formatMoney(Model.DoanhThuThang.TienBHYT) đ
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #d1fae5;">
+                        <i class="bi bi-currency-dollar" style="color: #059669;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Thu của bệnh nhân</p>
+                        <h3 class="text-highlight mb-0" style="color: #2563eb;">@formatMoney(Model.DoanhThuThang.DoanhThuThucNhan) <small style="font-size: 14px;">đ</small></h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <small class="text-muted">Tiền mặt + Chuyển khoản</small>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #dbeafe;">
+                        <i class="bi bi-wallet2" style="color: #2563eb;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-12">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <p class="text-muted mb-1" style="font-size: 12px;">Đang khám</p>
+                        <h4 class="mb-0" style="color: #d97706; font-weight: 700;">@Model.ThongKeKhamBenh.DangKham</h4>
+                    </div>
+                    <div class="col-6">
+                        <p class="text-muted mb-1" style="font-size: 12px;">Hoàn thành</p>
+                        <h4 class="mb-0" style="color: #16a34a; font-weight: 700;">@Model.ThongKeKhamBenh.HoanThanh</h4>
+                    </div>
+                </div>
+                <hr class="my-2" />
+                <div class="d-flex justify-content-between small">
+                    <span class="text-muted">Tổng lượt khám tuần này</span>
+                    <strong>@Model.ThongKeKhamBenh.KhamTuanNay</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== 3. BIỂU ĐỒ + CẢNH BÁO ===================== -->
+<div class="row g-4 mb-4">
+    <!-- Biểu đồ doanh thu -->
+    <div class="col-xl-8">
+        <div class="card card-modern">
+            <div class="card-header card-header-modern d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="section-title mb-0">Biểu đồ doanh thu</h6>
+                    <small class="text-muted">Theo @DateTime.Now.Year</small>
+                </div>
+                <ul class="nav nav-chart-tabs mb-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="switchChart('week'); return false;">7 ngày</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="switchChart('month'); return false;">12 tháng</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cảnh báo -->
+    <div class="col-xl-4">
+        <div class="card card-modern h-100">
+            <div class="card-header card-header-modern">
+                <h6 class="section-title mb-0">
+                    <i class="bi bi-exclamation-triangle text-warning me-1"></i> Cảnh báo kho
+                </h6>
+            </div>
+            <div class="card-body p-3">
+                @if (Model.ThuocSapHetHan.Count == 0 && Model.ThuocSapHetHang.Count == 0)
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 48px;"></i>
+                        <p class="mt-2 mb-0 text-muted">Kho dược hoạt động tốt</p>
+                    </div>
+                }
+                else
+                {
+                    if (Model.ThuocSapHetHan.Count > 0)
+                    {
+                        <div class="alert-warning-card mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-clock-history text-warning me-2"></i>
+                                <strong>Sắp hết hạn (@Model.ThuocSapHetHan.Count)</strong>
+                            </div>
+                            @foreach (var item in Model.ThuocSapHetHan.Take(3))
+                            {
+                                <div class="d-flex justify-content-between small py-1">
+                                    <span class="text-truncate me-2">@item.TenThuoc</span>
+                                    <span class="badge bg-warning text-dark">@item.SoNgayConLai ngày</span>
+                                </div>
+                            }
+                            @if (Model.ThuocSapHetHan.Count > 3)
+                            {
+                                <a href="@Url.Action("Index", "Kho")" class="small text-warning text-decoration-none mt-1 d-block">
+                                    Xem thêm @(Model.ThuocSapHetHan.Count - 3) thuốc...
+                                </a>
+                            }
+                        </div>
+                    }
+
+                    if (Model.ThuocSapHetHang.Count > 0)
+                    {
+                        <div class="alert-danger-card">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-box-seam text-danger me-2"></i>
+                                <strong>Sắp hết hàng (@Model.ThuocSapHetHang.Count)</strong>
+                            </div>
+                            @foreach (var item in Model.ThuocSapHetHang.Take(3))
+                            {
+                                <div class="d-flex justify-content-between small py-1">
+                                    <span class="text-truncate me-2">@item.TenThuoc</span>
+                                    <span class="badge bg-danger">@item.TongTon @item.DonViCoBan</span>
+                                </div>
+                            }
+                            @if (Model.ThuocSapHetHang.Count > 3)
+                            {
+                                <a href="@Url.Action("Index", "Kho")" class="small text-danger text-decoration-none mt-1 d-block">
+                                    Xem thêm @(Model.ThuocSapHetHang.Count - 3) thuốc...
+                                </a>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== 4. PHIẾU NHẬP + BÁC SĨ ===================== -->
+<div class="row g-4 mb-4">
+    <!-- Phiếu nhập gần đây -->
+    <div class="col-xl-6">
+        <div class="card card-modern">
+            <div class="card-header card-header-modern d-flex justify-content-between align-items-center">
+                <h6 class="section-title mb-0">
+                    <i class="bi bi-file-earmark-arrow-down text-primary me-1"></i> Phiếu nhập gần đây
+                </h6>
+                <a href="@Url.Action("DanhSachPhieuNhap", "Kho")" class="btn btn-sm btn-outline-primary">
+                    Xem tất cả
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-modern mb-0">
+                        <thead>
+                            <tr>
+                                <th>Mã phiếu</th>
+                                <th>Ngày lập</th>
+                                <th>Nhà cung cấp</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.PhieuNhapGanDay.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">Chưa có phiếu nhập nào</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var item in Model.PhieuNhapGanDay)
+                                {
+                                    <tr>
+                                        <td><strong>#@item.MaPhieuNhap</strong></td>
+                                        <td>@item.NgayLapDisplay</td>
+                                        <td class="text-truncate" style="max-width: 120px;">@item.NhaCungCap</td>
+                                        <td><strong>@formatMoney(item.TongTienNhap) đ</strong></td>
+                                        <td>
+                                            @{
+                                                string badgeClass = item.TrangThai switch
+                                                {
+                                                    "Chờ duyệt" => "bg-warning text-dark",
+                                                    "Đã duyệt" => "bg-success",
+                                                    "Đã hủy" => "bg-secondary",
+                                                    _ => "bg-secondary"
+                                                };
+                                            }
+                                            <span class="badge @badgeClass">@item.TrangThai</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bác sĩ khám nhiều -->
+    <div class="col-xl-6">
+        <div class="card card-modern">
+            <div class="card-header card-header-modern d-flex justify-content-between align-items-center">
+                <h6 class="section-title mb-0">
+                    <i class="bi bi-award text-success me-1"></i> Bác sĩ khám nhiều nhất (30 ngày)
+                </h6>
+                <a href="@Url.Action("Index", "NhanVien")" class="btn btn-sm btn-outline-success">
+                    Xem tất cả
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-modern mb-0">
+                        <thead>
+                            <tr>
+                                <th>Bác sĩ</th>
+                                <th>Chức vụ</th>
+                                <th class="text-end">Lượt khám</th>
+                                <th class="text-end">Tỷ lệ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.BacSiKhamNhieuNhat.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">Chưa có dữ liệu</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                var maxKham = Model.BacSiKhamNhieuNhat.Max(x => x.SoLuotKham);
+                                foreach (var item in Model.BacSiKhamNhieuNhat)
+                                {
+                                    var tyLe = maxKham > 0 ? (item.SoLuotKham * 100.0 / maxKham) : 0;
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(item.HoTen)&background=10b981&color=fff&size=32&rounded=true"
+                                                     class="rounded-circle me-2" alt="@item.HoTen" />
+                                                <div>
+                                                    <div class="fw-semibold">@item.HoTen</div>
+                                                    <small class="text-muted">@item.MaNV</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark">@item.TenChucVu</span></td>
+                                        <td class="text-end"><strong>@item.SoLuotKham</strong></td>
+                                        <td class="text-end">
+                                            <div class="progress" style="height: 6px; width: 60px;" title="@tyLe.ToString("F1")%">
+                                                <div class="progress-bar bg-success" style="width: @tyLe.ToString("F0")%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== 5. THAO TÁC NHANH ===================== -->
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card card-modern">
+            <div class="card-header card-header-modern">
+                <h6 class="section-title mb-0">
+                    <i class="bi bi-lightning text-primary me-1"></i> Thao tác nhanh
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <a href="@Url.Action("Create", "Thuoc")" class="quick-action-btn">
+                            <div class="icon" style="background: #dbeafe;">
+                                <i class="bi bi-plus-circle-fill" style="color: #2563eb;"></i>
+                            </div>
+                            <div class="fw-semibold" style="font-size: 13px;">Thêm thuốc mới</div>
+                        </a>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <a href="@Url.Action("Create", "NhanVien")" class="quick-action-btn">
+                            <div class="icon" style="background: #dcfce7;">
+                                <i class="bi bi-person-plus-fill" style="color: #16a34a;"></i>
+                            </div>
+                            <div class="fw-semibold" style="font-size: 13px;">Thêm nhân viên</div>
+                        </a>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <a href="@Url.Action("Create", "Kho")" class="quick-action-btn">
+                            <div class="icon" style="background: #fef3c7;">
+                                <i class="bi bi-box-seam-fill" style="color: #d97706;"></i>
+                            </div>
+                            <div class="fw-semibold" style="font-size: 13px;">Nhập kho</div>
+                        </a>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <a href="@Url.Action("Create", "BenhNhan")" class="quick-action-btn">
+                            <div class="icon" style="background: #fce7f3;">
+                                <i class="bi bi-person-vcard-fill" style="color: #db2777;"></i>
+                            </div>
+                            <div class="fw-semibold" style="font-size: 13px;">Tiếp nhận BN</div>
+                        </a>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <a href="@Url.Action("Index", "DichVu")" class="quick-action-btn">
+                            <div class="icon" style="background: #e0e7ff;">
+                                <i class="bi bi-clipboard2-pulse" style="color: #4f46e5;"></i>
+                            </div>
+                            <div class="fw-semibold" style="font-size: 13px;">Dịch vụ</div>
+                        </a>
+                    </div>
+                    <div class="col-xl-2 col-md-4 col-6">
+                        <a href="@Url.Action("Index", "Kho")" class="quick-action-btn">
+                            <div class="icon" style="background: #fee2e2;">
+                                <i class="bi bi-bar-chart-fill" style="color: #dc2626;"></i>
+                            </div>
+                            <div class="fw-semibold" style="font-size: 13px;">Báo cáo kho</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== SCRIPTS ===================== -->
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script>
+        // ==================== BIỂU ĐỒ DOANH THU ====================
+        let revenueChart = null;
+        let currentChartType = 'week';
+
+        const chartLabels7 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu7Ngay.Select(x => x.NgayDisplay).ToList()));
+        const chartData7 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu7Ngay.Select(x => (double)x.DoanhThu).ToList()));
+
+        const chartLabels12 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu12Thang.Select(x => x.TenThang).ToList()));
+        const chartData12 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu12Thang.Select(x => (double)x.DoanhThu).ToList()));
+
+        function initChart(labels, data, label) {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+
+            if (revenueChart) {
+                revenueChart.destroy();
+            }
+
+            revenueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        barThickness: label === 'Doanh thu 7 ngày' ? 30 : 20
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return context.parsed.y.toLocaleString('vi-VN') + ' đ';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000000) return (value / 1000000).toFixed(1) + 'M';
+                                    if (value >= 1000) return (value / 1000).toFixed(0) + 'K';
+                                    return value;
+                                }
+                            },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function switchChart(type) {
+            currentChartType = type;
+            document.querySelectorAll('.nav-chart-tabs .nav-link').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (type === 'week') {
+                initChart(chartLabels7, chartData7, 'Doanh thu 7 ngày');
+            } else {
+                initChart(chartLabels12, chartData12, 'Doanh thu 12 tháng');
+            }
+        }
+
+        // Init mặc định
+        document.addEventListener('DOMContentLoaded', function() {
+            initChart(chartLabels7, chartData7, 'Doanh thu 7 ngày');
+        });
+    </script>
+}

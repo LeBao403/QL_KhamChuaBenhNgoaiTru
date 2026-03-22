@@ -1,0 +1,160 @@
+@{
+    Layout = "~/Areas/NhanVienKho/Views/Shared/_Layout_NhanVienKho.cshtml";
+    ViewBag.Title = "Phiếu nhập kho";
+
+    var dsPhieuNhap = ViewBag.DsPhieuNhap as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.PhieuNhapItem>;
+    int page = (int)ViewBag.Page;
+    int pageSize = (int)ViewBag.PageSize;
+    int totalCount = (int)ViewBag.TotalCount;
+    int totalPages = (int)ViewBag.TotalPages;
+    string keyword = ViewBag.Keyword ?? "";
+    string trangThai = ViewBag.TrangThai ?? "";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-dark mb-0">
+        <i class="bi bi-file-earmark-plus text-primary me-2"></i>Danh sách phiếu nhập kho
+    </h4>
+    <a href="@Url.Action("Create", "PhieuNhap", new { area = "NhanVienKho" })" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Tạo phiếu nhập mới
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        @using (Html.BeginForm("Index", "PhieuNhap", FormMethod.Get, new { @class = "row g-3" }))
+        {
+            <div class="col-md-4">
+                <input type="text" name="keyword" class="form-control" placeholder="Tìm theo nhà cung cấp, thuốc..." value="@keyword" />
+            </div>
+            <div class="col-md-3">
+                <select name="trangThai" class="form-select">
+                    <option value="">-- Tất cả trạng thái --</option>
+                    <option value="Chờ duyệt" @(trangThai == "Chờ duyệt" ? "selected" : "")>Chờ duyệt</option>
+                    <option value="Đã duyệt" @(trangThai == "Đã duyệt" ? "selected" : "")>Đã duyệt</option>
+                    <option value="Đã hủy" @(trangThai == "Đã hủy" ? "selected" : "")>Đã hủy</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search me-1"></i> Tìm kiếm
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="@Url.Action("Index", "PhieuNhap", new { area = "NhanVienKho" })" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i> Reset
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        @if (dsPhieuNhap == null || !dsPhieuNhap.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+                <strong>Không có phiếu nhập nào</strong>
+                <div class="mt-2">
+                    <a href="@Url.Action("Create", "PhieuNhap", new { area = "NhanVienKho" })" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Tạo phiếu nhập đầu tiên
+                    </a>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width:60px">#</th>
+                            <th>Mã phiếu</th>
+                            <th>Kho nhập</th>
+                            <th>Nhà cung cấp</th>
+                            <th>Người lập</th>
+                            <th>Ngày lập</th>
+                            <th class="text-end">Tổng tiền</th>
+                            <th class="text-center">Trạng thái</th>
+                            <th class="text-center" style="width:120px">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int stt = (page - 1) * pageSize + 1; }
+                        @foreach (var item in dsPhieuNhap)
+                        {
+                            string badgeClass = "bg-secondary";
+                            if (item.TrangThai == "Chờ duyệt") { badgeClass = "bg-warning text-dark"; }
+                            else if (item.TrangThai == "Đã duyệt") { badgeClass = "bg-success"; }
+                            else if (item.TrangThai == "Đã hủy") { badgeClass = "bg-danger"; }
+
+                            <tr>
+                                <td class="text-center text-muted">@(stt++)</td>
+                                <td><strong>@item.MaPhieuNhap</strong></td>
+                                <td><span class="badge bg-info text-dark">@(string.IsNullOrEmpty(item.TenKho) ? "—" : item.TenKho)</span></td>
+                                <td>@item.TenNSX</td>
+                                <td>@item.TenNV_Lap</td>
+                                <td>@(item.NgayLap.HasValue ? item.NgayLap.Value.ToString("dd/MM/yyyy HH:mm") : "-")</td>
+                                <td class="text-end fw-bold text-primary">@((item.TongTienNhap ?? 0).ToString("N0")) đ</td>
+                                <td class="text-center">
+                                    <span class="badge @badgeClass">@item.TrangThai</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="@Url.Action("Details", "PhieuNhap", new { area = "NhanVienKho", id = item.MaPhieuNhap })"
+                                           class="btn btn-outline-info" title="Chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        @if (item.TrangThai == "Chờ duyệt")
+                                        {
+                                            <a href="@Url.Action("HuyPhieu", "PhieuNhap", new { area = "NhanVienKho", id = item.MaPhieuNhap })"
+                                               class="btn btn-outline-danger"
+                                               onclick="return confirm('Hủy phiếu nhập #@item.MaPhieuNhap?')"
+                                               title="Hủy phiếu">
+                                                <i class="bi bi-x-circle"></i>
+                                            </a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            if (totalPages > 1)
+            {
+                int startPage = Math.Max(1, page - 2);
+                int endPage = Math.Min(totalPages, page + 2);
+                <div class="card-footer bg-white border-0">
+                    <nav>
+                        <ul class="pagination justify-content-center mb-0">
+                            @if (page > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=@(page - 1)&keyword=@keyword&trangThai=@trangThai">&laquo;</a>
+                                </li>
+                            }
+                            @for (int i = startPage; i <= endPage; i++)
+                            {
+                                <li class="page-item @(i == page ? "active" : "")">
+                                    <a class="page-link" href="?page=@i&keyword=@keyword&trangThai=@trangThai">@i</a>
+                                </li>
+                            }
+                            @if (page < totalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=@(page + 1)&keyword=@keyword&trangThai=@trangThai">&raquo;</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                    <div class="text-center text-muted small mt-1">
+                        Hiển thị @((page - 1) * pageSize + 1) - @(Math.Min(page * pageSize, totalCount)) trong tổng @totalCount phiếu
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

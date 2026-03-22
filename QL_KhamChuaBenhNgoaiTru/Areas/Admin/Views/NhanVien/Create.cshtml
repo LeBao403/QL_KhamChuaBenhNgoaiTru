@@ -1,0 +1,265 @@
+@model QL_KhamChuaBenhNgoaiTru.Models.NhanVienManageViewModel2
+
+@{
+    ViewBag.Title = "Thêm nhân viên mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+    var defaultAvatar = Url.Content("~/Images/nhanvien/default-avatar.png");
+}
+
+<style>
+    .profile-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #dee2e6;
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        color: #0d6efd;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+        .section-title i {
+            margin-right: 8px;
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .optional-section {
+        background-color: #f8fbff;
+        border: 1px dashed #0d6efd;
+        border-radius: 10px;
+        padding: 20px;
+        display: none;
+    }
+
+    .text-danger {
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+
+    .avatar-upload-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .avatar-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 3px solid #dee2e6;
+        object-fit: cover;
+        background: #f0f0f0;
+    }
+
+    .avatar-upload-label {
+        display: inline-block;
+        padding: 6px 16px;
+        background: #e9ecef;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #495057;
+        transition: all 0.2s;
+    }
+
+        .avatar-upload-label:hover {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+    #HinhAnh_File {
+        display: none;
+    }
+</style>
+
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-dark mb-0">Thêm Nhân Viên Mới</h4>
+        <span class="badge bg-info text-dark fs-6">Mã NV dự kiến: @Model.NhanVien.MaNV</span>
+    </div>
+
+    @using (Html.BeginForm("Create", "NhanVien", FormMethod.Post, new { @class = "needs-validation", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @* THÔNG BÁO LỖI *@
+        if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger shadow-sm border-start border-4 border-danger mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Vui lòng kiểm tra lại các thông tin sau:</strong>
+                <div class="mt-2">
+                    @Html.ValidationSummary(false, "")
+                </div>
+            </div>
+        }
+
+        @Html.HiddenFor(m => m.NhanVien.MaNV)
+        @Html.HiddenFor(m => m.NhanVien.HinhAnh)
+
+        <h4 class="section-title"><i class="bi bi-person-plus-fill"></i> 1. Thông tin hành chính (Bắt buộc)</h4>
+        <div class="profile-card">
+            <div class="row g-3">
+                <div class="col-md-2">
+                    <div class="avatar-upload-wrapper">
+                        <img id="avatarPreview" src="@defaultAvatar" alt="Avatar" class="avatar-preview" />
+                        <label for="HinhAnh_File" class="avatar-upload-label">
+                            <i class="bi bi-camera me-1"></i> Chọn ảnh
+                        </label>
+                        <input type="file" name="HinhAnh_File" id="HinhAnh_File" accept="image/*" />
+                    </div>
+                </div>
+                <div class="col-md-10">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Họ tên nhân viên <span class="text-danger">*</span></label>
+                            @Html.EditorFor(m => m.NhanVien.HoTen, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: Nguyễn Văn A" } })
+                            @Html.ValidationMessageFor(m => m.NhanVien.HoTen, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Ngày sinh</label>
+                            @Html.EditorFor(m => m.NhanVien.NgaySinh, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                            @Html.ValidationMessageFor(m => m.NhanVien.NgaySinh, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Giới tính</label>
+                            @Html.DropDownListFor(m => m.NhanVien.GioiTinh, new SelectList(new[] { "Nam", "Nữ", "Khác" }), "-- Chọn --", new { @class = "form-select" })
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Số điện thoại</label>
+                            @Html.EditorFor(m => m.NhanVien.SDT, new { htmlAttributes = new { @class = "form-control", id = "nv_sdt", placeholder = "10 chữ số..." } })
+                            @Html.ValidationMessageFor(m => m.NhanVien.SDT, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Email</label>
+                            @Html.EditorFor(m => m.NhanVien.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "example@gmail.com" } })
+                            @Html.ValidationMessageFor(m => m.NhanVien.Email, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Địa chỉ</label>
+                            @Html.EditorFor(m => m.NhanVien.DiaChi, new { htmlAttributes = new { @class = "form-control", placeholder = "Số nhà, đường..." } })
+                            @Html.ValidationMessageFor(m => m.NhanVien.DiaChi, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="section-title"><i class="bi bi-briefcase-fill"></i> 2. Thông tin công tác</h4>
+        <div class="profile-card">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Chức vụ</label>
+                    <select name="NhanVien.MaChucVu" id="NhanVien_MaChucVu" class="form-select">
+                        <option value="">-- Chọn chức vụ --</option>
+                        @if (ViewBag.DsChucVu != null)
+                        {
+                            foreach (var cv in ViewBag.DsChucVu)
+                            {
+                                <option value="@cv.MaChucVu">@cv.TenChucVu</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Khoa</label>
+                    <select name="NhanVien.MaKhoa" id="NhanVien_MaKhoa" class="form-select">
+                        <option value="">-- Chọn khoa --</option>
+                        @if (ViewBag.DsKhoa != null)
+                        {
+                            foreach (var k in ViewBag.DsKhoa)
+                            {
+                                <option value="@k.MaKhoa">@k.TenKhoa</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Phòng làm việc</label>
+                    <select name="NhanVien.MaPhong" id="NhanVien_MaPhong" class="form-select">
+                        <option value="">-- Chọn phòng --</option>
+                        @if (ViewBag.DsPhong != null)
+                        {
+                            foreach (var p in ViewBag.DsPhong)
+                            {
+                                <option value="@p.MaPhong">@p.TenPhong</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Trạng thái làm việc</label>
+                    <select name="NhanVien.TrangThai" class="form-select">
+                        <option value="True" selected>Đang làm việc</option>
+                        <option value="False">Đã nghỉ</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="section-title"><i class="bi bi-person-lock"></i> 3. Tài khoản hệ thống <span class="text-danger">*</span></h4>
+        <div class="profile-card" id="areaTK">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tên đăng nhập (Username) <span class="text-danger">*</span></label>
+                    @Html.TextBoxFor(m => m.TaiKhoan.Username, new { @class = "form-control", id = "tk_user", placeholder = "Sẽ lấy theo SĐT nếu để trống", required = "required" })
+                    @Html.ValidationMessageFor(m => m.TaiKhoan.Username, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Mật khẩu khởi tạo <span class="text-danger">*</span></label>
+                    @Html.PasswordFor(m => m.TaiKhoan.PasswordHash, new { @class = "form-control", id = "tk_pass", placeholder = "Nhập mật khẩu..." })
+                    @Html.ValidationMessageFor(m => m.TaiKhoan.PasswordHash, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2 mb-5">
+            <a href="@Url.Action("Index", "NhanVien")" class="btn btn-outline-secondary px-4 shadow-sm">Hủy</a>
+            <button type="submit" class="btn btn-primary px-5 shadow border-0">
+                <i class="bi bi-check-circle me-1"></i> Lưu hồ sơ nhân viên
+            </button>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Dong bo Username theo SDT
+        document.getElementById('nv_sdt').addEventListener('input', function () {
+            var userField = document.getElementById('tk_user');
+            if (userField.value === '' || userField.dataset.auto === 'true') {
+                userField.value = this.value;
+                userField.dataset.auto = 'true';
+            }
+        });
+
+        // Cho phep sua Username thu cong
+        document.getElementById('tk_user').addEventListener('input', function () {
+            this.dataset.auto = 'false';
+        });
+
+        // Preview avatar khi chon anh
+        document.getElementById('HinhAnh_File').addEventListener('change', function (e) {
+            var file = e.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (event) {
+                    document.getElementById('avatarPreview').src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>
