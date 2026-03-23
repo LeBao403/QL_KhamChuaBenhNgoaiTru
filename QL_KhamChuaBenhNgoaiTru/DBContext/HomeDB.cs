@@ -337,7 +337,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             {
                                 TenDV = dr["TenDV"].ToString(),
                                 GiaDichVu = Convert.ToDecimal(dr["GiaDichVu"]),
-                                GiaBHYT = giaBHYT,
                                 DonViTinh = dr["DonViTinh"]?.ToString(),
                                 MoTa = dr["MoTa"]?.ToString()
                             });

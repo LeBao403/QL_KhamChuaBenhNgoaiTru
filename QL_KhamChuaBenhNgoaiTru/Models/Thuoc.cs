@@ -69,10 +69,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         [DisplayName("Có BHYT")]
         public bool CoBHYT { get; set; }
 
-        [DisplayName("Giá BHYT quy định")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public decimal? GiaBHYT { get; set; }
-
         [DisplayName("Nhà sản xuất")]
         public int? MaNSX { get; set; }
 
@@ -102,7 +98,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string DuongDung { get; set; }
         public decimal? GiaBan { get; set; }
         public bool CoBHYT { get; set; }
-        public decimal? GiaBHYT { get; set; }
         public int? MaNSX { get; set; }
         public string TenNSX { get; set; }
         public bool TrangThai { get; set; }

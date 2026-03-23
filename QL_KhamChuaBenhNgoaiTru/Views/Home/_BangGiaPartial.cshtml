@@ -13,10 +13,9 @@
                 <table class="table table-hover price-table border">
                     <thead>
                         <tr style="background-color: #f1f4f9;">
-                            <th width="45%" class="p-3 text-uppercase" style="color: #052c65;">Tên Dịch Vụ</th>
+                            <th width="60%" class="p-3 text-uppercase" style="color: #052c65;">Tên Dịch Vụ</th>
                             <th width="15%" class="p-3 text-center text-uppercase" style="color: #052c65;">Đơn vị</th>
-                            <th width="20%" class="p-3 text-end text-uppercase" style="color: #052c65;">Giá Dịch Vụ</th>
-                            <th width="20%" class="p-3 text-end text-uppercase" style="color: #052c65;">Giá BHYT</th>
+                            <th width="25%" class="p-3 text-end text-uppercase" style="color: #052c65;">Giá Dịch Vụ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,16 +33,6 @@
                                 <td class="p-3 text-end align-middle" style="font-weight: 800; color: #dc3545; font-size: 1.1rem;">
                                     @String.Format("{0:N0}", dv.GiaDichVu) đ
                                 </td>
-                                <td class="p-3 text-end align-middle">
-                                    @if (dv.GiaBHYT.HasValue)
-                                    {
-                                        <span class="fw-bold px-2 py-1 rounded" style="color: #198754; background: #e8f5e9;">@String.Format("{0:N0}", dv.GiaBHYT.Value) đ</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-light text-muted border fw-normal px-2 py-1">Không áp dụng</span>
-                                    }
-                                </td>
                             </tr>
                         }
                     </tbody>
@@ -55,7 +44,10 @@
 else
 {
     <div class="text-center py-5">
+        <div class="mb-3">
+            <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
+        </div>
         <h4 class="text-muted fw-bold">Không tìm thấy dịch vụ nào!</h4>
-        <p>Vui lòng thử tìm kiếm bằng từ khóa khác.</p>
+        <p class="text-secondary">Vui lòng thử tìm kiếm bằng từ khóa khác.</p>
     </div>
 }

@@ -257,7 +257,7 @@ VALUES
 ('KH0069', N'Bùi Hồng Anh', '2017-09-17', N'Nữ', NULL, NULL, NULL, N'TP. Huế, Thừa Thiên Huế', 1, NULL),
 ('KH0070', N'Đỗ Quốc Khánh', '2014-05-12', N'Nam', NULL, NULL, NULL, N'TP. Biên Hòa, Đồng Nai', 0, NULL),
 
-('KH0071', N'Lê Quân Bảo', '2004-03-04', N'Nam', NULL, '0383156689', 'baocenzo@gmail.com', N'TP. Huế, Thừa Thiên Huế', 1, 137),
+('KH0071', N'Lê Quân Bảo', '2005-03-04', N'Nam', NULL, '0383156689', 'baocenzo@gmail.com', N'TP. Huế, Thừa Thiên Huế', 1, 137),
 ('KH0072', N'Đinh Đỗ Quỳnh Như', '2004-09-01', N'Nữ', NULL, '0976865715', 'dinhdoquynhnhuss@gmail.com', N'TP. Biên Hòa, Đồng Nai', 0, 138),
 ('KH0073', N'Lại Phước Thịnh', '2004-09-01', N'Nam', NULL, '0978610519', 'laiphuocthinh.bp@gmail.com', N'TP. Biên Hòa, Đồng Nai', 1, 139);
 
@@ -685,50 +685,67 @@ GO
 
 INSERT INTO DANHMUC_LOAIPHONG (TenLoaiPhong)
 VALUES 
-    (N'Phòng khám'), 
-    (N'Phòng xét nghiệm'), 
-    (N'Phòng X-Quang'), 
-    (N'Phòng siêu âm'), 
-    (N'Nhà thuốc'), 
-    (N'Thu ngân'), 
-    (N'Kho');
+    (N'Quầy Tiếp nhận'),         -- ID: 1
+    (N'Phòng Khám bệnh'),        -- ID: 2
+    (N'Phòng Xét nghiệm'),       -- ID: 3
+    (N'Phòng X-Quang'),          -- ID: 4
+    (N'Phòng Siêu âm'),          -- ID: 5
+    (N'Phòng Nội soi'),          -- ID: 6  (Thêm mới cho DV Nội soi)
+    (N'Phòng Thủ thuật'),        -- ID: 7  (Thêm mới cho Cắt chỉ, nặn mụn, nhổ răng...)
+    (N'Quầy Thu ngân'),          -- ID: 8
+    (N'Nhà thuốc'),              -- ID: 9
+    (N'Kho Dược / Vật tư');      -- ID: 10
 GO
 
+
 INSERT INTO PHONG (TenPhong, MaLoaiPhong, TrangThai, MaKhoa) VALUES 
--- Khu vực hành chính & Tiếp nhận
-(N'Sảnh tiếp đón & Đăng ký', 1, 1, 1), -- Thuộc Khoa Khám bệnh (ID 1)
-(N'Quầy thu ngân & Thanh toán', 6, 1, NULL), -- Thu ngân tách riêng (Phòng kế toán) nên để NULL
+-- ==========================================
+-- 1. KHU VỰC TIẾP NHẬN & HÀNH CHÍNH (MaKhoa để NULL vì không thuộc Khoa lâm sàng)
+-- ==========================================
+(N'Quầy Tiếp Tân 01', 1, 1, NULL), 
+(N'Quầy Tiếp Tân 02', 1, 1, NULL), 
+(N'Quầy Tiếp Tân 03', 1, 1, NULL), 
+(N'Quầy Thu ngân 01', 8, 1, NULL), 
+(N'Quầy Thu ngân 02', 8, 1, NULL),
 
--- Khu vực khám chuyên khoa
-(N'Phòng khám Nội tổng quát 01', 1, 1, 2),
-(N'Phòng khám Nội tổng quát 02', 1, 1, 2),
-(N'Phòng khám Ngoại tổng hợp 01', 1, 1, 3),
-(N'Phòng khám Ngoại tổng hợp 02', 1, 1, 3),
-(N'Phòng khám Nhi khoa 01', 1, 1, 4),
-(N'Phòng khám Nhi khoa 02', 1, 1, 4),
-(N'Phòng khám Sản phụ khoa 01', 1, 1, 5),
-(N'Phòng khám Sản phụ khoa 02', 1, 1, 5),
-(N'Phòng khám Tai Mũi Họng 01', 1, 1, 6),
-(N'Phòng khám Tai Mũi Họng 02', 1, 1, 6),
-(N'Phòng khám Răng Hàm Mặt 01', 1, 1, 7),
-(N'Phòng khám Răng Hàm Mặt 02', 1, 1, 7),
+-- ==========================================
+-- 2. KHU VỰC KHÁM BỆNH CHUYÊN KHOA (Thuộc các khoa tương ứng)
+-- ==========================================
+(N'Phòng khám Nội tổng quát 01', 2, 1, 2),
+(N'Phòng khám Nội tổng quát 02', 2, 1, 2),
+(N'Phòng khám Ngoại tổng hợp 01', 2, 1, 3),
+(N'Phòng khám Nhi khoa 01', 2, 1, 4),
+(N'Phòng khám Nhi khoa 02', 2, 1, 4),
+(N'Phòng khám Sản phụ khoa 01', 2, 1, 5),
+(N'Phòng khám Tai Mũi Họng 01', 2, 1, 6),
+(N'Phòng khám Răng Hàm Mặt 01', 2, 1, 7),
+(N'Phòng khám Mắt 01', 2, 1, 8),
+(N'Phòng khám Da liễu 01', 2, 1, 9),
 
--- [Bổ sung] Phòng khám cho Khoa Mắt (ID 8) và Da Liễu (ID 9)
-(N'Phòng khám Mắt 01', 1, 1, 8),
-(N'Phòng khám Da liễu 01', 1, 1, 9),
+-- ==========================================
+-- 3. KHU VỰC THỦ THUẬT & NỘI SOI 
+-- ==========================================
+(N'Phòng Nội soi Tiêu hóa', 6, 1, 10),      -- Thuộc CĐHA (ID 10)
+(N'Phòng Tiểu phẫu & Thay băng', 7, 1, 3),  -- Thuộc Khoa Ngoại (ID 3)
+(N'Phòng Thực hiện Thủ thuật Da liễu', 7, 1, 9), -- Nặn mụn, đốt mụn ruồi (ID 9)
 
--- Khu vực Cận lâm sàng
-(N'Phòng Xét nghiệm máu & Sinh hóa', 2, 1, 11), -- Thuộc Khoa Xét nghiệm (ID 11)
-(N'Phòng Siêu âm tổng quát', 4, 1, 10),            -- Thuộc Khoa CĐHA (ID 10)
-(N'Phòng Chụp X-Quang kỹ thuật số', 3, 1, 10),      -- Thuộc Khoa CĐHA (ID 10)
+-- ==========================================
+-- 4. KHU VỰC CẬN LÂM SÀNG 
+-- ==========================================
+(N'Phòng Xét nghiệm Huyết học', 3, 1, 11),  -- Thuộc Khoa Xét nghiệm (ID 11)
+(N'Phòng Siêu âm 4D', 5, 1, 10),            -- Thuộc Khoa CĐHA (ID 10)
+(N'Phòng Chụp X-Quang Kỹ thuật số', 4, 1, 10), 
 
--- Khu vực Dược & Kho 
-(N'Nhà thuốc 01', 5, 1, 12), -- Thuộc Khoa Dược (ID 12)
-(N'Nhà thuốc 02', 5, 1, 12),
-(N'Nhà thuốc 03', 5, 1, 12),
-(N'Nhà thuốc 04', 5, 1, 12),
-(N'Nhà thuốc 05', 5, 1, 12),
-(N'Kho tổng dược phẩm', 7, 1, 12);
+-- ==========================================
+-- 5. KHU VỰC DƯỢC & KHO 
+-- ==========================================
+(N'Nhà thuốc 01', 9, 1, 12), -- Thuộc Khoa Dược (ID 12)
+(N'Nhà thuốc 02', 9, 1, 12),
+(N'Nhà thuốc 03', 9, 1, 12),
+(N'Nhà thuốc 04', 9, 1, 12),
+(N'Nhà thuốc 05', 9, 1, 12),
+(N'Kho Dược phẩm Trung tâm', 10, 1, 12),
+(N'Kho Vật tư Y tế', 10, 1, 12);
 GO
 
 
@@ -841,88 +858,170 @@ GO
 -- BỘ DATA DỊCH VỤ Y TẾ KHỔNG LỒ (CHUẨN CÓ CỘT MoTa)
 -- =========================================================================================
 
-INSERT INTO DICHVU (MaDV, TenDV, MaLoaiDV, GiaDichVu, DonViTinh, CoBHYT, GiaBHYT, TrangThai, MoTa) VALUES
+INSERT INTO DICHVU (MaDV, TenDV, MaLoaiDV, GiaDichVu, DonViTinh, CoBHYT, TrangThai, MoTa, MaKhoa) VALUES
 -- ================= NHÓM 1: KHÁM BỆNH (LDV01) =================
-('DV001', N'Khám bệnh Nội tổng quát', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám lâm sàng đánh giá sức khỏe tổng quát, tim mạch, hô hấp cơ bản.'),
-('DV002', N'Khám bệnh Ngoại tổng quát', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám chấn thương, đánh giá chỉ định phẫu thuật ngoại khoa.'),
-('DV003', N'Khám chuyên khoa Nhi', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám, đánh giá thể chất và tư vấn dinh dưỡng cho trẻ dưới 16 tuổi.'),
-('DV004', N'Khám chuyên khoa Phụ Sản', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám thai định kỳ, khám các bệnh lý phụ khoa thường gặp.'),
-('DV005', N'Khám chuyên khoa Tai Mũi Họng', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám lâm sàng tai mũi họng, lấy ráy tai, rửa mũi viêm xoang.'),
-('DV006', N'Khám chuyên khoa Răng Hàm Mặt', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám răng miệng tổng quát, tư vấn nhổ răng, chỉnh nha.'),
-('DV007', N'Khám chuyên khoa Mắt', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám mắt tổng quát, đo nhãn áp, kiểm tra thị lực.'),
-('DV008', N'Khám chuyên khoa Da liễu', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám các bệnh lý ngoài da, dị ứng, viêm da cơ địa.'),
-('DV009', N'Khám bệnh yêu cầu (Chọn Giáo sư/Tiến sĩ)', 'LDV01', 500000, N'Lần', 0, NULL, 1, N'Khám trực tiếp với chuyên gia đầu ngành. Không áp dụng BHYT.'),
-('DV010', N'Khám cấp cứu ngoài giờ', 'LDV01', 250000, N'Lần', 1, 38700, 1, N'Phí khám ban đầu tại phòng cấp cứu ngoài giờ hành chính.'),
-('DV011', N'Khám chuyên khoa Tim mạch', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám chuyên sâu bệnh lý huyết áp, suy tim, thiếu máu cơ tim.'),
-('DV012', N'Khám chuyên khoa Thần kinh', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám rối loạn tiền đình, đau nửa đầu, đau dây thần kinh.'),
-('DV013', N'Khám chuyên khoa Cơ Xương Khớp', 'LDV01', 150000, N'Lần', 1, 38700, 1, N'Khám thoái hóa khớp, gout, loãng xương, viêm đa khớp.'),
+('DV001', N'Khám bệnh Nội tổng quát', 'LDV01', 150000, N'Lần', 1, 1, N'Khám tim mạch, hô hấp, nội tiết.', 2),
+('DV002', N'Khám bệnh Ngoại tổng quát', 'LDV01', 150000, N'Lần', 1, 1, N'Khám chấn thương, ngoại khoa.', 3),
+('DV003', N'Khám chuyên khoa Nhi', 'LDV01', 150000, N'Lần', 1, 1, N'Khám trẻ em và tư vấn dinh dưỡng.', 4),
+('DV004', N'Khám chuyên khoa Phụ Sản', 'LDV01', 150000, N'Lần', 1, 1, N'Khám thai định kỳ và phụ khoa.', 5),
+('DV005', N'Khám chuyên khoa Tai Mũi Họng', 'LDV01', 150000, N'Lần', 1, 1, N'Khám và nội soi Tai Mũi Họng.', 6),
+('DV006', N'Khám chuyên khoa Răng Hàm Mặt', 'LDV01', 150000, N'Lần', 1, 1, N'Khám răng miệng tổng quát.', 7),
+('DV007', N'Khám chuyên khoa Mắt', 'LDV01', 150000, N'Lần', 1, 1, N'Khám mắt và đo thị lực.', 8),
+('DV008', N'Khám chuyên khoa Da liễu', 'LDV01', 150000, N'Lần', 1, 1, N'Khám các bệnh lý da liễu.', 9),
+('DV009', N'Khám bệnh yêu cầu (Giáo sư)', 'LDV01', 500000, N'Lần', 0, 1, N'Khám trực tiếp với chuyên gia.', 1), -- Khoa Khám bệnh
+('DV010', N'Khám cấp cứu ngoài giờ', 'LDV01', 250000, N'Lần', 1, 1, N'Khám ban đầu tại phòng cấp cứu.', 1),
 
--- ================= NHÓM 2: XÉT NGHIỆM (LDV02) =================
-('DV014', N'Tổng phân tích tế bào máu ngoại vi (máy laser)', 'LDV02', 90000, N'Mẫu', 1, 41200, 1, N'Đánh giá tình trạng thiếu máu, nhiễm trùng. Lấy máu đường tĩnh mạch.'),
-('DV015', N'Định lượng Glucose (Đường huyết)', 'LDV02', 40000, N'Mẫu', 1, 21500, 1, N'Bệnh nhân bắt buộc nhịn ăn sáng tối thiểu 8 tiếng trước khi lấy máu.'),
-('DV016', N'Xét nghiệm HbA1c', 'LDV02', 120000, N'Mẫu', 1, 80000, 1, N'Đánh giá chỉ số đường huyết trung bình trong 3 tháng qua (Tầm soát Tiểu đường).'),
-('DV017', N'Định lượng Cholesterol toàn phần', 'LDV02', 45000, N'Mẫu', 1, 26600, 1, N'Xét nghiệm mỡ máu cơ bản. Cần nhịn ăn sáng.'),
-('DV018', N'Định lượng Triglyceride, HDL, LDL (Bộ mỡ máu)', 'LDV02', 120000, N'Mẫu', 1, 75000, 1, N'Đánh giá chi tiết nguy cơ xơ vữa động mạch.'),
-('DV019', N'Đo hoạt độ AST (GOT) / ALT (GPT) (Chức năng gan)', 'LDV02', 45000, N'Mẫu', 1, 21500, 1, N'Đánh giá tổn thương tế bào gan.'),
-('DV020', N'Định lượng Creatinin (Chức năng thận)', 'LDV02', 40000, N'Mẫu', 1, 21500, 1, N'Đánh giá chức năng lọc của thận, tầm soát suy thận.'),
-('DV021', N'Định lượng Acid Uric', 'LDV02', 45000, N'Mẫu', 1, 21500, 1, N'Tầm soát bệnh Gout (Gút).'),
-('DV022', N'Tổng phân tích nước tiểu', 'LDV02', 50000, N'Mẫu', 1, 27400, 1, N'Lấy mẫu nước tiểu giữa dòng vào buổi sáng.'),
-('DV023', N'Xét nghiệm viêm gan B (HBsAg test nhanh)', 'LDV02', 80000, N'Mẫu', 1, 52000, 1, N'Tầm soát kháng nguyên virus viêm gan B.'),
-('DV024', N'Định lượng TSH, FT3, FT4 (Chức năng tuyến giáp)', 'LDV02', 250000, N'Mẫu', 1, 150000, 1, N'Tầm soát basedow, suy giáp, cường giáp.'),
-('DV025', N'Xét nghiệm tầm soát ung thư gan (AFP)', 'LDV02', 250000, N'Mẫu', 0, NULL, 1, N'Marker ung thư gan. Dịch vụ tự nguyện, không áp dụng BHYT.'),
-('DV026', N'Xét nghiệm nhóm máu ABO, Rh', 'LDV02', 100000, N'Mẫu', 1, 65000, 1, N'Định nhóm máu cơ bản.'),
-('DV027', N'Test nhanh Cúm A/B', 'LDV02', 150000, N'Mẫu', 0, NULL, 1, N'Lấy dịch tỵ hầu kiểm tra virus cúm mùa.'),
-('DV028', N'Test nhanh Sốt xuất huyết (Dengue NS1)', 'LDV02', 180000, N'Mẫu', 1, 80000, 1, N'Phát hiện sớm virus sốt xuất huyết trong những ngày đầu.'),
+-- ================= NHÓM 2: XÉT NGHIỆM (LDV02) -> Map Khoa Xét nghiệm (ID: 11) =================
+('DV011', N'Tổng phân tích tế bào máu', 'LDV02', 90000, N'Mẫu', 1, 1, N'Kiểm tra hồng cầu, bạch cầu.', 11),
+('DV012', N'Định lượng Glucose', 'LDV02', 40000, N'Mẫu', 1, 1, N'Kiểm tra đường huyết.', 11),
+('DV013', N'Xét nghiệm HbA1c', 'LDV02', 120000, N'Mẫu', 1, 1, N'Tầm soát tiểu đường mạn tính.', 11),
+('DV014', N'Định lượng Cholesterol', 'LDV02', 45000, N'Mẫu', 1, 1, N'Xét nghiệm mỡ máu.', 11),
+('DV015', N'Chức năng gan (AST/ALT)', 'LDV02', 80000, N'Mẫu', 1, 1, N'Đánh giá tổn thương gan.', 11),
+('DV016', N'Định lượng Creatinin', 'LDV02', 40000, N'Mẫu', 1, 1, N'Đánh giá chức năng thận.', 11),
+('DV017', N'Tổng phân tích nước tiểu', 'LDV02', 50000, N'Mẫu', 1, 1, N'Kiểm tra đường tiết niệu.', 11),
+('DV018', N'Test nhanh Viêm gan B', 'LDV02', 80000, N'Mẫu', 1, 1, N'Tầm soát virus HBsAg.', 11),
 
--- ================= NHÓM 3: CHẨN ĐOÁN HÌNH ẢNH (LDV03) =================
-('DV029', N'Siêu âm ổ bụng tổng quát (Màu 4D)', 'LDV03', 250000, N'Lần', 1, 43900, 1, N'Siêu âm đánh giá gan, mật, tụy, thận. Cần nhịn tiểu căng.'),
-('DV030', N'Siêu âm tuyến giáp', 'LDV03', 150000, N'Lần', 1, 43900, 1, N'Siêu âm phát hiện nang, nhân tuyến giáp.'),
-('DV031', N'Siêu âm tuyến vú 2 bên', 'LDV03', 200000, N'Lần', 1, 43900, 1, N'Tầm soát u xơ, nang vú ở nữ giới.'),
-('DV032', N'Siêu âm doppler tim', 'LDV03', 350000, N'Lần', 1, 222000, 1, N'Siêu âm màu đánh giá cấu trúc và chức năng van tim.'),
-('DV033', N'Chụp X-Quang ngực thẳng (Kỹ thuật số)', 'LDV03', 120000, N'Lần', 1, 65400, 1, N'Chụp tim phổi. Phụ nữ có thai KHÔNG được chụp.'),
-('DV034', N'Chụp X-Quang cột sống thắt lưng (2 tư thế)', 'LDV03', 150000, N'Lần', 1, 65400, 1, N'Phát hiện gai cột sống, thoái hóa, xẹp đốt sống.'),
-('DV035', N'Chụp X-Quang sọ não (thẳng, nghiêng)', 'LDV03', 150000, N'Lần', 1, 65400, 1, N'Đánh giá vỡ xương sọ sau chấn thương.'),
-('DV036', N'Chụp cắt lớp vi tính (CT Scan) sọ não không tiêm thuốc', 'LDV03', 1200000, N'Lần', 1, 536000, 1, N'Chẩn đoán đột quỵ não, xuất huyết não cấp.'),
-('DV037', N'Chụp cắt lớp vi tính (CT Scan) lồng ngực', 'LDV03', 1500000, N'Lần', 1, 536000, 1, N'Tầm soát ung thư phổi, tổn thương phổi phức tạp.'),
-('DV038', N'Chụp Cộng hưởng từ (MRI) khớp gối', 'LDV03', 2500000, N'Lần', 1, 1311000, 1, N'Đánh giá rách sụn chêm, đứt dây chằng chéo.'),
-('DV039', N'Chụp Cộng hưởng từ (MRI) cột sống cổ', 'LDV03', 2500000, N'Lần', 1, 1311000, 1, N'Đánh giá thoát vị đĩa đệm chèn ép rễ thần kinh.'),
+-- ================= NHÓM 3: CHẨN ĐOÁN HÌNH ẢNH (LDV03) -> Map Khoa CĐHA (ID: 10) =================
+('DV019', N'Siêu âm ổ bụng tổng quát', 'LDV03', 250000, N'Lần', 1, 1, N'Siêu âm gan, mật, tụy, thận.', 10),
+('DV020', N'Siêu âm tuyến giáp', 'LDV03', 150000, N'Lần', 1, 1, N'Siêu âm phát hiện u tuyến giáp.', 10),
+('DV021', N'Siêu âm doppler tim', 'LDV03', 350000, N'Lần', 1, 1, N'Siêu âm màu chức năng van tim.', 10),
+('DV022', N'Chụp X-Quang ngực thẳng', 'LDV03', 120000, N'Lần', 1, 1, N'Chụp tim phổi kỹ thuật số.', 10),
+('DV023', N'Chụp X-Quang cột sống', 'LDV03', 150000, N'Lần', 1, 1, N'Kiểm tra thoái hóa cột sống.', 10),
 
--- ================= NHÓM 4: THĂM DÒ CHỨC NĂNG (LDV04) =================
-('DV040', N'Đo Điện tâm đồ (ECG)', 'LDV04', 80000, N'Lần', 1, 30500, 1, N'Phát hiện rối loạn nhịp tim, nhồi máu cơ tim.'),
-('DV041', N'Đo chức năng hô hấp', 'LDV04', 150000, N'Lần', 1, 75000, 1, N'Chẩn đoán hen suyễn, bệnh phổi tắc nghẽn mạn tính (COPD).'),
-('DV042', N'Điện não đồ (EEG)', 'LDV04', 180000, N'Lần', 1, 65000, 1, N'Chẩn đoán động kinh, rối loạn giấc ngủ.'),
-('DV043', N'Đo mật độ xương (DEXA) 2 vị trí', 'LDV04', 350000, N'Lần', 0, NULL, 1, N'Đo loãng xương cổ xương đùi và cột sống thắt lưng.'),
+-- ================= NHÓM 4: THĂM DÒ & NỘI SOI (LDV04, 05) -> Map Khoa CĐHA (ID: 10) =================
+('DV024', N'Đo Điện tâm đồ (ECG)', 'LDV04', 80000, N'Lần', 1, 1, N'Kiểm tra rối loạn nhịp tim.', 10),
+('DV025', N'Nội soi Tai Mũi Họng ống mềm', 'LDV05', 200000, N'Lần', 1, 1, N'Nội soi không đau.', 10),
+('DV026', N'Nội soi dạ dày không gây mê', 'LDV05', 600000, N'Lần', 1, 1, N'Kiểm tra dạ dày, tá tràng.', 10),
 
--- ================= NHÓM 5: NỘI SOI (LDV05) =================
-('DV044', N'Nội soi Tai Mũi Họng ống mềm', 'LDV05', 200000, N'Lần', 1, 104000, 1, N'Ống nội soi siêu nhỏ không gây buồn nôn, soi rõ dây thanh quản.'),
-('DV045', N'Nội soi dạ dày - tá tràng (không sinh thiết)', 'LDV05', 600000, N'Lần', 1, 244000, 1, N'Nội soi tươi. Bệnh nhân cần nhịn ăn 6 tiếng trước soi.'),
-('DV046', N'Nội soi dạ dày - tá tràng (Gây mê không đau)', 'LDV05', 1800000, N'Lần', 0, NULL, 1, N'Ngủ êm ái trong 15 phút. Cần người nhà đi cùng đưa về.'),
-('DV047', N'Nội soi đại trực tràng (Gây mê)', 'LDV05', 2500000, N'Lần', 0, NULL, 1, N'Bệnh nhân cần uống thuốc xổ làm sạch ruột trước khi soi.'),
-
--- ================= NHÓM 6: THỦ THUẬT NGOẠI KHOA (LDV06) =================
-('DV048', N'Thay băng, rửa vết thương chiều dài < 15cm', 'LDV06', 80000, N'Lần', 1, 46500, 1, N'Chăm sóc vết thương nhiễm trùng, vết mổ cũ.'),
-('DV049', N'Cắt chỉ vết thương phần mềm', 'LDV06', 50000, N'Lần', 1, 30000, 1, N'Tháo chỉ sau phẫu thuật.'),
-('DV050', N'Khâu vết thương phần mềm tổn thương nông < 5cm', 'LDV06', 250000, N'Lần', 1, 126000, 1, N'Gây tê tại chỗ, khâu thẩm mỹ vết rách.'),
-('DV051', N'Chích rạch áp xe phần mềm', 'LDV06', 300000, N'Lần', 1, 150000, 1, N'Tháo mủ ổ áp xe, đặt dẫn lưu.'),
-('DV052', N'Bó bột cẳng tay/cẳng chân', 'LDV06', 400000, N'Lần', 1, 200000, 1, N'Cố định gãy xương bằng bột thạch cao hoặc bột thủy tinh.'),
-
--- ================= NHÓM 7: RĂNG HÀM MẶT (LDV07) =================
-('DV053', N'Cạo vôi răng (Lấy cao răng) đánh bóng hai hàm', 'LDV07', 250000, N'Lần', 0, NULL, 1, N'Sử dụng sóng siêu âm làm sạch mảng bám, không tổn thương men răng.'),
-('DV054', N'Nhổ răng vĩnh viễn (Răng 1 đến 7)', 'LDV07', 300000, N'Răng', 1, 150000, 1, N'Gây tê tại chỗ, nhổ răng lung lay, sâu hỏng nặng.'),
-('DV055', N'Nhổ răng khôn (Răng số 8) mọc lệch ngầm', 'LDV07', 1500000, N'Răng', 1, 450000, 1, N'Tiểu phẫu nhổ răng bằng máy Piezotome giảm đau.'),
-('DV056', N'Trám răng thẩm mỹ bằng Composite', 'LDV07', 300000, N'Răng', 1, 115000, 1, N'Hàn răng sâu bằng vật liệu cùng màu răng thật.'),
-('DV057', N'Tẩy trắng răng tại phòng khám (Laser)', 'LDV07', 2500000, N'Lần', 0, NULL, 1, N'Bật từ 2-3 tone màu sau 60 phút thực hiện. Dịch vụ thẩm mỹ.'),
-
--- ================= NHÓM 8: SẢN PHỤ KHOA (LDV08) =================
-('DV058', N'Siêu âm thai 4D (Ghi hình màu)', 'LDV08', 350000, N'Lần', 0, NULL, 1, N'Khảo sát dị tật thai nhi, thấy rõ khuôn mặt bé. Tặng kèm USB lưu video.'),
-('DV059', N'Đo tim thai (Monitor sản khoa)', 'LDV08', 120000, N'Lần', 1, 55000, 1, N'Đo cơn gò tử cung và nhịp tim thai nhi trong 30 phút.'),
-('DV060', N'Tầm soát ung thư cổ tử cung (Xét nghiệm Pap/HPV)', 'LDV08', 450000, N'Lần', 0, NULL, 1, N'Lấy tế bào cổ tử cung. Cần thực hiện định kỳ hàng năm cho phụ nữ đã quan hệ.'),
-('DV061', N'Cấy que tránh thai Implanon', 'LDV08', 3000000, N'Lần', 0, NULL, 1, N'Cấy que dưới da tay, hiệu quả ngừa thai lên đến 3 năm.'),
-
--- ================= NHÓM 9: THỦ THUẬT MẮT - DA LIỄU (LDV09) =================
-('DV062', N'Đo khúc xạ mắt bằng máy tự động', 'LDV09', 50000, N'Lần', 1, 25000, 1, N'Đo độ cận, viễn, loạn thị.'),
-('DV063', N'Lấy dị vật giác mạc nông', 'LDV09', 200000, N'Lần', 1, 85000, 1, N'Gây tê bề mặt và gắp dị vật ở lớp nông của mắt.'),
-('DV064', N'Chích lẹo/chắp mắt', 'LDV09', 150000, N'Lần', 1, 75000, 1, N'Rạch tháo mủ mụn lẹo mi mắt.'),
-('DV065', N'Đốt nốt ruồi / mụn thịt bằng Laser CO2', 'LDV09', 300000, N'Nốt', 0, NULL, 1, N'Thẩm mỹ không sẹo. Tự nguyện, không áp dụng BHYT.'),
-('DV066', N'Lấy nhân mụn chuẩn y khoa', 'LDV09', 400000, N'Lần', 0, NULL, 1, N'Làm sạch sâu, nặn mụn vô khuẩn, chiếu đèn sinh học giảm sưng.');
+-- ================= NHÓM 5: THỦ THUẬT (LDV06 -> 09) -> Map về Khoa chuyên biệt =================
+('DV027', N'Thay băng vết thương', 'LDV06', 80000, N'Lần', 1, 1, N'Chăm sóc vết mổ.', 3), -- Ngoại
+('DV028', N'Khâu vết thương < 5cm', 'LDV06', 250000, N'Lần', 1, 1, N'Khâu thẩm mỹ gây tê.', 3), -- Ngoại
+('DV029', N'Cạo vôi răng (Lấy cao răng)', 'LDV07', 250000, N'Lần', 0, 1, N'Làm sạch mảng bám răng.', 7), -- RHM
+('DV030', N'Nhổ răng vĩnh viễn', 'LDV07', 300000, N'Răng', 1, 1, N'Nhổ răng sâu hỏng nặng.', 7), -- RHM
+('DV031', N'Siêu âm thai 4D', 'LDV08', 350000, N'Lần', 0, 1, N'Khảo sát dị tật thai nhi.', 5), -- Sản
+('DV032', N'Đo khúc xạ mắt tự động', 'LDV09', 50000, N'Lần', 1, 1, N'Kiểm tra độ cận, viễn.', 8), -- Mắt
+('DV033', N'Lấy nhân mụn chuẩn y khoa', 'LDV09', 400000, N'Lần', 0, 1, N'Điều trị mụn vô khuẩn.', 9); -- Da liễu
 GO
+
+
+
+
+
+
+
+
+
+
+
+
+INSERT INTO DANHMUC_THUOC (MaDanhMuc, TenDanhMuc)
+VALUES
+('DM001', N'Giảm đau'),
+('DM002', N'Kháng sinh'),
+('DM003', N'Hạ sốt'),
+('DM004', N'Tiêu hóa'),
+('DM005', N'Tim mạch'),
+('DM006', N'Hô hấp'),
+('DM007', N'Dị ứng'),
+('DM008', N'Vitamin'),
+('DM009', N'Thần kinh'),
+('DM010', N'Nội tiết');
+
+
+INSERT INTO DANHMUC_HOATCHAT (MaHoatChat, TenHoatChat)
+VALUES
+('HC001', N'Paracetamol'),
+('HC002', N'Amoxicillin'),
+('HC003', N'Ibuprofen'),
+('HC004', N'Omeprazole'),
+('HC005', N'Aspirin'),
+('HC006', N'Salbutamol'),
+('HC007', N'Cetirizine'),
+('HC008', N'Vitamin C'),
+('HC009', N'Diazepam'),
+('HC010', N'Metformin');
+
+
+INSERT INTO NHASANXUAT (TenNSX, DiaChi, QuocGia)
+VALUES
+(N'Dược Hậu Giang', N'Cần Thơ', N'Việt Nam'),
+(N'Traphaco', N'Hà Nội', N'Việt Nam'),
+(N'Imexpharm', N'Đồng Tháp', N'Việt Nam'),
+(N'Pfizer', N'Mỹ', N'Mỹ'),
+(N'Sanofi', N'Pháp', N'Pháp'),
+(N'Bayer', N'Đức', N'Đức'),
+(N'Abbott', N'Mỹ', N'Mỹ'),
+(N'GSK', N'Anh', N'Anh'),
+(N'Novartis', N'Thụy Sĩ', N'Thụy Sĩ'),
+(N'Roche', N'Thụy Sĩ', N'Thụy Sĩ');
+
+
+INSERT INTO THUOC (
+    MaThuoc, TenThuoc, QuyCach, DonViCoBan,
+    MaLoaiThuoc, DuongDung, GiaBan,
+    CoBHYT, MaNSX
+)
+VALUES
+('T001', N'Paracetamol 500mg', N'Hộp 100 viên', N'Viên', 'DM003', N'Uống', 500, 1, 1),
+('T002', N'Amoxicillin 500mg', N'Hộp 50 viên', N'Viên', 'DM002', N'Uống', 1000, 1, 2),
+('T003', N'Ibuprofen 400mg', N'Hộp 100 viên', N'Viên', 'DM001', N'Uống', 2000, 0, 3),
+('T004', N'Omeprazole 20mg', N'Hộp 30 viên', N'Viên', 'DM004', N'Uống', 60000, 1, 4),
+('T005', N'Aspirin 81mg', N'Hộp 100 viên', N'Viên', 'DM005', N'Uống', 1500, 1, 5),
+
+('T006', N'Salbutamol khí dung', N'Chai 100ml', N'Chai', 'DM006', N'Hít', 70000, 1, 6),
+('T007', N'Cetirizine 10mg', N'Hộp 20 viên', N'Viên', 'DM007', N'Uống', 3000, 1, 7),
+('T008', N'Vitamin C 500mg', N'Hộp 100 viên', N'Viên', 'DM008', N'Uống', 500, 0, 8),
+('T009', N'Diazepam 5mg', N'Hộp 30 viên', N'Viên', 'DM009', N'Uống', 4000, 1, 9),
+('T010', N'Metformin 500mg', N'Hộp 60 viên', N'Viên', 'DM010', N'Uống', 2000, 1, 10);
+
+
+INSERT INTO THANHPHAN_THUOC (MaThanhPhan, MaThuoc, MaHoatChat, HamLuong)
+VALUES
+('TP001', 'T001', 'HC001', N'500mg'),
+('TP002', 'T002', 'HC002', N'500mg'),
+('TP003', 'T003', 'HC003', N'400mg'),
+('TP004', 'T004', 'HC004', N'20mg'),
+('TP005', 'T005', 'HC005', N'81mg'),
+('TP006', 'T006', 'HC006', N'2.5mg'),
+('TP007', 'T007', 'HC007', N'10mg'),
+('TP008', 'T008', 'HC008', N'500mg'),
+('TP009', 'T009', 'HC009', N'5mg'),
+('TP010', 'T010', 'HC010', N'500mg');
+
+
+INSERT INTO KHO (TenKho, LoaiKho, DiaChi)
+VALUES
+(N'Kho tổng', N'Kho chính', N'Tầng 1'),
+(N'Nhà thuốc', N'Kho bán lẻ', N'Tầng trệt'),
+(N'Kho dự phòng', N'Kho phụ', N'Tầng 2');
+
+-- 5. INSERT TỒN KHO (20 dòng)
+INSERT INTO TONKHO (
+    MaKho, MaThuoc, MaLo,
+    HanSuDung, NgaySanXuat,
+    GiaNhap, SoLuongTon
+)
+VALUES
+(1, 'T001', 'LO001', '2027-12-31', '2025-01-01', 300, 1000),
+(1, 'T002', 'LO002', '2027-10-01', '2025-02-01', 800, 800),
+(1, 'T003', 'LO003', '2026-12-01', '2025-01-15', 2000, 600),
+(1, 'T004', 'LO004', '2026-08-01', '2025-03-01', 60000, 200),
+(1, 'T005', 'LO005', '2026-06-01', '2025-02-10', 1000, 900),
+
+(2, 'T001', 'LO006', '2027-11-01', '2025-02-01', 320, 500),
+(2, 'T002', 'LO007', '2027-09-01', '2025-03-01', 850, 400),
+(2, 'T003', 'LO008', '2026-11-01', '2025-02-10', 2100, 300),
+(2, 'T004', 'LO009', '2026-07-01', '2025-03-15', 62000, 150),
+(2, 'T005', 'LO010', '2026-05-01', '2025-02-20', 1100, 600),
+
+(3, 'T001', 'LO011', '2027-12-31', '2025-01-01', 350, 300),
+(3, 'T002', 'LO012', '2027-10-01', '2025-02-01', 900, 250),
+(3, 'T003', 'LO013', '2026-12-01', '2025-01-15', 2200, 200),
+(3, 'T004', 'LO014', '2026-08-01', '2025-03-01', 65000, 100),
+(3, 'T005', 'LO015', '2026-06-01', '2025-02-10', 1200, 400),
+
+(1, 'T001', 'LO016', '2027-11-01', '2025-02-01', 360, 200),
+(2, 'T002', 'LO017', '2027-09-01', '2025-03-01', 950, 150),
+(3, 'T003', 'LO018', '2026-11-01', '2025-02-10', 2300, 120),
+(1, 'T004', 'LO019', '2026-07-01', '2025-03-15', 67000, 80),
+(2, 'T005', 'LO020', '2026-05-01', '2025-02-20', 1300, 300);

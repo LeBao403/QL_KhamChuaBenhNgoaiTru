@@ -10,12 +10,9 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 {
     public class DichVuDB
     {
-
         private string connectStr = ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString;
 
-        // =======================================================================
-        // 1. LẤY DANH SÁCH DANH MỤC (ĐỔ VÀO DROPDOWN LỌC)
-        // =======================================================================
+        // 1. LẤY DANH SÁCH LOẠI DỊCH VỤ
         public List<LoaiDichVu> GetAllLoaiDichVu()
         {
             var list = new List<LoaiDichVu>();
@@ -37,39 +34,31 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        // =======================================================================
-        // 2. HÀM CORE: LẤY DANH SÁCH CÓ LỌC, TÌM KIẾM, SẮP XẾP & PHÂN TRANG
-        // =======================================================================
+        // 2. LẤY DANH SÁCH DỊCH VỤ (PHÂN TRANG, LỌC)
         public List<DichVuViewModel> GetDanhSachDichVu(int pageIndex, int pageSize, string keyword = "", string maLoai = "", decimal? minPrice = null, decimal? maxPrice = null, string sortPrice = "")
         {
             var list = new List<DichVuViewModel>();
             using (SqlConnection con = new SqlConnection(connectStr))
             {
                 con.Open();
-
-                // Nối chuỗi SQL động để xử lý bộ lọc
                 string sql = @"
                     SELECT D.*, L.TenLoaiDV 
                     FROM DICHVU D
                     INNER JOIN LOAI_DICHVU L ON D.MaLoaiDV = L.MaLoaiDV
-                    WHERE 1=1 "; 
+                    WHERE 1=1 ";
 
                 if (!string.IsNullOrEmpty(keyword)) sql += " AND (D.TenDV LIKE @Keyword OR D.MaDV LIKE @Keyword) ";
                 if (!string.IsNullOrEmpty(maLoai)) sql += " AND D.MaLoaiDV = @MaLoai ";
                 if (minPrice.HasValue) sql += " AND D.GiaDichVu >= @MinPrice ";
                 if (maxPrice.HasValue) sql += " AND D.GiaDichVu <= @MaxPrice ";
 
-                // Xử lý sắp xếp (Order By)
                 if (sortPrice == "asc") sql += " ORDER BY D.GiaDichVu ASC ";
                 else if (sortPrice == "desc") sql += " ORDER BY D.GiaDichVu DESC ";
-                else sql += " ORDER BY D.MaDV DESC "; // Mặc định cái mới nhất lên đầu
+                else sql += " ORDER BY D.MaDV DESC ";
 
-                // Xử lý Phân trang (OFFSET - FETCH)
                 sql += " OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
-
-                // Gán tham số an toàn (Chống SQL Injection)
                 if (!string.IsNullOrEmpty(keyword)) cmd.Parameters.AddWithValue("@Keyword", "%" + keyword.Trim() + "%");
                 if (!string.IsNullOrEmpty(maLoai)) cmd.Parameters.AddWithValue("@MaLoai", maLoai);
                 if (minPrice.HasValue) cmd.Parameters.AddWithValue("@MinPrice", minPrice.Value);
@@ -91,7 +80,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             GiaDichVu = Convert.ToDecimal(rd["GiaDichVu"]),
                             DonViTinh = rd["DonViTinh"]?.ToString(),
                             CoBHYT = rd["CoBHYT"] != DBNull.Value ? Convert.ToBoolean(rd["CoBHYT"]) : false,
-                            GiaBHYT = rd["GiaBHYT"] != DBNull.Value ? Convert.ToDecimal(rd["GiaBHYT"]) : (decimal?)null,
                             TrangThai = rd["TrangThai"] != DBNull.Value ? Convert.ToBoolean(rd["TrangThai"]) : true,
                             MoTa = rd["MoTa"]?.ToString()
                         });
@@ -101,9 +89,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        // =======================================================================
-        // 3. LẤY TỔNG SỐ BẢN GHI (ĐỂ VIEW TÍNH RA SỐ TRANG PAGING)
-        // =======================================================================
+        // 3. TÍNH TỔNG SỐ BẢN GHI
         public int GetTotalRecord(string keyword = "", string maLoai = "", decimal? minPrice = null, decimal? maxPrice = null)
         {
             int total = 0;
@@ -111,7 +97,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             {
                 con.Open();
                 string sql = "SELECT COUNT(1) FROM DICHVU D WHERE 1=1 ";
-
                 if (!string.IsNullOrEmpty(keyword)) sql += " AND (D.TenDV LIKE @Keyword OR D.MaDV LIKE @Keyword) ";
                 if (!string.IsNullOrEmpty(maLoai)) sql += " AND D.MaLoaiDV = @MaLoai ";
                 if (minPrice.HasValue) sql += " AND D.GiaDichVu >= @MinPrice ";
@@ -128,9 +113,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return total;
         }
 
-        // =======================================================================
-        // 4. LẤY CHI TIẾT 1 DỊCH VỤ (DÙNG CHO TRANG EDIT / DETAILS)
-        // =======================================================================
+        // 4. CHI TIẾT DỊCH VỤ
         public DichVuViewModel GetDichVuById(string maDV)
         {
             using (SqlConnection con = new SqlConnection(connectStr))
@@ -155,7 +138,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         GiaDichVu = Convert.ToDecimal(rd["GiaDichVu"]),
                         DonViTinh = rd["DonViTinh"]?.ToString(),
                         CoBHYT = rd["CoBHYT"] != DBNull.Value ? Convert.ToBoolean(rd["CoBHYT"]) : false,
-                        GiaBHYT = rd["GiaBHYT"] != DBNull.Value ? Convert.ToDecimal(rd["GiaBHYT"]) : (decimal?)null,
                         TrangThai = rd["TrangThai"] != DBNull.Value ? Convert.ToBoolean(rd["TrangThai"]) : true,
                         MoTa = rd["MoTa"]?.ToString()
                     };
@@ -164,25 +146,21 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return null;
         }
 
-        // =======================================================================
-        // 5. THÊM MỚI DỊCH VỤ (CÓ AUTO GENERATE MÃ)
-        // =======================================================================
+        // 5. THÊM MỚI (Đã bỏ GiaBHYT)
         public bool InsertDichVu(DichVuViewModel dv)
         {
             using (SqlConnection con = new SqlConnection(connectStr))
             {
-                string sql = @"INSERT INTO DICHVU (MaDV, TenDV, MaLoaiDV, GiaDichVu, DonViTinh, CoBHYT, GiaBHYT, TrangThai, MoTa) 
-                               VALUES (@MaDV, @TenDV, @MaLoaiDV, @GiaDichVu, @DonViTinh, @CoBHYT, @GiaBHYT, 1, @MoTa)";
+                string sql = @"INSERT INTO DICHVU (MaDV, TenDV, MaLoaiDV, GiaDichVu, DonViTinh, CoBHYT, TrangThai, MoTa) 
+                               VALUES (@MaDV, @TenDV, @MaLoaiDV, @GiaDichVu, @DonViTinh, @CoBHYT, 1, @MoTa)";
                 SqlCommand cmd = new SqlCommand(sql, con);
 
-                // Tự động sinh mã mới (VD: DV067)
                 cmd.Parameters.AddWithValue("@MaDV", GenerateNextMaDV());
                 cmd.Parameters.AddWithValue("@TenDV", dv.TenDV);
                 cmd.Parameters.AddWithValue("@MaLoaiDV", dv.MaLoaiDV);
                 cmd.Parameters.AddWithValue("@GiaDichVu", dv.GiaDichVu);
                 cmd.Parameters.AddWithValue("@DonViTinh", (object)dv.DonViTinh ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@CoBHYT", dv.CoBHYT);
-                cmd.Parameters.AddWithValue("@GiaBHYT", dv.CoBHYT && dv.GiaBHYT.HasValue ? (object)dv.GiaBHYT.Value : DBNull.Value);
                 cmd.Parameters.AddWithValue("@MoTa", (object)dv.MoTa ?? DBNull.Value);
 
                 con.Open();
@@ -190,24 +168,20 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             }
         }
 
-        // =======================================================================
-        // 6. CẬP NHẬT DỊCH VỤ
-        // =======================================================================
+        // 6. CẬP NHẬT (Đã bỏ GiaBHYT)
         public bool UpdateDichVu(DichVuViewModel dv)
         {
             using (SqlConnection con = new SqlConnection(connectStr))
             {
-                // THÊM TrangThai = @TrangThai VÀO CÂU LỆNH SQL
                 string sql = @"UPDATE DICHVU 
-                       SET TenDV = @TenDV, 
-                           MaLoaiDV = @MaLoaiDV, 
-                           GiaDichVu = @GiaDichVu, 
-                           DonViTinh = @DonViTinh, 
-                           CoBHYT = @CoBHYT, 
-                           GiaBHYT = @GiaBHYT, 
-                           TrangThai = @TrangThai,
-                           MoTa = @MoTa
-                       WHERE MaDV = @MaDV";
+                               SET TenDV = @TenDV, 
+                                   MaLoaiDV = @MaLoaiDV, 
+                                   GiaDichVu = @GiaDichVu, 
+                                   DonViTinh = @DonViTinh, 
+                                   CoBHYT = @CoBHYT, 
+                                   TrangThai = @TrangThai,
+                                   MoTa = @MoTa
+                               WHERE MaDV = @MaDV";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@MaDV", dv.MaDV);
@@ -216,16 +190,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 cmd.Parameters.AddWithValue("@GiaDichVu", dv.GiaDichVu);
                 cmd.Parameters.AddWithValue("@DonViTinh", (object)dv.DonViTinh ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("@CoBHYT", dv.CoBHYT);
-
-                // Ràng buộc logic: Bỏ check BHYT thì tự gán Giá BHYT = NULL
-                if (!dv.CoBHYT)
-                    cmd.Parameters.AddWithValue("@GiaBHYT", DBNull.Value);
-                else
-                    cmd.Parameters.AddWithValue("@GiaBHYT", dv.GiaBHYT.HasValue ? (object)dv.GiaBHYT.Value : DBNull.Value);
-
-                // Bơm tham số TrangThai xuống DB
                 cmd.Parameters.AddWithValue("@TrangThai", dv.TrangThai);
-
                 cmd.Parameters.AddWithValue("@MoTa", (object)dv.MoTa ?? DBNull.Value);
 
                 con.Open();
@@ -233,33 +198,26 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             }
         }
 
-        // =======================================================================
-        // 7. XÓA 
-        // =======================================================================
+        // 7. XÓA
         public string DeleteDichVu(string maDV)
         {
             using (SqlConnection con = new SqlConnection(connectStr))
             {
                 con.Open();
-
-                // BƯỚC 1: Kiểm tra xem dịch vụ này đã từng xuất hiện trong Chỉ định hoặc Hóa đơn chưa
                 string checkSql = @"
-            SELECT 
-                (SELECT COUNT(*) FROM CHITIET_CHIDINH WHERE MaDV = @MaDV) +
-                (SELECT COUNT(*) FROM CT_HOADON_DV WHERE MaDV = @MaDV)";
+                    SELECT 
+                        (SELECT COUNT(*) FROM CHITIET_CHIDINH WHERE MaDV = @MaDV) +
+                        (SELECT COUNT(*) FROM CT_HOADON_DV WHERE MaDV = @MaDV)";
 
                 SqlCommand checkCmd = new SqlCommand(checkSql, con);
                 checkCmd.Parameters.AddWithValue("@MaDV", maDV);
-
                 int count = (int)checkCmd.ExecuteScalar();
 
                 if (count > 0)
                 {
-                    // Nếu đã có dữ liệu liên quan, trả về thông báo lỗi thay vì xóa
-                    return "Dữ liệu đang được sử dụng! Dịch vụ này đã có trong Chỉ định khám hoặc Hóa đơn, không thể xóa hẳn. Vui lòng sử dụng chức năng 'Khóa' dịch vụ.";
+                    return "Dữ liệu đang được sử dụng! Không thể xóa hẳn. Vui lòng sử dụng chức năng 'Khóa' dịch vụ.";
                 }
 
-                // BƯỚC 2: Nếu chưa dùng ở đâu cả, thực hiện XÓA HẲN (Physical Delete)
                 string deleteSql = "DELETE FROM DICHVU WHERE MaDV = @MaDV";
                 SqlCommand deleteCmd = new SqlCommand(deleteSql, con);
                 deleteCmd.Parameters.AddWithValue("@MaDV", maDV);
@@ -269,9 +227,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             }
         }
 
-        // =======================================================================
-        // 8. AUTO GENERATE MÃ DỊCH VỤ (Hàm hỗ trợ ẩn)
-        // =======================================================================
+        // 8. SINH MÃ TỰ ĐỘNG
         public string GenerateNextMaDV()
         {
             string newMa = "DV001";

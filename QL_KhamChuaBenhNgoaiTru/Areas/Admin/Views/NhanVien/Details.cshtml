@@ -4,10 +4,40 @@
     ViewBag.Title = "Chi tiết nhân viên";
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
 
-    var defaultAvatar = Url.Content("~/Images/nhanvien/default-avatar.png");
-    var avatarUrl = !string.IsNullOrEmpty(Model.NhanVien.HinhAnh)
-        ? Url.Content("~/" + Model.NhanVien.HinhAnh)
-        : defaultAvatar;
+    // ==============================================================
+    // LOGIC LẤY HÌNH ẢNH THÔNG MINH TỪ THƯ MỤC Images/doctors
+    // ==============================================================
+    string avatarUrl = "";
+
+    if (!string.IsNullOrEmpty(Model.NhanVien.HinhAnh))
+    {
+        string hinhAnh = Model.NhanVien.HinhAnh.Trim();
+
+        // Kiểm tra xem DB đang lưu tên file (nv001.jpg) hay lưu cả đường dẫn (Images/doctors/nv001.jpg)
+        if (hinhAnh.Contains("/"))
+        {
+            avatarUrl = Url.Content("~/" + hinhAnh.TrimStart('/'));
+        }
+        else
+        {
+            // Tự động nối vào thư mục doctors
+            avatarUrl = Url.Content("~/Images/doctors/" + hinhAnh);
+        }
+    }
+    else
+    {
+        // Lấy ảnh mặc định theo giới tính (Lấy từ 2 file có sẵn trong cây thư mục)
+        string gioiTinh = Model.NhanVien.GioiTinh ?? "";
+        if (gioiTinh.Equals("Nữ", StringComparison.OrdinalIgnoreCase) || gioiTinh.Equals("Nu", StringComparison.OrdinalIgnoreCase))
+        {
+            avatarUrl = Url.Content("~/Images/doctors/defaultDoctor_Female.png");
+        }
+        else
+        {
+            // Mặc định cho Nam hoặc chưa rõ giới tính
+            avatarUrl = Url.Content("~/Images/doctors/defaultDoctor_Male.png");
+        }
+    }
 
     string initials = !string.IsNullOrEmpty(Model.NhanVien.HoTen)
         ? string.Join("", Model.NhanVien.HoTen.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => w[0]))
@@ -91,16 +121,8 @@
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
                         <div style="position:relative;">
-                            @if (!string.IsNullOrEmpty(Model.NhanVien.HinhAnh))
-                            {
-                                <img src="@avatarUrl" alt="@Model.NhanVien.HoTen" class="avatar-large" />
-                            }
-                            else
-                            {
-                                <div class="avatar-large d-flex align-items-center justify-content-center">
-                                    <span style="color:#fff;font-weight:700;font-size:2rem;">@initials</span>
-                                </div>
-                            }
+                            @* XÓA ĐOẠN IF ELSE ẢNH CŨ VÌ ĐÃ CÓ LOGIC THÔNG MINH BÊN TRÊN *@
+                            <img src="@avatarUrl" alt="@Model.NhanVien.HoTen" class="avatar-large" onerror="this.src='@Url.Content("~/Images/doctors/defaultDoctor_Male.png")';" />
                         </div>
                         <div style="margin-left:20px;">
                             <h4 class="mb-0 fw-bold text-dark">@Model.NhanVien.HoTen</h4>

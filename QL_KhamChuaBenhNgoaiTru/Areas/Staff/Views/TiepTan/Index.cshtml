@@ -1,51 +1,213 @@
 ﻿@{
-    ViewBag.Title = "Danh sách Tiếp nhận & Đăng ký khám";
+    ViewBag.Title = "Tiếp Nhận & Điều Phối";
     Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
+    var dtDanhSachCho = ViewBag.DanhSachCho as System.Data.DataTable;
 }
 
-<div class="card shadow-sm border-0">
-    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 text-primary fw-bold"><i class="bi bi-list-check"></i> Hàng đợi bệnh nhân hôm nay</h5>
-        <button class="btn btn-success fw-bold"><i class="bi bi-plus-circle"></i> Đăng ký khám mới</button>
+<div class="card shadow border-0 rounded-3 mt-3">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom-0">
+        <h5 class="mb-0 fw-bold text-primary"><i class="bi bi-list-task me-2"></i>Bệnh nhân chờ từ Kiosk</h5>
+        <button class="btn btn-sm btn-outline-secondary" onclick="location.reload()">
+            <i class="bi bi-arrow-clockwise"></i> Làm mới
+        </button>
     </div>
-    <div class="card-body">
-        <table class="table table-hover table-bordered text-center align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>STT</th>
-                    <th>Mã Bệnh Nhân</th>
-                    <th>Họ và tên</th>
-                    <th>Số điện thoại</th>
-                    <th>Thời gian ĐK</th>
-                    <th>Trạng thái</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td class="fw-bold text-primary">BN001</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>0901234567</td>
-                    <td>08:30 - Hôm nay</td>
-                    <td><span class="badge bg-warning text-dark">Chờ tiếp nhận</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary">Xác nhận</button>
-                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td class="fw-bold text-primary">BN002</td>
-                    <td>Trần Thị B</td>
-                    <td>0987654321</td>
-                    <td>09:00 - Hôm nay</td>
-                    <td><span class="badge bg-info">Đang khám</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-secondary" disabled>Đã xử lý</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-muted">
+                    <tr>
+                        <th class="text-center">STT (Kiosk)</th>
+                        <th>Mã BN</th>
+                        <th>Họ Tên</th>
+                        <th>Ngày Sinh</th>
+                        <th>Giới Tính</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (dtDanhSachCho != null && dtDanhSachCho.Rows.Count > 0)
+                    {
+                        foreach (System.Data.DataRow row in dtDanhSachCho.Rows)
+                        {
+                            <tr>
+                                <td class="text-center fw-bold text-danger fs-5">@row["STT"]</td>
+                                <td class="fw-bold text-secondary">@row["MaBN"]</td>
+                                <td class="fw-bold">@row["HoTen"]</td>
+                                <td>@(row["NgaySinh"] != DBNull.Value ? Convert.ToDateTime(row["NgaySinh"]).ToString("dd/MM/yyyy") : "N/A")</td>
+                                <td>@row["GioiTinh"]</td>
+                                <td class="text-center">
+                                    <button class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm"
+                                            onclick="openTiepNhanModal(@row["MaPhieuDK"], '@row["MaBN"]', '@row["HoTen"]')">
+                                        <i class="bi bi-check-circle me-1"></i> Tiếp nhận
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="bi bi-emoji-smile fs-1 d-block mb-2"></i>
+                                Hiện tại không có bệnh nhân nào đang chờ ở Kiosk.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+<div class="modal fade" id="modalTiepNhan" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title fw-bold"><i class="bi bi-person-badge me-2"></i>Chỉ định Khám Bệnh</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+
+                <div class="alert alert-light border border-primary text-primary mb-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1">Bệnh nhân: <strong id="lblTenBN" class="fs-5 text-uppercase"></strong></p>
+                        <p class="mb-0 small">Mã BN: <span id="lblMaBN" class="fw-bold"></span></p>
+                    </div>
+                    <i class="bi bi-person-vcard fs-1 opacity-50"></i>
+                </div>
+
+                <input type="hidden" id="txtMaPhieuDK" />
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold text-dark">Chọn Dịch Vụ Khám <span class="text-danger">*</span></label>
+                        @Html.DropDownList("MaDV", (IEnumerable<SelectListItem>)ViewBag.ListDichVu, "-- Chọn Dịch vụ --", new { @class = "form-select form-select-lg border-primary", id = "ddlDichVu" })
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold text-dark">Phòng Khám <span class="text-danger">*</span></label>
+                        <select id="ddlPhong" class="form-select form-select-lg border-success" disabled>
+                            <option value="">-- Vui lòng chọn dịch vụ trước --</option>
+                        </select>
+                        <small class="text-muted mt-1 d-block fst-italic"><i class="bi bi-info-circle"></i> Hệ thống đã ưu tiên chọn Phòng rảnh nhất.</small>
+                    </div>
+                </div>
+
+                <div class="mb-3 mt-2">
+                    <label class="form-label fw-bold text-dark">Lý do khám bệnh <span class="text-muted fw-normal">(Tùy chọn)</span></label>
+                    <textarea id="txtLyDo" class="form-control" rows="2" placeholder="Ghi nhận triệu chứng ban đầu (Ví dụ: Đau bụng âm ỉ, ho kéo dài...)"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-success fw-bold px-4 shadow-sm" id="btnXacNhanDichVu" onclick="submitDichVu()">
+                    <i class="bi bi-printer me-2"></i>LƯU & CẤP SỐ
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // 1. Mở Modal & Reset Dữ liệu cũ
+        function openTiepNhanModal(maPhieuDK, maBN, tenBN) {
+            $('#txtMaPhieuDK').val(maPhieuDK);
+            $('#lblMaBN').text(maBN);
+            $('#lblTenBN').text(tenBN);
+
+            // Xóa rỗng các form nhập
+            $('#ddlDichVu').val('');
+            $('#ddlPhong').html('<option value="">-- Vui lòng chọn dịch vụ trước --</option>').prop('disabled', true);
+            $('#txtLyDo').val('');
+
+            var myModal = new bootstrap.Modal(document.getElementById('modalTiepNhan'));
+            myModal.show();
+        }
+
+        // 2. Logic AJAX: Chọn Dịch Vụ -> Gọi Danh sách Phòng (Sắp xếp rảnh nhất lên đầu)
+        $('#ddlDichVu').change(function() {
+            var maDV = $(this).val();
+            var ddlPhong = $('#ddlPhong');
+
+            if(!maDV) {
+                ddlPhong.html('<option value="">-- Vui lòng chọn dịch vụ trước --</option>').prop('disabled', true);
+                return;
+            }
+
+            ddlPhong.html('<option value="">Đang tìm Phòng...</option>').prop('disabled', true);
+
+            // GỌI AJAX XUỐNG API GetDanhSachPhong
+            $.post('@Url.Action("GetDanhSachPhong", "TiepTan")', { maDV: maDV }, function(data) {
+                ddlPhong.empty(); // Xóa sạch
+                if(data.length > 0) {
+                    // Lặp qua danh sách trả về từ SQL
+                    $.each(data, function (i, item) {
+                        // Chỉ cần lấy đúng Text (Ví dụ: Phòng khám Nội 01 (Đang chờ: 0))
+                        ddlPhong.append($('<option></option>').val(item.Value).html(item.Text));
+                    });
+                    // Mở khóa dropdown
+                    ddlPhong.prop('disabled', false);
+                } else {
+                    ddlPhong.append('<option value="">⚠️ Không có Phòng nào đang mở</option>');
+                }
+            });
+        });
+
+        // 3. Logic Submit: Gửi dữ liệu xuống DB & Hiển thị STT
+        function submitDichVu() {
+            var dataPost = {
+                maPhieuDK: $('#txtMaPhieuDK').val(),
+                maDV: $('#ddlDichVu').val(),
+                maPhong: $('#ddlPhong').val(), // Chú ý: Lấy giá trị của ddlPhong
+                lyDo: $('#txtLyDo').val()
+            };
+
+            // Bắt lỗi rỗng
+            if (!dataPost.maDV || !dataPost.maPhong) {
+                Swal.fire('Thiếu thông tin', 'Vui lòng chọn Dịch vụ và Phòng khám!', 'warning');
+                return;
+            }
+
+            // Đổi text nút thành Đang xử lý tránh bấm 2 lần
+            var btnSubmit = $('#btnXacNhanDichVu');
+            btnSubmit.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...');
+
+            // Gửi AJAX
+            $.post('@Url.Action("XacNhanDichVu", "TiepTan")', dataPost, function(res) {
+                if (res.success) {
+                    $('#modalTiepNhan').modal('hide');
+
+                    // Nổ Popup báo cáo kết quả rực rỡ
+                    Swal.fire({
+                        title: 'ĐÃ CẤP SỐ KHÁM!',
+                        html: `
+                            <div class="text-start bg-light p-3 rounded border shadow-sm">
+                                <p class="mb-2 fs-5"><i class="bi bi-hospital text-muted me-2"></i><strong>Khoa:</strong> ${res.khoa}</p>
+                                <p class="mb-2 fs-5"><i class="bi bi-door-open text-primary me-2"></i><strong>Phòng:</strong> <span class="text-primary fw-bold">${res.phong}</span></p>
+                                <hr class="my-3"/>
+                                <div class="text-center">
+                                    <span class="text-muted text-uppercase fw-bold" style="letter-spacing: 1px;">Số Thứ Tự Vào Khám</span>
+                                    <h1 class="display-1 fw-bolder text-danger mt-2 mb-0">${res.stt}</h1>
+                                </div>
+                            </div>
+                        `,
+                        icon: 'success',
+                        confirmButtonText: '<i class="bi bi-check2-circle me-1"></i> Đóng',
+                        confirmButtonColor: '#198754',
+                        width: '500px',
+                        allowOutsideClick: false
+                    }).then(() => {
+                        location.reload(); // Quét lại danh sách để bệnh nhân này biến mất
+                    });
+                } else {
+                    Swal.fire('Lỗi hệ thống', res.message, 'error');
+                    btnSubmit.prop('disabled', false).html('<i class="bi bi-printer me-2"></i>LƯU & CẤP SỐ');
+                }
+            }).fail(function() {
+                Swal.fire('Lỗi mạng', 'Không thể kết nối đến máy chủ. Vui lòng thử lại!', 'error');
+                btnSubmit.prop('disabled', false).html('<i class="bi bi-printer me-2"></i>LƯU & CẤP SỐ');
+            });
+        }
+    </script>
+}

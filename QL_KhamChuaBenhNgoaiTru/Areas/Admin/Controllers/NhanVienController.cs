@@ -119,7 +119,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             // --- 0. XU LY ANH DAI DIEN ---
             if (HinhAnh_File != null && HinhAnh_File.ContentLength > 0)
             {
-                string uploadsDir = Server.MapPath("~/Images/nhanvien/");
+                string uploadsDir = Server.MapPath("~/Images/doctors/");
                 if (!System.IO.Directory.Exists(uploadsDir))
                     System.IO.Directory.CreateDirectory(uploadsDir);
 
@@ -128,7 +128,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
                 string fullPath = System.IO.Path.Combine(uploadsDir, fileName);
 
                 HinhAnh_File.SaveAs(fullPath);
-                model.NhanVien.HinhAnh = "Images/nhanvien/" + fileName;
+                model.NhanVien.HinhAnh = "/Images/doctors/" + fileName;
             }
 
             // --- 1. KIEM TRA TRUNG LAP ---
@@ -261,7 +261,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             // 0. XU LY ANH DAI DIEN
             if (HinhAnh_File != null && HinhAnh_File.ContentLength > 0)
             {
-                string uploadsDir = Server.MapPath("~/Images/nhanvien/");
+                string uploadsDir = Server.MapPath("~/Images/doctors/");
                 if (!System.IO.Directory.Exists(uploadsDir))
                     System.IO.Directory.CreateDirectory(uploadsDir);
 
@@ -270,7 +270,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
                 string fullPath = System.IO.Path.Combine(uploadsDir, fileName);
 
                 HinhAnh_File.SaveAs(fullPath);
-                model.NhanVien.HinhAnh = "Images/nhanvien/" + fileName;
+                model.NhanVien.HinhAnh = "/Images/doctors/" + fileName;
             }
             else
             {

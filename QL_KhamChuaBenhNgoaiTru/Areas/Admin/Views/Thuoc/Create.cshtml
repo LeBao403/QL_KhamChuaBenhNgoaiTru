@@ -4,7 +4,7 @@
     ViewBag.Title = "Thêm thuốc mới";
     Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
     var dsHoatChat = ViewBag.DsHoatChat as List<DanhMucHoatChat>;
-    var dsLoaiThuoc = ViewBag.DsLoaiThuoc as List<LoaiThuocItem>;
+    var dsLoaiThuoc = ViewBag.DsLoaiThuoc as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.LoaiThuocItem>;
     var dsNSX = ViewBag.DsNSX as List<NhaSanXuat>;
 }
 
@@ -26,7 +26,9 @@
         margin-bottom: 15px;
     }
 
-        .section-title i { margin-right: 8px; }
+        .section-title i {
+            margin-right: 8px;
+        }
 
     .form-label {
         font-weight: 600;
@@ -41,7 +43,10 @@
         margin-bottom: 10px;
     }
 
-    .text-danger { font-size: 0.85rem; font-style: italic; }
+    .text-danger {
+        font-size: 0.85rem;
+        font-style: italic;
+    }
 </style>
 
 <div class="container-fluid mt-4 px-4">
@@ -130,16 +135,16 @@
         @* ===== BẢO HIỂM Y TẾ ===== *@
         <h4 class="section-title"><i class="bi bi-shield-check"></i> 2. Bảo hiểm Y tế</h4>
         <div class="profile-card">
-            <div class="row g-3">
-                <div class="col-md-3">
-                    <div class="form-check form-switch mt-4">
-                        @Html.CheckBoxFor(m => m.Thuoc.CoBHYT, new { @class = "form-check-input", id = "switchBHYT" })
-                        <label class="form-check-label fw-bold" for="switchBHYT">Thuốc có trong danh mục BHYT</label>
+            <div class="row g-3 align-items-center">
+                <div class="col-md-12">
+                    <div class="form-check form-switch fs-5 mb-0">
+                        @Html.CheckBoxFor(m => m.Thuoc.CoBHYT, new { @class = "form-check-input", id = "switchBHYT", style = "cursor: pointer;" })
+                        <label class="form-check-label fw-bold mt-1 ms-2" for="switchBHYT">Áp dụng thanh toán BHYT</label>
                     </div>
-                </div>
-                <div class="col-md-4" id="areaBHYT" style="@(Model.Thuoc.CoBHYT ? "" : "display:none;")">
-                    <label class="form-label">Giá BHYT quy định (VNĐ)</label>
-                    @Html.EditorFor(m => m.Thuoc.GiaBHYT, new { htmlAttributes = new { @class = "form-control", type = "number", min = "0", placeholder = "0" } })
+                    <small class="text-muted d-block mt-2">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Hệ thống sẽ tự động tính mức đồng chi trả dựa trên quyền lợi thẻ BHYT của bệnh nhân khi xuất hóa đơn.
+                    </small>
                 </div>
             </div>
         </div>
@@ -193,6 +198,7 @@
     }
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var tpIndex = 1;
@@ -235,9 +241,13 @@
             }
         });
 
-        // BHYT toggle
-        $('#switchBHYT').on('change', function () {
-            $('#areaBHYT').toggle(this.checked);
+        // Chặn nhập số âm cho phần Giá bán
+        $('input[type="number"]').on('input', function () {
+            if ($(this).val() < 0) {
+                $(this).val(0);
+            }
         });
+
+        // Đã xóa hàm toggle logic ẩn hiện của ô GiaBHYT vì không còn ô nhập giá nữa
     });
 </script>

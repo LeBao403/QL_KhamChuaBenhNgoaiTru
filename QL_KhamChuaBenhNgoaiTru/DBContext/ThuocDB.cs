@@ -112,7 +112,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 StringBuilder queryBuilder = new StringBuilder(@"
                     SELECT
                         T.MaThuoc, T.TenThuoc, T.QuyCach, T.DonViCoBan, T.MaLoaiThuoc,
-                        T.DuongDung, T.GiaBan, T.CoBHYT, T.GiaBHYT, T.MaNSX, T.TrangThai,
+                        T.DuongDung, T.GiaBan, T.CoBHYT, T.MaNSX, T.TrangThai,
                         NSX.TenNSX
                     FROM THUOC T
                     LEFT JOIN NHASANXUAT NSX ON T.MaNSX = NSX.MaNSX
@@ -172,7 +172,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             DuongDung = dr["DuongDung"] != DBNull.Value ? dr["DuongDung"].ToString() : null,
                             GiaBan = dr["GiaBan"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBan"]) : (decimal?)null,
                             CoBHYT = dr["CoBHYT"] != DBNull.Value && Convert.ToBoolean(dr["CoBHYT"]),
-                            GiaBHYT = dr["GiaBHYT"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBHYT"]) : (decimal?)null,
+                            // Bỏ lấy GiaBHYT
                             MaNSX = dr["MaNSX"] != DBNull.Value ? (int?)Convert.ToInt32(dr["MaNSX"]) : null,
                             TenNSX = dr["TenNSX"] != DBNull.Value ? dr["TenNSX"].ToString() : null,
                             TrangThai = dr["TrangThai"] != DBNull.Value && Convert.ToBoolean(dr["TrangThai"])
@@ -253,7 +253,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             DuongDung = dr["DuongDung"] != DBNull.Value ? dr["DuongDung"].ToString() : null,
                             GiaBan = dr["GiaBan"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBan"]) : (decimal?)null,
                             CoBHYT = dr["CoBHYT"] != DBNull.Value && Convert.ToBoolean(dr["CoBHYT"]),
-                            GiaBHYT = dr["GiaBHYT"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBHYT"]) : (decimal?)null,
+                            // Bỏ gán GiaBHYT
                             MaNSX = dr["MaNSX"] != DBNull.Value ? (int?)Convert.ToInt32(dr["MaNSX"]) : null,
                             TrangThai = dr["TrangThai"] != DBNull.Value ? (bool?)Convert.ToBoolean(dr["TrangThai"]) : null
                         };
@@ -279,7 +279,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 DuongDung = t.DuongDung,
                 GiaBan = t.GiaBan,
                 CoBHYT = t.CoBHYT,
-                GiaBHYT = t.GiaBHYT,
+                // Bỏ GiaBHYT
                 MaNSX = t.MaNSX,
                 TrangThai = t.TrangThai ?? true,
                 ThanhPhans = GetThanhPhanByMaThuoc(maThuoc)
@@ -384,12 +384,12 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 SqlTransaction tran = conn.BeginTransaction();
                 try
                 {
-                    // 1. Thêm thuốc
+                    // 1. Thêm thuốc (Bỏ GiaBHYT khỏi câu SQL)
                     string queryThuoc = @"
                         INSERT INTO THUOC (MaThuoc, TenThuoc, QuyCach, DonViCoBan, MaLoaiThuoc, DuongDung,
-                                         GiaBan, CoBHYT, GiaBHYT, MaNSX, TrangThai)
+                                         GiaBan, CoBHYT, MaNSX, TrangThai)
                         VALUES (@MaThuoc, @TenThuoc, @QuyCach, @DonViCoBan, @MaLoaiThuoc, @DuongDung,
-                                @GiaBan, @CoBHYT, @GiaBHYT, @MaNSX, @TrangThai)";
+                                @GiaBan, @CoBHYT, @MaNSX, @TrangThai)";
 
                     SqlCommand cmdT = new SqlCommand(queryThuoc, conn, tran);
                     cmdT.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
@@ -400,7 +400,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     cmdT.Parameters.AddWithValue("@DuongDung", (object)thuoc.DuongDung ?? DBNull.Value);
                     cmdT.Parameters.AddWithValue("@GiaBan", (object)thuoc.GiaBan ?? DBNull.Value);
                     cmdT.Parameters.AddWithValue("@CoBHYT", thuoc.CoBHYT);
-                    cmdT.Parameters.AddWithValue("@GiaBHYT", (object)thuoc.GiaBHYT ?? DBNull.Value);
+                    // Bỏ add parameter @GiaBHYT
                     cmdT.Parameters.AddWithValue("@MaNSX", (object)thuoc.MaNSX ?? DBNull.Value);
                     cmdT.Parameters.AddWithValue("@TrangThai", thuoc.TrangThai ?? true);
 
@@ -447,7 +447,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 SqlTransaction tran = conn.BeginTransaction();
                 try
                 {
-                    // 1. Cập nhật thuốc
+                    // 1. Cập nhật thuốc (Bỏ GiaBHYT khỏi câu SQL)
                     string queryThuoc = @"
                         UPDATE THUOC SET
                             TenThuoc = @TenThuoc,
@@ -457,7 +457,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             DuongDung = @DuongDung,
                             GiaBan = @GiaBan,
                             CoBHYT = @CoBHYT,
-                            GiaBHYT = @GiaBHYT,
                             MaNSX = @MaNSX,
                             TrangThai = @TrangThai
                         WHERE MaThuoc = @MaThuoc";
@@ -471,7 +470,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     cmdT.Parameters.AddWithValue("@DuongDung", (object)thuoc.DuongDung ?? DBNull.Value);
                     cmdT.Parameters.AddWithValue("@GiaBan", (object)thuoc.GiaBan ?? DBNull.Value);
                     cmdT.Parameters.AddWithValue("@CoBHYT", thuoc.CoBHYT);
-                    cmdT.Parameters.AddWithValue("@GiaBHYT", (!thuoc.CoBHYT) ? DBNull.Value : (object)thuoc.GiaBHYT ?? DBNull.Value);
+                    // Bỏ add parameter @GiaBHYT
                     cmdT.Parameters.AddWithValue("@MaNSX", (object)thuoc.MaNSX ?? DBNull.Value);
                     cmdT.Parameters.AddWithValue("@TrangThai", thuoc.TrangThai ?? true);
 

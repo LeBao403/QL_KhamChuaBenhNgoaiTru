@@ -5,7 +5,9 @@
 }
 
 <style>
-    body { background-color: #f8f9fa; }
+    body {
+        background-color: #f8f9fa;
+    }
 
     .card-custom {
         border-radius: 12px;
@@ -141,16 +143,15 @@
 
                     <div class="row">
                         <div class="col-sm-4">
-                            <div class="info-label">Hỗ trợ BHYT</div>
+                            <div class="info-label">Chế độ thanh toán BHYT</div>
                             <div class="info-value mb-0">
                                 @if (Model.CoBHYT)
                                 {
-                                    <span class="badge bg-success me-1"><i class="bi bi-check-circle me-1"></i> Có</span>
-                                    <span class="small text-muted">(@String.Format("{0:N0} đ", Model.GiaBHYT ?? 0))</span>
+                                    <span class="badge bg-success px-2 py-2"><i class="bi bi-check-circle me-1"></i> Áp dụng BHYT</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-secondary"><i class="bi bi-x-circle me-1"></i> Không</span>
+                                    <span class="badge bg-secondary px-2 py-2"><i class="bi bi-x-circle me-1"></i> Không hỗ trợ</span>
                                 }
                             </div>
                         </div>
@@ -201,7 +202,7 @@
                     {
                         <div class="text-center py-5 text-muted">
                             <i class="bi bi-droplet fs-1 d-block mb-2 opacity-25"></i>
-                            <p class="mb-0">Chưa có thông tin thành phần cho thuốc này.</p>
+                            <p class="mb-0">Chưa có thông tap thành phần cho thuốc này.</p>
                         </div>
                     }
                 </div>

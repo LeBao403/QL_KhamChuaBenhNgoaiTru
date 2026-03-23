@@ -1,0 +1,436 @@
+﻿@{
+    Layout = null; // Tách hoàn toàn khỏi Layout của hệ thống
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Kiosk Lấy Số Thứ Tự Khám Bệnh</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --success-color: #198754;
+            --bg-color: #f0f4f8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            user-select: none; /* Chống bôi đen text trên màn hình cảm ứng */
+        }
+
+        .kiosk-header {
+            background-color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem 0;
+            text-align: center;
+            border-bottom: 4px solid var(--primary-color);
+        }
+
+        .kiosk-title {
+            font-weight: 800;
+            color: #2c3e50;
+            letter-spacing: -0.5px;
+            margin: 0;
+            font-size: 2.2rem;
+            text-transform: uppercase;
+        }
+
+        .kiosk-subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-top: 0.5rem;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            padding: 3rem 0;
+        }
+
+        /* Style cho nút Kiosk (Cards) */
+        .kiosk-card {
+            background: #ffffff;
+            border-radius: 24px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .kiosk-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 6px;
+            }
+
+            .kiosk-card.card-cccd::before {
+                background-color: var(--primary-color);
+            }
+
+            .kiosk-card.card-bhyt::before {
+                background-color: var(--success-color);
+            }
+
+            .kiosk-card:hover, .kiosk-card:active {
+                transform: translateY(-10px);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            }
+
+        .icon-wrapper {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .card-cccd .icon-wrapper {
+            background-color: rgba(13, 110, 253, 0.1);
+            color: var(--primary-color);
+        }
+
+        .card-bhyt .icon-wrapper {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: var(--success-color);
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-text {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        /* Style Modal Scanner */
+        .scanner-modal-content {
+            border-radius: 20px;
+            border: none;
+            overflow: hidden;
+        }
+
+        .scanner-modal-header {
+            background: #2c3e50;
+            color: #fff;
+            border-bottom: none;
+            padding: 1.5rem;
+        }
+
+        #reader {
+            border: 2px dashed #bdc3c7 !important;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        /* Nút tắt swal to hơn cho dễ bấm */
+        .swal2-confirm, .swal2-cancel {
+            padding: 12px 30px !important;
+            font-size: 1.1rem !important;
+            border-radius: 10px !important;
+        }
+
+        .kiosk-footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #95a5a6;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="kiosk-header">
+        <div class="container">
+            <h1 class="kiosk-title"><i class="bi bi-hospital text-primary me-2"></i> HỆ THỐNG ĐĂNG KÝ KHÁM BỆNH</h1>
+            <p class="kiosk-subtitle">Chạm vào màn hình để bắt đầu quá trình lấy số thứ tự</p>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="row justify-content-center g-5">
+
+                <div class="col-md-6 col-lg-5">
+                    <div class="kiosk-card card-cccd p-5 text-center" onclick="openScanner('CCCD')">
+                        <div class="icon-wrapper">
+                            <i class="bi bi-person-vcard" style="font-size: 4rem;"></i>
+                        </div>
+                        <h3 class="card-title">Quét CCCD</h3>
+                        <p class="card-text">Dành cho bệnh nhân Khám Dịch vụ<br />(Không sử dụng thẻ BHYT)</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-5">
+                    <div class="kiosk-card card-bhyt p-5 text-center" onclick="openScanner('BHYT')">
+                        <div class="icon-wrapper">
+                            <i class="bi bi-qr-code-scan" style="font-size: 4rem;"></i>
+                        </div>
+                        <h3 class="card-title">Quét VssID / BHYT</h3>
+                        <p class="card-text">Dành cho bệnh nhân có chế độ<br />Bảo Hiểm Y Tế</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="kiosk-footer">
+        <p class="mb-0"><i class="bi bi-shield-check me-1"></i> Dữ liệu của bạn được bảo mật an toàn</p>
+    </footer>
+
+    <div class="modal fade" id="scannerModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content scanner-modal-content">
+                <div class="modal-header scanner-modal-header d-flex justify-content-between align-items-center">
+                    <h4 class="modal-title fw-bold m-0" id="scannerTitle"><i class="bi bi-camera-video me-2"></i> Đang mở Camera...</h4>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="stopScanner()"></button>
+                </div>
+                <div class="modal-body text-center p-4">
+                    <div id="reader" class="mx-auto" style="width: 100%; max-width: 600px; min-height: 350px;"></div>
+                    <div class="mt-4 alert alert-info border-0 rounded-3 d-inline-block">
+                        <i class="bi bi-info-circle-fill me-2"></i> <strong>Hướng dẫn:</strong> Vui lòng đưa mã QR trên thẻ vào giữa khung hình camera.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <script>
+        let html5QrcodeScanner;
+        let currentScanType = '';
+
+        // 1. Mở Modal và Khởi động Camera
+        function openScanner(loaiThe) {
+            currentScanType = loaiThe;
+            $('#scannerTitle').html(loaiThe === 'CCCD' ? '<i class="bi bi-person-vcard me-2"></i> Quét mã QR trên CCCD' : '<i class="bi bi-qr-code-scan me-2"></i> Quét mã QR thẻ BHYT / VssID');
+            $('#scannerModal').modal('show');
+
+            // Cấu hình máy quét mượt hơn
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+                fps: 15,
+                qrbox: { width: 300, height: 300 },
+                supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
+                aspectRatio: 1.0
+            }, false);
+
+            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        }
+
+        // 2. Dừng Camera
+        function stopScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.clear().catch(error => {
+                    console.error("Failed to clear scanner.", error);
+                });
+            }
+        }
+
+        // 3. Xử lý khi quét thành công
+        function onScanSuccess(decodedText, decodedResult) {
+            stopScanner();
+            $('#scannerModal').modal('hide');
+
+            let parsedData = null;
+            if (currentScanType === 'CCCD') {
+                parsedData = parseCCCD(decodedText);
+            } else {
+                parsedData = parseBHYT(decodedText);
+            }
+
+            if (parsedData) {
+                showConfirmModal(parsedData, currentScanType);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi đọc thẻ!',
+                    text: 'Mã QR không hợp lệ hoặc không đúng loại thẻ đã chọn!',
+                    confirmButtonColor: '#0d6efd'
+                });
+            }
+        }
+
+        function onScanFailure(error) { }
+
+        // ==========================================
+        // BÓC TÁCH CHUỖI QR
+        // ==========================================
+        function parseCCCD(qrText) {
+            let parts = qrText.split('|');
+            if (parts.length >= 6) {
+                let dobStr = parts[3];
+                let formattedDob = "";
+                if(dobStr.length === 8) {
+                    formattedDob = `${dobStr.substring(4,8)}-${dobStr.substring(2,4)}-${dobStr.substring(0,2)}`;
+                }
+                return {
+                    CCCD: parts[0],
+                    HoTen: parts[2],
+                    NgaySinh: formattedDob,
+                    GioiTinh: parts[4],
+                    DiaChi: parts[5]
+                };
+            }
+            return null;
+        }
+
+        function parseBHYT(qrText) {
+            let parts = qrText.split('|');
+            if (parts.length < 5) parts = qrText.split('$');
+
+            if (parts.length >= 5) {
+                let dobStr = parts[2];
+                let formattedDob = dobStr.split('/').reverse().join('-');
+
+                let maThe = parts[0];
+                let kyTuMucHuong = maThe.charAt(2);
+                let mucHuong = 0;
+                if (['1', '2', '5'].includes(kyTuMucHuong)) mucHuong = 100;
+                else if (kyTuMucHuong === '3') mucHuong = 95;
+                else if (kyTuMucHuong === '4') mucHuong = 80;
+
+                // Xử lý Giải mã Hex UTF-8 Tên bệnh nhân
+                let hoTenRaw = parts[1];
+                if (/^[0-9A-Fa-f]+$/.test(hoTenRaw) && hoTenRaw.length % 2 === 0) {
+                    try {
+                        hoTenRaw = decodeURIComponent(hoTenRaw.replace(/(..)/g, '%$1'));
+                    } catch (e) { console.error("Lỗi giải mã tên"); }
+                }
+                let hoTenChuan = hoTenRaw.toUpperCase();
+
+                return {
+                    SoTheBHYT: maThe,
+                    HoTen: hoTenChuan,
+                    NgaySinh: formattedDob,
+                    GioiTinh: parts[3] === '1' ? 'Nam' : 'Nữ',
+                    MucHuongBHYT: mucHuong,
+                    TuyenKham: 'Đúng tuyến'
+                };
+            }
+            return null;
+        }
+
+        // ==========================================
+        // XÁC NHẬN VÀ GỬI LÊN MÁY CHỦ
+        // ==========================================
+        function showConfirmModal(data, loaiThe) {
+            let htmlContent = `
+                <div class="text-start fs-5 p-2 bg-light rounded-3 border mb-3">
+                    <p class="mb-2"><strong>Họ tên:</strong> <span class="text-primary fw-bold">${data.HoTen}</span></p>
+                    <p class="mb-2"><strong>Ngày sinh:</strong> ${data.NgaySinh}</p>
+                    ${loaiThe === 'BHYT'
+                        ? `<p class="mb-0"><strong>Mã BHYT:</strong> <span class="text-success fw-bold">${data.SoTheBHYT}</span> <span class="badge bg-success ms-1">Hưởng ${data.MucHuongBHYT}%</span></p>`
+                        : `<p class="mb-0"><strong>CCCD:</strong> <span class="fw-bold">${data.CCCD}</span></p>`}
+                </div>
+                <div class="text-start mt-3">
+                    <label class="fw-bold text-dark mb-2">Nhập số điện thoại <span class="text-muted fw-normal">(Không bắt buộc)</span>:</label>
+                    <input type="tel" id="txtSDT" class="form-control form-control-lg text-center fw-bold text-primary" placeholder="Ví dụ: 0901234567" autocomplete="off">
+                </div>
+            `;
+
+            Swal.fire({
+                title: 'Xác Nhận Thông Tin',
+                html: htmlContent,
+                showCancelButton: true,
+                confirmButtonText: 'LẤY SỐ THỨ TỰ',
+                cancelButtonText: 'Quét lại thẻ',
+                confirmButtonColor: '#0d6efd',
+                cancelButtonColor: '#6c757d',
+                width: '600px',
+                preConfirm: () => {
+                    const sdt = Swal.getPopup().querySelector('#txtSDT').value;
+                    return { sdt: sdt }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    data.SDT = result.value.sdt;
+                    if (loaiThe === 'CCCD') { data.SoTheBHYT = ''; data.HanSuDungBHYT = null; }
+                    submitToBackend(data, loaiThe);
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    openScanner(loaiThe);
+                }
+            });
+        }
+
+        function submitToBackend(patientData, loaiThe) {
+            Swal.fire({
+                title: 'Đang xử lý...',
+                text: 'Vui lòng đợi hệ thống khởi tạo phiếu đăng ký',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading() }
+            });
+
+            $.ajax({
+                url: '@Url.Action("XuLyQuetThe", "TiepTan")',
+                type: 'POST',
+                data: { model: patientData, loaiThe: loaiThe },
+                success: function (res) {
+                    if (res.success) {
+                        Swal.fire({
+                            title: 'ĐĂNG KÝ THÀNH CÔNG!',
+                            html: `
+                                <div class="my-4">
+                                    <p class="text-muted text-uppercase fw-bold mb-1" style="letter-spacing: 2px;">SỐ THỨ TỰ CỦA BẠN</p>
+                                    <h1 class="display-1 fw-bolder text-danger mb-2" style="font-size: 6rem;">${res.stt}</h1>
+                                </div>
+
+                                <div class="bg-primary text-white p-3 rounded-3 shadow-sm mb-4">
+                                    <p class="mb-0 fs-5 fw-bold"><i class="bi bi-arrow-right-circle-fill me-2"></i>VUI LÒNG ĐẾN: <span class="text-warning text-uppercase fs-4 ms-2">${res.tenPhong}</span></p>
+                                </div>
+
+                                <div class="bg-light p-3 rounded-3 border text-start">
+                                    <p class="mb-1 fs-5"><strong>Bệnh nhân:</strong> <span class="text-primary fw-bold text-uppercase">${res.tenBN}</span></p>
+                                    <p class="mb-0 text-muted"><i class="bi bi-person-badge me-1"></i> Mã BN: ${res.maBN}</p>
+                                </div>
+                                <p class="mt-4 text-success fw-bold fs-5"><i class="bi bi-megaphone-fill me-2"></i>Vui lòng ngồi chờ gọi tên tại khu vực Tiếp Nhận.</p>
+                            `,
+                            icon: 'success',
+                            confirmButtonText: 'ĐÓNG',
+                            confirmButtonColor: '#198754',
+                            width: '700px',
+                            allowOutsideClick: false
+                        }).then(() => {
+                            // Tùy chọn reload trang để làm mới thẻ sau khi quét
+                            // location.reload();
+                        });
+                    } else {
+                        Swal.fire('Lỗi hệ thống', res.message, 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('Lỗi kết nối', 'Không thể kết nối đến máy chủ, vui lòng thử lại sau.', 'error');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

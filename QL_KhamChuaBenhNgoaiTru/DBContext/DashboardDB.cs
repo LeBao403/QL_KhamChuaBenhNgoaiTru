@@ -217,30 +217,27 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public List<ThuocSapHetHan> GetThuocSapHetHan(int ngay = 30)
         {
             var list = new List<ThuocSapHetHan>();
-
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
                 conn.Open();
-
                 string sql = @"
-                    SELECT TOP 10
-                        T.MaThuoc,
-                        T.TenThuoc,
-                        TK.MaLo,
-                        TK.HanSuDung,
-                        TK.SoLuongTon,
-                        P.TenPhong
-                    FROM TONKHO TK
-                    INNER JOIN THUOC T ON TK.MaThuoc = T.MaThuoc
-                    INNER JOIN PHONG P ON TK.MaPhong = P.MaPhong
-                    WHERE TK.HanSuDung <= DATEADD(day, @Ngay, CAST(GETDATE() AS DATE))
-                      AND TK.SoLuongTon > 0
-                    ORDER BY TK.HanSuDung ASC";
+            SELECT TOP 10
+                T.MaThuoc,
+                T.TenThuoc,
+                TK.MaLo,
+                TK.HanSuDung,
+                TK.SoLuongTon,
+                K.TenKho
+            FROM TONKHO TK
+            INNER JOIN THUOC T ON TK.MaThuoc = T.MaThuoc
+            INNER JOIN KHO K ON TK.MaKho = K.MaKho
+            WHERE TK.HanSuDung <= DATEADD(day, @Ngay, CAST(GETDATE() AS DATE))
+              AND TK.SoLuongTon > 0
+            ORDER BY TK.HanSuDung ASC";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Ngay", ngay);
-
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
@@ -252,13 +249,12 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 MaLo = dr["MaLo"].ToString(),
                                 HanSuDung = dr["HanSuDung"] != DBNull.Value ? Convert.ToDateTime(dr["HanSuDung"]) : DateTime.Now,
                                 SoLuongTon = dr["SoLuongTon"] != DBNull.Value ? Convert.ToInt32(dr["SoLuongTon"]) : 0,
-                                TenPhong = dr["TenPhong"] != DBNull.Value ? dr["TenPhong"].ToString() : ""
+                                TenKho = dr["TenKho"] != DBNull.Value ? dr["TenKho"].ToString() : "" // Map vào TenKho
                             });
                         }
                     }
                 }
             }
-
             return list;
         }
 
@@ -266,29 +262,26 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public List<ThuocSapHetHang> GetThuocSapHetHang(int minSoLuong = 10)
         {
             var list = new List<ThuocSapHetHang>();
-
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
                 conn.Open();
-
                 string sql = @"
-                    SELECT TOP 10
-                        T.MaThuoc,
-                        T.TenThuoc,
-                        T.DonViCoBan,
-                        SUM(TK.SoLuongTon) AS TongTon,
-                        P.TenPhong
-                    FROM TONKHO TK
-                    INNER JOIN THUOC T ON TK.MaThuoc = T.MaThuoc
-                    INNER JOIN PHONG P ON TK.MaPhong = P.MaPhong
-                    GROUP BY T.MaThuoc, T.TenThuoc, T.DonViCoBan, P.TenPhong
-                    HAVING SUM(TK.SoLuongTon) <= @MinSoLuong
-                    ORDER BY TongTon ASC";
+            SELECT TOP 10
+                T.MaThuoc,
+                T.TenThuoc,
+                T.DonViCoBan,
+                SUM(TK.SoLuongTon) AS TongTon,
+                K.TenKho
+            FROM TONKHO TK
+            INNER JOIN THUOC T ON TK.MaThuoc = T.MaThuoc
+            INNER JOIN KHO K ON TK.MaKho = K.MaKho
+            GROUP BY T.MaThuoc, T.TenThuoc, T.DonViCoBan, K.TenKho
+            HAVING SUM(TK.SoLuongTon) <= @MinSoLuong
+            ORDER BY TongTon ASC";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@MinSoLuong", minSoLuong);
-
                     using (SqlDataReader dr = cmd.ExecuteReader())
                     {
                         while (dr.Read())
@@ -299,13 +292,12 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 TenThuoc = dr["TenThuoc"].ToString(),
                                 DonViCoBan = dr["DonViCoBan"] != DBNull.Value ? dr["DonViCoBan"].ToString() : "",
                                 TongTon = dr["TongTon"] != DBNull.Value ? Convert.ToInt32(dr["TongTon"]) : 0,
-                                TenPhong = dr["TenPhong"] != DBNull.Value ? dr["TenPhong"].ToString() : ""
+                                TenKho = dr["TenKho"] != DBNull.Value ? dr["TenKho"].ToString() : "" // Map vào TenKho
                             });
                         }
                     }
                 }
             }
-
             return list;
         }
 
@@ -442,7 +434,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public string MaLo { get; set; }
         public DateTime HanSuDung { get; set; }
         public int SoLuongTon { get; set; }
-        public string TenPhong { get; set; }
+        public string TenKho { get; set; }
         public int SoNgayConLai => (HanSuDung - DateTime.Now.Date).Days;
         public string HanSuDungDisplay => HanSuDung.ToString("dd/MM/yyyy");
     }
@@ -453,7 +445,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public string TenThuoc { get; set; }
         public string DonViCoBan { get; set; }
         public int TongTon { get; set; }
-        public string TenPhong { get; set; }
+        public string TenKho { get; set; }
     }
 
     public class PhieuNhapItem
