@@ -85,6 +85,120 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             return PartialView("_TonKhoTable", dsTonKho);
         }
 
+        // ===================== TẠO PHIẾU NHẬP =====================
+        public ActionResult Create()
+        {
+            ViewBag.Title = "Tạo phiếu nhập kho";
+            try
+            {
+                ViewBag.DsThuoc = db.GetAllThuoc();
+                ViewBag.DsNhaCungCap = db.GetAllNhaCungCap();
+                ViewBag.DsKho = db.GetAllKho();
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Lỗi: " + ex.Message;
+                return View("Error");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(FormCollection form)
+        {
+            try
+            {
+                var nv = Session["NhanVien"] as NhanVien;
+                if (nv == null)
+                {
+                    TempData["Error"] = "Không xác định được nhân viên đăng nhập.";
+                    return RedirectToAction("Create");
+                }
+
+                string maKhoStr = form["MaKho"];
+                string maNSXStr = form["MaNSX"];
+                string ghiChu = form["GhiChu"] ?? "";
+
+                if (string.IsNullOrEmpty(maKhoStr) || !int.TryParse(maKhoStr, out int maKho))
+                {
+                    TempData["Error"] = "Vui lòng chọn kho nhập hàng.";
+                    return RedirectToAction("Create");
+                }
+
+                if (string.IsNullOrEmpty(maNSXStr) || !int.TryParse(maNSXStr, out int maNSX))
+                {
+                    TempData["Error"] = "Vui lòng chọn nhà cung cấp.";
+                    return RedirectToAction("Create");
+                }
+
+                var chiTiets = new List<CT_PhieuNhapInput>();
+                var thuocKeys = form.AllKeys.Where(k => k != null && k.StartsWith("MaThuoc_")).ToList();
+
+                foreach (var key in thuocKeys)
+                {
+                    var idx = key.Replace("MaThuoc_", "");
+                    var maThuoc = form[key];
+                    var maLo = form["MaLo" + idx];
+                    var soLuongStr = form["SoLuong" + idx];
+                    var donGiaStr = form["DonGia" + idx];
+                    var ngaySXStr = form["NgaySanXuat" + idx];
+                    var hanSDStr = form["HanSuDung" + idx];
+
+                    if (string.IsNullOrWhiteSpace(maThuoc)) continue;
+
+                    if (string.IsNullOrWhiteSpace(soLuongStr) || !int.TryParse(soLuongStr, out int soLuong) || soLuong <= 0)
+                    {
+                        TempData["Error"] = "Số lượng dòng không hợp lệ. Vui lòng kiểm tra lại.";
+                        return RedirectToAction("Create");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(donGiaStr) || !decimal.TryParse(donGiaStr, out decimal donGia) || donGia < 0)
+                    {
+                        TempData["Error"] = "Đơn giá dòng không hợp lệ. Vui lòng kiểm tra lại.";
+                        return RedirectToAction("Create");
+                    }
+
+                    DateTime? ngaySX = !string.IsNullOrWhiteSpace(ngaySXStr) && DateTime.TryParse(ngaySXStr, out DateTime parsedNSX) ? (DateTime?)parsedNSX : null;
+                    DateTime hanSD = DateTime.Now.AddMonths(6);
+                    if (!string.IsNullOrWhiteSpace(hanSDStr) && DateTime.TryParse(hanSDStr, out DateTime parsedHSD))
+                        hanSD = parsedHSD;
+
+                    chiTiets.Add(new CT_PhieuNhapInput
+                    {
+                        MaThuoc = maThuoc.Trim(),
+                        MaLo = maLo?.Trim() ?? "",
+                        NgaySanXuat = ngaySX,
+                        HanSuDung = hanSD,
+                        SoLuongNhap = soLuong,
+                        DonGiaNhap = donGia
+                    });
+                }
+
+                if (chiTiets.Count == 0)
+                {
+                    TempData["Error"] = "Vui lòng thêm ít nhất một chi tiết thuốc vào phiếu nhập.";
+                    return RedirectToAction("Create");
+                }
+
+                int maPhieuNhap = db.TaoPhieuNhap(nv.MaNV, maNSX, maKho, ghiChu, chiTiets);
+
+                if (maPhieuNhap > 0)
+                {
+                    TempData["Success"] = "Tạo phiếu nhập #" + maPhieuNhap + " thành công! Phiếu đang chờ duyệt.";
+                    return RedirectToAction("DanhSachPhieuNhap");
+                }
+
+                TempData["Error"] = "Không thể tạo phiếu nhập. Vui lòng thử lại.";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Lỗi: " + ex.Message;
+            }
+
+            return RedirectToAction("Create");
+        }
+
         // ===================== DANH SÁCH PHIẾU NHẬP =====================
         public ActionResult DanhSachPhieuNhap(int page = 1, string keyword = "", string trangThai = "")
         {

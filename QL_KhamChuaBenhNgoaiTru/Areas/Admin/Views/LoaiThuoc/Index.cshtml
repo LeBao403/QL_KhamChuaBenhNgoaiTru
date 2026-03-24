@@ -1,0 +1,243 @@
+@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers.LoaiThuocViewModel>
+@{
+    ViewBag.Title = "Quản lý loại thuốc";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+
+    int totalCount = ViewBag.TotalCount ?? 0;
+    int totalWithThuoc = ViewBag.TotalWithThuoc ?? 0;
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+}
+
+<style>
+    .filter-card {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 16px 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid #e9ecef;
+        margin-bottom: 16px;
+    }
+
+    .filter-label {
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 16px 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid #e9ecef;
+        text-align: center;
+    }
+
+    .stat-card .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #0d6efd;
+        line-height: 1;
+    }
+
+    .stat-card .stat-label {
+        font-size: 0.8rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 4px;
+    }
+
+    .pagination {
+        margin-top: 12px;
+    }
+</style>
+
+<div class="container-fluid">
+    @* ===== THÔNG TIN TỔNG QUAN ===== *@
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number" id="statTotal">@totalCount</div>
+                <div class="stat-label">Tổng loại thuốc</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-number" id="statWithThuoc">@totalWithThuoc</div>
+                <div class="stat-label">Đang sử dụng</div>
+            </div>
+        </div>
+    </div>
+
+    @* ===== BẢNG CHÍNH ===== *@
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 text-primary fw-bold">
+                <i class="bi bi-tags me-2"></i> Danh sách loại thuốc
+            </h4>
+            <a href="@Url.Action("Create", "LoaiThuoc", new { area = "Admin" })"
+               class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i> Thêm loại thuốc
+            </a>
+        </div>
+
+        <div class="card-body">
+            @* ======= PHẦN TÌM KIẾM ======= *@
+            <div class="filter-card">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="filter-label">Tìm kiếm</label>
+                        <input type="text" id="txtKeyword" class="form-control"
+                               value="@ViewBag.Keyword"
+                               placeholder="Mã loại thuốc, tên loại thuốc...">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" id="btnSearch" class="btn btn-primary w-100">
+                            <i class="bi bi-search me-1"></i> Tìm kiếm
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" id="btnReset" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Đặt lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            @* ======= THÔNG TIN ======= *@
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted small">
+                    Tổng cộng: <strong class="text-dark" id="totalCountLabel">@totalCount</strong> loại thuốc
+                </span>
+            </div>
+
+            @* ======= BẢNG DANH SÁCH + PHÂN TRANG ======= *@
+            <div id="searchResultArea">
+                @{ Html.RenderPartial("_LoaiThuocTable", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // =========================================================
+            // 1. TÌM KIẾM & LỌC
+            // =========================================================
+            function fireSearch(page) {
+                var keyword = $('#txtKeyword').val() || '';
+                var p = page || 1;
+
+                $('#searchResultArea').html(
+                    '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Đang tìm kiếm...</p></div>'
+                );
+
+                $.ajax({
+                    url: '@Url.Action("Search", "LoaiThuoc", new { area = "Admin" })',
+                    type: 'GET',
+                    data: { q: keyword, page: p },
+                    success: function (html) {
+                        $('#searchResultArea').html(html);
+                    },
+                    error: function () {
+                        $('#searchResultArea').html(
+                            '<div class="text-center text-danger py-4"><i class="bi bi-exclamation-triangle fs-3 d-block mb-2"></i>Lỗi kết nối máy chủ!</div>'
+                        );
+                    }
+                });
+
+                // Cập nhật stats (gọi riêng)
+                $.ajax({
+                    url: '@Url.Action("GetStats", "LoaiThuoc", new { area = "Admin" })',
+                    type: 'GET',
+                    data: { q: keyword },
+                    success: function (data) {
+                        $('#statTotal').text(data.totalCount);
+                        $('#statWithThuoc').text(data.totalWithThuoc);
+                        $('#totalCountLabel').text(data.totalCount);
+                    }
+                });
+            }
+
+            $('#btnSearch').on('click', function () { fireSearch(1); });
+            $('#btnReset').on('click', function () {
+                $('#txtKeyword').val('');
+                fireSearch(1);
+            });
+            $('#txtKeyword').on('keypress', function (e) {
+                if (e.which === 13) fireSearch(1);
+            });
+
+
+            // =========================================================
+            // 2. XÁC NHẬN XÓA
+            // =========================================================
+            $('#searchResultArea').on('click', '.btn-delete-loai', function (e) {
+                e.preventDefault();
+                var form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Bạn chắc chắn muốn xóa?',
+                    text: "Loại thuốc này sẽ bị xóa vĩnh viễn khỏi hệ thống!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Xóa ngay',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+
+
+            // =========================================================
+            // 3. PHÂN TRANG AJAX
+            // =========================================================
+            $(document).on('click', '.page-link', function (e) {
+                e.preventDefault();
+                var page = $(this).data('page');
+                if (page) {
+                    fireSearch(page);
+                    $('html, body').animate({ scrollTop: 0 }, 300);
+                }
+            });
+
+
+            // =========================================================
+            // 4. THÔNG BÁO TỪ SERVER
+            // =========================================================
+            @if (TempData["Success"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: '@Html.Raw(TempData["Success"])',
+                    timer: 3000,
+                    showConfirmButton: true
+                });
+                </text>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: '@Html.Raw(TempData["Error"])',
+                    showConfirmButton: true
+                });
+                </text>
+            }
+        });
+    </script>
+}

@@ -76,7 +76,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 var query = @"
                     SELECT
                         TK.MaTonKho,
-                        TK.MaPhong,
                         TK.MaKho,
                         TK.MaThuoc,
                         TK.MaLo,
@@ -89,11 +88,9 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         T.DonViCoBan,
                         T.GiaBan,
                         T.CoBHYT,
-                        P.TenPhong,
                         K.TenKho
                     FROM TONKHO TK
                     INNER JOIN THUOC T ON TK.MaThuoc = T.MaThuoc
-                    INNER JOIN PHONG P ON TK.MaPhong = P.MaPhong
                     LEFT JOIN KHO K ON TK.MaKho = K.MaKho
                     WHERE 1=1";
 
@@ -140,7 +137,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         var item = new TonKhoViewModel
                         {
                             MaTonKho = Convert.ToInt32(dr["MaTonKho"]),
-                            MaPhong = Convert.ToInt32(dr["MaPhong"]),
                             MaKho = dr["MaKho"] != DBNull.Value ? Convert.ToInt32(dr["MaKho"]) : 0,
                             MaThuoc = dr["MaThuoc"].ToString(),
                             MaLo = dr["MaLo"].ToString(),
@@ -153,7 +149,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             DonViCoBan = dr["DonViCoBan"] != DBNull.Value ? dr["DonViCoBan"].ToString() : "",
                             GiaBan = dr["GiaBan"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBan"]) : 0,
                             CoBHYT = dr["CoBHYT"] != DBNull.Value && Convert.ToBoolean(dr["CoBHYT"]),
-                            TenPhong = dr["TenPhong"] != DBNull.Value ? dr["TenPhong"].ToString() : "",
                             TenKho = dr["TenKho"] != DBNull.Value ? dr["TenKho"].ToString() : ""
                         };
 
@@ -324,12 +319,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     SELECT
                         TK.*,
                         T.TenThuoc, T.DonViCoBan, T.GiaBan, T.CoBHYT, T.GiaBHYT,
-                        P.TenPhong,
                         NSX.TenNSX,
                         K.TenKho
                     FROM TONKHO TK
                     INNER JOIN THUOC T ON TK.MaThuoc = T.MaThuoc
-                    INNER JOIN PHONG P ON TK.MaPhong = P.MaPhong
                     LEFT JOIN NHASANXUAT NSX ON T.MaNSX = NSX.MaNSX
                     LEFT JOIN KHO K ON TK.MaKho = K.MaKho
                     WHERE TK.MaTonKho = @MaTonKho";
@@ -344,7 +337,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         var item = new TonKhoViewModel
                         {
                             MaTonKho = Convert.ToInt32(dr["MaTonKho"]),
-                            MaPhong = Convert.ToInt32(dr["MaPhong"]),
                             MaKho = dr["MaKho"] != DBNull.Value ? Convert.ToInt32(dr["MaKho"]) : 0,
                             MaThuoc = dr["MaThuoc"].ToString(),
                             MaLo = dr["MaLo"].ToString(),
@@ -358,7 +350,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             GiaBan = dr["GiaBan"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBan"]) : 0,
                             CoBHYT = dr["CoBHYT"] != DBNull.Value && Convert.ToBoolean(dr["CoBHYT"]),
                             GiaBHYT = dr["GiaBHYT"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBHYT"]) : 0,
-                            TenPhong = dr["TenPhong"] != DBNull.Value ? dr["TenPhong"].ToString() : "",
                             TenNSX = dr["TenNSX"] != DBNull.Value ? dr["TenNSX"].ToString() : "",
                             TenKho = dr["TenKho"] != DBNull.Value ? dr["TenKho"].ToString() : ""
                         };
@@ -619,7 +610,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         }
 
         // ==================== TẠO PHIẾU NHẬP ====================
-        public int TaoPhieuNhap(string maNV, int maNSX, string ghiChu, List<CT_PhieuNhapInput> chiTiets)
+        public int TaoPhieuNhap(string maNV, int maNSX, int maKho, string ghiChu, List<CT_PhieuNhapInput> chiTiets)
         {
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
@@ -628,15 +619,16 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                 try
                 {
-                    // 1. Tạo phiếu nhập
+                    // 1. Tạo phiếu nhập (MaKho đã có sau ALTER TABLE)
                     string sqlPN = @"
-                        INSERT INTO PHIEUNHAP (MaNV_LapPhieu, MaNSX, TongTienNhap, TrangThai, GhiChu)
-                        VALUES (@MaNV, @MaNSX, 0, N'Chờ duyệt', @GhiChu);
+                        INSERT INTO PHIEUNHAP (MaNV_LapPhieu, MaNSX, MaKho, TongTienNhap, TrangThai, GhiChu)
+                        VALUES (@MaNV, @MaNSX, @MaKho, 0, N'Chờ duyệt', @GhiChu);
                         SELECT SCOPE_IDENTITY();";
 
                     SqlCommand cmdPN = new SqlCommand(sqlPN, conn, tran);
                     cmdPN.Parameters.AddWithValue("@MaNV", maNV);
                     cmdPN.Parameters.AddWithValue("@MaNSX", maNSX);
+                    cmdPN.Parameters.AddWithValue("@MaKho", maKho);
                     cmdPN.Parameters.AddWithValue("@GhiChu", (object)ghiChu ?? DBNull.Value);
 
                     int maPhieuNhap = Convert.ToInt32(cmdPN.ExecuteScalar());
@@ -693,7 +685,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                 try
                 {
-                    // 1. Lấy MaKho đã chọn khi tạo phiếu nhập
+                    // 1. Lấy MaKho từ phiếu nhập
                     SqlCommand cmdPN = new SqlCommand(
                         "SELECT MaKho FROM PHIEUNHAP WHERE MaPhieuNhap = @MaPhieuNhap", conn, tran);
                     cmdPN.Parameters.AddWithValue("@MaPhieuNhap", maPhieuNhap);
@@ -742,17 +734,11 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         }
                         else
                         {
-                            // Thêm mới dòng tồn kho
-                            SqlCommand cmdPhong = new SqlCommand(
-                                "SELECT TOP 1 MaPhong FROM PHONG WHERE TrangThai = 1 ORDER BY MaPhong", conn, tran);
-                            int maPhongDefault = Convert.ToInt32(cmdPhong.ExecuteScalar());
-
                             string sqlInsert = @"
-                                INSERT INTO TONKHO (MaKho, MaPhong, MaThuoc, MaLo, HanSuDung, NgaySanXuat, GiaNhap, SoLuongTon)
-                                VALUES (@MaKho, @MaPhong, @MaThuoc, @MaLo, @HanSuDung, @NgaySanXuat, @GiaNhap, @SoLuongNhap)";
+                                INSERT INTO TONKHO (MaKho, MaThuoc, MaLo, HanSuDung, NgaySanXuat, GiaNhap, SoLuongTon)
+                                VALUES (@MaKho, @MaThuoc, @MaLo, @HanSuDung, @NgaySanXuat, @GiaNhap, @SoLuongNhap)";
                             SqlCommand cmdI = new SqlCommand(sqlInsert, conn, tran);
                             cmdI.Parameters.AddWithValue("@MaKho", maKhoNhan);
-                            cmdI.Parameters.AddWithValue("@MaPhong", maPhongDefault);
                             cmdI.Parameters.AddWithValue("@MaThuoc", ct.MaThuoc);
                             cmdI.Parameters.AddWithValue("@MaLo", ct.MaLo);
                             cmdI.Parameters.AddWithValue("@HanSuDung", ct.HanSuDung);
@@ -832,7 +818,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
     public class TonKhoViewModel
     {
         public int MaTonKho { get; set; }
-        public int MaPhong { get; set; }
         public int MaKho { get; set; }
         public string MaThuoc { get; set; }
         public string MaLo { get; set; }
@@ -847,7 +832,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public decimal GiaBan { get; set; }
         public bool CoBHYT { get; set; }
         public decimal GiaBHYT { get; set; }
-        public string TenPhong { get; set; }
         public string TenNSX { get; set; }
         public string TenKho { get; set; }
 

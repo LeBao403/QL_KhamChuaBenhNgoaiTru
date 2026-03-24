@@ -1,0 +1,144 @@
+@model QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.BenhNhanProfile
+@{
+    ViewBag.Title = "Thông tin cá nhân";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+}
+
+<div class="page-hero">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <div class="hero-title"><i class="bi bi-person-vcard-fill me-2"></i>Thông tin cá nhân</div>
+                <div class="hero-subtitle">Cập nhật và quản lý hồ sơ bệnh nhân</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="profile-info-card">
+                <div class="profile-avatar-wrap">
+                    <div class="profile-avatar">
+                        @(Model?.HoTen?.Length > 0 ? Model.HoTen[0].ToString().ToUpper() : "B")
+                    </div>
+                    <div class="fw-bold text-white" style="font-size:1.1rem;">@(Model?.HoTen)</div>
+                    <div class="small" style="color:rgba(255,255,255,0.7);">@(Model?.MaBN)</div>
+                </div>
+                <div>
+                    <div class="profile-info-item">
+                        <span class="label"><i class="bi bi-telephone me-1"></i>Điện thoại</span>
+                        <span class="value">@(string.IsNullOrEmpty(Model?.SDT) ? "—" : Model.SDT)</span>
+                    </div>
+                    <div class="profile-info-item">
+                        <span class="label"><i class="bi bi-envelope me-1"></i>Email</span>
+                        <span class="value" style="font-size:0.8rem;">@(string.IsNullOrEmpty(Model?.Email) ? "—" : Model.Email)</span>
+                    </div>
+                    <div class="profile-info-item">
+                        <span class="label"><i class="bi bi-calendar3 me-1"></i>Ngày sinh</span>
+                        <span class="value">@(Model?.NgaySinh?.ToString("dd/MM/yyyy") ?? "—")</span>
+                    </div>
+                    <div class="profile-info-item">
+                        <span class="label"><i class="bi bi-gender-ambiguous me-1"></i>Giới tính</span>
+                        <span class="value">@(Model?.GioiTinh ?? "—")</span>
+                    </div>
+                    <div class="profile-info-item">
+                        <span class="label"><i class="bi bi-shield me-1"></i>BHYT</span>
+                        <span class="badge @(Model?.BHYT == true ? "bg-success" : "bg-secondary") rounded-pill">
+                            @(Model?.BHYT == true ? "Có" : "Không")
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="patient-card">
+                <div class="card-header">
+                    <h5 class="patient-section-title mb-0">
+                        <i class="bi bi-pencil-square me-2"></i>Cập nhật thông tin
+                    </h5>
+                </div>
+                <div class="card-body patient-form">
+                    @using (Html.BeginForm("ThongTinCaNhan", "BenhNhanPortal", FormMethod.Post, new { @class = "row g-3" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(m => m.MaBN)
+                        <div class="col-md-6">
+                            <label class="form-label">Họ tên <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(m => m.HoTen, new { @class = "form-control", placeholder = "Nhập họ tên" })
+                            @Html.ValidationMessageFor(m => m.HoTen, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày sinh <span class="text-danger">*</span></label>
+                            @Html.TextBoxFor(m => m.NgaySinh, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                            @Html.ValidationMessageFor(m => m.NgaySinh, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Giới tính <span class="text-danger">*</span></label>
+                            @Html.DropDownListFor(m => m.GioiTinh,
+                                new SelectList(new[] {
+                                    new { Value = "Nam", Text = "Nam" },
+                                    new { Value = "Nữ", Text = "Nữ" }
+                                }, "Value", "Text", Model?.GioiTinh),
+                                "-- Chọn giới tính --",
+                                new { @class = "form-select" })
+                            @Html.ValidationMessageFor(m => m.GioiTinh, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Số điện thoại</label>
+                            @Html.TextBoxFor(m => m.SDT, new { @class = "form-control", placeholder = "Nhập số điện thoại" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "Nhập email" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">CCCD / CMND</label>
+                            @Html.TextBoxFor(m => m.CCCD, new { @class = "form-control", placeholder = "Nhập số CCCD" })
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Địa chỉ</label>
+                            @Html.TextBoxFor(m => m.DiaChi, new { @class = "form-control", placeholder = "Nhập địa chỉ" })
+                        </div>
+
+                        <div class="col-12">
+                            <hr />
+                            <h6 class="fw-bold mb-3"><i class="bi bi-shield-check text-success me-1"></i>Thông tin BHYT</h6>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check form-switch mb-3">
+                                @Html.CheckBoxFor(m => m.BHYT, new { @class = "form-check-input", role = "switch", id = "BHYTToggle" })
+                                <label class="form-check-label fw-semibold" for="BHYTToggle">Tôi có thẻ BHYT</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Số thẻ BHYT</label>
+                            @Html.TextBoxFor(m => m.SoTheBHYT, new { @class = "form-control", placeholder = "VD: DN123456789" })
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Hạn sử dụng BHYT</label>
+                            @Html.TextBoxFor(m => m.HanSuDungBHYT, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Tuyến khám</label>
+                            @Html.DropDownListFor(m => m.TuyenKham,
+                                new SelectList(new[] {
+                                    new { Value = "Đúng tuyến", Text = "Đúng tuyến" },
+                                    new { Value = "Trái tuyến", Text = "Trái tuyến" }
+                                }, "Value", "Text", Model?.TuyenKham),
+                                "-- Chọn tuyến --",
+                                new { @class = "form-select" })
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold">
+                                <i class="bi bi-check-circle me-1"></i>Lưu thông tin
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

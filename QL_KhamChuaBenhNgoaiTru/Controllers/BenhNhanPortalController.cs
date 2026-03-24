@@ -5,9 +5,9 @@ using QL_KhamChuaBenhNgoaiTru.Models;
 
 using BenhNhanModel = QL_KhamChuaBenhNgoaiTru.Models.BenhNhan;
 
-namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
+namespace QL_KhamChuaBenhNgoaiTru.Controllers
 {
-    public class BenhNhanController : BaseBenhNhanController
+    public class BenhNhanPortalController : Controller
     {
         private readonly BenhNhanPortalDB db = new BenhNhanPortalDB();
 
@@ -15,7 +15,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult Index()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
-            if (bn == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
             var dashboard = db.GetDashboard(bn.MaBN);
             ViewBag.Profile = db.GetBenhNhanByMaBN(bn.MaBN);
@@ -26,7 +26,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult ThongTinCaNhan()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
-            if (bn == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
             var profile = db.GetBenhNhanByMaBN(bn.MaBN);
             return View(profile);
@@ -37,7 +37,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult ThongTinCaNhan(BenhNhanPortalDB.BenhNhanProfile model)
         {
             var bnSession = Session["BenhNhan"] as BenhNhanModel;
-            if (bnSession == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bnSession == null) return RedirectToAction("Login", "TaiKhoan");
 
             if (!ModelState.IsValid)
             {
@@ -76,7 +76,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult DatLichKham()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
-            if (bn == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
             ViewBag.PhongKham = db.GetAllPhongKham();
             return View();
@@ -87,7 +87,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult DatLichKham(DateTime ngayKham, int maPhong, string lyDo)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
-            if (bn == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
             if (ngayKham < DateTime.Today)
             {
@@ -112,7 +112,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult LichKham(string trangThai = "")
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
-            if (bn == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
             var lichKham = db.GetLichKhamByMaBN(bn.MaBN);
 
@@ -134,7 +134,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult HuyLich(int id)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
-            if (bn == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
             try
             {
@@ -156,7 +156,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult TrangThaiKham()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
-            if (bn == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
             var list = db.GetTrangThaiKhamByMaBN(bn.MaBN);
             return View(list);
@@ -166,7 +166,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult LichSuKham()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
-            if (bn == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
             var list = db.GetLichSuKhamByMaBN(bn.MaBN);
             return View(list);
@@ -176,7 +176,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult DonThuoc()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
-            if (bn == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
             var list = db.GetDonThuocByMaBN(bn.MaBN);
             return View(list);
@@ -184,6 +184,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
 
         public ActionResult ChiTietDonThuoc(int id)
         {
+            var bn = Session["BenhNhan"] as BenhNhanModel;
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
+
             var detail = db.GetChiTietDonThuoc(id);
             if (detail == null || detail.ChiTiet.Count == 0)
                 return HttpNotFound("Không tìm thấy đơn thuốc!");
@@ -195,7 +198,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
         public ActionResult HoaDon()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
-            if (bn == null) return RedirectToAction("Login", "TaiKhoan", new { area = "" });
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
             var list = db.GetHoaDonByMaBN(bn.MaBN);
             return View(list);
@@ -203,6 +206,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.BenhNhan.Controllers
 
         public ActionResult ChiTietHoaDon(int id)
         {
+            var bn = Session["BenhNhan"] as BenhNhanModel;
+            if (bn == null) return RedirectToAction("Login", "TaiKhoan");
+
             var detail = db.GetChiTietHoaDon(id);
             if (detail == null)
                 return HttpNotFound("Không tìm thấy hóa đơn!");

@@ -1,0 +1,138 @@
+@model List<QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.LichKhamItem>
+@{
+    ViewBag.Title = "Lịch khám";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+    var cho = Model?.Count(x => x.TrangThai == "Chờ xử lý") ?? 0;
+    var xn = Model?.Count(x => x.TrangThai == "Đã xác nhận") ?? 0;
+    var huy = Model?.Count(x => x.TrangThai == "Hủy") ?? 0;
+}
+
+<div class="page-hero">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <div class="hero-title"><i class="bi bi-calendar-check-fill me-2"></i>Danh sách lịch khám</div>
+                <div class="hero-subtitle">
+                    Tổng: @(Model != null ? Model.Count : 0) lịch
+                    <span class="mx-2 text-white-50">|</span>
+                    <span><span class="badge" style="background:#fef3c7;color:#92400e;">Chờ: @cho</span></span>
+                    <span class="mx-1"></span>
+                    <span><span class="badge" style="background:#d1fae5;color:#065f46;">Đã xác nhận: @xn</span></span>
+                    <span class="mx-1"></span>
+                    <span><span class="badge" style="background:#fee2e2;color:#991b1b;">Hủy: @huy</span></span>
+                </div>
+            </div>
+            <a href="@Url.Action("DatLichKham", "BenhNhanPortal")" class="btn btn-warning rounded-pill fw-bold px-4">
+                <i class="bi bi-plus-circle me-1"></i> Đặt lịch mới
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="patient-card">
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-calendar-x"></i></div>
+                <div class="empty-state-title">Chưa có lịch khám nào</div>
+                <div class="empty-state-desc">Đặt lịch khám ngay để được phục vụ nhanh nhất.</div>
+                <a href="@Url.Action("DatLichKham", "BenhNhanPortal")" class="btn btn-primary rounded-pill mt-3 px-4 fw-bold">
+                    <i class="bi bi-calendar-plus me-1"></i> Đặt lịch khám
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="patient-card">
+            <div class="table-responsive">
+                <table class="patient-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Mã phiếu</th>
+                            <th>Ngày đăng ký</th>
+                            <th>Hình thức</th>
+                            <th>Trạng thái lịch</th>
+                            <th>Trạng thái khám</th>
+                            <th>Khoa / Phòng</th>
+                            <th>Bác sĩ</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold text-primary">#@item.MaPhieuDK</td>
+                                <td>@(item.NgayDangKy?.ToString("dd/MM/yyyy") ?? "—")</td>
+                                <td><span class="badge bg-secondary rounded-pill">@item.HinhThucDangKy</span></td>
+                                <td>
+                                    @if (item.TrangThai == "Chờ xử lý")
+                                    {
+                                        <span class="badge badge-waiting rounded-pill">Chờ xử lý</span>
+                                    }
+                                    else if (item.TrangThai == "Đã xác nhận")
+                                    {
+                                        <span class="badge badge-confirmed rounded-pill">Đã xác nhận</span>
+                                    }
+                                    else if (item.TrangThai == "Hủy")
+                                    {
+                                        <span class="badge badge-cancelled rounded-pill">Đã hủy</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary rounded-pill">@item.TrangThai</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.TrangThaiKham))
+                                    {
+                                        if (item.TrangThaiKham == "Đang khám")
+                                        {
+                                            <span class="badge badge-pending rounded-pill">Đang khám</span>
+                                        }
+                                        else if (item.TrangThaiKham == "Hoàn thành")
+                                        {
+                                            <span class="badge badge-done rounded-pill">Hoàn thành</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary rounded-pill">@item.TrangThaiKham</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="fw-semibold">@(string.IsNullOrEmpty(item.TenKhoa) ? "—" : item.TenKhoa)</div>
+                                    <div class="small text-muted">@(item.TenPhong ?? "")</div>
+                                </td>
+                                <td>@(string.IsNullOrEmpty(item.TenBacSi) ? "—" : item.TenBacSi)</td>
+                                <td>
+                                    @if (item.TrangThai == "Chờ xử lý")
+                                    {
+                                        <form method="post" action="@Url.Action("HuyLich", "BenhNhanPortal")"
+                                              onsubmit="return confirm('Bạn có chắc muốn hủy lịch khám #@item.MaPhieuDK không?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.MaPhieuDK" />
+                                            <button type="submit" class="btn btn-danger btn-sm rounded-pill">
+                                                <i class="bi bi-x-circle me-1"></i>Hủy
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

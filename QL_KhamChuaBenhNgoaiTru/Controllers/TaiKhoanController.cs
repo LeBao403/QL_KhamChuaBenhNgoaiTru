@@ -89,7 +89,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                     }
 
                     // Cuối cùng, điều hướng Bệnh nhân về trang Cổng Bệnh nhân
-                    return RedirectToAction("Index", "BenhNhan", new { area = "BenhNhan" });
+                    return RedirectToAction("LichKham", "BenhNhanPortal");
                 }
             }
 

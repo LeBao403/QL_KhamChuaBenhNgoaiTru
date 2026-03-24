@@ -1,0 +1,86 @@
+@{
+    ViewBag.Title = "Đặt lịch khám";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+    var phongKham = ViewBag.PhongKham as List<QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.PhongInfo>
+        ?? new List<QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.PhongInfo>();
+}
+
+<div class="page-hero">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <div class="hero-title"><i class="bi bi-calendar-plus-fill me-2"></i>Đặt lịch khám mới</div>
+                <div class="hero-subtitle">Đăng ký lịch hẹn khám bệnh nhanh chóng</div>
+            </div>
+            <a href="@Url.Action("LichKham", "BenhNhanPortal")" class="btn btn-light rounded-pill fw-bold">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="patient-card">
+                <div class="card-header">
+                    <h5 class="patient-section-title mb-0">
+                        <i class="bi bi-clipboard-plus me-2"></i>Thông tin đặt lịch
+                    </h5>
+                </div>
+                <div class="card-body patient-form">
+                    <div class="alert alert-info d-flex align-items-center gap-2 mb-4" style="border-radius:12px;">
+                        <i class="bi bi-info-circle-fill fs-5"></i>
+                        <span>Vui lòng điền đầy đủ thông tin bên dưới. Lịch hẹn sẽ được xác nhận trong vòng <strong>24 giờ</strong> làm việc.</span>
+                    </div>
+
+                    @using (Html.BeginForm("DatLichKham", "BenhNhanPortal", FormMethod.Post, new { @class = "row g-3" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="col-12">
+                            <label class="form-label">Ngày khám <span class="text-danger">*</span></label>
+                            <input type="date" name="ngayKham" class="form-control"
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Phòng khám / Khoa <span class="text-danger">*</span></label>
+                            <select name="maPhong" class="form-select" required>
+                                <option value="">-- Chọn phòng khám --</option>
+                                @foreach (var p in phongKham)
+                                {
+                                    <option value="@p.MaPhong">@p.TenKhoa - @p.TenPhong</option>
+                                }
+                            </select>
+                            @if (!phongKham.Any())
+                            {
+                                <div class="form-text text-danger">Chưa có phòng khám nào. Vui lòng liên hệ lễ tân.</div>
+                            }
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Lý do khám <span class="text-danger">*</span></label>
+                            <textarea name="lyDo" class="form-control" rows="4"
+                                      placeholder="Mô tả triệu chứng, lý do đến khám..." required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <div class="alert alert-warning mb-0" style="border-radius:12px;">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                Lịch hẹn chỉ được xác nhận khi nhân viên y tế kiểm tra và duyệt.
+                                Bạn có thể xem / hủy lịch đã đặt trong mục
+                                <a href="@Url.Action("LichKham", "BenhNhanPortal")" class="fw-bold">Lịch khám</a>.
+                            </div>
+                        </div>
+                        <div class="col-12 d-flex gap-3">
+                            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold"
+                                    @(phongKham.Any() ? "" : "disabled")>
+                                <i class="bi bi-calendar-check me-1"></i> Gửi yêu cầu đặt lịch
+                            </button>
+                            <a href="@Url.Action("Index", "BenhNhanPortal")" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
+                                Hủy
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

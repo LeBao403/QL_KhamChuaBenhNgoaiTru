@@ -1,0 +1,120 @@
+@model List<QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.LichSuKhamItem>
+@{
+    ViewBag.Title = "Lịch sử khám";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+}
+
+<div class="page-hero">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <div class="hero-title"><i class="bi bi-clock-history me-2"></i>Lịch sử khám bệnh</div>
+                <div class="hero-subtitle">
+                    @(Model != null ? Model.Count : 0) lần khám
+                </div>
+            </div>
+            <a href="@Url.Action("TrangThaiKham", "BenhNhanPortal")" class="btn btn-light rounded-pill fw-bold">
+                <i class="bi bi-activity me-1"></i> Trạng thái khám
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="patient-card">
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-clock-history"></i></div>
+                <div class="empty-state-title">Chưa có lịch sử khám</div>
+                <div class="empty-state-desc">Lịch sử khám sẽ hiển thị sau khi bạn hoàn tất lần khám đầu tiên.</div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-xl-4">
+                    <div class="patient-card h-100">
+                        <div class="card-header">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="fw-bold text-primary">#@item.MaPhieuKhamBenh</div>
+                                @if (item.TrangThai == "Hoàn thành")
+                                {
+                                    <span class="badge badge-done rounded-pill">Hoàn thành</span>
+                                }
+                                else if (item.TrangThai == "Đang khám")
+                                {
+                                    <span class="badge badge-pending rounded-pill">Đang khám</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary rounded-pill">@item.TrangThai</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <div style="width:36px;height:36px;border-radius:10px;background:#dbeafe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="bi bi-calendar3 text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <div class="small text-muted">Ngày khám</div>
+                                        <div class="fw-semibold" style="font-size:0.9rem;">@item.NgayKham.ToString("dd/MM/yyyy")</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <div style="width:36px;height:36px;border-radius:10px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                        <i class="bi bi-hospital text-success"></i>
+                                    </div>
+                                    <div>
+                                        <div class="small text-muted">Khoa / Phòng</div>
+                                        <div class="fw-semibold" style="font-size:0.9rem;">@(item.TenKhoa ?? "—")</div>
+                                        <div class="small text-muted">@(item.TenPhong ?? "")</div>
+                                    </div>
+                                </div>
+                                @if (!string.IsNullOrEmpty(item.TenBacSi))
+                                {
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <div style="width:36px;height:36px;border-radius:10px;background:#ede9fe;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                            <i class="bi bi-person-badge text-purple" style="color:#5b21b6;"></i>
+                                        </div>
+                                        <div>
+                                            <div class="small text-muted">Bác sĩ</div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;">BS. @item.TenBacSi</div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(item.LyDoDenKham))
+                            {
+                                <div class="mb-2">
+                                    <div class="small text-muted fw-semibold">Lý do đến khám</div>
+                                    <div class="small">@item.LyDoDenKham</div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(item.TrieuChung))
+                            {
+                                <div class="mb-2">
+                                    <div class="small text-muted fw-semibold">Triệu chứng</div>
+                                    <div class="small">@item.TrieuChung</div>
+                                </div>
+                            }
+                            @if (!string.IsNullOrEmpty(item.KetLuan))
+                            {
+                                <div class="alert alert-light border mb-0 py-2 px-3" style="border-radius:10px;">
+                                    <div class="small text-muted fw-semibold">Kết luận</div>
+                                    <div class="small fw-semibold">@item.KetLuan</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
