@@ -1,0 +1,188 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.BenhNhanManageViewModel
+@{
+    ViewBag.Title = "Thêm bệnh nhân mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<style>
+    .profile-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #dee2e6;
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        color: #0d6efd;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+        .section-title i {
+            margin-right: 8px;
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .optional-section {
+        background-color: #f8fbff;
+        border: 1px dashed #0d6efd;
+        border-radius: 10px;
+        padding: 20px;
+        display: none;
+    }
+
+    .text-danger {
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+</style>
+
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-dark mb-0">Thêm Bệnh Nhân Mới</h4>
+        <span class="badge bg-info text-dark fs-6">Mã BN dự kiến: @Model.BenhNhan.MaBN</span>
+    </div>
+
+    @using (Html.BeginForm("Create", "BenhNhan", FormMethod.Post, new { @class = "needs-validation" }))
+    {
+        @Html.AntiForgeryToken()
+
+        @* BOX THÔNG BÁO LỖI: Chỉ hiện khi thực sự có lỗi *@
+        if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger shadow-sm border-start border-4 border-danger mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Vui lòng kiểm tra lại các thông tin sau:</strong>
+                <div class="mt-2">
+                    @Html.ValidationSummary(false, "")
+                </div>
+            </div>
+        }
+
+        @Html.HiddenFor(m => m.BenhNhan.MaBN)
+
+        <h4 class="section-title"><i class="bi bi-person-plus-fill"></i> 1. Thông tin hành chính (Bắt buộc)</h4>
+        <div class="profile-card">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Họ tên bệnh nhân <span class="text-danger">*</span></label>
+                    @Html.EditorFor(m => m.BenhNhan.HoTen, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: Nguyễn Văn A" } })
+                    @Html.ValidationMessageFor(m => m.BenhNhan.HoTen, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Ngày sinh <span class="text-danger">*</span></label>
+                    @Html.EditorFor(m => m.BenhNhan.NgaySinh, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                    @Html.ValidationMessageFor(m => m.BenhNhan.NgaySinh, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Giới tính <span class="text-danger">*</span></label>
+                    @Html.DropDownListFor(m => m.BenhNhan.GioiTinh, new SelectList(new[] { "Nam", "Nữ", "Khác" }), "-- Chọn --", new { @class = "form-select" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                    @Html.EditorFor(m => m.BenhNhan.SDT, new { htmlAttributes = new { @class = "form-control", id = "bn_sdt", placeholder = "10 chữ số..." } })
+                    @Html.ValidationMessageFor(m => m.BenhNhan.SDT, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Số CCCD</label>
+                    @Html.EditorFor(m => m.BenhNhan.CCCD, new { htmlAttributes = new { @class = "form-control", placeholder = "9 hoặc 12 số" } })
+                    @Html.ValidationMessageFor(m => m.BenhNhan.CCCD, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Email</label>
+                    @Html.EditorFor(m => m.BenhNhan.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "example@gmail.com" } })
+                    @Html.ValidationMessageFor(m => m.BenhNhan.Email, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Địa chỉ hiện tại <span class="text-danger">*</span></label>
+                    @Html.TextAreaFor(m => m.BenhNhan.DiaChi, new { @class = "form-control", @rows = 2, placeholder = "Số nhà, tên đường, xã/phường..." })
+                    @Html.ValidationMessageFor(m => m.BenhNhan.DiaChi, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center mb-3">
+            <h4 class="section-title mb-0"><i class="bi bi-shield-check"></i> 2. Chế độ Bảo hiểm Y tế</h4>
+            <div class="form-check form-switch ms-3">
+                @Html.CheckBoxFor(m => m.BenhNhan.BHYT, new { @class = "form-check-input", id = "switchBHYT" })
+                <label class="form-check-label text-muted" for="switchBHYT">Bệnh nhân có thẻ BHYT</label>
+            </div>
+        </div>
+        <div class="profile-card optional-section" id="areaBHYT">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Số thẻ BHYT</label>
+                    @Html.EditorFor(m => m.BenhNhan.SoTheBHYT, new { htmlAttributes = new { @class = "form-control", placeholder = "Mã số thẻ BHYT" } })
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Hạn sử dụng</label>
+                    @Html.EditorFor(m => m.BenhNhan.HanSuDungBHYT, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Tuyến khám</label>
+                    @Html.DropDownListFor(m => m.BenhNhan.TuyenKham, new SelectList(new[] { "Đúng tuyến", "Trái tuyến" }), new { @class = "form-select" })
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Mức hưởng (%)</label>
+                    @Html.EditorFor(m => m.BenhNhan.MucHuongBHYT, new { htmlAttributes = new { @class = "form-control", @type = "number", min = "0", max = "100" } })
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center mb-3">
+            <h4 class="section-title mb-0"><i class="bi bi-person-lock"></i> 3. Tài khoản hệ thống</h4>
+            <div class="form-check form-switch ms-3">
+                <input type="checkbox" class="form-check-input" id="switchTK" name="capTaiKhoan" value="true">
+                <label class="form-check-label text-muted" for="switchTK">Cấp tài khoản truy cập</label>
+            </div>
+        </div>
+        <div class="profile-card optional-section" id="areaTK">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Tên đăng nhập (Username)</label>
+                    @Html.TextBoxFor(m => m.TaiKhoan.Username, new { @class = "form-control bg-light", @readonly = "readonly", id = "tk_user", placeholder = "Sẽ lấy theo SĐT" })
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Mật khẩu khởi tạo</label>
+                    @Html.PasswordFor(m => m.TaiKhoan.PasswordHash, new { @class = "form-control", id = "tk_pass", placeholder = "Nhập mật khẩu..." })
+                    @Html.ValidationMessageFor(m => m.TaiKhoan.PasswordHash, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2 mb-5">
+            <a href="@Url.Action("Index", "BenhNhan")" class="btn btn-outline-secondary px-4 shadow-sm">Hủy</a>
+            <button type="submit" class="btn btn-primary px-5 shadow border-0">
+                <i class="bi bi-check-circle me-1"></i> Lưu hồ sơ bệnh nhân
+            </button>
+        </div>
+    }
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const swBhyt = document.getElementById('switchBHYT');
+        const swTk = document.getElementById('switchTK');
+        const areaBhyt = document.getElementById('areaBHYT');
+        const areaTk = document.getElementById('areaTK');
+
+        // Cập nhật trạng thái hiển thị ban đầu dựa trên Model (phòng hờ khi reload do lỗi validate)
+        if (swBhyt.checked) areaBhyt.style.display = 'block';
+        if (swTk.checked) areaTk.style.display = 'block';
+
+        swBhyt.addEventListener('change', () => { areaBhyt.style.display = swBhyt.checked ? 'block' : 'none'; });
+        swTk.addEventListener('change', () => { areaTk.style.display = swTk.checked ? 'block' : 'none'; });
+
+        document.getElementById('bn_sdt').addEventListener('input', function () {
+            document.getElementById('tk_user').value = this.value;
+        });
+    });
+</script>
