@@ -13,10 +13,11 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
     {
         private string connectStr = ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString;
 
-        // Hàm phát sinh Mã Bệnh Nhân (VD: BN2603001)
+        // Hàm phát sinh Mã Bệnh Nhân theo chuẩn: KH + 4 số (Ví dụ: KH0001, KH0011)
         public string GenerateMaBN(SqlConnection con, SqlTransaction trans)
         {
-            string prefix = "BN" + DateTime.Now.ToString("yyMM");
+            string prefix = "KH";
+            // Tìm mã lớn nhất bắt đầu bằng chữ "KH"
             string sql = "SELECT TOP 1 MaBN FROM BENHNHAN WHERE MaBN LIKE @Prefix ORDER BY MaBN DESC";
             SqlCommand cmd = new SqlCommand(sql, con, trans);
             cmd.Parameters.AddWithValue("@Prefix", prefix + "%");
@@ -24,10 +25,16 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             object result = cmd.ExecuteScalar();
             if (result != null)
             {
-                int nextNum = int.Parse(result.ToString().Substring(6)) + 1;
-                return prefix + nextNum.ToString("D3"); // BN2603002...
+                // Giả sử result là "KH0010"
+                // Cắt bỏ 2 ký tự đầu ("KH"), lấy phần số ("0010"), ép kiểu Int rồi cộng 1
+                int nextNum = int.Parse(result.ToString().Substring(2)) + 1;
+
+                // Trả về "KH" ghép với số mới định dạng 4 chữ số (D4)
+                return prefix + nextNum.ToString("D4");
             }
-            return prefix + "001"; // BN2603001
+
+            // Nếu trong Database chưa có ai thì trả về mã đầu tiên
+            return prefix + "0001";
         }
 
         // HÀM CORE: Xử lý Quét thẻ -> Lưu Bệnh nhân -> Tự động chia Quầy -> Tạo Phiếu Đăng Ký
@@ -156,13 +163,14 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             insertCmd.ExecuteNonQuery();
                         }
 
-                        // BƯỚC 2: TÌM QUẦY TIẾP TÂN VẮNG NHẤT (MaLoaiPhong = 1)
+                        // BƯỚC 2: TÌM QUẦY TIẾP TÂN VẮNG NHẤT (Chỉ đếm lượng khách OFFLINE)
                         string sqlTimQuay = @"
                         SELECT TOP 1 p.MaPhong, p.TenPhong
                         FROM PHONG p
                         LEFT JOIN PHIEUDANGKY pdk ON p.MaPhong = pdk.MaPhong 
                             AND CAST(pdk.NgayDangKy AS DATE) = CAST(GETDATE() AS DATE) 
                             AND pdk.TrangThai = N'Chờ xử lý'
+                            AND pdk.HinhThucDangKy = N'Offline' -- MỚI THÊM CHỖ NÀY ĐỂ TÁCH LUỒNG
                         WHERE p.MaLoaiPhong = 1 AND p.TrangThai = 1
                         GROUP BY p.MaPhong, p.TenPhong
                         ORDER BY COUNT(pdk.MaPhieuDK) ASC, p.TenPhong ASC";
@@ -285,9 +293,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return res;
         }
 
-        // 1. Lấy danh sách bệnh nhân đang chờ (Từ Kiosk)
-        // 1. Lấy danh sách bệnh nhân đang chờ (Lọc theo Quầy trực của nhân viên)
-        public DataTable GetDanhSachChoXyLy(int maPhongTiepTan)
+        // 1. Lấy danh sách OFFLINE (Từ Kiosk) - Lọc theo Quầy, sắp xếp theo STT
+        public DataTable GetDanhSachOffline(int maPhongTiepTan)
         {
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
@@ -298,9 +305,32 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN
             WHERE pdk.TrangThai = N'Chờ xử lý' 
               AND pdk.MaPhong = @MaPhong
+              AND pdk.HinhThucDangKy = N'Offline'
               AND CAST(pdk.NgayDangKy AS DATE) = CAST(GETDATE() AS DATE)
             ORDER BY pdk.STT ASC";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@MaPhong", maPhongTiepTan);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+            }
+            return dt;
+        }
 
+        // 2. Lấy danh sách ONLINE (Từ Web) - Lọc theo Quầy, có kèm Lý do
+        public DataTable GetDanhSachOnline(int maPhongTiepTan)
+        {
+            DataTable dt = new DataTable();
+            using (SqlConnection con = new SqlConnection(connectStr))
+            {
+                string sql = @"
+            SELECT pdk.MaPhieuDK, pdk.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, pdk.LyDo 
+            FROM PHIEUDANGKY pdk
+            JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN
+            WHERE pdk.TrangThai = N'Chờ xử lý' 
+              AND pdk.MaPhong = @MaPhong
+              AND pdk.HinhThucDangKy = N'Online'
+              AND CAST(pdk.NgayDangKy AS DATE) = CAST(GETDATE() AS DATE)
+            ORDER BY pdk.MaPhieuDK ASC";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@MaPhong", maPhongTiepTan);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -345,6 +375,20 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 da.Fill(dt);
             }
             return dt;
+        }
+
+        // Thêm hàm này vào TiepTanDB.cs
+        public string GetTenPhong(int maPhong)
+        {
+            using (SqlConnection con = new SqlConnection(connectStr))
+            {
+                con.Open();
+                string sql = "SELECT TenPhong FROM PHONG WHERE MaPhong = @MaPhong";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@MaPhong", maPhong);
+                object result = cmd.ExecuteScalar();
+                return result != null ? result.ToString() : "Quầy không xác định";
+            }
         }
     }
 }

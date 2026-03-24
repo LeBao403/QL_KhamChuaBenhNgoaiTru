@@ -120,18 +120,49 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        public int DatLichKham(string maBN, DateTime ngayKham)
+        public int DatLichKham(string maBN, DateTime ngayKham, string maDV, string lyDo)
         {
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
                 conn.Open();
-                string sql = @"
-                    INSERT INTO PHIEUDANGKY (MaBN, NgayDangKy, HinhThucDangKy, TrangThai)
-                    OUTPUT INSERTED.MaPhieuDK
-                    VALUES (@MaBN, @NgayKham, N'Online', N'Chờ xử lý')";
-                SqlCommand cmd = new SqlCommand(sql, conn);
+
+                // 1. Lấy tên Dịch vụ để ghép vào Lý do 
+                string sqlTenDV = "SELECT TenDV FROM DICHVU WHERE MaDV = @MaDV";
+                SqlCommand cmdDV = new SqlCommand(sqlTenDV, conn);
+                cmdDV.Parameters.AddWithValue("@MaDV", maDV);
+                var tenDV = cmdDV.ExecuteScalar()?.ToString() ?? "Khám bệnh";
+
+                // Ghi rõ Dịch vụ và Triệu chứng
+                string lyDoGop = $"Dịch vụ: {tenDV} | Triệu chứng: {lyDo}";
+
+                // 2. Tìm QUẦY TIẾP TÂN vắng nhất cho ngày khám đó (Chỉ đếm lượng khách ONLINE)
+                string sqlTimQuay = @"
+            SELECT TOP 1 p.MaPhong
+            FROM PHONG p
+            LEFT JOIN PHIEUDANGKY pdk ON p.MaPhong = pdk.MaPhong 
+                AND CAST(pdk.NgayDangKy AS DATE) = @NgayKham
+                AND pdk.HinhThucDangKy = N'Online' -- MỚI THÊM CHỖ NÀY ĐỂ TÁCH LUỒNG
+            WHERE p.MaLoaiPhong = 1 AND p.TrangThai = 1
+            GROUP BY p.MaPhong, p.TenPhong
+            ORDER BY COUNT(pdk.MaPhieuDK) ASC, p.TenPhong ASC";
+
+                SqlCommand cmdQuay = new SqlCommand(sqlTimQuay, conn);
+                cmdQuay.Parameters.AddWithValue("@NgayKham", ngayKham);
+                var objQuay = cmdQuay.ExecuteScalar();
+                int maQuayTiepTan = objQuay != null ? Convert.ToInt32(objQuay) : 1;
+
+                // 3. Tạo PHIEUDANGKY
+                string sqlInsert = @"
+            INSERT INTO PHIEUDANGKY (MaBN, NgayDangKy, STT, HinhThucDangKy, TrangThai, LyDo, MaPhong)
+            OUTPUT INSERTED.MaPhieuDK
+            VALUES (@MaBN, @NgayKham, NULL, N'Online', N'Chờ xử lý', @LyDo, @MaPhong)";
+
+                SqlCommand cmd = new SqlCommand(sqlInsert, conn);
                 cmd.Parameters.AddWithValue("@MaBN", maBN);
                 cmd.Parameters.AddWithValue("@NgayKham", ngayKham);
+                cmd.Parameters.AddWithValue("@LyDo", lyDoGop);
+                cmd.Parameters.AddWithValue("@MaPhong", maQuayTiepTan);
+
                 return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
@@ -489,6 +520,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             public DateTime? NgayDangKy { get; set; }
             public string HinhThucDangKy { get; set; }
             public string TrangThai { get; set; }
+            public string LyDo { get; set; }     
+            public string TenDV { get; set; }
             public int? MaPhieuKhamBenh { get; set; }
             public int? STT { get; set; }
             public string TrangThaiKham { get; set; }

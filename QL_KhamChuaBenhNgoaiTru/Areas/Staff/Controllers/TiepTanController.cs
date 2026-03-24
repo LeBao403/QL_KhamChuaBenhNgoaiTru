@@ -8,7 +8,7 @@ using QL_KhamChuaBenhNgoaiTru.Models;
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 {
     // 1. ĐỔI KẾ THỪA TỪ Controller SANG BaseStaffController
-    public class TiepTanController : Controller
+    public class TiepTanController : BaseStaffController
     {
         TiepTanDB db = new TiepTanDB();
 
@@ -32,57 +32,25 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             }
         }
 
-        public ActionResult Lobby()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public JsonResult XuLyQuetThe(QL_KhamChuaBenhNgoaiTru.Models.BenhNhan model, string loaiThe)
-        {
-            try
-            {
-                // Gọi hàm xử lý Transaction dưới DB
-                var result = db.DangKyKhamTuThe(model, loaiThe);
-
-                if (result.Success)
-                {
-                    return Json(new
-                    {
-                        success = true,
-                        stt = result.STT,
-                        maBN = result.MaBN,
-                        tenBN = result.TenBN,
-
-                        // === BỔ SUNG DÒNG NÀY ĐỂ TRẢ TÊN QUẦY RA ===
-                        tenPhong = result.TenPhong,
-
-                        message = "Đăng ký khám thành công!"
-                    });
-                }
-                return Json(new { success = false, message = "Lỗi Database: " + result.ErrorMessage });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = "Lỗi máy chủ: " + ex.Message });
-            }
-        }
-
 
         // GET: Staff/TiepTan/Index
         public ActionResult Index()
         {
-            // Lấy thông tin nhân viên đang đăng nhập từ Session
             var nv = Session["NhanVien"] as NhanVien;
 
-            // Nếu nhân viên có phân phòng (MaPhong != null), dùng phòng đó.
-            // Nếu chưa gán hoặc bị null, mặc định giả lập là Quầy 01 (ID: 1) để test.
-            int maQuayHienTai = (nv != null && nv.MaPhong != null) ? (int)nv.MaPhong : 1;
+            if (nv == null || nv.MaPhong == null || nv.MaPhong <= 0)
+            {
+                ViewBag.LoiPhanPhong = "Tài khoản của bạn chưa được phân công ngồi trực tại Quầy Tiếp Tân nào. Vui lòng liên hệ Admin để cập nhật thông tin!";
+                return View();
+            }
 
-            // Lấy danh sách chờ ĐÚNG CỦA QUẦY ĐÓ
-            ViewBag.DanhSachCho = db.GetDanhSachChoXyLy(maQuayHienTai);
+            int maQuayHienTai = nv.MaPhong.Value;
+            ViewBag.TenQuayHienTai = db.GetTenPhong(maQuayHienTai);
 
-            // Lấy danh sách dịch vụ ném vào Dropdown
+            // Gọi 2 hàm mới tách
+            ViewBag.DanhSachOffline = db.GetDanhSachOffline(maQuayHienTai);
+            ViewBag.DanhSachOnline = db.GetDanhSachOnline(maQuayHienTai);
+
             var dtDichVu = db.GetDanhSachDichVuKham();
             var listDV = new List<SelectListItem>();
             foreach (System.Data.DataRow row in dtDichVu.Rows)

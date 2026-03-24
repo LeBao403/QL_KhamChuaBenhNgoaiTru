@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -115,6 +115,7 @@
     <Compile Include="Areas\Admin\Controllers\PhongController.cs" />
     <Compile Include="Areas\Admin\Controllers\ThuocController.cs" />
     <Compile Include="Areas\Admin\Controllers\LoaiThuocController.cs" />
+    <Compile Include="Areas\Staff\Controllers\KioskController.cs" />
     <Compile Include="Controllers\BenhNhanPortalController.cs" />
     <Compile Include="Areas\NhanVienKho\Controllers\BaseNhanVienKhoController.cs" />
     <Compile Include="Areas\NhanVienKho\Controllers\DashboardController.cs" />
@@ -293,13 +294,13 @@
     <Content Include="Views\BenhNhanPortal\ThongTinCaNhan.cshtml" />
     <Content Include="Views\BenhNhanPortal\TrangThaiKham.cshtml" />
     <Content Include="Areas\Admin\Views\NhanVien\Edit_NV.cshtml" />
-    <Content Include="Areas\Staff\Views\TiepTan\Lobby.cshtml" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
     <Content Include="Scripts\bootstrap.esm.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Areas\Staff\Views\Kiosk\Lobby.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />

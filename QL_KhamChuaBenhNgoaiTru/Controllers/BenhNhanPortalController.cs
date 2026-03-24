@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
 using QL_KhamChuaBenhNgoaiTru.Models;
@@ -10,6 +11,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
     public class BenhNhanPortalController : Controller
     {
         private readonly BenhNhanPortalDB db = new BenhNhanPortalDB();
+        TiepTanDB TTdb = new TiepTanDB();
 
         // ==================== 0. TRANG CHỦ / DASHBOARD ====================
         public ActionResult Index()
@@ -78,13 +80,27 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             var bn = Session["BenhNhan"] as BenhNhanModel;
             if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
-            ViewBag.PhongKham = db.GetAllPhongKham();
+            // 1. Tận dụng hàm của Tiếp Tân để lấy danh sách Dịch Vụ
+            var tiepTanDb = new QL_KhamChuaBenhNgoaiTru.DBContext.TiepTanDB();
+            var dtDichVu = tiepTanDb.GetDanhSachDichVuKham();
+
+            var listDV = new List<SelectListItem>();
+            foreach (System.Data.DataRow row in dtDichVu.Rows)
+            {
+                listDV.Add(new SelectListItem
+                {
+                    Value = row["MaDV"].ToString(),
+                    Text = $"{row["TenDV"]} - {Convert.ToDecimal(row["GiaDichVu"]).ToString("N0")} VNĐ"
+                });
+            }
+            ViewBag.ListDichVu = listDV;
+
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DatLichKham(DateTime ngayKham, int maPhong, string lyDo)
+        public ActionResult DatLichKham(DateTime ngayKham, string maDV, string lyDo)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
             if (bn == null) return RedirectToAction("Login", "TaiKhoan");
@@ -97,7 +113,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
             try
             {
-                int maPhieu = db.DatLichKham(bn.MaBN, ngayKham);
+                int maPhieu = db.DatLichKham(bn.MaBN, ngayKham, maDV, lyDo);
+
                 TempData["Success"] = "Đặt lịch khám thành công! Mã phiếu: " + maPhieu;
             }
             catch (Exception ex)

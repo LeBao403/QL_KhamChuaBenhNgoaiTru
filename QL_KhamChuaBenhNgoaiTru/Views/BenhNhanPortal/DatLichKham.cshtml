@@ -1,8 +1,9 @@
 @{
     ViewBag.Title = "Đặt lịch khám";
     Layout = "~/Views/Shared/_Layout_Client.cshtml";
-    var phongKham = ViewBag.PhongKham as List<QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.PhongInfo>
-        ?? new List<QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.PhongInfo>();
+
+    // Lấy danh sách dịch vụ từ ViewBag
+    var listDichVu = ViewBag.ListDichVu as IEnumerable<SelectListItem> ?? new List<SelectListItem>();
 }
 
 <div class="page-hero">
@@ -29,6 +30,14 @@
                     </h5>
                 </div>
                 <div class="card-body patient-form">
+
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger fw-bold">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                        </div>
+                    }
+
                     <div class="alert alert-info d-flex align-items-center gap-2 mb-4" style="border-radius:12px;">
                         <i class="bi bi-info-circle-fill fs-5"></i>
                         <span>Vui lòng điền đầy đủ thông tin bên dưới. Lịch hẹn sẽ được xác nhận trong vòng <strong>24 giờ</strong> làm việc.</span>
@@ -38,29 +47,32 @@
                     {
                         @Html.AntiForgeryToken()
                         <div class="col-12">
-                            <label class="form-label">Ngày khám <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">Ngày khám <span class="text-danger">*</span></label>
                             <input type="date" name="ngayKham" class="form-control"
                                    min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
                         </div>
+
                         <div class="col-12">
-                            <label class="form-label">Phòng khám / Khoa <span class="text-danger">*</span></label>
-                            <select name="maPhong" class="form-select" required>
-                                <option value="">-- Chọn phòng khám --</option>
-                                @foreach (var p in phongKham)
+                            <label class="form-label fw-bold">Dịch vụ khám <span class="text-danger">*</span></label>
+                            <select name="maDV" class="form-select" required>
+                                <option value="">-- Chọn dịch vụ khám --</option>
+                                @foreach (var dv in listDichVu)
                                 {
-                                    <option value="@p.MaPhong">@p.TenKhoa - @p.TenPhong</option>
+                                    <option value="@dv.Value">@dv.Text</option>
                                 }
                             </select>
-                            @if (!phongKham.Any())
+                            @if (!listDichVu.Any())
                             {
-                                <div class="form-text text-danger">Chưa có phòng khám nào. Vui lòng liên hệ lễ tân.</div>
+                                <div class="form-text text-danger">Chưa có dịch vụ khám nào. Vui lòng liên hệ lễ tân.</div>
                             }
                         </div>
+
                         <div class="col-12">
-                            <label class="form-label">Lý do khám <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">Lý do khám <span class="text-danger">*</span></label>
                             <textarea name="lyDo" class="form-control" rows="4"
                                       placeholder="Mô tả triệu chứng, lý do đến khám..." required></textarea>
                         </div>
+
                         <div class="col-12">
                             <div class="alert alert-warning mb-0" style="border-radius:12px;">
                                 <i class="bi bi-exclamation-triangle-fill me-1"></i>
@@ -69,9 +81,10 @@
                                 <a href="@Url.Action("LichKham", "BenhNhanPortal")" class="fw-bold">Lịch khám</a>.
                             </div>
                         </div>
+
                         <div class="col-12 d-flex gap-3">
                             <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold"
-                                    @(phongKham.Any() ? "" : "disabled")>
+                                    @(listDichVu.Any() ? "" : "disabled")>
                                 <i class="bi bi-calendar-check me-1"></i> Gửi yêu cầu đặt lịch
                             </button>
                             <a href="@Url.Action("Index", "BenhNhanPortal")" class="btn btn-outline-secondary rounded-pill px-4 fw-bold">
@@ -84,3 +97,29 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            // Kiểm tra xem có thông báo Success từ Controller gửi sang không
+            var successMessage = '@Html.Raw(TempData["Success"])';
+            if (successMessage && successMessage.trim() !== '') {
+                // Nổ Popup thành công
+                Swal.fire({
+                    title: 'ĐĂNG KÝ THÀNH CÔNG!',
+                    text: successMessage,
+                    icon: 'success',
+                    confirmButtonText: '<i class="bi bi-calendar-check me-1"></i> Xem lịch khám',
+                    confirmButtonColor: '#0d6efd', // Màu xanh Primary
+                    allowOutsideClick: false // Bắt buộc phải bấm nút mới thoát
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Chuyển hướng người dùng sang trang Lịch Khám
+                        window.location.href = '@Url.Action("LichKham", "BenhNhanPortal")';
+                    }
+                });
+            }
+        });
+    </script>
+}

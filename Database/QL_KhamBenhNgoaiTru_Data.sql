@@ -821,7 +821,10 @@ VALUES
 ('NV045', N'Trần Quốc Việt', '1993-09-30', N'Nam', '0903222555', 'viet.tq@vnvc.vn', N'110 Nguyễn Văn Linh, Đà Nẵng', 8, 0, 45, 1, NULL, NULL);
 GO
 
-
+-- Ví dụ chia đều
+UPDATE NHANVIEN SET MaPhong = 1 WHERE MaNV = 'NV027';
+UPDATE NHANVIEN SET MaPhong = 2 WHERE MaNV = 'NV028';
+UPDATE NHANVIEN SET MaPhong = 3 WHERE MaNV = 'NV029';
 
 INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive)
 VALUES
@@ -1025,3 +1028,26 @@ VALUES
 (3, 'T003', 'LO018', '2026-11-01', '2025-02-10', 2300, 120),
 (1, 'T004', 'LO019', '2026-07-01', '2025-03-15', 67000, 80),
 (2, 'T005', 'LO020', '2026-05-01', '2025-02-20', 1300, 300);
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT 
+    p.TenPhong,
+    nv.HoTen,
+    tk.Username,
+    tk.PasswordHash,
+	p.MaPhong
+FROM PHONG p
+LEFT JOIN NHANVIEN nv ON nv.MaPhong = p.MaPhong
+LEFT JOIN TAIKHOAN tk ON nv.MaTK = tk.MaTK
+WHERE p.TenPhong LIKE N'Quầy Tiếp Tân%' and MaChucVu = 8
+ORDER BY p.TenPhong; 

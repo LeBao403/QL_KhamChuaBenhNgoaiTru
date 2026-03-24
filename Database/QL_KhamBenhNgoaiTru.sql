@@ -22,6 +22,7 @@ CREATE TABLE BENHNHAN (
     HanSuDungBHYT DATE,
     TuyenKham NVARCHAR(50) CHECK (TuyenKham IN (N'Đúng tuyến', N'Trái tuyến')),
     MucHuongBHYT INT, -- Lưu phần trăm hưởng (VD: 80, 95, 100)
+	AvatarPath NVARCHAR(500) NULL,
     MaTK INT
 );
 
@@ -228,6 +229,7 @@ CREATE TABLE PHIEUDANGKY (
 	STT INT,
     HinhThucDangKy NVARCHAR(20) CHECK (HinhThucDangKy IN (N'Online', N'Offline')),
     TrangThai NVARCHAR(20) CHECK (TrangThai IN (N'Chờ xử lý', N'Đã xác nhận', N'Hủy')),
+	LyDo NVARCHAR(500),
 	MaPhong INT
 );
 

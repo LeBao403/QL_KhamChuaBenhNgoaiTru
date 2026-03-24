@@ -76,6 +76,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     nv.MaNV = rd["MaNV"].ToString();
                     nv.HoTen = rd["HoTen"].ToString();
                     nv.MaChucVu = rd["MaChucVu"] != DBNull.Value ? Convert.ToInt32(rd["MaChucVu"]) : 0;
+                    nv.MaPhong = rd["MaPhong"] != DBNull.Value ? Convert.ToInt32(rd["MaPhong"]) : (int?)null;
+                    nv.MaKhoa = rd["MaKhoa"] != DBNull.Value ? Convert.ToInt32(rd["MaKhoa"]) : (int?)null;
                 }
             }
             return nv;
