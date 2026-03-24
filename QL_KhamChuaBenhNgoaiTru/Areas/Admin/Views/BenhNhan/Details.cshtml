@@ -1,0 +1,245 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.BenhNhanManageViewModel
+
+@{
+    ViewBag.Title = "Chi tiết bệnh nhân";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .card-custom {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 24px;
+        background-color: #fff;
+        height: 100%; /* Giữ đồng nhất chiều cao nhưng cho phép nội dung co giãn */
+    }
+
+    .card-header-custom {
+        background-color: #fff;
+        border-bottom: 1px solid #f0f0f0;
+        padding: 16px 24px;
+        border-radius: 12px 12px 0 0;
+        font-weight: 600;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .info-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        color: #212529;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 12px;
+        word-break: break-all;
+    }
+
+    .not-available {
+        font-style: italic;
+        color: #adb5bd;
+    }
+
+    .avatar-wrapper {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        color: #0d6efd;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin-right: 15px;
+    }
+
+    .table-custom th {
+        background-color: #f8f9fa;
+        color: #495057;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 text-dark fw-bold">Hồ sơ Bệnh nhân</h4>
+        <div>
+            <a href="@Url.Action("Index", "BenhNhan", new { Area = "Admin" })" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+            <a href="@Url.Action("Edit_KH", "BenhNhan", new { area = "Admin", id = Model.BenhNhan.MaBN.Trim() })" class="btn btn-primary">
+                <i class="bi bi-pencil-square"></i> Chỉnh sửa
+            </a>
+        </div>
+    </div>
+
+    <div class="row align-items-stretch">
+        <div class="col-lg-8 mb-4">
+            <div class="card-custom shadow-sm">
+                <div class="card-header-custom">
+                    <span><i class="bi bi-person-badge me-2"></i> Thông tin hành chính</span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                        <div class="avatar-wrapper shadow-sm"><i class="bi bi-person-fill"></i></div>
+                        <div>
+                            <h4 class="mb-0 fw-bold text-dark">@Model.BenhNhan.HoTen</h4>
+                            <span class="badge bg-primary">Mã BN: @Model.BenhNhan.MaBN</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="info-label">Ngày sinh</div>
+                            <div class="info-value">@Model.BenhNhan.NgaySinh.ToString("dd/MM/yyyy")</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info-label">Giới tính</div>
+                            <div class="info-value">@Model.BenhNhan.GioiTinh</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info-label">CCCD</div>
+                            <div class="info-value">@(string.IsNullOrWhiteSpace(Model.BenhNhan.CCCD) ? Html.Raw("<span class='not-available'>Chưa có</span>") : Html.Raw(Model.BenhNhan.CCCD))</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info-label">Số điện thoại</div>
+                            <div class="info-value">@(string.IsNullOrWhiteSpace(Model.BenhNhan.SDT) ? Html.Raw("<span class='not-available'>Chưa có</span>") : Html.Raw(Model.BenhNhan.SDT))</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info-label">Email</div>
+                            <div class="info-value">@(string.IsNullOrWhiteSpace(Model.BenhNhan.Email) ? Html.Raw("<span class='not-available'>Chưa có</span>") : Html.Raw(Model.BenhNhan.Email))</div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info-label">Địa chỉ</div>
+                            <div class="info-value">@Model.BenhNhan.DiaChi</div>
+                        </div>
+                    </div>
+
+                    <h6 class="mt-2 text-primary fw-bold"><i class="bi bi-shield-plus me-1"></i> Bảo hiểm Y tế</h6>
+                    <div class="p-3 bg-light rounded border">
+                        @if (Model.BenhNhan.BHYT)
+                        {
+                            <div class="row mb-0">
+                                <div class="col-sm-4">
+                                    <div class="info-label">Số thẻ BHYT</div>
+                                    <div class="info-value mb-0 text-success">@Model.BenhNhan.SoTheBHYT</div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="info-label">Hạn dùng</div>
+                                    <div class="info-value mb-0">@(Model.BenhNhan.HanSuDungBHYT?.ToString("dd/MM/yyyy") ?? "N/A")</div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="info-label">Tuyến/Mức hưởng</div>
+                                    <div class="info-value mb-0">
+                                        <span class="badge bg-info text-dark">@Model.BenhNhan.TuyenKham</span>
+                                        <span class="badge bg-success">@Model.BenhNhan.MucHuongBHYT%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted small">Không sử dụng Bảo hiểm Y tế</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card-custom shadow-sm">
+                <div class="card-header-custom">
+                    <span><i class="bi bi-key-fill me-2"></i> Tài khoản</span>
+                    @if (Model.TaiKhoan != null && !string.IsNullOrEmpty(Model.TaiKhoan.Username))
+                    {
+                        <form action="@Url.Action("ToggleAccountStatus", "BenhNhan")" method="post" onsubmit="return confirm('Xác nhận thay đổi trạng thái tài khoản?')">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="maTK" value="@Model.TaiKhoan.MaTK" />
+                            <input type="hidden" name="maBN" value="@Model.BenhNhan.MaBN" />
+                            <button type="submit" class="btn btn-sm @(Model.TaiKhoan.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                                <i class="bi @(Model.TaiKhoan.IsActive ? "bi-lock" : "bi-unlock")"></i>
+                                @(Model.TaiKhoan.IsActive ? "Khóa" : "Mở")
+                            </button>
+                        </form>
+                    }
+                </div>
+                <div class="card-body p-4">
+                    @if (Model.TaiKhoan != null && !string.IsNullOrEmpty(Model.TaiKhoan.Username))
+                    {
+                        <div class="mb-3">
+                            <div class="info-label">Tên đăng nhập</div>
+                            <div class="info-value">@Model.TaiKhoan.Username</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="info-label">Mật khẩu (Mã hóa)</div>
+                            <div class="info-value text-break" style="max-height: 60px; overflow-y: auto;">@Model.TaiKhoan.PasswordHash</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="info-label">Trạng thái</div>
+                            <div>
+                                @if (Model.TaiKhoan.IsActive)
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger"><i class="bi bi-lock"></i> Đã khóa</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="mb-0">
+                            <div class="info-label">Ngày cấp</div>
+                            <div class="info-value mb-0">@Model.TaiKhoan.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-shield-slash fs-1 text-light"></i>
+                            <p class="text-muted mt-2">Chưa cấp tài khoản</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-custom shadow-sm">
+        <div class="card-header-custom">
+            <span><i class="bi bi-clipboard2-pulse me-2"></i> Lịch sử y tế</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-custom mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Ngày ghi nhận</th>
+                            <th>Nội dung</th>
+                            <th>Chi tiết</th>
+                            <th>Cơ sở/Phòng</th>
+                            <th>Tình trạng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-5">
+                                <i class="bi bi-folder-x fs-2 d-block text-secondary"></i>
+                                Chưa có dữ liệu lịch sử y tế.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
