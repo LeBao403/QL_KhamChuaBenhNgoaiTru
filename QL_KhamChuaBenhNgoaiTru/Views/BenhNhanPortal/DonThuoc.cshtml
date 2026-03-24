@@ -1,0 +1,80 @@
+@model List<QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.DonThuocItem>
+@{
+    ViewBag.Title = "Đơn thuốc";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+}
+
+<div class="page-hero" style="background:linear-gradient(135deg,#991b1b 0%,#dc3545 100%);">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <div class="hero-title"><i class="bi bi-prescription2 me-2"></i>Danh sách đơn thuốc</div>
+                <div class="hero-subtitle">
+                    @(Model != null ? Model.Count : 0) đơn thuốc
+                    <span class="mx-2 text-white-50">|</span>
+                    Thuốc được kê sau mỗi lần khám
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="patient-card">
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-prescription2"></i></div>
+                <div class="empty-state-title">Chưa có đơn thuốc nào</div>
+                <div class="empty-state-desc">Đơn thuốc sẽ xuất hiện sau khi bác sĩ kê đơn cho bạn.</div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="patient-card h-100">
+                        <div class="card-header">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="fw-bold text-danger">#@item.MaDonThuoc</div>
+                                @if (item.TrangThai == "Chưa phát")
+                                {
+                                    <span class="badge badge-pending rounded-pill">Chưa phát</span>
+                                }
+                                else if (item.TrangThai == "Đã phát")
+                                {
+                                    <span class="badge badge-done rounded-pill">Đã phát</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary rounded-pill">@item.TrangThai</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-2">
+                                <div class="small text-muted fw-semibold">Ngày kê</div>
+                                <div class="fw-semibold">@item.NgayKe.ToString("dd/MM/yyyy")</div>
+                            </div>
+                            <div class="mb-2">
+                                <div class="small text-muted fw-semibold">Ngày khám</div>
+                                <div class="fw-semibold">@item.NgayKham.ToString("dd/MM/yyyy")</div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="small text-muted fw-semibold">Bác sĩ kê</div>
+                                <div class="fw-semibold">@(string.IsNullOrEmpty(item.TenBacSi) ? "—" : "BS. " + item.TenBacSi)</div>
+                            </div>
+                            <a href="@Url.Action("ChiTietDonThuoc", "BenhNhanPortal", new { id = item.MaDonThuoc })"
+                               class="btn btn-outline-danger rounded-pill btn-sm w-100">
+                                <i class="bi bi-eye me-1"></i>Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

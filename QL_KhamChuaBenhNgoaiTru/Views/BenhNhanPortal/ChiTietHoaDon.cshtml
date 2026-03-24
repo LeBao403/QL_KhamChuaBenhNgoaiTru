@@ -1,0 +1,109 @@
+@model QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.HoaDonChiTiet
+@{
+    ViewBag.Title = "Chi tiết hóa đơn";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+}
+
+<div class="page-hero" style="background:linear-gradient(135deg,#15803d 0%,#22c55e 100%);">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <div class="hero-title"><i class="bi bi-receipt-cutoff me-2"></i>Chi tiết hóa đơn</div>
+                <div class="hero-subtitle">Mã hóa đơn: #@(Model?.MaHD ?? 0)</div>
+            </div>
+            <div class="d-flex gap-2">
+                <button onclick="window.print()" class="btn btn-light rounded-pill fw-bold no-print">
+                    <i class="bi bi-printer me-1"></i>In hóa đơn
+                </button>
+                <a href="@Url.Action("HoaDon", "BenhNhanPortal")" class="btn btn-outline-light rounded-pill fw-bold">
+                    <i class="bi bi-arrow-left me-1"></i> Quay lại
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    @if (Model == null)
+    {
+        <div class="patient-card">
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-exclamation-triangle"></i></div>
+                <div class="empty-state-title">Không tìm thấy hóa đơn</div>
+                <div class="empty-state-desc">Hóa đơn này không tồn tại hoặc đã bị xóa.</div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-lg-5">
+                <div class="patient-card h-100">
+                    <div class="card-header">
+                        <h5 class="patient-section-title mb-0">
+                            <i class="bi bi-info-circle me-2"></i>Thông tin hóa đơn
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="profile-info-item">
+                            <span class="label">Mã hóa đơn</span>
+                            <span class="value text-success fw-bold">#@Model.MaHD</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <span class="label">Ngày thanh toán</span>
+                            <span class="value">@(Model.NgayThanhToan?.ToString("dd/MM/yyyy HH:mm") ?? "—")</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <span class="label">Hình thức</span>
+                            <span class="value">@(string.IsNullOrEmpty(Model.HinhThucThanhToan) ? "—" : Model.HinhThucThanhToan)</span>
+                        </div>
+                        <div class="profile-info-item">
+                            <span class="label">Trạng thái</span>
+                            @if (Model.TrangThaiThanhToan == "Đã thanh toán")
+                            {
+                                <span class="badge badge-done rounded-pill"><i class="bi bi-check-circle me-1"></i>Đã thanh toán</span>
+                            }
+                            else if (Model.TrangThaiThanhToan == "Chưa thanh toán")
+                            {
+                                <span class="badge badge-cancelled rounded-pill"><i class="bi bi-clock me-1"></i>Chưa thanh toán</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary rounded-pill">@Model.TrangThaiThanhToan</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="patient-card h-100">
+                    <div class="card-header">
+                        <h5 class="patient-section-title mb-0">
+                            <i class="bi bi-cash-stack me-2"></i>Chi tiết thanh toán
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="profile-info-item" style="padding: 1rem 0; border-bottom: 2px solid #e2e8f0;">
+                            <span class="label fs-5">Tổng tiền</span>
+                            <span class="value text-danger fs-4 fw-bold">@Model.TongTien.ToString("N0") đ</span>
+                        </div>
+                        @if (Model.TienBHYTChiTra > 0)
+                        {
+                            <div class="profile-info-item">
+                                <span class="label">BHYT chi trả</span>
+                                <span class="value text-success fw-bold">-@Model.TienBHYTChiTra.ToString("N0") đ</span>
+                            </div>
+                        }
+                        @if (Model.TienBenhNhanTra > 0)
+                        {
+                            <div class="profile-info-item">
+                                <span class="label">Bệnh nhân trả</span>
+                                <span class="value fw-bold">@Model.TienBenhNhanTra.ToString("N0") đ</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
