@@ -1,0 +1,136 @@
+@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers.LoaiThuocViewModel>
+
+@{
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int totalPages = ViewBag.TotalPages ?? 1;
+    int totalCount = ViewBag.TotalCount ?? 0;
+}
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped align-middle bg-white">
+        <thead class="table-primary">
+            <tr>
+                <th class="text-center" style="width: 120px;">Mã loại</th>
+                <th>Tên loại thuốc</th>
+                <th>Mô tả</th>
+                <th class="text-center" style="width: 140px;">Số thuốc</th>
+                <th class="text-center" style="width: 150px;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model == null || !Model.Any())
+            {
+                <tr>
+                    <td colspan="5" class="text-center py-5">
+                        <i class="bi bi-inbox fs-1 d-block mb-2 text-muted opacity-25"></i>
+                        <p class="text-muted mb-0">Không có loại thuốc nào phù hợp.</p>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="text-center">
+                            <span class="badge bg-primary bg-opacity-10 text-primary fw-semibold px-2 py-1">
+                                @item.MaDanhMuc
+                            </span>
+                        </td>
+                        <td>
+                            <strong>@item.TenDanhMuc</strong>
+                            @if (!string.IsNullOrWhiteSpace(item.MoTa))
+                            {
+                                <br />
+                                <small class="text-muted">@item.MoTa</small>
+                            }
+                        </td>
+                        <td>
+                            @(string.IsNullOrWhiteSpace(item.MoTa) ? "—" : item.MoTa)
+                        </td>
+                        <td class="text-center">
+                            @if (item.SoLuongThuoc > 0)
+                            {
+                                <span class="badge bg-info bg-opacity-10 text-info border border-info px-2 py-1">
+                                    <i class="bi bi-capsule me-1"></i> @item.SoLuongThuoc thuốc
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary px-2 py-1">
+                                    <i class="bi bi-dash-circle me-1"></i> 0 thuốc
+                                </span>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <a href="@Url.Action("Details", "LoaiThuoc", new { area = "Admin", id = item.MaDanhMuc })"
+                               class="btn btn-sm btn-outline-info" title="Chi tiết">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="@Url.Action("Edit", "LoaiThuoc", new { area = "Admin", id = item.MaDanhMuc })"
+                               class="btn btn-sm btn-outline-warning" title="Chỉnh sửa">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <form method="post" action="@Url.Action("Delete", "LoaiThuoc", new { area = "Admin" })"
+                                  style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.MaDanhMuc" />
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-delete-loai" title="Xóa"
+                                        @(item.SoLuongThuoc > 0 ? "disabled" : "")>
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@* ======= PHÂN TRANG ======= *@
+@if (totalPages > 1)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            @{
+                int startPage = Math.Max(1, currentPage - 2);
+                int endPage = Math.Min(totalPages, currentPage + 2);
+            }
+            @if (currentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="#" data-page="@(currentPage - 1)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+            }
+            @for (int i = startPage; i <= endPage; i++)
+            {
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <a class="page-link" href="#" data-page="@i">@i</a>
+                </li>
+            }
+            @if (currentPage < totalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="#" data-page="@(currentPage + 1)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                </li>
+            }
+        </ul>
+    </nav>
+}

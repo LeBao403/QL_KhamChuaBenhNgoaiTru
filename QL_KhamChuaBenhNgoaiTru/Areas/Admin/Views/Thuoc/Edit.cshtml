@@ -66,17 +66,17 @@
         @Html.HiddenFor(m => m.Thuoc.MaThuoc)
 
         @* ===== THÔNG TIN CƠ BẢN ===== *@
-        <h4 class="section-title"><i class="bi bi-capsule"></i> 1. Thông tin thuốc</h4>
+        <h4 class="section-title"><i class="bi bi-capsule"></i> 1. Thông tin thuốc <span class="text-danger">*</span></h4>
         <div class="profile-card">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label">Tên thuốc <span class="text-danger">*</span></label>
-                    @Html.TextBoxFor(m => m.Thuoc.TenThuoc, new { @class = "form-control" })
+                    @Html.TextBoxFor(m => m.Thuoc.TenThuoc, new { @class = "form-control", required = "required" })
                     @Html.ValidationMessageFor(m => m.Thuoc.TenThuoc, "", new { @class = "text-danger" })
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Đơn vị cơ bản <span class="text-danger">*</span></label>
-                    @Html.TextBoxFor(m => m.Thuoc.DonViCoBan, new { @class = "form-control" })
+                    @Html.TextBoxFor(m => m.Thuoc.DonViCoBan, new { @class = "form-control", required = "required" })
                     @Html.ValidationMessageFor(m => m.Thuoc.DonViCoBan, "", new { @class = "text-danger" })
                 </div>
                 <div class="col-md-3">
@@ -84,8 +84,8 @@
                     @Html.TextBoxFor(m => m.Thuoc.QuyCach, new { @class = "form-control" })
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Loại thuốc</label>
-                    <select name="Thuoc.MaLoaiThuoc" class="form-select">
+                    <label class="form-label">Loại thuốc <span class="text-danger">*</span></label>
+                    <select name="Thuoc.MaLoaiThuoc" id="Thuoc_MaLoaiThuoc" class="form-select" required>
                         <option value="">-- Chọn loại thuốc --</option>
                         @if (dsLoaiThuoc != null)
                         {
@@ -98,14 +98,16 @@
                             }
                         }
                     </select>
+                    @Html.ValidationMessage("Thuoc.MaLoaiThuoc", "", new { @class = "text-danger" })
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Đường dùng</label>
-                    @Html.TextBoxFor(m => m.Thuoc.DuongDung, new { @class = "form-control" })
+                    <label class="form-label">Đường dùng <span class="text-danger">*</span></label>
+                    @Html.TextBoxFor(m => m.Thuoc.DuongDung, new { @class = "form-control", required = "required" })
+                    @Html.ValidationMessageFor(m => m.Thuoc.DuongDung, "", new { @class = "text-danger" })
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Nhà sản xuất</label>
-                    <select name="Thuoc.MaNSX" class="form-select">
+                    <label class="form-label">Nhà sản xuất <span class="text-danger">*</span></label>
+                    <select name="Thuoc.MaNSX" id="Thuoc_MaNSX" class="form-select" required>
                         <option value="">-- Chọn nhà sản xuất --</option>
                         @if (dsNSX != null)
                         {
@@ -115,16 +117,19 @@
                             }
                         }
                     </select>
+                    @Html.ValidationMessage("Thuoc.MaNSX", "", new { @class = "text-danger" })
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label">Giá bán (VNĐ)</label>
+                    <label class="form-label">Giá bán (VNĐ) <span class="text-danger">*</span></label>
                     @Html.TextBoxFor(m => m.Thuoc.GiaBan, new
                     {
                         @class = "form-control",
                         type = "number",
-                        min = "0",
+                        min = "1",
+                        required = "required",
                         @Value = Model.Thuoc.GiaBan.HasValue ? Model.Thuoc.GiaBan.Value.ToString("0") : ""
                     })
+                    @Html.ValidationMessageFor(m => m.Thuoc.GiaBan, "", new { @class = "text-danger" })
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Trạng thái</label>
@@ -285,6 +290,72 @@
         $('input[type="number"]').on('input', function () {
             if ($(this).val() < 0) {
                 $(this).val(0);
+            }
+        });
+
+        // Validation trước khi submit: kiểm tra hoạt chất trùng lặp + các trường bắt buộc
+        $('form.needs-validation').on('submit', function (e) {
+            var form = $(this)[0];
+
+            // 1. Validate hoạt chất trùng lặp
+            var selectedHoatChats = [];
+            $('#thanhPhanList').find('select').each(function () {
+                var val = $(this).val();
+                if (val && val.trim() !== '') {
+                    selectedHoatChats.push(val.trim());
+                }
+            });
+
+            if (selectedHoatChats.length > 0) {
+                var uniqueHoatChats = selectedHoatChats.filter(function (v, i, arr) {
+                    return arr.indexOf(v) === i;
+                });
+                if (uniqueHoatChats.length !== selectedHoatChats.length) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Hoạt chất trùng lặp!',
+                        text: 'Danh sách hoạt chất có giá trị trùng nhau. Vui lòng chọn các hoạt chất khác nhau.',
+                        confirmButtonColor: '#0d6efd'
+                    });
+                    return false;
+                }
+            }
+
+            // 2. Validate các trường bắt buộc
+            var hasError = false;
+            var firstErrorField = null;
+
+            $(this).find('[required]').each(function () {
+                if (!this.checkValidity()) {
+                    hasError = true;
+                    if (!firstErrorField) firstErrorField = this;
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).addClass('is-valid');
+                }
+            });
+
+            if (hasError) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (firstErrorField) {
+                    firstErrorField.focus();
+                }
+                return false;
+            }
+
+            form.classList.add('was-validated');
+        });
+
+        // Xóa class is-invalid khi user thay đổi giá trị
+        $('form.needs-validation').on('change', 'select[required], input[required]', function () {
+            if (this.checkValidity()) {
+                $(this).removeClass('is-invalid').addClass('is-valid');
+            } else {
+                $(this).removeClass('is-valid').addClass('is-invalid');
             }
         });
     });

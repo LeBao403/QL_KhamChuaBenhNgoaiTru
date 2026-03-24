@@ -102,12 +102,42 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             if (!string.IsNullOrWhiteSpace(model.Thuoc.TenThuoc) && db.TenThuocExists(model.Thuoc.TenThuoc))
                 ModelState.AddModelError("Thuoc.TenThuoc", "Tên thuốc này đã tồn tại trong hệ thống.");
 
-            // Validate bắt buộc
+            // Validate bắt buộc - thông tin cơ bản
             if (string.IsNullOrWhiteSpace(model.Thuoc.TenThuoc))
                 ModelState.AddModelError("Thuoc.TenThuoc", "Tên thuốc là bắt buộc.");
 
             if (string.IsNullOrWhiteSpace(model.Thuoc.DonViCoBan))
                 ModelState.AddModelError("Thuoc.DonViCoBan", "Đơn vị cơ bản là bắt buộc.");
+
+            if (string.IsNullOrWhiteSpace(model.Thuoc.MaLoaiThuoc))
+                ModelState.AddModelError("Thuoc.MaLoaiThuoc", "Loại thuốc là bắt buộc.");
+
+            if (string.IsNullOrWhiteSpace(model.Thuoc.DuongDung))
+                ModelState.AddModelError("Thuoc.DuongDung", "Đường dùng là bắt buộc.");
+
+            if (!model.Thuoc.GiaBan.HasValue || model.Thuoc.GiaBan <= 0)
+                ModelState.AddModelError("Thuoc.GiaBan", "Giá bán phải lớn hơn 0.");
+
+            if (!model.Thuoc.MaNSX.HasValue || model.Thuoc.MaNSX <= 0)
+                ModelState.AddModelError("Thuoc.MaNSX", "Nhà sản xuất là bắt buộc.");
+
+            // Validate hoạt chất không trùng lặp
+            var thanhPhansTemp = ThuocHelpers.ParseThanhPhansFromForm(Request.Form);
+            if (thanhPhansTemp.Count == 0)
+            {
+                ModelState.AddModelError("", "Phải có ít nhất 1 hoạt chất.");
+            }
+            else
+            {
+                var hoatChatCodes = thanhPhansTemp
+                    .Where(tp => !string.IsNullOrWhiteSpace(tp.MaHoatChat))
+                    .Select(tp => tp.MaHoatChat.Trim())
+                    .ToList();
+                if (hoatChatCodes.Count != hoatChatCodes.Distinct().Count())
+                {
+                    ModelState.AddModelError("", "Danh sách hoạt chất có giá trị trùng lặp. Vui lòng chọn các hoạt chất khác nhau.");
+                }
+            }
 
             if (!ModelState.IsValid) return View(model);
 
@@ -189,6 +219,43 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             // Validate tên thuốc trùng (bỏ qua chính nó)
             if (!string.IsNullOrWhiteSpace(model.Thuoc.TenThuoc) && db.TenThuocExists(model.Thuoc.TenThuoc, model.Thuoc.MaThuoc))
                 ModelState.AddModelError("Thuoc.TenThuoc", "Tên thuốc này đã tồn tại trong hệ thống.");
+
+            // Validate bắt buộc - thông tin cơ bản
+            if (string.IsNullOrWhiteSpace(model.Thuoc.TenThuoc))
+                ModelState.AddModelError("Thuoc.TenThuoc", "Tên thuốc là bắt buộc.");
+
+            if (string.IsNullOrWhiteSpace(model.Thuoc.DonViCoBan))
+                ModelState.AddModelError("Thuoc.DonViCoBan", "Đơn vị cơ bản là bắt buộc.");
+
+            if (string.IsNullOrWhiteSpace(model.Thuoc.MaLoaiThuoc))
+                ModelState.AddModelError("Thuoc.MaLoaiThuoc", "Loại thuốc là bắt buộc.");
+
+            if (string.IsNullOrWhiteSpace(model.Thuoc.DuongDung))
+                ModelState.AddModelError("Thuoc.DuongDung", "Đường dùng là bắt buộc.");
+
+            if (!model.Thuoc.GiaBan.HasValue || model.Thuoc.GiaBan <= 0)
+                ModelState.AddModelError("Thuoc.GiaBan", "Giá bán phải lớn hơn 0.");
+
+            if (!model.Thuoc.MaNSX.HasValue || model.Thuoc.MaNSX <= 0)
+                ModelState.AddModelError("Thuoc.MaNSX", "Nhà sản xuất là bắt buộc.");
+
+            // Validate hoạt chất không trùng lặp
+            var thanhPhansTemp = ThuocHelpers.ParseThanhPhansFromForm(Request.Form);
+            if (thanhPhansTemp.Count == 0)
+            {
+                ModelState.AddModelError("", "Phải có ít nhất 1 hoạt chất.");
+            }
+            else
+            {
+                var hoatChatCodes = thanhPhansTemp
+                    .Where(tp => !string.IsNullOrWhiteSpace(tp.MaHoatChat))
+                    .Select(tp => tp.MaHoatChat.Trim())
+                    .ToList();
+                if (hoatChatCodes.Count != hoatChatCodes.Distinct().Count())
+                {
+                    ModelState.AddModelError("", "Danh sách hoạt chất có giá trị trùng lặp. Vui lòng chọn các hoạt chất khác nhau.");
+                }
+            }
 
             if (!ModelState.IsValid) return View(model);
 

@@ -1,0 +1,137 @@
+@model QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers.LoaiThuocViewModel
+@{
+    ViewBag.Title = "Chỉnh sửa loại thuốc";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<style>
+    .profile-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #dee2e6;
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        color: #0d6efd;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .section-title i {
+        margin-right: 8px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .text-danger {
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+
+    .info-hint {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 4px;
+    }
+
+    .validation-summary-valid {
+        display: none !important;
+    }
+</style>
+
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-dark mb-0">Chỉnh sửa loại thuốc</h4>
+        <span class="text-muted">Mã loại thuốc: <strong class="text-primary">@Model.MaDanhMuc</strong></span>
+    </div>
+
+    @using (Html.BeginForm("Edit", "LoaiThuoc", FormMethod.Post, new { @class = "needs-validation" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger shadow-sm border-start border-4 border-danger mb-4" })
+
+        @Html.HiddenFor(m => m.MaDanhMuc)
+
+        @* ===== THÔNG TIN LOẠI THUỐC ===== *@
+        <h4 class="section-title"><i class="bi bi-tags"></i> Thông tin loại thuốc <span class="text-danger">*</span></h4>
+        <div class="profile-card">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Mã loại thuốc</label>
+                    @Html.TextBoxFor(m => m.MaDanhMuc, new { @class = "form-control", @readonly = "readonly", style = "background-color: #e9ecef; cursor: not-allowed;" })
+                    <div class="info-hint">
+                        <i class="bi bi-info-circle me-1"></i> Mã loại thuốc không thể thay đổi.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tên loại thuốc <span class="text-danger">*</span></label>
+                    @Html.EditorFor(m => m.TenDanhMuc, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: Kháng sinh, Thuốc hạ sốt", maxlength = "100", required = "required" } })
+                    @Html.ValidationMessageFor(m => m.TenDanhMuc, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Mô tả</label>
+                    @Html.TextAreaFor(m => m.MoTa, new { @class = "form-control", rows = "4", placeholder = "Nhập mô tả chi tiết về loại thuốc này (không bắt buộc)" })
+                    @Html.ValidationMessageFor(m => m.MoTa, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2 mb-5">
+            <a href="@Url.Action("Details", "LoaiThuoc", new { id = Model.MaDanhMuc })" class="btn btn-secondary px-4">Hủy</a>
+            <button type="submit" class="btn btn-primary px-5 shadow">
+                <i class="bi bi-save me-1"></i> Lưu thay đổi
+            </button>
+        </div>
+    }
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Validation trước khi submit
+        $('form.needs-validation').on('submit', function (e) {
+            var form = $(this)[0];
+            var hasError = false;
+            var firstErrorField = null;
+
+            $(this).find('[required]').each(function () {
+                if (!this.checkValidity()) {
+                    hasError = true;
+                    if (!firstErrorField) firstErrorField = this;
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).addClass('is-valid');
+                }
+            });
+
+            if (hasError) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (firstErrorField) {
+                    firstErrorField.focus();
+                }
+                return false;
+            }
+
+            form.classList.add('was-validated');
+        });
+
+        // Xóa class is-invalid khi user thay đổi giá trị
+        $('form.needs-validation').on('change', 'select[required], input[required]', function () {
+            if (this.checkValidity()) {
+                $(this).removeClass('is-invalid').addClass('is-valid');
+            } else {
+                $(this).removeClass('is-valid').addClass('is-invalid');
+            }
+        });
+    });
+</script>

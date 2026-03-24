@@ -37,12 +37,105 @@
 
         /* Chút CSS cho Dropdown Avatar */
         .user-dropdown-toggle::after {
-            display: none; /* Ẩn cái mũi tên mặc định của Bootstrap cho đẹp */
+            display: none;
         }
 
         .user-info:hover {
             background-color: #f8f9fa;
             border-radius: 50px;
+        }
+
+        /* ===== SIDEBAR DROPDOWN ===== */
+        .sidebar-dropdown {
+            position: relative;
+        }
+
+        .sidebar-dropdown-toggle {
+            cursor: pointer;
+            justify-content: flex-start !important;
+            gap: 15px;
+        }
+
+            .sidebar-dropdown-toggle .submenu-arrow {
+                font-size: 0.8rem;
+                margin-left: auto;
+                transition: transform 0.25s ease;
+                opacity: 0.6;
+            }
+
+            .sidebar-dropdown-toggle .submenu-arrow.rotated,
+            .sidebar-dropdown-toggle[aria-expanded="true"] .submenu-arrow {
+                transform: rotate(180deg);
+                opacity: 1;
+            }
+
+            .sidebar-dropdown-toggle:hover {
+                background-color: rgba(255, 255, 255, 0.08) !important;
+                color: #fff !important;
+                border-left-color: rgba(255, 255, 255, 0.3);
+            }
+
+            .sidebar-dropdown-toggle.active {
+                background-color: rgba(255, 255, 255, 0.12) !important;
+                color: #fff !important;
+                border-left-color: #f9c404;
+            }
+
+        /* Submenu */
+        .sidebar-submenu {
+            background: rgba(0, 0, 0, 0.15);
+            border-left: 3px solid rgba(249, 196, 4, 0.5);
+            margin-left: 0;
+            padding: 4px 0;
+        }
+
+            /* Fix Bootstrap collapse - ép hiển thị khi mở */
+            .sidebar-submenu.collapse.show {
+                display: block !important;
+                visibility: visible !important;
+                overflow: visible !important;
+                height: auto !important;
+                max-height: none !important;
+            }
+
+            .sidebar-submenu .sub-nav-link {
+                padding: 10px 20px 10px 54px !important;
+                font-size: 0.9rem;
+                color: #c8d6e8 !important;
+                display: flex !important;
+                align-items: center;
+                gap: 12px;
+                transition: all 0.2s ease;
+                border-left: none !important;
+                border-radius: 0;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+
+                .sidebar-submenu .sub-nav-link i {
+                    font-size: 1rem;
+                    width: 18px;
+                    text-align: center;
+                }
+
+                .sidebar-submenu .sub-nav-link:hover {
+                    background-color: rgba(255, 255, 255, 0.1) !important;
+                    color: #fff !important;
+                }
+
+                .sidebar-submenu .sub-nav-link.active {
+                    background-color: rgba(249, 196, 4, 0.2) !important;
+                    color: #f9c404 !important;
+                    font-weight: 600;
+                }
+
+        /* Collapsed sidebar - ẩn submenu */
+        .sidebar.collapsed .sidebar-submenu {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .sidebar-dropdown-toggle .submenu-arrow {
+            display: none;
         }
     </style>
 </head>
@@ -57,54 +150,90 @@
 
         <nav class="nav flex-column sidebar-nav">
             @{
-                int chucVu = (Session["MaChucVu"] != null) ? (int)Session["MaChucVu"] : 0;
+                string ctrl = ViewContext.RouteData.Values["controller"].ToString();
+                string act = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+                bool isBenhVien = ctrl == "Thuoc" || ctrl == "LoaiThuoc" || ctrl == "BenhNhan" || ctrl == "Khoa" || ctrl == "Phong";
+                bool isVatTu = ctrl == "Kho" || ctrl == "HoaDon" || ctrl == "DichVu";
+                bool isHeThong = ctrl == "NhanVien";
             }
 
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Dashboard" ? "active" : "")" href="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
+            <a class="nav-link @(ctrl == "Dashboard" ? "active" : "")" href="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
                 <i class="bi bi-grid-1x2-fill"></i> <span>Tổng quan</span>
             </a>
 
-            <div class="nav-section-title"><span>Quản lý Bệnh viện</span></div>
+            @* ========== NHÓM QUẢN LÝ BỆNH VIỆN (DROPDOWN) ========== *@
+            <div class="sidebar-dropdown">
+                <a class="nav-link sidebar-dropdown-toggle @(isBenhVien ? "active" : "")"
+                   href="#" data-bs-toggle="collapse"
+                   data-bs-target="#submenuBenhVien"
+                   aria-expanded="@isBenhVien.ToString().ToLower()">
+                    <i class="bi bi-hospital-fill"></i>
+                    <span>Quản lý Bệnh viện</span>
+                    <i class="bi bi-chevron-down ms-auto submenu-arrow @(isBenhVien ? "rotated" : "")"></i>
+                </a>
+                <div class="sidebar-submenu collapse @(isBenhVien ? "show" : "")" id="submenuBenhVien">
+                    <a class="nav-link sub-nav-link @(ctrl == "Thuoc" ? "active" : "")" href="@Url.Action("Index", "Thuoc", new { area = "Admin" })">
+                        <i class="bi bi-capsule"></i> <span>Danh sách Thuốc</span>
+                    </a>
+                    <a class="nav-link sub-nav-link @(ctrl == "LoaiThuoc" ? "active" : "")" href="@Url.Action("Index", "LoaiThuoc", new { area = "Admin" })">
+                        <i class="bi bi-tags-fill"></i> <span>Loại thuốc</span>
+                    </a>
+                    <a class="nav-link sub-nav-link @(ctrl == "BenhNhan" ? "active" : "")" href="@Url.Action("Index", "BenhNhan", new { area = "Admin" })">
+                        <i class="bi bi-people-fill"></i> <span>Bệnh nhân nội trú</span>
+                    </a>
+                    <a class="nav-link sub-nav-link @(ctrl == "Khoa" || ctrl == "Phong" ? "active" : "")" href="@Url.Action("Index", "Khoa", new { area = "Admin" })">
+                        <i class="bi bi-diagram-3-fill"></i> <span>Khoa - Phòng</span>
+                    </a>
+                </div>
+            </div>
 
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "BenhNhan" ? "active" : "")" href="@Url.Action("Index", "BenhNhan", new { area = "Admin" })">
-                <i class="bi bi-people-fill"></i> <span>Bệnh nhân nội trú</span>
-            </a>
+            @* ========== NHÓM VẬT TƯ & TÀI CHÍNH (DROPDOWN) ========== *@
+            <div class="sidebar-dropdown">
+                <a class="nav-link sidebar-dropdown-toggle @(isVatTu ? "active" : "")"
+                   href="#" data-bs-toggle="collapse"
+                   data-bs-target="#submenuVatTu"
+                   aria-expanded="@isVatTu.ToString().ToLower()">
+                    <i class="bi bi-wallet2-fill"></i>
+                    <span>Vật tư &amp; Tài chính</span>
+                    <i class="bi bi-chevron-down ms-auto submenu-arrow @(isVatTu ? "rotated" : "")"></i>
+                </a>
+                <div class="sidebar-submenu collapse @(isVatTu ? "show" : "")" id="submenuVatTu">
+                    <a class="nav-link sub-nav-link @(ctrl == "Kho" && (act == "" || act == "Index") ? "active" : "")" href="@Url.Action("Index", "Kho", new { area = "Admin" })">
+                        <i class="bi bi-box-seam-fill"></i> <span>Kho Dược - Vật tư</span>
+                    </a>
+                    <a class="nav-link sub-nav-link @(ctrl == "Kho" && act == "DanhSachPhieuNhap" ? "active" : "")" href="@Url.Action("DanhSachPhieuNhap", "Kho", new { area = "Admin" })">
+                        <i class="bi bi-file-earmark-arrow-down-fill"></i>
+                        <span>Phiếu nhập kho</span>
+                        @if (ViewBag.PhieuChoDuyet > 0)
+                        {
+                            <span class="badge bg-danger ms-auto">@ViewBag.PhieuChoDuyet</span>
+                        }
+                    </a>
+                    <a class="nav-link sub-nav-link @(ctrl == "HoaDon" ? "active" : "")" href="@Url.Action("Index", "HoaDon", new { area = "Admin" })">
+                        <i class="bi bi-receipt-cutoff"></i> <span>Thu ngân - Viện phí</span>
+                    </a>
+                    <a class="nav-link sub-nav-link @(ctrl == "DichVu" ? "active" : "")" href="@Url.Action("Index", "DichVu", new { area = "Admin" })">
+                        <i class="bi bi-clipboard2-pulse"></i> <span>Dịch vụ viện phí</span>
+                    </a>
+                </div>
+            </div>
 
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Khoa" ? "active" : "")" href="@Url.Action("Index", "Khoa", new { area = "Admin" })">
-                <i class="bi bi-hospital-fill"></i> <span>Quản lý Khoa - Phòng</span>
-            </a>
-
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Thuoc" ? "active" : "")" href="@Url.Action("Index", "Thuoc", new { area = "Admin" })">
-                <i class="bi bi-capsule"></i> <span>Quản lý Thuốc</span>
-            </a>
-
-            <div class="nav-section-title"><span>Vật tư & Tài chính</span></div>
-
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Kho" && (ViewContext.RouteData.Values["action"] == null || ViewContext.RouteData.Values["action"].ToString() == "Index") ? "active" : "")" href="@Url.Action("Index", "Kho", new { area = "Admin" })">
-                <i class="bi bi-box-seam-fill"></i> <span>Kho Dược - Vật tư</span>
-            </a>
-
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "Kho" && ViewContext.RouteData.Values["action"].ToString() == "DanhSachPhieuNhap" ? "active" : "")" href="@Url.Action("DanhSachPhieuNhap", "Kho", new { area = "Admin" })">
-                <i class="bi bi-file-earmark-arrow-down-fill"></i> <span>Phiếu nhập kho</span>
-                @if (ViewBag.PhieuChoDuyet > 0)
-                {
-                    <span class="badge bg-danger ms-2">@ViewBag.PhieuChoDuyet</span>
-                }
-            </a>
-
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "HoaDon" ? "active" : "")" href="@Url.Action("Index", "HoaDon", new { area = "Admin" })">
-                <i class="bi bi-receipt-cutoff"></i> <span>Thu ngân - Viện phí</span>
-            </a>
-
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "DichVu" ? "active" : "")" href="@Url.Action("Index", "DichVu", new { area = "Admin" })">
-                <i class="bi bi-clipboard2-pulse"></i> <span>Dịch vụ viện phí</span>
-            </a>
-
-            <div class="nav-section-title"><span>Hệ thống</span></div>
-
-            <a class="nav-link @(ViewContext.RouteData.Values["controller"].ToString() == "NhanVien" ? "active" : "")" href="@Url.Action("Index", "NhanVien", new { area = "Admin" })">
-                <i class="bi bi-person-badge-fill"></i> <span>Hồ sơ Nhân viên</span>
-            </a>
+            @* ========== NHÓM HỆ THỐNG (DROPDOWN) ========== *@
+            <div class="sidebar-dropdown">
+                <a class="nav-link sidebar-dropdown-toggle @(isHeThong ? "active" : "")"
+                   href="#" data-bs-toggle="collapse"
+                   data-bs-target="#submenuHeThong"
+                   aria-expanded="@isHeThong.ToString().ToLower()">
+                    <i class="bi bi-gear-wide-connected"></i>
+                    <span>Hệ thống</span>
+                    <i class="bi bi-chevron-down ms-auto submenu-arrow @(isHeThong ? "rotated" : "")"></i>
+                </a>
+                <div class="sidebar-submenu collapse @(isHeThong ? "show" : "")" id="submenuHeThong">
+                    <a class="nav-link sub-nav-link @(ctrl == "NhanVien" ? "active" : "")" href="@Url.Action("Index", "NhanVien", new { area = "Admin" })">
+                        <i class="bi bi-person-badge-fill"></i> <span>Hồ sơ Nhân viên</span>
+                    </a>
+                </div>
+            </div>
 
             <div class="mt-auto"></div>
 
@@ -125,10 +254,8 @@
 
             <div class="user-info flex-shrink-0 dropdown p-1 transition" style="cursor: pointer;">
                 @{
-                    // Lấy Tên hiển thị từ Session, nếu chưa có thì dùng "Admin"
+                    int chucVu = (Session["MaChucVu"] != null) ? (int)Session["MaChucVu"] : 0;
                     string tenHienThi = Session["HoTenNV"] as string ?? Session["Username"] as string ?? "Quản trị viên";
-
-                    // Xác định chức danh hiển thị
                     string tenChucVu = "Nhân viên y tế";
                     if (chucVu == 1) { tenChucVu = "Giám đốc"; }
                     else if (chucVu == 2) { tenChucVu = "Quản trị hệ thống (Admin)"; }
