@@ -333,8 +333,10 @@ CREATE TABLE HOADON (
     MaHD INT IDENTITY(1,1) PRIMARY KEY,
     MaBN CHAR(10),
     MaPhieuKhamBenh INT, 
-    NgayThanhToan DATE ,
-    TongTien DECIMAL(18,2),
+    NgayThanhToan DATETIME DEFAULT GETDATE(),
+    TongTienGoc DECIMAL(18,2) DEFAULT 0,
+    TongTienBHYTChiTra DECIMAL(18,2) DEFAULT 0,
+    TongTienBenhNhanTra DECIMAL(18,2) DEFAULT 0,
     TrangThaiThanhToan NVARCHAR(50) NOT NULL 
         CHECK (TrangThaiThanhToan IN (N'Đã thanh toán', N'Chưa thanh toán'))
         DEFAULT N'Chưa thanh toán',
@@ -349,27 +351,30 @@ CREATE TABLE CT_HOADON_DV (
     MaDV CHAR(10),
     DonGia DECIMAL(18,2) NOT NULL,
     
-    -- [BỔ SUNG BHYT] (Tách ThanhTien thành 3 khoản)
-    TongTienGoc DECIMAL(18,2) NOT NULL,       -- Tổng tiền dịch vụ ban đầu
-    TienBHYTChiTra DECIMAL(18,2) DEFAULT 0,   -- Số tiền quỹ BHYT chịu
-    TienBenhNhanTra DECIMAL(18,2) NOT NULL,   -- Số tiền khách hàng tự móc ví đóng (Đồng chi trả)
-    -- [KẾT THÚC BỔ SUNG]
+    TongTienGoc DECIMAL(18,2) NOT NULL,        -- Tổng tiền dịch vụ ban đầu
+    TienBHYTChiTra DECIMAL(18,2) DEFAULT 0,    -- Số tiền quỹ BHYT chịu
+    TienBenhNhanTra DECIMAL(18,2) NOT NULL,    -- Số tiền khách hàng tự móc ví đóng (Đồng chi trả)
 
-    MaNV_ThuNgan CHAR(10),
+    TrangThaiThanhToan NVARCHAR(50) DEFAULT N'Chưa thanh toán' 
+        CHECK (TrangThaiThanhToan IN (N'Chưa thanh toán', N'Đã thanh toán', N'Hủy')),
+        
+    MaNV_ThuNgan CHAR(10) NULL -- Khi nào trạng thái là 'Đã thanh toán' thì mới update mã nhân viên thu tiền vào đây
 );
 
 CREATE TABLE CT_HOADON_THUOC (
     MaCTHD INT IDENTITY(1,1) PRIMARY KEY,
     MaHD INT NOT NULL,
-    MaDonThuoc INT,
+    MaCTDonThuoc INT NOT NULL,
+	SoLuong INT DEFAULT 1,
 
-    -- [BỔ SUNG BHYT] (Tách ThanhTien thành 3 khoản)
-    TongTienGoc DECIMAL(18,2) NOT NULL,       -- Tổng tiền thuốc ban đầu
-    TienBHYTChiTra DECIMAL(18,2) DEFAULT 0,   -- Số tiền quỹ BHYT chịu
-    TienBenhNhanTra DECIMAL(18,2) NOT NULL,   -- Số tiền khách hàng tự móc ví đóng (Đồng chi trả)
-    -- [KẾT THÚC BỔ SUNG]
+    TongTienGoc DECIMAL(18,2) NOT NULL,        -- Tổng tiền thuốc ban đầu
+    TienBHYTChiTra DECIMAL(18,2) DEFAULT 0,    -- Số tiền quỹ BHYT chịu
+    TienBenhNhanTra DECIMAL(18,2) NOT NULL,    -- Số tiền khách hàng tự móc ví đóng (Đồng chi trả)
 
-    MaNV_ThuNgan CHAR(10),
+    TrangThaiThanhToan NVARCHAR(50) DEFAULT N'Chưa thanh toán' 
+        CHECK (TrangThaiThanhToan IN (N'Chưa thanh toán', N'Đã thanh toán', N'Hủy')),
+
+    MaNV_ThuNgan CHAR(10) NULL -- Tương tự, chỉ update khi đã thu tiền
 );
 
 -- ======================================================================================
@@ -441,7 +446,7 @@ ALTER TABLE CT_HOADON_DV ADD CONSTRAINT FK_CTHDDV_DV FOREIGN KEY (MaDV) REFERENC
 
 ALTER TABLE CT_HOADON_THUOC ADD CONSTRAINT FK_CTHDT_NV FOREIGN KEY (MaNV_ThuNgan) REFERENCES NHANVIEN(MaNV);
 ALTER TABLE CT_HOADON_THUOC ADD CONSTRAINT FK_CTHDT_HD FOREIGN KEY (MaHD) REFERENCES HOADON(MaHD);
-ALTER TABLE CT_HOADON_THUOC ADD CONSTRAINT FK_CTHDT_DT FOREIGN KEY (MaDonThuoc) REFERENCES DON_THUOC(MaDonThuoc);
+ALTER TABLE CT_HOADON_THUOC ADD CONSTRAINT FK_CTHDT_CTDT FOREIGN KEY (MaCTDonThuoc) REFERENCES CT_DON_THUOC(MaCTDonThuoc);
 GO
 
 ALTER TABLE TONKHO

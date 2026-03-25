@@ -826,6 +826,34 @@ UPDATE NHANVIEN SET MaPhong = 1 WHERE MaNV = 'NV027';
 UPDATE NHANVIEN SET MaPhong = 2 WHERE MaNV = 'NV028';
 UPDATE NHANVIEN SET MaPhong = 3 WHERE MaNV = 'NV029';
 
+-- Nội tổng quát
+UPDATE NHANVIEN SET MaPhong = 6 WHERE MaNV IN ('NV003','NV004');
+
+-- Nội tổng quát 02
+UPDATE NHANVIEN SET MaPhong = 7 WHERE MaNV IN ('NV005');
+
+-- Ngoại
+UPDATE NHANVIEN SET MaPhong = 8 WHERE MaNV IN ('NV006');
+
+-- Nhi
+UPDATE NHANVIEN SET MaPhong = 9 WHERE MaNV IN ('NV007');
+UPDATE NHANVIEN SET MaPhong = 10 WHERE MaNV IN ('NV008');
+
+-- Sản
+UPDATE NHANVIEN SET MaPhong = 11 WHERE MaNV IN ('NV009');
+
+-- Tai Mũi Họng
+UPDATE NHANVIEN SET MaPhong = 12 WHERE MaNV IN ('NV010');
+
+-- RHM
+UPDATE NHANVIEN SET MaPhong = 13 WHERE MaNV IN ('NV034');
+
+-- Mắt
+UPDATE NHANVIEN SET MaPhong = 14 WHERE MaNV IN ('NV035');
+
+-- Da liễu
+UPDATE NHANVIEN SET MaPhong = 15 WHERE MaNV IN ('NV036');
+
 INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive)
 VALUES
 ('baolq', '1', 1);
@@ -1051,3 +1079,399 @@ LEFT JOIN NHANVIEN nv ON nv.MaPhong = p.MaPhong
 LEFT JOIN TAIKHOAN tk ON nv.MaTK = tk.MaTK
 WHERE p.TenPhong LIKE N'Quầy Tiếp Tân%' and MaChucVu = 8
 ORDER BY p.TenPhong; 
+
+
+
+
+
+INSERT INTO DANHMUC_BENH (MaBenh, TenBenh, TrieuChung, MoTa, SoGiaiDoan)
+VALUES
+-- ====== BỆNH ĐÃ DÙNG TRONG CHẨN ĐOÁN ======
+('BENH01', N'Nhiễm siêu vi', N'Sốt, mệt mỏi, đau đầu', N'Bệnh do virus gây ra, thường tự khỏi sau vài ngày.', 0),
+('BENH02', N'Rối loạn tiêu hóa', N'Đau bụng, tiêu chảy, đầy hơi', N'Liên quan đến hệ tiêu hóa, ăn uống không hợp vệ sinh.', 0),
+('BENH03', N'Mất ngủ', N'Khó ngủ, ngủ không sâu', N'Rối loạn giấc ngủ do stress hoặc sinh lý.', 0),
+
+-- ====== BỆNH NỘI KHOA ======
+('BENH04', N'Tăng huyết áp', N'Đau đầu, chóng mặt', N'Bệnh tim mạch mạn tính.', 1),
+('BENH05', N'Đái tháo đường', N'Khát nước, tiểu nhiều', N'Rối loạn chuyển hóa đường.', 1),
+
+-- ====== BỆNH HÔ HẤP ======
+('BENH06', N'Viêm phế quản', N'Ho, khó thở', N'Viêm đường hô hấp dưới.', 0),
+('BENH07', N'Viêm phổi', N'Sốt cao, ho đờm', N'Nhiễm trùng phổi.', 1),
+
+-- ====== BỆNH NHI ======
+('BENH08', N'Sốt siêu vi ở trẻ', N'Sốt, quấy khóc', N'Bệnh thường gặp ở trẻ nhỏ.', 0),
+
+-- ====== BỆNH DA LIỄU ======
+('BENH09', N'Viêm da dị ứng', N'Ngứa, nổi mẩn', N'Phản ứng dị ứng ngoài da.', 0),
+('BENH10', N'Mụn trứng cá', N'Mụn viêm, mụn đầu đen', N'Rối loạn tuyến bã nhờn.', 1),
+
+-- ====== BỆNH MẮT ======
+('BENH11', N'Cận thị', N'Nhìn xa mờ', N'Tật khúc xạ mắt.', 1),
+
+-- ====== BỆNH TAI MŨI HỌNG ======
+('BENH12', N'Viêm họng', N'Đau họng, sốt nhẹ', N'Viêm niêm mạc họng.', 0),
+
+-- ====== BỆNH NGOẠI ======
+('BENH13', N'Vết thương phần mềm', N'Chảy máu, đau', N'Tổn thương ngoài da.', 0);
+
+
+
+
+
+
+INSERT INTO PHIEUDANGKY (MaBN, NgayDangKy, STT, HinhThucDangKy, TrangThai, LyDo, MaPhong) VALUES 
+-- ===== Phòng 6 ===== 
+('KH0001', GETDATE(), 1, N'Offline', N'Đã xác nhận', N'Đau đầu', 6), 
+('KH0002', GETDATE(), 2, N'Online', N'Đã xác nhận', N'Mệt mỏi', 6), 
+('KH0003', GETDATE(), 3, N'Offline', N'Đã xác nhận', N'Chóng mặt', 6), 
+-- ===== Phòng 7 ===== 
+('KH0004', GETDATE(), 1, N'Offline', N'Đã xác nhận', N'Đau bụng', 7), 
+('KH0005', GETDATE(), 2, N'Online', N'Đã xác nhận', N'Tiêu chảy', 7), 
+('KH0001', GETDATE(), 3, N'Offline', N'Đã xác nhận', N'Buồn nôn', 7),
+-- ===== Phòng 8 ===== 
+('KH0002', GETDATE(), 1, N'Offline', N'Đã xác nhận', N'Vết thương', 8), 
+('KH0003', GETDATE(), 2, N'Offline', N'Đã xác nhận', N'Chảy máu', 8), 
+('KH0004', GETDATE(), 3, N'Online', N'Đã xác nhận', N'Đau tay', 8), 
+-- ===== Phòng 9 ===== 
+('KH0005', GETDATE(), 1, N'Offline', N'Đã xác nhận', N'Sốt', 9), 
+('KH0001', GETDATE(), 2, N'Online', N'Đã xác nhận', N'Ho', 9), 
+('KH0002', GETDATE(), 3, N'Offline', N'Đã xác nhận', N'Sổ mũi', 9), 
+-- ===== Phòng 10 ===== 
+('KH0003', GETDATE(), 1, N'Offline', N'Đã xác nhận', N'Sốt cao', 10), 
+('KH0004', GETDATE(), 2, N'Online', N'Đã xác nhận', N'Quấy khóc', 10), 
+('KH0005', GETDATE(), 3, N'Offline', N'Đã xác nhận', N'Biếng ăn', 10), 
+-- ===== Phòng 11 ===== 
+('KH0001', GETDATE(), 1, N'Offline', N'Đã xác nhận', N'Khám thai', 11), 
+('KH0002', GETDATE(), 2, N'Online', N'Đã xác nhận', N'Đau bụng dưới', 11), 
+('KH0003', GETDATE(), 3, N'Offline', N'Đã xác nhận', N'Ra huyết', 11), 
+-- ===== Phòng 12 ===== 
+('KH0004', GETDATE(), 1, N'Offline', N'Đã xác nhận', N'Đau họng', 12), 
+('KH0005', GETDATE(), 2, N'Online', N'Đã xác nhận', N'Nghẹt mũi', 12), 
+('KH0001', GETDATE(), 3, N'Offline', N'Đã xác nhận', N'Ù tai', 12), 
+-- ===== Phòng 13 ===== 
+('KH0002', GETDATE(), 1, N'Offline', N'Đã xác nhận', N'Đau răng', 13), 
+('KH0003', GETDATE(), 2, N'Online', N'Đã xác nhận', N'Chảy máu nướu', 13), 
+('KH0004', GETDATE(), 3, N'Offline', N'Đã xác nhận', N'Hôi miệng', 13), 
+-- ===== Phòng 14 ===== 
+('KH0005', GETDATE(), 1, N'Offline', N'Đã xác nhận', N'Mờ mắt', 14), 
+('KH0001', GETDATE(), 2, N'Online', N'Đã xác nhận', N'Đau mắt', 14), 
+('KH0002', GETDATE(), 3, N'Offline', N'Đã xác nhận', N'Khô mắt', 14),
+-- ===== Phòng 15 ===== 
+('KH0003', GETDATE(), 1, N'Offline', N'Đã xác nhận', N'Nổi mụn', 15), 
+('KH0004', GETDATE(), 2, N'Online', N'Đã xác nhận', N'Dị ứng', 15), 
+('KH0005', GETDATE(), 3, N'Offline', N'Đã xác nhận', N'Ngứa da', 15);
+
+INSERT INTO PHIEUKHAMBENH 
+(MaPhieuDK, MaBN, STT, LyDoDenKham, NgayLap, TrangThai, TrieuChung, MaBacSiKham, MaPhong)
+VALUES
+-- ===== Phòng 6 =====
+(1, 'KH0001', 1, N'Đau đầu', GETDATE(), N'Đang khám', N'Đau đầu nhẹ', 'NV003', 6),
+(2, 'KH0002', 2, N'Mệt mỏi', GETDATE(), N'Đang khám', N'Mệt kéo dài', 'NV004', 6),
+(3, 'KH0003', 3, N'Chóng mặt', GETDATE(), N'Đang khám', N'Chóng mặt khi đứng', 'NV003', 6),
+
+-- ===== Phòng 7 =====
+(4, 'KH0004', 1, N'Đau bụng', GETDATE(), N'Đang khám', N'Đau âm ỉ', 'NV005', 7),
+(5, 'KH0005', 2, N'Tiêu chảy', GETDATE(), N'Đang khám', N'Đi ngoài nhiều', 'NV005', 7),
+(6, 'KH0001', 3, N'Buồn nôn', GETDATE(), N'Đang khám', N'Nôn nhẹ', 'NV005', 7),
+
+-- ===== Phòng 8 =====
+(7, 'KH0002', 1, N'Vết thương', GETDATE(), N'Đang khám', N'Trầy xước', 'NV006', 8),
+(8, 'KH0003', 2, N'Chảy máu', GETDATE(), N'Đang khám', N'Chảy máu nhẹ', 'NV006', 8),
+(9, 'KH0004', 3, N'Đau tay', GETDATE(), N'Đang khám', N'Đau sau va chạm', 'NV006', 8),
+
+-- ===== Phòng 9 =====
+(10, 'KH0005', 1, N'Sốt', GETDATE(), N'Đang khám', N'Sốt 38 độ', 'NV007', 9),
+(11, 'KH0001', 2, N'Ho', GETDATE(), N'Đang khám', N'Ho khan', 'NV007', 9),
+(12, 'KH0002', 3, N'Sổ mũi', GETDATE(), N'Đang khám', N'Chảy mũi', 'NV007', 9),
+
+-- ===== Phòng 10 =====
+(13, 'KH0003', 1, N'Sốt cao', GETDATE(), N'Đang khám', N'Sốt 39 độ', 'NV008', 10),
+(14, 'KH0004', 2, N'Quấy khóc', GETDATE(), N'Đang khám', N'Trẻ khóc nhiều', 'NV008', 10),
+(15, 'KH0005', 3, N'Biếng ăn', GETDATE(), N'Đang khám', N'Ăn kém', 'NV008', 10),
+
+-- ===== Phòng 11 =====
+(16, 'KH0001', 1, N'Khám thai', GETDATE(), N'Đang khám', N'Thai 12 tuần', 'NV009', 11),
+(17, 'KH0002', 2, N'Đau bụng dưới', GETDATE(), N'Đang khám', N'Đau nhẹ', 'NV009', 11),
+(18, 'KH0003', 3, N'Ra huyết', GETDATE(), N'Đang khám', N'Ra huyết ít', 'NV009', 11),
+
+-- ===== Phòng 12 =====
+(19, 'KH0004', 1, N'Đau họng', GETDATE(), N'Đang khám', N'Đau khi nuốt', 'NV010', 12),
+(20, 'KH0005', 2, N'Nghẹt mũi', GETDATE(), N'Đang khám', N'Khó thở', 'NV010', 12),
+(21, 'KH0001', 3, N'Ù tai', GETDATE(), N'Đang khám', N'Nghe kém', 'NV010', 12),
+
+-- ===== Phòng 13 =====
+(22, 'KH0002', 1, N'Đau răng', GETDATE(), N'Đang khám', N'Sâu răng', 'NV034', 13),
+(23, 'KH0003', 2, N'Chảy máu nướu', GETDATE(), N'Đang khám', N'Viêm nướu', 'NV034', 13),
+(24, 'KH0004', 3, N'Hôi miệng', GETDATE(), N'Đang khám', N'Mảng bám', 'NV034', 13),
+
+-- ===== Phòng 14 =====
+(25, 'KH0005', 1, N'Mờ mắt', GETDATE(), N'Đang khám', N'Nhìn xa kém', 'NV035', 14),
+(26, 'KH0001', 2, N'Đau mắt', GETDATE(), N'Đang khám', N'Đỏ mắt', 'NV035', 14),
+(27, 'KH0002', 3, N'Khô mắt', GETDATE(), N'Đang khám', N'Khó chịu', 'NV035', 14),
+
+-- ===== Phòng 15 =====
+(28, 'KH0003', 1, N'Nổi mụn', GETDATE(), N'Đang khám', N'Mụn viêm', 'NV036', 15),
+(29, 'KH0004', 2, N'Dị ứng', GETDATE(), N'Đang khám', N'Nổi mẩn', 'NV036', 15),
+(30, 'KH0005', 3, N'Ngứa da', GETDATE(), N'Đang khám', N'Ngứa kéo dài', 'NV036', 15);
+
+
+INSERT INTO CHITIET_CHANDOAN
+(MaPhieuKhamBenh, MaBenh, LoaiBenh, KetLuanChiTiet, GiaiDoan)
+VALUES
+-- ===== Nhóm Nội tổng quát (đau đầu, chóng mặt) =====
+(1, 'BENH03', N'Bệnh chính', N'Mất ngủ nhẹ', 0),
+(2, 'BENH01', N'Bệnh chính', N'Nhiễm siêu vi', 0),
+(3, 'BENH03', N'Bệnh kèm theo', N'Căng thẳng', 0),
+
+-- ===== Nhóm tiêu hóa =====
+(4, 'BENH02', N'Bệnh chính', N'Rối loạn tiêu hóa', 0),
+(5, 'BENH02', N'Bệnh chính', N'Rối loạn tiêu hóa cấp', 0),
+(6, 'BENH02', N'Bệnh kèm theo', N'Ăn uống không hợp vệ sinh', 0),
+
+-- ===== Ngoại =====
+(7, 'BENH13', N'Bệnh chính', N'Vết thương nhẹ', 0),
+(8, 'BENH13', N'Bệnh chính', N'Trầy xước ngoài da', 0),
+(9, 'BENH13', N'Bệnh kèm theo', N'Đau sau va chạm', 0),
+
+-- ===== Nhi =====
+(10, 'BENH08', N'Bệnh chính', N'Sốt siêu vi', 0),
+(11, 'BENH08', N'Bệnh chính', N'Nhiễm virus nhẹ', 0),
+(12, 'BENH06', N'Bệnh kèm theo', N'Viêm hô hấp nhẹ', 0),
+
+-- ===== Nhi 2 =====
+(13, 'BENH08', N'Bệnh chính', N'Sốt cao', 0),
+(14, 'BENH08', N'Bệnh chính', N'Rối loạn tiêu hóa trẻ em', 0),
+(15, 'BENH06', N'Bệnh kèm theo', N'Ho nhẹ', 0),
+
+-- ===== Sản =====
+(16, 'BENH04', N'Bệnh chính', N'Tăng huyết áp thai kỳ nhẹ', 1),
+(17, 'BENH04', N'Bệnh kèm theo', N'Theo dõi thêm', 1),
+(18, 'BENH04', N'Bệnh kèm theo', N'Nguy cơ tiền sản giật', 1),
+
+-- ===== Tai mũi họng =====
+(19, 'BENH12', N'Bệnh chính', N'Viêm họng cấp', 0),
+(20, 'BENH12', N'Bệnh chính', N'Viêm mũi dị ứng', 0),
+(21, 'BENH12', N'Bệnh kèm theo', N'Ù tai nhẹ', 0),
+
+-- ===== Răng =====
+(22, 'BENH10', N'Bệnh chính', N'Sâu răng', 1),
+(23, 'BENH10', N'Bệnh chính', N'Viêm nướu', 1),
+(24, 'BENH10', N'Bệnh kèm theo', N'Mảng bám răng', 1),
+
+-- ===== Mắt =====
+(25, 'BENH11', N'Bệnh chính', N'Cận thị nhẹ', 1),
+(26, 'BENH11', N'Bệnh kèm theo', N'Khô mắt', 1),
+(27, 'BENH11', N'Bệnh kèm theo', N'Mỏi mắt', 1),
+
+-- ===== Da liễu =====
+(28, 'BENH10', N'Bệnh chính', N'Mụn viêm', 1),
+(29, 'BENH09', N'Bệnh chính', N'Dị ứng da', 0),
+(30, 'BENH09', N'Bệnh kèm theo', N'Ngứa kéo dài', 0);
+
+
+INSERT INTO DON_THUOC (MaPhieuKhamBenh, NgayKe, LoiDanBS, TrangThai)
+VALUES
+(1, GETDATE(), N'Uống thuốc đúng giờ', N'Chưa phát'),
+(2, GETDATE(), N'Nghỉ ngơi nhiều', N'Chưa phát'),
+(3, GETDATE(), N'Tránh thay đổi tư thế đột ngột', N'Chưa phát'),
+(4, GETDATE(), N'Ăn nhẹ, tránh dầu mỡ', N'Chưa phát'),
+(5, GETDATE(), N'Uống nhiều nước', N'Chưa phát'),
+(6, GETDATE(), N'Không ăn đồ sống', N'Chưa phát'),
+(7, GETDATE(), N'Rửa sạch vết thương', N'Chưa phát'),
+(8, GETDATE(), N'Theo dõi chảy máu', N'Chưa phát'),
+(9, GETDATE(), N'Hạn chế vận động', N'Chưa phát'),
+(10, GETDATE(), N'Uống hạ sốt khi cần', N'Chưa phát'),
+(11, GETDATE(), N'Giữ ấm cổ họng', N'Chưa phát'),
+(12, GETDATE(), N'Vệ sinh mũi sạch', N'Chưa phát'),
+(13, GETDATE(), N'Hạ sốt và theo dõi', N'Chưa phát'),
+(14, GETDATE(), N'Theo dõi trẻ', N'Chưa phát'),
+(15, GETDATE(), N'Ăn uống đủ chất', N'Chưa phát'),
+(16, GETDATE(), N'Tái khám đúng lịch', N'Chưa phát'),
+(17, GETDATE(), N'Không vận động mạnh', N'Chưa phát'),
+(18, GETDATE(), N'Nghỉ ngơi tuyệt đối', N'Chưa phát'),
+(19, GETDATE(), N'Súc miệng nước muối', N'Chưa phát'),
+(20, GETDATE(), N'Uống thuốc đều', N'Chưa phát'),
+(21, GETDATE(), N'Tránh tiếng ồn lớn', N'Chưa phát'),
+(22, GETDATE(), N'Đánh răng sạch', N'Chưa phát'),
+(23, GETDATE(), N'Vệ sinh răng miệng', N'Chưa phát'),
+(24, GETDATE(), N'Cạo vôi răng định kỳ', N'Chưa phát'),
+(25, GETDATE(), N'Hạn chế dùng điện thoại', N'Chưa phát'),
+(26, GETDATE(), N'Nhỏ mắt đúng giờ', N'Chưa phát'),
+(27, GETDATE(), N'Không dụi mắt', N'Chưa phát'),
+(28, GETDATE(), N'Rửa mặt sạch', N'Chưa phát'),
+(29, GETDATE(), N'Tránh dị ứng', N'Chưa phát'),
+(30, GETDATE(), N'Không gãi', N'Chưa phát');
+
+
+INSERT INTO CT_DON_THUOC
+(MaDonThuoc, MaThuoc, SoLuongSang, SoLuongTrua, SoLuongChieu, SoLuongToi, SoNgayDung, SoLuong, DonViTinh, DonGia, GhiChu)
+VALUES
+-- Đơn 1
+(1, 'T001', 1,1,1,1, 3, 12, N'Viên', 500, N'Giảm đau'),
+(1, 'T003', 1,0,1,0, 3, 6, N'Viên', 2000, N'Chống viêm'),
+
+-- Đơn 2
+(2, 'T008', 1,1,1,1, 5, 20, N'Viên', 500, N'Vitamin'),
+(2, 'T010', 1,0,1,0, 5, 10, N'Viên', 2000, N'Ổn định đường huyết'),
+
+-- Đơn 3
+(3, 'T001', 1,1,1,1, 3, 12, N'Viên', 500, N'Giảm đau'),
+
+-- Đơn 4
+(4, 'T004', 1,0,1,0, 5, 10, N'Viên', 60000, N'Dạ dày'),
+(4, 'T001', 1,1,1,1, 3, 12, N'Viên', 500, N'Giảm đau'),
+
+-- Đơn 5
+(5, 'T002', 1,1,1,1, 5, 20, N'Viên', 1000, N'Kháng sinh'),
+
+-- Đơn 6
+(6, 'T004', 1,0,1,0, 3, 6, N'Viên', 60000, N'Dạ dày'),
+
+-- Đơn 7
+(7, 'T002', 1,1,1,1, 5, 20, N'Viên', 1000, N'Kháng sinh'),
+
+-- Đơn 8
+(8, 'T002', 1,1,1,1, 5, 20, N'Viên', 1000, N'Kháng sinh'),
+
+-- Đơn 9
+(9, 'T003', 1,1,1,1, 3, 12, N'Viên', 2000, N'Giảm đau'),
+
+-- Đơn 10
+(10, 'T001', 1,1,1,1, 3, 12, N'Viên', 500, N'Hạ sốt'),
+
+-- Đơn 11
+(11, 'T007', 1,0,1,0, 5, 10, N'Viên', 3000, N'Dị ứng'),
+
+-- Đơn 12
+(12, 'T007', 1,0,1,0, 5, 10, N'Viên', 3000, N'Dị ứng'),
+
+-- Đơn 13
+(13, 'T001', 1,1,1,1, 3, 12, N'Viên', 500, N'Hạ sốt'),
+
+-- Đơn 14
+(14, 'T008', 1,1,1,1, 5, 20, N'Viên', 500, N'Vitamin'),
+
+-- Đơn 15
+(15, 'T008', 1,1,1,1, 5, 20, N'Viên', 500, N'Vitamin'),
+
+-- Đơn 16
+(16, 'T004', 1,0,1,0, 5, 10, N'Viên', 60000, N'Thai kỳ'),
+
+-- Đơn 17
+(17, 'T001', 1,1,1,1, 3, 12, N'Viên', 500, N'Giảm đau'),
+
+-- Đơn 18
+(18, 'T002', 1,1,1,1, 5, 20, N'Viên', 1000, N'Kháng sinh'),
+
+-- Đơn 19
+(19, 'T007', 1,0,1,0, 5, 10, N'Viên', 3000, N'Dị ứng'),
+
+-- Đơn 20
+(20, 'T007', 1,0,1,0, 5, 10, N'Viên', 3000, N'Dị ứng'),
+
+-- Đơn 21
+(21, 'T007', 1,0,1,0, 5, 10, N'Viên', 3000, N'Dị ứng'),
+
+-- Đơn 22
+(22, 'T002', 1,1,1,1, 5, 20, N'Viên', 1000, N'Nhiễm trùng răng'),
+
+-- Đơn 23
+(23, 'T002', 1,1,1,1, 5, 20, N'Viên', 1000, N'Nướu'),
+
+-- Đơn 24
+(24, 'T007', 1,0,1,0, 5, 10, N'Viên', 3000, N'Hôi miệng'),
+
+-- Đơn 25
+(25, 'T008', 1,1,1,1, 5, 20, N'Viên', 500, N'Mắt'),
+
+-- Đơn 26
+(26, 'T007', 1,0,1,0, 5, 10, N'Viên', 3000, N'Viêm mắt'),
+
+-- Đơn 27
+(27, 'T008', 1,1,1,1, 5, 20, N'Viên', 500, N'Khô mắt'),
+
+-- Đơn 28
+(28, 'T007', 1,0,1,0, 5, 10, N'Viên', 3000, N'Mụn'),
+
+-- Đơn 29
+(29, 'T007', 1,0,1,0, 5, 10, N'Viên', 3000, N'Dị ứng'),
+
+-- Đơn 30
+(30, 'T007', 1,0,1,0, 5, 10, N'Viên', 3000, N'Ngứa da');
+
+
+
+
+
+INSERT INTO HOADON (MaBN, MaPhieuKhamBenh, NgayThanhToan, TongTien, TrangThaiThanhToan, HinhThucThanhToan)
+VALUES
+('KH0001', 1, GETDATE(), 300000, N'Đã thanh toán', N'Tiền mặt'),
+('KH0002', 2, GETDATE(), 350000, N'Đã thanh toán', N'Chuyển khoản'),
+('KH0003', 3, GETDATE(), 250000, N'Đã thanh toán', N'Thẻ'),
+('KH0004', 4, GETDATE(), 400000, N'Đã thanh toán', N'Tiền mặt'),
+('KH0005', 5, GETDATE(), 200000, N'Chưa thanh toán', NULL),
+
+('KH0001', 6, GETDATE(), 300000, N'Đã thanh toán', N'Thẻ'),
+('KH0002', 7, GETDATE(), 280000, N'Đã thanh toán', N'Tiền mặt'),
+('KH0003', 8, GETDATE(), 350000, N'Đã thanh toán', N'Chuyển khoản'),
+('KH0004', 9, GETDATE(), 300000, N'Chưa thanh toán', NULL),
+('KH0005', 10, GETDATE(), 450000, N'Đã thanh toán', N'Thẻ'),
+
+('KH0001', 11, GETDATE(), 200000, N'Đã thanh toán', N'Tiền mặt'),
+('KH0002', 12, GETDATE(), 220000, N'Đã thanh toán', N'Thẻ'),
+('KH0003', 13, GETDATE(), 500000, N'Đã thanh toán', N'Chuyển khoản'),
+('KH0004', 14, GETDATE(), 350000, N'Đã thanh toán', N'Tiền mặt'),
+('KH0005', 15, GETDATE(), 300000, N'Đã thanh toán', N'Thẻ');
+
+
+
+
+
+
+
+
+INSERT INTO CT_HOADON_DV 
+(MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, MaNV_ThuNgan)
+VALUES
+(1, 'DV001', 150000, 150000, 100000, 50000, 'NV030'),
+(1, 'DV011', 90000, 90000, 60000, 30000, 'NV030'),
+
+(2, 'DV002', 150000, 150000, 100000, 50000, 'NV031'),
+(2, 'DV019', 250000, 250000, 150000, 100000, 'NV031'),
+
+(3, 'DV003', 150000, 150000, 100000, 50000, 'NV030'),
+
+(4, 'DV004', 150000, 150000, 100000, 50000, 'NV031'),
+(4, 'DV031', 350000, 350000, 0, 350000, 'NV031'),
+
+(5, 'DV005', 150000, 150000, 100000, 50000, 'NV030'),
+
+(6, 'DV006', 150000, 150000, 100000, 50000, 'NV030'),
+(7, 'DV007', 150000, 150000, 100000, 50000, 'NV031'),
+(8, 'DV008', 150000, 150000, 100000, 50000, 'NV030'),
+
+(9, 'DV024', 80000, 80000, 50000, 30000, 'NV031'),
+(10, 'DV022', 120000, 120000, 80000, 40000, 'NV030');
+
+
+INSERT INTO CT_HOADON_THUOC
+(MaHD, MaDonThuoc, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, MaNV_ThuNgan)
+VALUES
+(1, 1, 50000, 30000, 20000, 'NV030'),
+(2, 2, 80000, 50000, 30000, 'NV031'),
+(3, 3, 60000, 40000, 20000, 'NV030'),
+(4, 4, 120000, 80000, 40000, 'NV031'),
+(5, 5, 70000, 40000, 30000, 'NV030'),
+
+(6, 6, 50000, 30000, 20000, 'NV030'),
+(7, 7, 60000, 40000, 20000, 'NV031'),
+(8, 8, 90000, 60000, 30000, 'NV030'),
+(9, 9, 100000, 70000, 30000, 'NV031'),
+(10, 10, 80000, 50000, 30000, 'NV030'),
+
+(11, 11, 60000, 40000, 20000, 'NV030'),
+(12, 12, 70000, 50000, 20000, 'NV031'),
+(13, 13, 120000, 80000, 40000, 'NV030'),
+(14, 14, 90000, 60000, 30000, 'NV031'),
+(15, 15, 100000, 70000, 30000, 'NV030');
