@@ -7,11 +7,10 @@ using QL_KhamChuaBenhNgoaiTru.Models;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 {
-    // 1. ĐỔI KẾ THỪA TỪ Controller SANG BaseStaffController
+    // ĐỔI KẾ THỪA TỪ Controller SANG BaseStaffController
     public class TiepTanController : BaseStaffController
     {
         TiepTanDB db = new TiepTanDB();
-
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -19,7 +18,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 
             var nv = Session["NhanVien"] as NhanVien;
 
-            // 2. Chặn Bác sĩ: Chỉ Tiếp đón (8) mới được ở lại đây
+            // Chặn Bác sĩ: Chỉ Tiếp đón (8) mới được ở lại đây
             if (nv != null && nv.MaChucVu != 8)
             {
                 // Nếu là Bác sĩ (3, 4) đang cố ấn vào "Tiếp nhận", điều hướng họ an toàn về lại trang Bác Sĩ
@@ -31,7 +30,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 }
             }
         }
-
 
         // GET: Staff/TiepTan/Index
         public ActionResult Index()
@@ -73,7 +71,10 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 return Json(new { success = false, message = "Vui lòng chọn đầy đủ Dịch vụ và Phòng khám!" });
 
             string tenPhong, tenKhoa;
-            PhieuDangKyResult result = db.XacNhanDichVuKham(maPhieuDK, maDV, maPhong, lyDo, out tenPhong, out tenKhoa);
+            bool requirePayment; // Bổ sung biến hứng trạng thái thu tiền
+
+            // Gọi hàm DB đã update
+            PhieuDangKyResult result = db.XacNhanDichVuKham(maPhieuDK, maDV, maPhong, lyDo, out tenPhong, out tenKhoa, out requirePayment);
 
             if (result.Success)
             {
@@ -82,8 +83,22 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                     success = true,
                     stt = result.STT,
                     phong = tenPhong,
-                    khoa = tenKhoa
+                    khoa = tenKhoa,
+                    requirePayment = requirePayment // Quăng cờ này ra View để JavaScript xử lý UI
                 });
+            }
+            return Json(new { success = false, message = result.ErrorMessage });
+        }
+
+        [HttpPost]
+        public JsonResult ChotCapSo(int maPhieuKhamBenh)
+        {
+            string tenPhong, tenKhoa;
+            var result = db.ChotCapSoKham(maPhieuKhamBenh, out tenPhong, out tenKhoa);
+
+            if (result.Success)
+            {
+                return Json(new { success = true, stt = result.STT, phong = tenPhong, khoa = tenKhoa });
             }
             return Json(new { success = false, message = result.ErrorMessage });
         }
@@ -96,7 +111,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 
             foreach (System.Data.DataRow row in dtPhong.Rows)
             {
-                string valueStr = row["MaPhong"].ToString(); // Bây giờ value chỉ chứa MaPhong
+                string valueStr = row["MaPhong"].ToString();
                 string textStr = $"{row["TenPhong"]} (Đang chờ: {row["SoNguoiCho"]})";
                 list.Add(new { Value = valueStr, Text = textStr });
             }

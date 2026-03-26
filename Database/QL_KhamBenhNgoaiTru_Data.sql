@@ -1118,7 +1118,7 @@ VALUES
 
 
 
-
+/*
 
 INSERT INTO PHIEUDANGKY (MaBN, NgayDangKy, STT, HinhThucDangKy, TrangThai, LyDo, MaPhong) VALUES 
 -- ===== Phòng 6 ===== 
@@ -1404,26 +1404,26 @@ VALUES
 
 
 
-INSERT INTO HOADON (MaBN, MaPhieuKhamBenh, NgayThanhToan, TongTien, TrangThaiThanhToan, HinhThucThanhToan)
+INSERT INTO HOADON 
+(MaBN, MaPhieuKhamBenh, NgayThanhToan, TongTienGoc, TongTienBHYTChiTra, TongTienBenhNhanTra, TrangThaiThanhToan, HinhThucThanhToan)
 VALUES
-('KH0001', 1, GETDATE(), 300000, N'Đã thanh toán', N'Tiền mặt'),
-('KH0002', 2, GETDATE(), 350000, N'Đã thanh toán', N'Chuyển khoản'),
-('KH0003', 3, GETDATE(), 250000, N'Đã thanh toán', N'Thẻ'),
-('KH0004', 4, GETDATE(), 400000, N'Đã thanh toán', N'Tiền mặt'),
-('KH0005', 5, GETDATE(), 200000, N'Chưa thanh toán', NULL),
+('KH0001', 1, GETDATE(), 300000, 200000, 100000, N'Đã thanh toán', N'Tiền mặt'),
+('KH0002', 2, GETDATE(), 350000, 230000, 120000, N'Đã thanh toán', N'Chuyển khoản'),
+('KH0003', 3, GETDATE(), 250000, 150000, 100000, N'Đã thanh toán', N'Thẻ'),
+('KH0004', 4, GETDATE(), 400000, 250000, 150000, N'Đã thanh toán', N'Tiền mặt'),
+('KH0005', 5, GETDATE(), 200000, 120000, 80000, N'Chưa thanh toán', NULL),
 
-('KH0001', 6, GETDATE(), 300000, N'Đã thanh toán', N'Thẻ'),
-('KH0002', 7, GETDATE(), 280000, N'Đã thanh toán', N'Tiền mặt'),
-('KH0003', 8, GETDATE(), 350000, N'Đã thanh toán', N'Chuyển khoản'),
-('KH0004', 9, GETDATE(), 300000, N'Chưa thanh toán', NULL),
-('KH0005', 10, GETDATE(), 450000, N'Đã thanh toán', N'Thẻ'),
+('KH0001', 6, GETDATE(), 300000, 200000, 100000, N'Đã thanh toán', N'Thẻ'),
+('KH0002', 7, GETDATE(), 280000, 180000, 100000, N'Đã thanh toán', N'Tiền mặt'),
+('KH0003', 8, GETDATE(), 350000, 230000, 120000, N'Đã thanh toán', N'Chuyển khoản'),
+('KH0004', 9, GETDATE(), 300000, 180000, 120000, N'Chưa thanh toán', NULL),
+('KH0005', 10, GETDATE(), 450000, 300000, 150000, N'Đã thanh toán', N'Thẻ'),
 
-('KH0001', 11, GETDATE(), 200000, N'Đã thanh toán', N'Tiền mặt'),
-('KH0002', 12, GETDATE(), 220000, N'Đã thanh toán', N'Thẻ'),
-('KH0003', 13, GETDATE(), 500000, N'Đã thanh toán', N'Chuyển khoản'),
-('KH0004', 14, GETDATE(), 350000, N'Đã thanh toán', N'Tiền mặt'),
-('KH0005', 15, GETDATE(), 300000, N'Đã thanh toán', N'Thẻ');
-
+('KH0001', 11, GETDATE(), 200000, 120000, 80000, N'Đã thanh toán', N'Tiền mặt'),
+('KH0002', 12, GETDATE(), 220000, 140000, 80000, N'Đã thanh toán', N'Thẻ'),
+('KH0003', 13, GETDATE(), 500000, 300000, 200000, N'Đã thanh toán', N'Chuyển khoản'),
+('KH0004', 14, GETDATE(), 350000, 220000, 130000, N'Đã thanh toán', N'Tiền mặt'),
+('KH0005', 15, GETDATE(), 300000, 180000, 120000, N'Đã thanh toán', N'Thẻ');
 
 
 
@@ -1454,7 +1454,7 @@ VALUES
 (9, 'DV024', 80000, 80000, 50000, 30000, 'NV031'),
 (10, 'DV022', 120000, 120000, 80000, 40000, 'NV030');
 
-
+/*
 INSERT INTO CT_HOADON_THUOC
 (MaHD, MaDonThuoc, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, MaNV_ThuNgan)
 VALUES
@@ -1475,3 +1475,6 @@ VALUES
 (13, 13, 120000, 80000, 40000, 'NV030'),
 (14, 14, 90000, 60000, 30000, 'NV031'),
 (15, 15, 100000, 70000, 30000, 'NV030');
+*/
+
+*/

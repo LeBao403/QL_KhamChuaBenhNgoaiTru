@@ -17,7 +17,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public string GenerateMaBN(SqlConnection con, SqlTransaction trans)
         {
             string prefix = "KH";
-            // Tìm mã lớn nhất bắt đầu bằng chữ "KH"
             string sql = "SELECT TOP 1 MaBN FROM BENHNHAN WHERE MaBN LIKE @Prefix ORDER BY MaBN DESC";
             SqlCommand cmd = new SqlCommand(sql, con, trans);
             cmd.Parameters.AddWithValue("@Prefix", prefix + "%");
@@ -25,15 +24,9 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             object result = cmd.ExecuteScalar();
             if (result != null)
             {
-                // Giả sử result là "KH0010"
-                // Cắt bỏ 2 ký tự đầu ("KH"), lấy phần số ("0010"), ép kiểu Int rồi cộng 1
                 int nextNum = int.Parse(result.ToString().Substring(2)) + 1;
-
-                // Trả về "KH" ghép với số mới định dạng 4 chữ số (D4)
                 return prefix + nextNum.ToString("D4");
             }
-
-            // Nếu trong Database chưa có ai thì trả về mã đầu tiên
             return prefix + "0001";
         }
 
@@ -42,20 +35,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         {
             PhieuDangKyResult res = new PhieuDangKyResult { Success = false };
 
-            // ====================================================================
-            // BƯỚC 0: TIỀN XỬ LÝ DỮ LIỆU ĐỂ TRÁNH LỖI "SQLDATETIME OVERFLOW 1753"
-            // ====================================================================
             object ngaySinhSafe = DBNull.Value;
             if (bn.NgaySinh != null && Convert.ToDateTime(bn.NgaySinh).Year > 1753)
-            {
                 ngaySinhSafe = bn.NgaySinh;
-            }
 
             object hanSDSafe = DBNull.Value;
             if (bn.HanSuDungBHYT != null && Convert.ToDateTime(bn.HanSuDungBHYT).Year > 1753)
-            {
                 hanSDSafe = bn.HanSuDungBHYT;
-            }
 
             using (SqlConnection con = new SqlConnection(connectStr))
             {
@@ -78,8 +64,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         checkCmd.Parameters.AddWithValue("@CCCD", string.IsNullOrEmpty(bn.CCCD) ? DBNull.Value : (object)bn.CCCD);
                         checkCmd.Parameters.AddWithValue("@SoBHYT", string.IsNullOrEmpty(bn.SoTheBHYT) ? DBNull.Value : (object)bn.SoTheBHYT);
                         checkCmd.Parameters.AddWithValue("@HoTen", bn.HoTen);
-
-                        // Sử dụng biến an toàn đã bọc DBNull
                         checkCmd.Parameters.AddWithValue("@NgaySinh", ngaySinhSafe);
 
                         object existMaBN = checkCmd.ExecuteScalar();
@@ -110,20 +94,14 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             updateCmd.Parameters.AddWithValue("@MaBN", maBN);
                             updateCmd.Parameters.AddWithValue("@HoTen", string.IsNullOrEmpty(bn.HoTen) ? DBNull.Value : (object)bn.HoTen);
                             updateCmd.Parameters.AddWithValue("@DiaChi", string.IsNullOrEmpty(bn.DiaChi) ? DBNull.Value : (object)bn.DiaChi);
-
-                            // Sử dụng biến an toàn
                             updateCmd.Parameters.AddWithValue("@NgaySinh", ngaySinhSafe);
-
                             updateCmd.Parameters.AddWithValue("@GioiTinh", string.IsNullOrEmpty(bn.GioiTinh) ? DBNull.Value : (object)bn.GioiTinh);
                             updateCmd.Parameters.AddWithValue("@SDT", string.IsNullOrEmpty(bn.SDT) ? DBNull.Value : (object)bn.SDT);
 
                             if (loaiThe == "BHYT")
                             {
                                 updateCmd.Parameters.AddWithValue("@SoTheBHYT", string.IsNullOrEmpty(bn.SoTheBHYT) ? DBNull.Value : (object)bn.SoTheBHYT);
-
-                                // Sử dụng biến an toàn
                                 updateCmd.Parameters.AddWithValue("@HanSD", hanSDSafe);
-
                                 updateCmd.Parameters.AddWithValue("@MucHuong", bn.MucHuongBHYT.HasValue ? (object)bn.MucHuongBHYT.Value : DBNull.Value);
                                 updateCmd.Parameters.AddWithValue("@TuyenKham", string.IsNullOrEmpty(bn.TuyenKham) ? DBNull.Value : (object)bn.TuyenKham);
                             }
@@ -144,19 +122,12 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             insertCmd.Parameters.AddWithValue("@HoTen", bn.HoTen);
                             insertCmd.Parameters.AddWithValue("@CCCD", string.IsNullOrEmpty(bn.CCCD) ? DBNull.Value : (object)bn.CCCD);
                             insertCmd.Parameters.AddWithValue("@SDT", string.IsNullOrEmpty(bn.SDT) ? DBNull.Value : (object)bn.SDT);
-
-                            // Sử dụng biến an toàn
                             insertCmd.Parameters.AddWithValue("@NgaySinh", ngaySinhSafe);
-
                             insertCmd.Parameters.AddWithValue("@GioiTinh", string.IsNullOrEmpty(bn.GioiTinh) ? DBNull.Value : (object)bn.GioiTinh);
                             insertCmd.Parameters.AddWithValue("@DiaChi", string.IsNullOrEmpty(bn.DiaChi) ? DBNull.Value : (object)bn.DiaChi);
-
                             insertCmd.Parameters.AddWithValue("@HasBHYT", loaiThe == "BHYT" ? 1 : 0);
                             insertCmd.Parameters.AddWithValue("@SoTheBHYT", (loaiThe == "BHYT" && !string.IsNullOrEmpty(bn.SoTheBHYT)) ? (object)bn.SoTheBHYT : DBNull.Value);
-
-                            // Sử dụng biến an toàn
                             insertCmd.Parameters.AddWithValue("@HanSD", hanSDSafe);
-
                             insertCmd.Parameters.AddWithValue("@MucHuong", (loaiThe == "BHYT" && bn.MucHuongBHYT.HasValue) ? (object)bn.MucHuongBHYT.Value : DBNull.Value);
                             insertCmd.Parameters.AddWithValue("@TuyenKham", (loaiThe == "BHYT" && !string.IsNullOrEmpty(bn.TuyenKham)) ? (object)bn.TuyenKham : DBNull.Value);
 
@@ -170,7 +141,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         LEFT JOIN PHIEUDANGKY pdk ON p.MaPhong = pdk.MaPhong 
                             AND CAST(pdk.NgayDangKy AS DATE) = CAST(GETDATE() AS DATE) 
                             AND pdk.TrangThai = N'Chờ xử lý'
-                            AND pdk.HinhThucDangKy = N'Offline' -- MỚI THÊM CHỖ NÀY ĐỂ TÁCH LUỒNG
+                            AND pdk.HinhThucDangKy = N'Offline'
                         WHERE p.MaLoaiPhong = 1 AND p.TrangThai = 1
                         GROUP BY p.MaPhong, p.TenPhong
                         ORDER BY COUNT(pdk.MaPhieuDK) ASC, p.TenPhong ASC";
@@ -228,11 +199,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         }
 
 
-
-        public PhieuDangKyResult XacNhanDichVuKham(int maPhieuDK, string maDV, int maPhong, string lyDo, out string tenPhong, out string tenKhoa)
+        // [HÀM ĐÃ ĐƯỢC NÂNG CẤP LUỒNG BHYT VÀ TÀI CHÍNH]
+        public PhieuDangKyResult XacNhanDichVuKham(int maPhieuDK, string maDV, int maPhong, string lyDo, out string tenPhong, out string tenKhoa, out bool requirePayment)
         {
             PhieuDangKyResult res = new PhieuDangKyResult { Success = false };
-            tenPhong = ""; tenKhoa = "";
+            tenPhong = "";
+            tenKhoa = "";
+            requirePayment = true; // Mặc định là phải đi đóng tiền (Trừ khi có BHYT)
 
             using (SqlConnection con = new SqlConnection(connectStr))
             {
@@ -241,37 +214,121 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 {
                     try
                     {
-                        // 1. LẤY MaBN
-                        string sqlGetBN = "SELECT MaBN FROM PHIEUDANGKY WHERE MaPhieuDK = @MaPDK";
+                        // 1. LẤY THÔNG TIN BỆNH NHÂN (Check xem có BHYT không)
+                        string sqlGetBN = @"
+                            SELECT pdk.MaBN, bn.BHYT, bn.MucHuongBHYT 
+                            FROM PHIEUDANGKY pdk 
+                            JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN 
+                            WHERE pdk.MaPhieuDK = @MaPDK";
                         SqlCommand cmdGetBN = new SqlCommand(sqlGetBN, con, trans);
                         cmdGetBN.Parameters.AddWithValue("@MaPDK", maPhieuDK);
-                        string maBN = cmdGetBN.ExecuteScalar().ToString();
 
-                        // 2. TÍNH STT TẠI PHÒNG
-                        string sqlSTT = "SELECT ISNULL(MAX(STT), 0) + 1 FROM PHIEUKHAMBENH WHERE MaPhong = @MaPhong AND CAST(NgayLap AS DATE) = CAST(GETDATE() AS DATE)";
-                        SqlCommand cmdSTT = new SqlCommand(sqlSTT, con, trans);
-                        cmdSTT.Parameters.AddWithValue("@MaPhong", maPhong);
-                        int sttPhong = Convert.ToInt32(cmdSTT.ExecuteScalar());
+                        string maBN = "";
+                        bool hasBHYT = false;
+                        int mucHuong = 0;
 
-                        // 3. TẠO PHIEUKHAMBENH (Lưu ý: Không truyền MaBacSiKham nữa)
+                        using (SqlDataReader dr = cmdGetBN.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                maBN = dr["MaBN"].ToString();
+                                hasBHYT = dr["BHYT"] != DBNull.Value && Convert.ToBoolean(dr["BHYT"]);
+                                mucHuong = dr["MucHuongBHYT"] != DBNull.Value ? Convert.ToInt32(dr["MucHuongBHYT"]) : 0;
+                            }
+                        }
+
+                        // 2. LẤY THÔNG TIN DỊCH VỤ KHÁM BỆNH (Để lấy giá tiền)
+                        string sqlDV = "SELECT GiaDichVu, CoBHYT FROM DICHVU WHERE MaDV = @MaDV";
+                        SqlCommand cmdDV = new SqlCommand(sqlDV, con, trans);
+                        cmdDV.Parameters.AddWithValue("@MaDV", maDV);
+
+                        decimal giaDichVu = 0;
+                        bool dvCoBHYT = false;
+                        using (SqlDataReader drDV = cmdDV.ExecuteReader())
+                        {
+                            if (drDV.Read())
+                            {
+                                giaDichVu = Convert.ToDecimal(drDV["GiaDichVu"]);
+                                dvCoBHYT = drDV["CoBHYT"] != DBNull.Value && Convert.ToBoolean(drDV["CoBHYT"]);
+                            }
+                        }
+
+                        // 3. TÍNH TOÁN TIỀN NONG & ĐỊNH TUYẾN
+                        decimal tienBHYTChiTra = 0;
+                        decimal tienBenhNhanTra = giaDichVu;
+
+                        if (hasBHYT && dvCoBHYT)
+                        {
+                            tienBHYTChiTra = giaDichVu * mucHuong / 100;
+                            tienBenhNhanTra = giaDichVu - tienBHYTChiTra;
+                            requirePayment = false; // Có BHYT -> Bỏ qua thu ngân, đi khám luôn
+                        }
+
+                        // Xác định trạng thái Khám:
+                        string trangThaiKham = requirePayment ? "Chờ thanh toán" : "Chờ khám";
+
+                        // 4. TÍNH STT (Chỉ cấp số nếu KHÔNG CẦN ĐÓNG TIỀN, ngược lại để NULL)
+                        int sttPhong = 0;
+                        object sttValue = DBNull.Value;
+
+                        if (!requirePayment)
+                        {
+                            string sqlSTT = "SELECT ISNULL(MAX(STT), 0) + 1 FROM PHIEUKHAMBENH WHERE MaPhong = @MaPhong AND CAST(NgayLap AS DATE) = CAST(GETDATE() AS DATE)";
+                            SqlCommand cmdSTT = new SqlCommand(sqlSTT, con, trans);
+                            cmdSTT.Parameters.AddWithValue("@MaPhong", maPhong);
+                            sttPhong = Convert.ToInt32(cmdSTT.ExecuteScalar());
+                            sttValue = sttPhong;
+                        }
+
+                        // 5. TẠO PHIEUKHAMBENH (STT có thể là số hoặc NULL)
                         string sqlInsertPKB = @"
-                    INSERT INTO PHIEUKHAMBENH (MaPhieuDK, MaBN, STT, NgayLap, TrangThai, MaPhong, LyDoDenKham) 
-                    VALUES (@MaPDK, @MaBN, @STT, GETDATE(), N'Đang khám', @MaPhong, @LyDo)";
+                            INSERT INTO PHIEUKHAMBENH (MaPhieuDK, MaBN, STT, NgayLap, TrangThai, MaPhong, LyDoDenKham) 
+                            OUTPUT INSERTED.MaPhieuKhamBenh
+                            VALUES (@MaPDK, @MaBN, @STT, GETDATE(), @TrangThai, @MaPhong, @LyDo)";
                         SqlCommand cmdPKB = new SqlCommand(sqlInsertPKB, con, trans);
                         cmdPKB.Parameters.AddWithValue("@MaPDK", maPhieuDK);
                         cmdPKB.Parameters.AddWithValue("@MaBN", maBN);
-                        cmdPKB.Parameters.AddWithValue("@STT", sttPhong);
+                        cmdPKB.Parameters.AddWithValue("@STT", sttValue);
+                        cmdPKB.Parameters.AddWithValue("@TrangThai", trangThaiKham);
                         cmdPKB.Parameters.AddWithValue("@MaPhong", maPhong);
                         cmdPKB.Parameters.AddWithValue("@LyDo", string.IsNullOrEmpty(lyDo) ? DBNull.Value : (object)lyDo);
-                        cmdPKB.ExecuteNonQuery();
 
-                        // 4. UPDATE PHIEUDANGKY
+                        int maPhieuKhamBenh = Convert.ToInt32(cmdPKB.ExecuteScalar());
+
+                        // 6. TẠO HÓA ĐƠN TỔNG (Trạng thái luôn là Chưa thanh toán ban đầu)
+                        string sqlInsertHD = @"
+                            INSERT INTO HOADON (MaBN, MaPhieuKhamBenh, NgayThanhToan, TongTienGoc, TongTienBHYTChiTra, TongTienBenhNhanTra, TrangThaiThanhToan)
+                            OUTPUT INSERTED.MaHD
+                            VALUES (@MaBN, @MaPKB, GETDATE(), @TienGoc, @TienBHYT, @TienBN, N'Chưa thanh toán')";
+                        SqlCommand cmdHD = new SqlCommand(sqlInsertHD, con, trans);
+                        cmdHD.Parameters.AddWithValue("@MaBN", maBN);
+                        cmdHD.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                        cmdHD.Parameters.AddWithValue("@TienGoc", giaDichVu);
+                        cmdHD.Parameters.AddWithValue("@TienBHYT", tienBHYTChiTra);
+                        cmdHD.Parameters.AddWithValue("@TienBN", tienBenhNhanTra);
+
+                        int maHD = Convert.ToInt32(cmdHD.ExecuteScalar());
+
+                        // 7. TẠO CHI TIẾT HÓA ĐƠN (Tiền công khám)
+                        string sqlInsertCTHD = @"
+                        INSERT INTO CT_HOADON_DV (MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
+                        VALUES (@MaHD, @MaDV, @DonGia, @TienGoc, @TienBHYT, @TienBN, N'Chưa thanh toán')";
+                        SqlCommand cmdCTHD = new SqlCommand(sqlInsertCTHD, con, trans);
+                        cmdCTHD.Parameters.AddWithValue("@MaHD", maHD);
+                        cmdCTHD.Parameters.AddWithValue("@MaDV", maDV);
+                        cmdCTHD.Parameters.AddWithValue("@DonGia", giaDichVu);
+                        cmdCTHD.Parameters.AddWithValue("@TienGoc", giaDichVu);
+                        cmdCTHD.Parameters.AddWithValue("@TienBHYT", tienBHYTChiTra);
+                        cmdCTHD.Parameters.AddWithValue("@TienBN", tienBenhNhanTra);
+                        cmdCTHD.ExecuteNonQuery();
+
+                        // 8. CẬP NHẬT PHIẾU ĐĂNG KÝ
                         string sqlUpdatePDK = "UPDATE PHIEUDANGKY SET TrangThai = N'Đã xác nhận' WHERE MaPhieuDK = @MaPDK";
                         SqlCommand cmdUpdatePDK = new SqlCommand(sqlUpdatePDK, con, trans);
                         cmdUpdatePDK.Parameters.AddWithValue("@MaPDK", maPhieuDK);
                         cmdUpdatePDK.ExecuteNonQuery();
 
-                        // 5. LẤY TÊN PHÒNG/KHOA ĐỂ HIỂN THỊ POPUP
+                        // 9. LẤY TÊN PHÒNG/KHOA ĐỂ TRẢ VỀ HIỂN THỊ
                         string sqlInfo = "SELECT p.TenPhong, k.TenKhoa FROM PHONG p JOIN KHOA k ON p.MaKhoa = k.MaKhoa WHERE p.MaPhong = @MaPhong";
                         SqlCommand cmdInfo = new SqlCommand(sqlInfo, con, trans);
                         cmdInfo.Parameters.AddWithValue("@MaPhong", maPhong);
@@ -285,29 +342,41 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         }
 
                         trans.Commit();
-                        res.Success = true; res.MaPhieuDK = maPhieuDK; res.STT = sttPhong; res.MaBN = maBN;
+                        res.Success = true;
+                        res.MaPhieuDK = maPhieuDK;
+                        res.MaBN = maBN;
+
+                        // Nếu cần đóng tiền thì chưa có STT (trả về 0 để UI biết)
+                        res.STT = requirePayment ? 0 : sttPhong;
                     }
-                    catch (Exception ex) { trans.Rollback(); res.Success = false; res.ErrorMessage = ex.Message; }
+                    catch (Exception ex)
+                    {
+                        trans.Rollback();
+                        res.Success = false;
+                        res.ErrorMessage = ex.Message;
+                    }
                 }
             }
             return res;
         }
 
-        // 1. Lấy danh sách OFFLINE (Từ Kiosk) - Lọc theo Quầy, sắp xếp theo STT
+        // 1. Lấy danh sách OFFLINE (Từ Kiosk) - HIỂN THỊ CẢ NHỮNG NGƯỜI CHƯA CẤP SỐ
         public DataTable GetDanhSachOffline(int maPhongTiepTan)
         {
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
             {
                 string sql = @"
-            SELECT pdk.MaPhieuDK, pdk.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, pdk.STT 
-            FROM PHIEUDANGKY pdk
-            JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN
-            WHERE pdk.TrangThai = N'Chờ xử lý' 
-              AND pdk.MaPhong = @MaPhong
-              AND pdk.HinhThucDangKy = N'Offline'
-              AND CAST(pdk.NgayDangKy AS DATE) = CAST(GETDATE() AS DATE)
-            ORDER BY pdk.STT ASC";
+                SELECT pdk.MaPhieuDK, pdk.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, pdk.STT, bn.BHYT,
+                       ISNULL(pkb.TrangThai, N'Chưa tiếp nhận') AS TrangThaiPKB, pkb.MaPhieuKhamBenh
+                FROM PHIEUDANGKY pdk
+                JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN
+                LEFT JOIN PHIEUKHAMBENH pkb ON pdk.MaPhieuDK = pkb.MaPhieuDK
+                WHERE pdk.MaPhong = @MaPhong
+                  AND pdk.HinhThucDangKy = N'Offline'
+                  AND CAST(pdk.NgayDangKy AS DATE) = CAST(GETDATE() AS DATE)
+                  AND (pdk.TrangThai = N'Chờ xử lý' OR (pdk.TrangThai = N'Đã xác nhận' AND pkb.TrangThai IN (N'Chờ thanh toán', N'Chờ cấp số')))
+                ORDER BY pdk.STT ASC";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@MaPhong", maPhongTiepTan);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -316,21 +385,23 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return dt;
         }
 
-        // 2. Lấy danh sách ONLINE (Từ Web) - Lọc theo Quầy, có kèm Lý do
+        // 2. Lấy danh sách ONLINE (Từ Web) - HIỂN THỊ CẢ NHỮNG NGƯỜI CHƯA CẤP SỐ
         public DataTable GetDanhSachOnline(int maPhongTiepTan)
         {
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
             {
                 string sql = @"
-            SELECT pdk.MaPhieuDK, pdk.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, pdk.LyDo 
-            FROM PHIEUDANGKY pdk
-            JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN
-            WHERE pdk.TrangThai = N'Chờ xử lý' 
-              AND pdk.MaPhong = @MaPhong
-              AND pdk.HinhThucDangKy = N'Online'
-              AND CAST(pdk.NgayDangKy AS DATE) = CAST(GETDATE() AS DATE)
-            ORDER BY pdk.MaPhieuDK ASC";
+                SELECT pdk.MaPhieuDK, pdk.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, pdk.LyDo, bn.BHYT,
+                       ISNULL(pkb.TrangThai, N'Chưa tiếp nhận') AS TrangThaiPKB, pkb.MaPhieuKhamBenh
+                FROM PHIEUDANGKY pdk
+                JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN
+                LEFT JOIN PHIEUKHAMBENH pkb ON pdk.MaPhieuDK = pkb.MaPhieuDK
+                WHERE pdk.MaPhong = @MaPhong
+                  AND pdk.HinhThucDangKy = N'Online'
+                  AND CAST(pdk.NgayDangKy AS DATE) = CAST(GETDATE() AS DATE)
+                  AND (pdk.TrangThai = N'Chờ xử lý' OR (pdk.TrangThai = N'Đã xác nhận' AND pkb.TrangThai IN (N'Chờ thanh toán', N'Chờ cấp số')))
+                ORDER BY pdk.MaPhieuDK ASC";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@MaPhong", maPhongTiepTan);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
@@ -339,7 +410,64 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return dt;
         }
 
-        // 2. Lấy danh sách dịch vụ Khám Bệnh (LDV01)
+        // 3. HÀM MỚI: Cấp STT cho bệnh nhân Khám Dịch Vụ đã đóng tiền xong
+        public PhieuDangKyResult ChotCapSoKham(int maPhieuKhamBenh, out string tenPhong, out string tenKhoa)
+        {
+            PhieuDangKyResult res = new PhieuDangKyResult { Success = false };
+            tenPhong = ""; tenKhoa = "";
+
+            using (SqlConnection con = new SqlConnection(connectStr))
+            {
+                con.Open();
+                using (SqlTransaction trans = con.BeginTransaction())
+                {
+                    try
+                    {
+                        string checkSql = "SELECT TrangThai, MaPhong FROM PHIEUKHAMBENH WHERE MaPhieuKhamBenh = @MaPKB";
+                        SqlCommand cmdCheck = new SqlCommand(checkSql, con, trans);
+                        cmdCheck.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                        string trangThai = "";
+                        int maPhong = 0;
+                        using (SqlDataReader dr = cmdCheck.ExecuteReader())
+                        {
+                            if (dr.Read()) { trangThai = dr["TrangThai"].ToString(); maPhong = Convert.ToInt32(dr["MaPhong"]); }
+                        }
+
+                        if (trangThai == "Chờ thanh toán") throw new Exception("Bệnh nhân CHƯA ĐÓNG TIỀN khám dịch vụ! Không thể cấp số.");
+                        if (trangThai != "Chờ cấp số") throw new Exception("Hồ sơ này đã được cấp số hoặc bị hủy.");
+
+                        // Tính STT
+                        string sqlSTT = "SELECT ISNULL(MAX(STT), 0) + 1 FROM PHIEUKHAMBENH WHERE MaPhong = @MaPhong AND CAST(NgayLap AS DATE) = CAST(GETDATE() AS DATE)";
+                        SqlCommand cmdSTT = new SqlCommand(sqlSTT, con, trans);
+                        cmdSTT.Parameters.AddWithValue("@MaPhong", maPhong);
+                        int sttPhong = Convert.ToInt32(cmdSTT.ExecuteScalar());
+
+                        // Cập nhật STT và Trạng thái
+                        string updateSql = "UPDATE PHIEUKHAMBENH SET STT = @STT, TrangThai = N'Chờ khám' WHERE MaPhieuKhamBenh = @MaPKB";
+                        SqlCommand cmdUpdate = new SqlCommand(updateSql, con, trans);
+                        cmdUpdate.Parameters.AddWithValue("@STT", sttPhong);
+                        cmdUpdate.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                        cmdUpdate.ExecuteNonQuery();
+
+                        // Lấy thông tin phòng
+                        string sqlInfo = "SELECT p.TenPhong, k.TenKhoa FROM PHONG p JOIN KHOA k ON p.MaKhoa = k.MaKhoa WHERE p.MaPhong = @MaPhong";
+                        SqlCommand cmdInfo = new SqlCommand(sqlInfo, con, trans);
+                        cmdInfo.Parameters.AddWithValue("@MaPhong", maPhong);
+                        using (SqlDataReader reader = cmdInfo.ExecuteReader())
+                        {
+                            if (reader.Read()) { tenPhong = reader["TenPhong"].ToString(); tenKhoa = reader["TenKhoa"].ToString(); }
+                        }
+
+                        trans.Commit();
+                        res.Success = true; res.STT = sttPhong;
+                    }
+                    catch (Exception ex) { trans.Rollback(); res.ErrorMessage = ex.Message; }
+                }
+            }
+            return res;
+        }
+
+        // Lấy danh sách dịch vụ Khám Bệnh (LDV01)
         public DataTable GetDanhSachDichVuKham()
         {
             DataTable dt = new DataTable();
@@ -352,7 +480,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return dt;
         }
 
-        // 1. Hàm lấy danh sách PHÒNG KHÁM (không lấy Bác sĩ)
+        // Hàm lấy danh sách PHÒNG KHÁM vắng nhất
         public DataTable GetPhongTheoDichVu(string maDV)
         {
             DataTable dt = new DataTable();
@@ -363,7 +491,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                    (SELECT COUNT(*) FROM PHIEUKHAMBENH pkb 
                     WHERE pkb.MaPhong = p.MaPhong 
                       AND CAST(pkb.NgayLap AS DATE) = CAST(GETDATE() AS DATE) 
-                      AND pkb.TrangThai = N'Đang khám') AS SoNguoiCho
+                      AND pkb.TrangThai = N'Chờ khám') AS SoNguoiCho
             FROM PHONG p
             WHERE p.MaKhoa = (SELECT MaKhoa FROM DICHVU WHERE MaDV = @MaDV)
               AND p.TrangThai = 1
@@ -377,7 +505,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return dt;
         }
 
-        // Thêm hàm này vào TiepTanDB.cs
         public string GetTenPhong(int maPhong)
         {
             using (SqlConnection con = new SqlConnection(connectStr))
