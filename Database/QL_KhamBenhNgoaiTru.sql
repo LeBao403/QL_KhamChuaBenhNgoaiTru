@@ -118,7 +118,7 @@ CREATE TABLE NHASANXUAT (
 
 -- 2. BẢNG THUỐC (Thông tin định danh sản phẩm)
 CREATE TABLE THUOC (
-    MaThuoc CHAR(10) PRIMARY KEY,
+    MaThuoc CHAR(20) PRIMARY KEY,
     TenThuoc NVARCHAR(MAX) NOT NULL, 
     
     -- Quy cách đóng gói/Dung tích (VD: Chai 100ml, Tuýp 10g)
@@ -158,7 +158,7 @@ CREATE TABLE DONVI_QUYDOI (
 CREATE TABLE TONKHO (
     MaTonKho INT IDENTITY(1,1) PRIMARY KEY,
     MaKho INT,
-    MaThuoc CHAR(10) NOT NULL,
+    MaThuoc CHAR(20) NOT NULL,
     
     -- [OPTION 2] Lưu thông tin Lô trực tiếp tại đây
     MaLo NVARCHAR(50) NOT NULL, -- Mã lô in trên vỏ hộp
@@ -185,7 +185,7 @@ CREATE TABLE KHO (
 
 CREATE TABLE THANHPHAN_THUOC (
     MaThanhPhan CHAR(10) PRIMARY KEY,
-    MaThuoc CHAR(10) NOT NULL,
+    MaThuoc CHAR(20) NOT NULL,
     MaHoatChat CHAR(10) NOT NULL,
     HamLuong NVARCHAR(50), 
 );
@@ -225,7 +225,7 @@ CREATE TABLE DICHVU (
 CREATE TABLE PHIEUDANGKY (
     MaPhieuDK INT IDENTITY(1,1) PRIMARY KEY,
     MaBN CHAR(10),
-    NgayDangKy DATE DEFAULT GETDATE(),
+    NgayDangKy DATETIME DEFAULT GETDATE(),
 	STT INT,
     HinhThucDangKy NVARCHAR(20) CHECK (HinhThucDangKy IN (N'Online', N'Offline')),
     TrangThai NVARCHAR(20) CHECK (TrangThai IN (N'Chờ xử lý', N'Đã xác nhận', N'Hủy')),
@@ -310,7 +310,7 @@ CREATE TABLE DON_THUOC (
 CREATE TABLE CT_DON_THUOC (
     MaCTDonThuoc INT IDENTITY(1,1) PRIMARY KEY,
     MaDonThuoc INT NOT NULL,
-    MaThuoc CHAR(10) NOT NULL,
+    MaThuoc CHAR(20) NOT NULL,
     
     -- Dùng DECIMAL và cài CHECK để bắt buộc phải là bội số của 0.5 (0.5, 1, 1.5, 2...)
     SoLuongSang DECIMAL(5,2) DEFAULT 0 CHECK ((SoLuongSang * 10) % 5 = 0),
@@ -482,7 +482,7 @@ CREATE TABLE PHIEUNHAP (
 CREATE TABLE CT_PHIEUNHAP (
     MaCTPN INT IDENTITY(1,1) PRIMARY KEY,
     MaPhieuNhap INT NOT NULL,
-    MaThuoc CHAR(10) NOT NULL,
+    MaThuoc CHAR(20) NOT NULL,
     
     -- Thông tin vật lý của lô hàng nhập
     MaLo NVARCHAR(50) NOT NULL,

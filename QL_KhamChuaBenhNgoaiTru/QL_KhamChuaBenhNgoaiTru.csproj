@@ -100,6 +100,7 @@
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
@@ -399,6 +400,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Staff\Views\Kiosk\Lobby.cshtml" />
     <Content Include="Areas\Staff\Views\ThuNgan\Index.cshtml" />
+    <Content Include="Areas\Staff\Views\TiepTan\LichSuTiepNhan.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
