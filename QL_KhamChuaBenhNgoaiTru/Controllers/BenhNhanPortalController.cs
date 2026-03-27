@@ -113,9 +113,14 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
             try
             {
-                int maPhieu = db.DatLichKham(bn.MaBN, ngayKham, maDV, lyDo);
+                // Khai báo biến để hứng tên quầy từ hàm DB
+                string tenQuay;
+                int maPhieu = db.DatLichKham(bn.MaBN, ngayKham, maDV, lyDo, out tenQuay);
 
-                TempData["Success"] = "Đặt lịch khám thành công! Mã phiếu: " + maPhieu;
+                TempData["Success"] = "Đăng ký thành công!";
+                TempData["MaPhieu"] = maPhieu.ToString();
+                TempData["TenQuay"] = tenQuay; // Tên quầy thật 100% từ thuật toán
+                TempData["STT"] = "Online";
             }
             catch (Exception ex)
             {

@@ -119,7 +119,7 @@ CREATE TABLE NHASANXUAT (
 -- 2. BẢNG THUỐC (Thông tin định danh sản phẩm)
 CREATE TABLE THUOC (
     MaThuoc CHAR(10) PRIMARY KEY,
-    TenThuoc NVARCHAR(200) NOT NULL, 
+    TenThuoc NVARCHAR(MAX) NOT NULL, 
     
     -- Quy cách đóng gói/Dung tích (VD: Chai 100ml, Tuýp 10g)
     QuyCach NVARCHAR(100), 
@@ -255,12 +255,13 @@ CREATE TABLE PHIEUKHAMBENH (
     STT INT NULL,
     LyDoDenKham NVARCHAR(MAX),
     NgayLap DATE DEFAULT GETDATE(),
-    TrangThai NVARCHAR(20) CHECK (TrangThai IN (N'Chờ thanh toán', N'Chờ khám', N'Đang khám', N'Hoàn thành', N'Đã hủy')) DEFAULT N'Chờ thanh toán',
+    TrangThai NVARCHAR(20) CHECK (TrangThai IN (N'Chờ thanh toán', N'Chờ cấp số', N'Chờ khám', N'Đang khám', N'Hoàn thành', N'Đã hủy')) DEFAULT N'Chờ thanh toán',
     TrieuChung NVARCHAR(MAX),
     KetLuan NVARCHAR(200),
     MaBacSiKham CHAR(10),
     MaPhong INT
 );
+
 
 CREATE TABLE CHITIET_CHANDOAN ( 
     MaCTChanDoan INT IDENTITY(1,1) PRIMARY KEY,
