@@ -1,0 +1,184 @@
+@{
+    Layout = "~/Areas/NhanVienKho/Views/Shared/_Layout_NhanVienKho.cshtml";
+    ViewBag.Title = "Tồn kho";
+
+    var dsTonKho = ViewBag.DsTonKho as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.TonKhoViewModel>;
+    var dsKho = ViewBag.DsKho as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.KhoItem>;
+
+    int page = (int)ViewBag.Page;
+    int pageSize = (int)ViewBag.PageSize;
+    int totalCount = (int)ViewBag.TotalCount;
+    int totalPages = (int)ViewBag.TotalPages;
+    string keyword = ViewBag.Keyword ?? "";
+    string maKho = ViewBag.MaKho ?? "";
+    string trangThaiTon = ViewBag.TrangThaiTon ?? "";
+}
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        @using (Html.BeginForm("Index", "TonKho", FormMethod.Get, new { @class = "row g-3" }))
+        {
+            <div class="col-md-3">
+                <input type="text" name="keyword" class="form-control" placeholder="Tìm thuốc, mã lô..." value="@keyword" />
+            </div>
+            <div class="col-md-3">
+                <select name="maKho" class="form-select">
+                    <option value="">-- Tất cả kho --</option>
+                    @if (dsKho != null)
+                    {
+                        foreach (var k in dsKho)
+                        {
+                            <option value="@k.MaKho" @(maKho == k.MaKho.ToString() ? "selected" : "")>@k.TenKho</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="trangThaiTon" class="form-select">
+                    <option value="">-- Tất cả --</option>
+                    <option value="hethan" @(trangThaiTon == "hethan" ? "selected" : "")>Hết hạn / Sắp hết hạn</option>
+                    <option value="saphethan" @(trangThaiTon == "saphethan" ? "selected" : "")>Sắp hết hạn (30-90 ngày)</option>
+                    <option value="conhan" @(trangThaiTon == "conhan" ? "selected" : "")>Còn hạn (&gt;90 ngày)</option>
+                    <option value="hethang" @(trangThaiTon == "hethang" ? "selected" : "")>Sắp hết hàng</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="@Url.Action("Index", "TonKho", new { area = "NhanVienKho" })" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-x-circle me-1"></i> Reset
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        @if (dsTonKho == null || !dsTonKho.Any())
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-inbox fs-1 d-block mb-3 opacity-25"></i>
+                <strong>Không có dữ liệu tồn kho</strong>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width:40px">#</th>
+                            <th>Mã thuốc</th>
+                            <th>Tên thuốc</th>
+                            <th>Kho</th>
+                            <th>Mã lô</th>
+                            <th>Hạn sử dụng</th>
+                            <th class="text-end">Số lượng</th>
+                            <th class="text-end">Giá nhập</th>
+                            <th class="text-end">Thành tiền</th>
+                            <th class="text-center" style="width:100px">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int stt = (page - 1) * pageSize + 1; }
+                        @foreach (var item in dsTonKho)
+                        {
+                            bool sapHetHan = item.HanSuDung.HasValue && item.HanSuDung.Value <= DateTime.Now.AddDays(30);
+                            bool daHetHan = item.HanSuDung.HasValue && item.HanSuDung.Value < DateTime.Now;
+                            string rowClass = sapHetHan ? "table-warning" : (daHetHan ? "table-danger" : "");
+
+                            <tr class="@rowClass">
+                                <td class="text-center text-muted">@(stt++)</td>
+                                <td><code>@item.MaThuoc</code></td>
+                                <td>
+                                    <strong>@item.TenThuoc</strong>
+                                    <div class="small text-muted">@item.DonViCoBan</div>
+                                </td>
+                                <td><span class="badge bg-secondary">@item.TenKho</span></td>
+                                <td><code>@item.MaLo</code></td>
+                                <td>
+                                    @if (item.HanSuDung.HasValue)
+                                    {
+                                        var daysLeft = (item.HanSuDung.Value - DateTime.Now).Days;
+                                        if (daysLeft < 0)
+                                        {
+                                            <span class="badge bg-danger">Đã hết hạn</span>
+                                        }
+                                        else if (daysLeft <= 30)
+                                        {
+                                            <span class="badge bg-warning text-dark">@daysLeft ngày</span>
+                                        }
+                                        else
+                                        {
+                                            @item.HanSuDung.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td class="text-end fw-bold @(item.SoLuongTon <= 10 ? "text-danger" : "")">
+                                    @item.SoLuongTon.ToString("N0")
+                                </td>
+                                <td class="text-end">@((item.GiaNhap ?? 0).ToString("N0")) đ</td>
+                                <td class="text-end fw-bold text-primary">@((item.ThanhTien ?? 0).ToString("N0")) đ</td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="@Url.Action("Details", "TonKho", new { area = "NhanVienKho", id = item.MaTonKho })"
+                                           class="btn btn-outline-primary" title="Chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("Edit", "TonKho", new { area = "NhanVienKho", id = item.MaTonKho })"
+                                           class="btn btn-outline-warning" title="Điều chỉnh số lượng">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <td colspan="7" class="text-end fw-bold">Tổng cộng:</td>
+                            <td class="text-end fw-bold text-primary">@((dsTonKho != null ? dsTonKho.Sum(x => x.ThanhTien ?? 0) : 0).ToString("N0")) đ</td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="card-footer bg-white border-0">
+                <nav>
+                    <ul class="pagination justify-content-center mb-0">
+                        @if (page > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@(page - 1)&keyword=@keyword&maKho=@maKho&trangThaiTon=@trangThaiTon">&laquo;</a>
+                            </li>
+                        }
+                        @for (int i = Math.Max(1, page - 2); i <= Math.Min(totalPages, page + 2); i++)
+                        {
+                            <li class="page-item @(i == page ? "active" : "")">
+                                <a class="page-link" href="?page=@i&keyword=@keyword&maKho=@maKho&trangThaiTon=@trangThaiTon">@i</a>
+                            </li>
+                        }
+                        @if (page < totalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@(page + 1)&keyword=@keyword&maKho=@maKho&trangThaiTon=@trangThaiTon">&raquo;</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+                <div class="text-center text-muted small mt-1">
+                    Hiển thị @( (page - 1) * pageSize + 1 ) - @( Math.Min(page * pageSize, totalCount) ) trong tổng @totalCount dòng
+                </div>
+            </div>
+        }
+    </div>
+</div>

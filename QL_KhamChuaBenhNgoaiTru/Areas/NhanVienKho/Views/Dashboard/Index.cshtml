@@ -1,0 +1,208 @@
+@using System.Linq
+@model QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.ThongKeDashboard
+@{
+    Layout = "~/Areas/NhanVienKho/Views/Shared/_Layout_NhanVienKho.cshtml";
+    ViewBag.Title = "Dashboard";
+
+    var chartKho = ViewBag.ChartTonKhoTheoKho as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.ChartDataItem> ?? new List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.ChartDataItem>();
+    var chartThang = ViewBag.ChartPhieuNhapThang as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.ChartDataItem> ?? new List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.ChartDataItem>();
+    var chartLoai = ViewBag.ChartTonKhoLoai as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.ChartDataItem> ?? new List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.ChartDataItem>();
+}
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card-stat p-4 text-center" style="background: linear-gradient(135deg, #0d6efd, #0a4fd4); color: white;">
+            <i class="bi bi-hospital stat-icon mb-2"></i>
+            <div class="fw-bold" style="font-size:2.5rem">@Model.SoKho</div>
+            <div>Số kho</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-stat p-4 text-center" style="background: linear-gradient(135deg, #198754, #16653a); color: white;">
+            <i class="bi bi-capsule stat-icon mb-2"></i>
+            <div class="fw-bold" style="font-size:2.5rem">@Model.SoMatHang</div>
+            <div>Mặt hàng tồn kho</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-stat p-4 text-center" style="background: linear-gradient(135deg, #dc3545, #a62b3a); color: white;">
+            <i class="bi bi-hourglass-split stat-icon mb-2"></i>
+            <div class="fw-bold" style="font-size:2.5rem">@Model.SoHetHan</div>
+            <div>Sắp hết hạn (&lt;30 ngày)</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card-stat p-4 text-center" style="background: linear-gradient(135deg, #fd7e14, #c5600a); color: white;">
+            <i class="bi bi-box-seam stat-icon mb-2"></i>
+            <div class="fw-bold" style="font-size:2.5rem">@Model.SoItHang</div>
+            <div>Sắp hết hàng (&lt;10 cái)</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card-stat p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div><i class="bi bi-currency-dollar text-primary me-2"></i><strong>Tổng giá trị tồn kho</strong></div>
+            </div>
+            <div class="text-primary fw-bold" style="font-size:1.8rem">@Model.TongGiaTriTon.ToString("N0") đ</div>
+            <div class="text-muted small mt-1">@Model.TongSoLuongTon.ToString("N0") đơn vị</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-stat p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div><i class="bi bi-hourglass-split text-warning me-2"></i><strong>Phiếu chờ duyệt</strong></div>
+            </div>
+            <div class="text-warning fw-bold" style="font-size:1.8rem">@Model.PhieuNhapChoDuyet</div>
+            <div class="small text-muted">trong tổng @Model.PhieuNhapTong phiếu</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-stat p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div><i class="bi bi-check-circle text-success me-2"></i><strong>Phiếu đã duyệt</strong></div>
+            </div>
+            <div class="text-success fw-bold" style="font-size:1.8rem">@Model.PhieuNhapDaDuyet</div>
+            <div class="small text-muted">tổng @Model.PhieuNhapTong phiếu nhập</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Biểu đồ tồn kho theo kho (Donut) -->
+    <div class="col-md-4">
+        <div class="card-stat p-4">
+            <div class="fw-bold mb-3"><i class="bi bi-pie-chart text-primary me-2"></i>Tồn kho theo kho</div>
+            <canvas id="chartKho" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Biểu đồ phiếu nhập theo tháng (Bar) -->
+    <div class="col-md-8">
+        <div class="card-stat p-4">
+            <div class="fw-bold mb-3"><i class="bi bi-bar-chart text-primary me-2"></i>Phiếu nhập đã duyệt @(ViewBag.Year)</div>
+            <canvas id="chartThang" height="100"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Biểu đồ tồn kho theo loại thuốc (Pie) -->
+    <div class="col-md-6">
+        <div class="card-stat p-4">
+            <div class="fw-bold mb-3"><i class="bi bi-pie-chart-fill text-primary me-2"></i>Tồn kho theo loại thuốc</div>
+            <canvas id="chartLoai" height="180"></canvas>
+        </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="col-md-6">
+        <div class="card-stat p-4 h-100">
+            <div class="fw-bold mb-3"><i class="bi bi-lightning text-primary me-2"></i>Thao tác nhanh</div>
+            <div class="d-flex flex-column gap-3">
+                <a href="@Url.Action("Create", "PhieuNhap", new { area = "NhanVienKho" })" class="btn btn-primary">
+                    <i class="bi bi-file-earmark-plus me-2"></i>Tạo phiếu nhập kho mới
+                </a>
+                <a href="@Url.Action("Index", "TonKho", new { area = "NhanVienKho" })" class="btn btn-outline-primary">
+                    <i class="bi bi-box-seam me-2"></i>Xem danh sách tồn kho
+                </a>
+                <a href="@Url.Action("Index", "PhieuNhap", new { area = "NhanVienKho", trangThai = "Chờ duyệt" })" class="btn btn-outline-warning">
+                    <i class="bi bi-hourglass-split me-2"></i>Phiếu chờ duyệt (@Model.PhieuNhapChoDuyet)
+                </a>
+                <a href="@Url.Action("Index", "Thuoc", new { area = "NhanVienKho" })" class="btn btn-outline-info">
+                    <i class="bi bi-capsule me-2"></i>Tra cứu thuốc
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        Chart.defaults.font.family = "'Segoe UI', Arial, sans-serif";
+        Chart.defaults.color = '#6c757d';
+
+        // Chart 1: Donut - Tồn kho theo kho
+        var ctxKho = document.getElementById('chartKho').getContext('2d');
+        new Chart(ctxKho, {
+            type: 'doughnut',
+            data: {
+                labels: [@Html.Raw(string.Join(",", chartKho.Select(x => "'" + x.Label.Replace("'", "\\'") + "'")))],
+                datasets: [{
+                    data: [@string.Join(",", chartKho.Select(x => x.Value))],
+                    backgroundColor: [
+                        '#0d6efd', '#198754', '#fd7e14', '#dc3545',
+                        '#6f42c1', '#20c997', '#e85d04', '#3a86ff'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 12, padding: 8, font: { size: 11 } }
+                    }
+                }
+            }
+        });
+
+        // Chart 2: Bar - Phiếu nhập theo tháng
+        var ctxThang = document.getElementById('chartThang').getContext('2d');
+        new Chart(ctxThang, {
+            type: 'bar',
+            data: {
+                labels: [@Html.Raw(string.Join(",", chartThang.Select(x => "'" + x.Label.Replace("'", "\\'") + "'")))],
+                datasets: [{
+                    label: 'Số phiếu',
+                    data: [@string.Join(",", chartThang.Select(x => x.Value))],
+                    backgroundColor: '#198754',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+
+        // Chart 3: Pie - Tồn kho theo loại thuốc
+        var ctxLoai = document.getElementById('chartLoai').getContext('2d');
+        new Chart(ctxLoai, {
+            type: 'pie',
+            data: {
+                labels: [@Html.Raw(string.Join(",", chartLoai.Where(x => x.Value > 0).Select(x => "'" + x.Label.Replace("'", "\\'") + "'")))],
+                datasets: [{
+                    data: [@string.Join(",", chartLoai.Where(x => x.Value > 0).Select(x => x.Value))],
+                    backgroundColor: [
+                        '#0d6efd', '#198754', '#fd7e14', '#dc3545',
+                        '#6f42c1', '#20c997', '#e85d04', '#3a86ff',
+                        '#6610f2', '#e83e8c'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 12, padding: 6, font: { size: 10 } }
+                    }
+                }
+            }
+        });
+    </script>
+}

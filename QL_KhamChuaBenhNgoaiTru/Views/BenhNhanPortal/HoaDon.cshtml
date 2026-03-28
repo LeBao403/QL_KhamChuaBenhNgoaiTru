@@ -1,0 +1,143 @@
+@model List<QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.HoaDonItem>
+@{
+    ViewBag.Title = "Hóa đơn";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+    var daThanhToan = Model?.Count(x => x.TrangThaiThanhToan == "Đã thanh toán") ?? 0;
+    var chuaThanhToan = Model?.Count(x => x.TrangThaiThanhToan != "Đã thanh toán") ?? 0;
+    var tongTien = Model?.Sum(x => x.TongTien) ?? 0;
+}
+
+<div class="page-hero" style="background:linear-gradient(135deg,#15803d 0%,#22c55e 100%);">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <div class="hero-title"><i class="bi bi-receipt-cutoff me-2"></i>Danh sách hóa đơn</div>
+                <div class="hero-subtitle">
+                    @(Model != null ? Model.Count : 0) hóa đơn
+                    <span class="mx-2 text-white-50">|</span>
+                    Tổng: <strong>@tongTien.ToString("N0") đ</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="patient-card">
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-receipt"></i></div>
+                <div class="empty-state-title">Chưa có hóa đơn nào</div>
+                <div class="empty-state-desc">Hóa đơn sẽ xuất hiện sau khi bạn hoàn tất thanh toán viện phí.</div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-3" data-aos="fade-up">
+                <div class="patient-stat-card text-center py-4 px-3">
+                    <div class="mb-2">
+                        <div style="width:48px;height:48px;border-radius:14px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                            <i class="bi bi-receipt" style="font-size:1.3rem;color:#64748b;"></i>
+                        </div>
+                    </div>
+                    <div class="display-6 fw-bold" style="color:#1e293b;">@(Model != null ? Model.Count : 0)</div>
+                    <div class="small text-muted fw-semibold">Tổng hóa đơn</div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="patient-stat-card text-center py-4 px-3">
+                    <div class="mb-2">
+                        <div style="width:48px;height:48px;border-radius:14px;background:#d1fae5;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                            <i class="bi bi-check-circle" style="font-size:1.3rem;color:#065f46;"></i>
+                        </div>
+                    </div>
+                    <div class="display-6 fw-bold" style="color:#065f46;">@daThanhToan</div>
+                    <div class="small text-muted fw-semibold">Đã thanh toán</div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="patient-stat-card text-center py-4 px-3">
+                    <div class="mb-2">
+                        <div style="width:48px;height:48px;border-radius:14px;background:#fee2e2;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                            <i class="bi bi-clock" style="font-size:1.3rem;color:#991b1b;"></i>
+                        </div>
+                    </div>
+                    <div class="display-6 fw-bold" style="color:#991b1b;">@chuaThanhToan</div>
+                    <div class="small text-muted fw-semibold">Chưa thanh toán</div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="patient-stat-card text-center py-4 px-3">
+                    <div class="mb-2">
+                        <div style="width:48px;height:48px;border-radius:14px;background:#dbeafe;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                            <i class="bi bi-cash-stack" style="font-size:1.3rem;color:#1e40af;"></i>
+                        </div>
+                    </div>
+                    <div class="fw-bold" style="color:#1e40af;font-size:1.1rem;">@tongTien.ToString("N0") đ</div>
+                    <div class="small text-muted fw-semibold">Tổng tiền</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="patient-card">
+            <div class="table-responsive">
+                <table class="patient-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Mã HĐ</th>
+                            <th>Ngày thanh toán</th>
+                            <th>Ngày khám</th>
+                            <th class="text-end">Tổng tiền</th>
+                            <th>Hình thức</th>
+                            <th>Trạng thái</th>
+                            <th>Chi tiết</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold text-success">#@item.MaHD</td>
+                                <td>
+                                    @(item.NgayThanhToan.HasValue
+                                        ? item.NgayThanhToan.Value.ToString("dd/MM/yyyy HH:mm")
+                                        : "—")
+                                </td>
+                                <td>@(item.NgayKham.HasValue ? item.NgayKham.Value.ToString("dd/MM/yyyy") : "—")</td>
+                                <td class="text-end fw-bold text-danger">@item.TongTien.ToString("N0") đ</td>
+                                <td class="text-muted small">@(string.IsNullOrEmpty(item.HinhThucThanhToan) ? "—" : item.HinhThucThanhToan)</td>
+                                <td>
+                                    @if (item.TrangThaiThanhToan == "Đã thanh toán")
+                                    {
+                                        <span class="badge badge-done rounded-pill">
+                                            <i class="bi bi-check-circle me-1"></i>Đã thanh toán
+                                        </span>
+                                    }
+                                    else if (item.TrangThaiThanhToan == "Chưa thanh toán")
+                                    {
+                                        <span class="badge badge-cancelled rounded-pill">
+                                            <i class="bi bi-clock me-1"></i>Chưa thanh toán
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary rounded-pill">@item.TrangThaiThanhToan</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("ChiTietHoaDon", "BenhNhanPortal", new { id = item.MaHD })"
+                                       class="btn btn-outline-success btn-sm rounded-pill">
+                                        <i class="bi bi-eye me-1"></i>Xem
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

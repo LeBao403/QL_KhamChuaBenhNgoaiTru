@@ -1,0 +1,256 @@
+@model QL_KhamChuaBenhNgoaiTru.Models.NhanVienManageViewModel2
+
+@{
+    ViewBag.Title = "Chi tiết nhân viên";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+
+    // ==============================================================
+    // LOGIC LẤY HÌNH ẢNH THÔNG MINH TỪ THƯ MỤC Images/doctors
+    // ==============================================================
+    string avatarUrl = "";
+
+    if (!string.IsNullOrEmpty(Model.NhanVien.HinhAnh))
+    {
+        string hinhAnh = Model.NhanVien.HinhAnh.Trim();
+
+        // Kiểm tra xem DB đang lưu tên file (nv001.jpg) hay lưu cả đường dẫn (Images/doctors/nv001.jpg)
+        if (hinhAnh.Contains("/"))
+        {
+            avatarUrl = Url.Content("~/" + hinhAnh.TrimStart('/'));
+        }
+        else
+        {
+            // Tự động nối vào thư mục doctors
+            avatarUrl = Url.Content("~/Images/doctors/" + hinhAnh);
+        }
+    }
+    else
+    {
+        // Lấy ảnh mặc định theo giới tính (Lấy từ 2 file có sẵn trong cây thư mục)
+        string gioiTinh = Model.NhanVien.GioiTinh ?? "";
+        if (gioiTinh.Equals("Nữ", StringComparison.OrdinalIgnoreCase) || gioiTinh.Equals("Nu", StringComparison.OrdinalIgnoreCase))
+        {
+            avatarUrl = Url.Content("~/Images/doctors/defaultDoctor_Female.png");
+        }
+        else
+        {
+            // Mặc định cho Nam hoặc chưa rõ giới tính
+            avatarUrl = Url.Content("~/Images/doctors/defaultDoctor_Male.png");
+        }
+    }
+
+    string initials = !string.IsNullOrEmpty(Model.NhanVien.HoTen)
+        ? string.Join("", Model.NhanVien.HoTen.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => w[0]))
+        : "?";
+}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .card-custom {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 24px;
+        background-color: #fff;
+    }
+
+    .card-header-custom {
+        background-color: #fff;
+        border-bottom: 1px solid #f0f0f0;
+        padding: 16px 24px;
+        border-radius: 12px 12px 0 0;
+        font-weight: 600;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .info-label {
+        color: #6c757d;
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        color: #212529;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 12px;
+        word-break: break-all;
+    }
+
+    .not-available {
+        font-style: italic;
+        color: #adb5bd;
+    }
+
+    .avatar-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 4px solid #dee2e6;
+        object-fit: cover;
+        background: linear-gradient(135deg, #0d6efd, #6610f2);
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 text-dark fw-bold">Hồ sơ Nhân viên</h4>
+        <div>
+            <a href="@Url.Action("Index", "NhanVien", new { Area = "Admin" })" class="btn btn-outline-secondary me-2">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+            <a href="@Url.Action("Edit_NV", "NhanVien", new { area = "Admin", id = Model.NhanVien.MaNV.Trim() })" class="btn btn-primary">
+                <i class="bi bi-pencil-square"></i> Chỉnh sửa
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card-custom shadow-sm">
+                <div class="card-header-custom">
+                    <span><i class="bi bi-person-badge me-2"></i> Thông tin hành chính</span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+                        <div style="position:relative;">
+                            @* XÓA ĐOẠN IF ELSE ẢNH CŨ VÌ ĐÃ CÓ LOGIC THÔNG MINH BÊN TRÊN *@
+                            <img src="@avatarUrl" alt="@Model.NhanVien.HoTen" class="avatar-large" onerror="this.src='@Url.Content("~/Images/doctors/defaultDoctor_Male.png")';" />
+                        </div>
+                        <div style="margin-left:20px;">
+                            <h4 class="mb-0 fw-bold text-dark">@Model.NhanVien.HoTen</h4>
+                            <span class="badge bg-primary mt-1">Mã NV: @Model.NhanVien.MaNV</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <div class="info-label">Ngày sinh</div>
+                            <div class="info-value">
+                                @(Model.NhanVien.NgaySinh.HasValue ? Model.NhanVien.NgaySinh.Value.ToString("dd/MM/yyyy") : "Chưa cập nhật")
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info-label">Giới tính</div>
+                            <div class="info-value">
+                                @(string.IsNullOrWhiteSpace(Model.NhanVien.GioiTinh) ? Html.Raw("<span class='not-available'>Chưa cập nhật</span>") : Html.Raw(Model.NhanVien.GioiTinh))
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info-label">Số điện thoại</div>
+                            <div class="info-value">
+                                @(string.IsNullOrWhiteSpace(Model.NhanVien.SDT) ? Html.Raw("<span class='not-available'>Chưa có</span>") : Html.Raw(Model.NhanVien.SDT))
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="info-label">Email</div>
+                            <div class="info-value">
+                                @(string.IsNullOrWhiteSpace(Model.NhanVien.Email) ? Html.Raw("<span class='not-available'>Chưa có</span>") : Html.Raw(Model.NhanVien.Email))
+                            </div>
+                        </div>
+                        <div class="col-sm-8">
+                            <div class="info-label">Địa chỉ</div>
+                            <div class="info-value">
+                                @(string.IsNullOrWhiteSpace(Model.NhanVien.DiaChi) ? Html.Raw("<span class='not-available'>Chưa cập nhật</span>") : Html.Raw(Model.NhanVien.DiaChi))
+                            </div>
+                        </div>
+                    </div>
+
+                    <h6 class="mt-2 text-primary fw-bold"><i class="bi bi-briefcase me-1"></i> Thông tin công tác</h6>
+                    <div class="p-3 bg-light rounded border">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="info-label">Chức vụ</div>
+                                <div class="info-value mb-0">
+                                    @(string.IsNullOrWhiteSpace(Model.TenChucVu) || Model.TenChucVu == "Chưa gán"
+                                        ? Html.Raw("<span class='not-available'>Chưa gán</span>")
+                                        : Html.Raw(Model.TenChucVu))
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="info-label">Khoa</div>
+                                <div class="info-value mb-0">
+                                    @(string.IsNullOrWhiteSpace(Model.NhanVien.MaKhoa.ToString()) || Model.NhanVien.MaKhoa == 0
+                                        ? Html.Raw("<span class='not-available'>Chưa gán</span>")
+                                        : Html.Raw(Model.TenKhoa ?? "Chưa gán"))
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="info-label">Trạng thái</div>
+                                <div class="info-value mb-0">
+                                    @if (Model.NhanVien.TrangThai)
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-check-circle"></i> Đang làm việc</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary"><i class="bi bi-clock"></i> Đã nghỉ</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="card-custom shadow-sm">
+                <div class="card-header-custom">
+                    <span><i class="bi bi-key-fill me-2"></i> Tài khoản</span>
+                    @if (Model.TaiKhoan != null && Model.TaiKhoan.MaTK > 0)
+                    {
+                        <form action="@Url.Action("ToggleLock", "NhanVien")" method="post" onsubmit="return confirm('Xác nhận thay đổi trạng thái tài khoản?')">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@Model.NhanVien.MaNV" />
+                            <button type="submit" class="btn btn-sm @(Model.TaiKhoan.IsActive ? "btn-outline-danger" : "btn-outline-success")">
+                                <i class="bi @(Model.TaiKhoan.IsActive ? "bi-lock" : "bi-unlock")"></i>
+                                @(Model.TaiKhoan.IsActive ? "Khóa" : "Mở")
+                            </button>
+                        </form>
+                    }
+                </div>
+                <div class="card-body p-4">
+                    @if (Model.TaiKhoan != null && !string.IsNullOrEmpty(Model.TaiKhoan.Username))
+                    {
+                        <div class="mb-3">
+                            <div class="info-label">Tên đăng nhập</div>
+                            <div class="info-value">@Model.TaiKhoan.Username</div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="info-label">Trạng thái TK</div>
+                            <div>
+                                @if (Model.TaiKhoan.IsActive)
+                                {
+                                    <span class="badge bg-success"><i class="bi bi-check-circle"></i> Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger"><i class="bi bi-lock"></i> Đã khóa</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="mb-0">
+                            <div class="info-label">Ngày cấp</div>
+                            <div class="info-value mb-0">@Model.TaiKhoan.CreatedAt.ToString("dd/MM/yyyy HH:mm")</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="bi bi-shield-slash fs-1 text-light"></i>
+                            <p class="text-muted mt-2">Chưa cấp tài khoản</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

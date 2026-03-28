@@ -1,0 +1,148 @@
+@model QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers.LoaiThuocViewModel
+@{
+    ViewBag.Title = "Thêm loại thuốc mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+}
+
+<style>
+    .profile-card {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #dee2e6;
+        margin-bottom: 25px;
+    }
+
+    .section-title {
+        color: #0d6efd;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .section-title i {
+        margin-right: 8px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .text-danger {
+        font-size: 0.85rem;
+        font-style: italic;
+    }
+
+    .info-hint {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 4px;
+    }
+</style>
+
+<div class="container-fluid mt-4 px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-dark mb-0">Thêm Loại Thuốc Mới</h4>
+        <a href="@Url.Action("Index", "LoaiThuoc", new { area = "Admin" })"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    @using (Html.BeginForm("Create", "LoaiThuoc", FormMethod.Post, new { @class = "needs-validation" }))
+    {
+        @Html.AntiForgeryToken()
+
+        if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger shadow-sm border-start border-4 border-danger mb-4">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>Vui lòng kiểm tra lại các thông tin sau:</strong>
+                <div class="mt-2">@Html.ValidationSummary(false, "")</div>
+            </div>
+        }
+
+        @* ===== THÔNG TIN LOẠI THUỐC ===== *@
+        <h4 class="section-title"><i class="bi bi-tags"></i> Thông tin loại thuốc <span class="text-danger">*</span></h4>
+        <div class="profile-card">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Mã loại thuốc <span class="text-danger">*</span></label>
+                    @Html.EditorFor(m => m.MaDanhMuc, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: KHANGSINH, GASSERING", maxlength = "10", required = "required", style = "text-transform: uppercase;" } })
+                    @Html.ValidationMessageFor(m => m.MaDanhMuc, "", new { @class = "text-danger" })
+                    <div class="info-hint">
+                        <i class="bi bi-info-circle me-1"></i> Tối đa 10 ký tự, chỉ chứa chữ và số, không dấu.
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Tên loại thuốc <span class="text-danger">*</span></label>
+                    @Html.EditorFor(m => m.TenDanhMuc, new { htmlAttributes = new { @class = "form-control", placeholder = "VD: Kháng sinh, Thuốc hạ sốt", maxlength = "100", required = "required" } })
+                    @Html.ValidationMessageFor(m => m.TenDanhMuc, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Mô tả</label>
+                    @Html.TextAreaFor(m => m.MoTa, new { @class = "form-control", rows = "4", placeholder = "Nhập mô tả chi tiết về loại thuốc này (không bắt buộc)" })
+                    @Html.ValidationMessageFor(m => m.MoTa, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end gap-2 mb-5">
+            <a href="@Url.Action("Index", "LoaiThuoc")" class="btn btn-outline-secondary px-4 shadow-sm">Hủy</a>
+            <button type="submit" class="btn btn-primary px-5 shadow border-0">
+                <i class="bi bi-check-circle me-1"></i> Lưu loại thuốc
+            </button>
+        </div>
+    }
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Tự động chuyển mã loại thuốc thành chữ hoa
+        $('#MaDanhMuc').on('input', function () {
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        });
+
+        // Validation trước khi submit
+        $('form.needs-validation').on('submit', function (e) {
+            var form = $(this)[0];
+            var hasError = false;
+            var firstErrorField = null;
+
+            $(this).find('[required]').each(function () {
+                if (!this.checkValidity()) {
+                    hasError = true;
+                    if (!firstErrorField) firstErrorField = this;
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                    $(this).addClass('is-valid');
+                }
+            });
+
+            if (hasError) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (firstErrorField) {
+                    firstErrorField.focus();
+                }
+                return false;
+            }
+
+            form.classList.add('was-validated');
+        });
+
+        // Xóa class is-invalid khi user thay đổi giá trị
+        $('form.needs-validation').on('change', 'select[required], input[required]', function () {
+            if (this.checkValidity()) {
+                $(this).removeClass('is-invalid').addClass('is-valid');
+            } else {
+                $(this).removeClass('is-valid').addClass('is-invalid');
+            }
+        });
+    });
+</script>

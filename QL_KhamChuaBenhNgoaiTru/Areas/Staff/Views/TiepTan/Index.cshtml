@@ -1,51 +1,470 @@
 ﻿@{
-    ViewBag.Title = "Danh sách Tiếp nhận & Đăng ký khám";
+    ViewBag.Title = "Tiếp Nhận & Điều Phối";
     Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
+
+    var dtOffline = ViewBag.DanhSachOffline as System.Data.DataTable;
+    var dtOnline = ViewBag.DanhSachOnline as System.Data.DataTable;
 }
 
-<div class="card shadow-sm border-0">
-    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 text-primary fw-bold"><i class="bi bi-list-check"></i> Hàng đợi bệnh nhân hôm nay</h5>
-        <button class="btn btn-success fw-bold"><i class="bi bi-plus-circle"></i> Đăng ký khám mới</button>
+@if (ViewBag.LoiPhanPhong != null)
+{
+    <div class="alert alert-danger mt-4 d-flex align-items-center shadow-sm p-4 rounded-3 border-0">
+        <i class="bi bi-exclamation-octagon-fill text-danger me-4" style="font-size: 3rem;"></i>
+        <div>
+            <h4 class="alert-heading fw-bold mb-2">Lỗi phân quyền hệ thống!</h4>
+            <p class="mb-0 fs-5">@ViewBag.LoiPhanPhong</p>
+        </div>
     </div>
-    <div class="card-body">
-        <table class="table table-hover table-bordered text-center align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>STT</th>
-                    <th>Mã Bệnh Nhân</th>
-                    <th>Họ và tên</th>
-                    <th>Số điện thoại</th>
-                    <th>Thời gian ĐK</th>
-                    <th>Trạng thái</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td class="fw-bold text-primary">BN001</td>
-                    <td>Nguyễn Văn A</td>
-                    <td>0901234567</td>
-                    <td>08:30 - Hôm nay</td>
-                    <td><span class="badge bg-warning text-dark">Chờ tiếp nhận</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-primary">Xác nhận</button>
-                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td class="fw-bold text-primary">BN002</td>
-                    <td>Trần Thị B</td>
-                    <td>0987654321</td>
-                    <td>09:00 - Hôm nay</td>
-                    <td><span class="badge bg-info">Đang khám</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-secondary" disabled>Đã xử lý</button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+}
+else
+{
+    <div class="d-flex justify-content-between align-items-end mt-3 mb-3">
+        <h4 class="mb-0 fw-bold text-primary">
+            Khu vực trực: <span class="text-danger text-uppercase">@ViewBag.TenQuayHienTai</span>
+        </h4>
+        <button class="btn btn-outline-primary shadow-sm rounded-pill px-4" onclick="location.reload()">
+            <i class="bi bi-arrow-clockwise me-1"></i> Cập nhật danh sách
+        </button>
     </div>
-</div>
+
+    <div class="card shadow border-0 rounded-3 mb-4">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-display me-2 text-primary"></i>Bệnh nhân chờ Kiosk (Offline)</h5>
+            <div class="input-group input-group-sm w-25">
+                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                <input type="text" id="searchOffline" class="form-control border-start-0 bg-light" placeholder="Tìm tên, mã BN, CCCD, SĐT...">
+            </div>
+        </div>
+        <div class="card-body p-0" style="max-height: 350px; overflow-y: auto;">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="tableOffline">
+                    <thead class="table-light text-muted sticky-top" style="z-index: 1;">
+                        <tr>
+                            <th class="text-center" style="width: 80px;">STT</th>
+                            <th>Mã BN</th>
+                            <th>Họ Tên</th>
+                            <th>Ngày Sinh</th>
+                            <th>Giới Tính</th>
+                            <th class="text-center" style="width: 170px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (dtOffline != null && dtOffline.Rows.Count > 0)
+                        {
+                            foreach (System.Data.DataRow row in dtOffline.Rows)
+                            {
+                                bool hasBHYT = row["BHYT"] != DBNull.Value && Convert.ToBoolean(row["BHYT"]);
+                                string trangThaiPKB = row["TrangThaiPKB"].ToString();
+                                string ngaySinhStr = row["NgaySinh"] != DBNull.Value ? Convert.ToDateTime(row["NgaySinh"]).ToString("dd/MM/yyyy") : "N/A";
+
+                                <tr>
+                                    <td class="text-center fw-bold text-danger fs-5">@row["STT"]</td>
+                                    <td class="fw-bold text-secondary">@row["MaBN"]</td>
+                                    <td class="fw-bold text-dark">@row["HoTen"]</td>
+                                    <td>@ngaySinhStr</td>
+                                    <td>@row["GioiTinh"]</td>
+                                    <td class="text-center">
+                                        @if (trangThaiPKB == "Chưa tiếp nhận")
+                                        {
+                                            <button class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm btn-tiep-nhan"
+                                                    data-mode="lan1"
+                                                    data-maphieu="@row["MaPhieuDK"]" data-mabn="@row["MaBN"]" data-hoten="@row["HoTen"]"
+                                                    data-lydo="" data-bhyt="@(hasBHYT ? "true" : "false")"
+                                                    data-ngaysinh="@ngaySinhStr" data-gioitinh="@row["GioiTinh"]"
+                                                    data-cccd="@row["CCCD"]" data-sdt="@row["SDT"]" data-diachi="@row["DiaChi"]">
+                                                <i class="bi bi-check-circle me-1"></i> Tiếp nhận
+                                            </button>
+                                        }
+                                        else if (trangThaiPKB == "Chờ thanh toán")
+                                        {
+                                            <button class="btn btn-outline-warning btn-sm rounded-pill px-3 shadow-sm btn-tiep-nhan"
+                                                    data-mode="lan_no_tien"
+                                                    data-maphieu="@row["MaPhieuDK"]" data-mabn="@row["MaBN"]" data-hoten="@row["HoTen"]"
+                                                    data-bhyt="@(hasBHYT ? "true" : "false")"
+                                                    data-ngaysinh="@ngaySinhStr" data-gioitinh="@row["GioiTinh"]"
+                                                    data-cccd="@row["CCCD"]" data-sdt="@row["SDT"]" data-diachi="@row["DiaChi"]">
+                                                <i class="bi bi-hourglass-split me-1"></i> Đang chờ tiền
+                                            </button>
+                                        }
+                                        else if (trangThaiPKB == "Chờ cấp số")
+                                        {
+                                            <button class="btn btn-success btn-sm rounded-pill px-3 shadow-sm btn-tiep-nhan"
+                                                    data-mode="lan2" data-mapkb="@row["MaPhieuKhamBenh"]"
+                                                    data-maphieu="@row["MaPhieuDK"]" data-mabn="@row["MaBN"]" data-hoten="@row["HoTen"]"
+                                                    data-bhyt="@(hasBHYT ? "true" : "false")"
+                                                    data-ngaysinh="@ngaySinhStr" data-gioitinh="@row["GioiTinh"]"
+                                                    data-cccd="@row["CCCD"]" data-sdt="@row["SDT"]" data-diachi="@row["DiaChi"]">
+                                                <i class="bi bi-ticket-perforated me-1"></i> Cấp STT Khám
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="6" class="text-center py-4 text-muted"><i class="bi bi-check2-circle fs-3 d-block mb-1 text-success"></i>Hiện không có bệnh nhân Kiosk nào đang chờ.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow border-0 rounded-3 border-top border-4 border-success">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold text-dark"><i class="bi bi-globe me-2 text-success"></i>Bệnh nhân đặt lịch trước (Online)</h5>
+            <div class="input-group input-group-sm w-25">
+                <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                <input type="text" id="searchOnline" class="form-control border-start-0 bg-light" placeholder="Tìm tên, mã BN, CCCD, SĐT...">
+            </div>
+        </div>
+        <div class="card-body p-0" style="max-height: 350px; overflow-y: auto;">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="tableOnline">
+                    <thead class="table-light text-muted sticky-top" style="z-index: 1;">
+                        <tr>
+                            <th class="ps-4">Mã BN</th>
+                            <th>Họ Tên</th>
+                            <th>Ngày Sinh</th>
+                            <th>Lý do đăng ký</th>
+                            <th class="text-center" style="width: 170px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (dtOnline != null && dtOnline.Rows.Count > 0)
+                        {
+                            foreach (System.Data.DataRow row in dtOnline.Rows)
+                            {
+                                bool hasBHYT = row["BHYT"] != DBNull.Value && Convert.ToBoolean(row["BHYT"]);
+                                string trangThaiPKB = row["TrangThaiPKB"].ToString();
+                                string ngaySinhStr = row["NgaySinh"] != DBNull.Value ? Convert.ToDateTime(row["NgaySinh"]).ToString("dd/MM/yyyy") : "N/A";
+
+                                <tr>
+                                    <td class="ps-4 fw-bold text-secondary">@row["MaBN"]</td>
+                                    <td class="fw-bold text-success">@row["HoTen"]</td>
+                                    <td>@ngaySinhStr</td>
+                                    <td><div class="text-truncate" style="max-width: 300px;" title="@row["LyDo"]"><small class="text-muted">@row["LyDo"]</small></div></td>
+                                    <td class="text-center">
+                                        @if (trangThaiPKB == "Chưa tiếp nhận")
+                                        {
+                                            <button class="btn btn-success btn-sm rounded-pill px-3 shadow-sm btn-tiep-nhan"
+                                                    data-mode="lan1"
+                                                    data-maphieu="@row["MaPhieuDK"]" data-mabn="@row["MaBN"]" data-hoten="@row["HoTen"]"
+                                                    data-lydo="@row["LyDo"]" data-bhyt="@(hasBHYT ? "true" : "false")"
+                                                    data-ngaysinh="@ngaySinhStr" data-gioitinh="@row["GioiTinh"]"
+                                                    data-cccd="@row["CCCD"]" data-sdt="@row["SDT"]" data-diachi="@row["DiaChi"]">
+                                                <i class="bi bi-check-circle me-1"></i> Tiếp nhận
+                                            </button>
+                                        }
+                                        else if (trangThaiPKB == "Chờ thanh toán")
+                                        {
+                                            <button class="btn btn-outline-warning btn-sm rounded-pill px-3 shadow-sm btn-tiep-nhan"
+                                                    data-mode="lan_no_tien"
+                                                    data-maphieu="@row["MaPhieuDK"]" data-mabn="@row["MaBN"]" data-hoten="@row["HoTen"]"
+                                                    data-bhyt="@(hasBHYT ? "true" : "false")"
+                                                    data-ngaysinh="@ngaySinhStr" data-gioitinh="@row["GioiTinh"]"
+                                                    data-cccd="@row["CCCD"]" data-sdt="@row["SDT"]" data-diachi="@row["DiaChi"]">
+                                                <i class="bi bi-hourglass-split me-1"></i> Chờ đóng tiền
+                                            </button>
+                                        }
+                                        else if (trangThaiPKB == "Chờ cấp số")
+                                        {
+                                            <button class="btn btn-success btn-sm rounded-pill px-3 shadow-sm btn-tiep-nhan"
+                                                    data-mode="lan2" data-mapkb="@row["MaPhieuKhamBenh"]"
+                                                    data-maphieu="@row["MaPhieuDK"]" data-mabn="@row["MaBN"]" data-hoten="@row["HoTen"]"
+                                                    data-bhyt="@(hasBHYT ? "true" : "false")"
+                                                    data-ngaysinh="@ngaySinhStr" data-gioitinh="@row["GioiTinh"]"
+                                                    data-cccd="@row["CCCD"]" data-sdt="@row["SDT"]" data-diachi="@row["DiaChi"]">
+                                                <i class="bi bi-ticket-perforated me-1"></i> Cấp STT Khám
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center py-4 text-muted"><i class="bi bi-inbox fs-3 d-block mb-1"></i>Không có bệnh nhân đặt lịch Online.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalTiepNhan" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="modalTitle"><i class="bi bi-person-badge me-2"></i>Hồ sơ Bệnh Nhân</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 bg-light">
+
+                    <div class="card border-0 shadow-sm mb-4 rounded-4 overflow-hidden">
+                        <div class="card-header bg-white border-bottom-0 pt-3 pb-0">
+                            <h6 class="text-uppercase fw-bold text-muted mb-0"><i class="bi bi-file-earmark-person me-2"></i>Thông tin đăng ký</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3 align-items-center pb-3 border-bottom border-light">
+                                <div class="col-sm-8">
+                                    <h4 class="mb-1 fw-bolder text-primary text-uppercase" id="lblTenBN"></h4>
+                                    <span class="badge bg-secondary rounded-pill me-2">Mã BN: <strong id="lblMaBN"></strong></span>
+                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary rounded-pill">Mã phiếu đăng ký: <strong id="lblMaPhieuDK"></strong></span>
+                                </div>
+                                <div class="col-sm-4 text-sm-end mt-2 mt-sm-0">
+                                    <span id="badgeBHYT" class="badge rounded-pill px-3 py-2 fs-7 shadow-sm"></span>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 px-1 text-dark">
+                                <div class="col-md-3 col-6">
+                                    <small class="text-muted d-block mb-1"><i class="bi bi-calendar-date me-1"></i>Ngày sinh</small>
+                                    <strong id="lblNgaySinh"></strong>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <small class="text-muted d-block mb-1"><i class="bi bi-gender-ambiguous me-1"></i>Giới tính</small>
+                                    <strong id="lblGioiTinh"></strong>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <small class="text-muted d-block mb-1"><i class="bi bi-credit-card-2-front me-1"></i>CCCD/CMND</small>
+                                    <strong id="lblCCCD"></strong>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <small class="text-muted d-block mb-1"><i class="bi bi-telephone me-1"></i>Số điện thoại</small>
+                                    <strong id="lblSDT"></strong>
+                                </div>
+                                <div class="col-12 mt-3 pt-2">
+                                    <small class="text-muted d-block mb-1"><i class="bi bi-geo-alt me-1"></i>Địa chỉ liên hệ</small>
+                                    <span class="text-dark fw-medium" id="lblDiaChi"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="txtMaPhieuDK" />
+                    <input type="hidden" id="txtMaPKB" />
+
+                    <div id="khuVucChiDinh" class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark">Chọn Dịch Vụ Khám <span class="text-danger">*</span></label>
+                            @Html.DropDownList("MaDV", (IEnumerable<SelectListItem>)ViewBag.ListDichVu, "-- Chọn Dịch vụ --", new { @class = "form-select form-select-lg border-primary shadow-sm", id = "ddlDichVu" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold text-dark">Phòng Khám <span class="text-danger">*</span></label>
+                            <select id="ddlPhong" class="form-select form-select-lg border-success shadow-sm" disabled>
+                                <option value="">-- Vui lòng chọn dịch vụ trước --</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-bold text-dark">Lý do khám bệnh</label>
+                            <textarea id="txtLyDo" class="form-control shadow-sm" rows="2" placeholder="Ghi nhận triệu chứng ban đầu..."></textarea>
+                        </div>
+                    </div>
+
+                    <div id="khuVucNoTien" class="d-none">
+                        <div class="alert alert-warning border-warning border-opacity-50 bg-warning bg-opacity-10 d-flex align-items-center mb-0 rounded-4">
+                            <i class="bi bi-exclamation-triangle-fill fs-1 text-warning me-3"></i>
+                            <div>
+                                <h5 class="fw-bold text-dark mb-1">Chưa đóng tiền viện phí!</h5>
+                                <span class="text-dark">Bệnh nhân cần di chuyển ra quầy Thu Ngân để hoàn tất thanh toán trước khi lấy số.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="khuVucCapSo" class="d-none">
+                        <div class="alert alert-success border-success border-opacity-25 bg-success bg-opacity-10 d-flex align-items-center mb-0 rounded-4">
+                            <i class="bi bi-check-circle-fill fs-1 text-success me-3"></i>
+                            <div>
+                                <h5 class="fw-bold text-success mb-1">Đã hoàn tất thanh toán</h5>
+                                <span class="text-dark">Vui lòng đối chiếu thông tin với bệnh nhân. Nhấn Cấp số để in số thứ tự vào phòng khám.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer border-top-0 pt-0 px-4 pb-4">
+                    <button type="button" class="btn btn-white border px-4 fw-bold text-secondary" data-bs-dismiss="modal">Đóng cửa sổ</button>
+                    <button type="button" class="btn btn-success fw-bold px-5 shadow-sm" id="btnThucThi">
+                        <i class="bi bi-printer-fill me-2"></i>LƯU & CHUYỂN
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (ViewBag.LoiPhanPhong == null)
+        {
+            <text>
+            $(document).ready(function(){
+                // Lọc bảng
+                $("#searchOnline, #searchOffline").on("keyup", function() {
+                    var value = $(this).val().toLowerCase();
+                    var tableId = $(this).attr('id') === 'searchOnline' ? '#tableOnline' : '#tableOffline';
+                    $(tableId + " tbody tr").filter(function() {
+                        if ($(this).find("td").length > 1) { $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1) }
+                    });
+                });
+            });
+
+            // MỞ MODAL CHO TẤT CẢ TRẠNG THÁI
+            $('.btn-tiep-nhan').click(function() {
+                var btn = $(this);
+                var mode = btn.data('mode'); // 'lan1', 'lan_no_tien', hoặc 'lan2'
+
+                // Đổ Data chung (Để Check CCCD)
+                $('#txtMaPhieuDK').val(btn.data('maphieu'));
+                $('#txtMaPKB').val(btn.data('mapkb'));
+                $('#lblMaPhieuDK').text('#' + btn.data('maphieu'));
+                $('#lblMaBN').text(btn.data('mabn'));
+                $('#lblTenBN').text(btn.data('hoten'));
+                $('#lblNgaySinh').text(btn.data('ngaysinh'));
+                $('#lblGioiTinh').text(btn.data('gioitinh'));
+                $('#lblCCCD').text(btn.data('cccd') || 'Chưa cập nhật');
+                $('#lblSDT').text(btn.data('sdt') || 'Chưa cập nhật');
+                $('#lblDiaChi').text(btn.data('diachi') || 'Chưa cập nhật');
+
+                // Xử lý BHYT
+                var hasBHYT = btn.data('bhyt');
+                if (hasBHYT === true || hasBHYT === "true" || hasBHYT === "True") {
+                    $('#badgeBHYT').removeClass('bg-secondary text-white border-secondary').addClass('bg-success bg-opacity-10 text-success border border-success').html('<i class="bi bi-shield-fill-check me-1"></i>BHYT');
+                } else {
+                    $('#badgeBHYT').removeClass('bg-success bg-opacity-10 text-success border-success').addClass('bg-secondary text-white border border-secondary').html('<i class="bi bi-cash-stack me-1"></i>DỊCH VỤ');
+                }
+
+                // XỬ LÝ BIẾN HÌNH MODAL
+                if(mode === 'lan1') {
+                    $('#modalTitle').html('<i class="bi bi-person-plus me-2"></i>Tiếp nhận & Phân phòng');
+                    $('#khuVucChiDinh').removeClass('d-none');
+                    $('#khuVucCapSo').addClass('d-none');
+                    $('#khuVucNoTien').addClass('d-none');
+
+                    $('#ddlDichVu').val('');
+                    $('#ddlPhong').html('<option value="">-- Vui lòng chọn dịch vụ trước --</option>').prop('disabled', true);
+                    $('#txtLyDo').val(btn.data('lydo'));
+
+                    $('#btnThucThi').show().removeClass('btn-primary btn-warning').addClass('btn-success')
+                                  .html('<i class="bi bi-printer-fill me-2"></i>LƯU & XÁC NHẬN CHUYỂN')
+                                  .attr('onclick', 'submitDichVu()');
+                }
+                else if (mode === 'lan_no_tien') {
+                    $('#modalTitle').html('<i class="bi bi-hourglass-split me-2"></i>Tra cứu hồ sơ nợ phí');
+                    $('#khuVucChiDinh').addClass('d-none');
+                    $('#khuVucCapSo').addClass('d-none');
+                    $('#khuVucNoTien').removeClass('d-none');
+
+                    $('#btnThucThi').show().removeClass('btn-success btn-primary').addClass('btn-warning text-dark')
+                                  .html('<i class="bi bi-exclamation-triangle-fill me-2"></i>BÁO KHÁCH ĐÓNG TIỀN')
+                                  .attr('onclick', 'alertChuaDongTien()');
+                }
+                else if (mode === 'lan2') {
+                    $('#modalTitle').html('<i class="bi bi-check-circle me-2"></i>Đã đóng tiền - Cấp STT');
+                    $('#khuVucChiDinh').addClass('d-none');
+                    $('#khuVucCapSo').removeClass('d-none');
+                    $('#khuVucNoTien').addClass('d-none');
+
+                    $('#btnThucThi').show().removeClass('btn-success btn-warning').addClass('btn-primary')
+                                  .html('<i class="bi bi-ticket-perforated me-2"></i>ĐÚNG NGƯỜI - CẤP SỐ')
+                                  .attr('onclick', 'submitCapSo()');
+                }
+
+                var myModal = new bootstrap.Modal(document.getElementById('modalTiepNhan'));
+                myModal.show();
+            });
+
+            // Cảnh báo chưa đóng tiền (Gọi khi bấm nút Vàng trong Modal)
+            function alertChuaDongTien() {
+                $('#modalTiepNhan').modal('hide');
+                Swal.fire({ icon: 'warning', title: 'Nhắc nhở nộp tiền', text: 'Bệnh nhân này đang nợ viện phí! Không thể cấp số lúc này. Vui lòng mời bệnh nhân ra Quầy Thu Ngân.', confirmButtonColor: '#ffc107' });
+            }
+
+            // Chọn DV -> Tìm Phòng (Lần 1)
+            $('#ddlDichVu').change(function() {
+                var maDV = $(this).val();
+                var ddlPhong = $('#ddlPhong');
+                if(!maDV) { ddlPhong.html('<option value="">-- Vui lòng chọn dịch vụ trước --</option>').prop('disabled', true); return; }
+                ddlPhong.html('<option value="">Đang tìm Phòng...</option>').prop('disabled', true);
+                $.post('@Url.Action("GetDanhSachPhong", "TiepTan")', { maDV: maDV }, function(data) {
+                    ddlPhong.empty();
+                    if(data.length > 0) {
+                        $.each(data, function(i, item) { ddlPhong.append($('<option></option>').val(item.Value).html(item.Text)); });
+                        ddlPhong.prop('disabled', false);
+                    } else { ddlPhong.append('<option value="">⚠️ Không có Phòng nào đang mở</option>'); }
+                });
+            });
+
+            // GỌI API LẦN 1 (Phân phòng)
+            function submitDichVu() {
+                var dataPost = { maPhieuDK: $('#txtMaPhieuDK').val(), maDV: $('#ddlDichVu').val(), maPhong: $('#ddlPhong').val(), lyDo: $('#txtLyDo').val() };
+                if (!dataPost.maDV || !dataPost.maPhong) { Swal.fire('Thiếu', 'Chọn Dịch vụ và Phòng khám!', 'warning'); return; }
+
+                var btnSubmit = $('#btnThucThi');
+                btnSubmit.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...');
+
+                $.post('@Url.Action("XacNhanDichVu", "TiepTan")', dataPost, function(res) {
+                    if (res.success) {
+                        $('#modalTiepNhan').modal('hide');
+                        if (!res.requirePayment) showThanhCong(res); else showCanDongTien(res);
+                    } else {
+                        Swal.fire('Lỗi', res.message, 'error');
+                        btnSubmit.prop('disabled', false).html('<i class="bi bi-printer-fill me-2"></i>LƯU & XÁC NHẬN CHUYỂN');
+                    }
+                });
+            }
+
+            // GỌI API LẦN 2 (Cấp số)
+            function submitCapSo() {
+                var maPKB = $('#txtMaPKB').val();
+                var btnSubmit = $('#btnThucThi');
+                btnSubmit.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang cấp số...');
+
+                $.post('@Url.Action("ChotCapSo", "TiepTan")', { maPhieuKhamBenh: maPKB }, function(res) {
+                    if (res.success) {
+                        $('#modalTiepNhan').modal('hide');
+                        showThanhCong(res);
+                    } else {
+                        Swal.fire('Lỗi', res.message, 'error');
+                        btnSubmit.prop('disabled', false).html('<i class="bi bi-ticket-perforated me-2"></i>ĐÚNG NGƯỜI - CẤP SỐ');
+                    }
+                });
+            }
+
+            // UI THÔNG BÁO XONG VIỆC
+            function showThanhCong(res) {
+                Swal.fire({
+                    title: 'ĐÃ CẤP SỐ KHÁM!',
+                    html: `<div class="text-start bg-light p-3 rounded border border-success shadow-sm">
+                            <p class="mb-2 fs-5"><i class="bi bi-hospital text-muted me-2"></i><strong>Khoa:</strong> ${res.khoa}</p>
+                            <p class="mb-2 fs-5"><i class="bi bi-door-open text-success me-2"></i><strong>Phòng:</strong> <span class="text-success fw-bold">${res.phong}</span></p>
+                            <hr class="my-3"/>
+                            <div class="text-center">
+                                <span class="text-muted text-uppercase fw-bold">Số Thứ Tự Vào Khám</span>
+                                <h1 class="display-1 fw-bolder text-success mt-2 mb-0">${res.stt}</h1>
+                            </div></div>
+                           <p class="text-success mt-3 fw-bold"><i class="bi bi-arrow-right-circle me-1"></i> Mời bệnh nhân đi thẳng lên phòng khám!</p>`,
+                    icon: 'success', confirmButtonText: 'Đóng', confirmButtonColor: '#198754', allowOutsideClick: false
+                }).then(() => { location.reload(); });
+            }
+
+            function showCanDongTien(res) {
+                Swal.fire({
+                    title: 'ĐÃ CHỈ ĐỊNH - CHỜ THU TIỀN!',
+                    html: `<div class="text-start bg-light p-3 rounded border border-warning shadow-sm">
+                            <p class="mb-2 fs-5"><i class="bi bi-door-open text-dark me-2"></i><strong>Phòng chỉ định:</strong> <span class="text-dark fw-bold">${res.phong}</span></p>
+                            <hr class="my-3 border-warning"/>
+                            <div class="text-center py-3 bg-warning bg-opacity-10 rounded">
+                                <i class="bi bi-cash-coin text-warning fs-1 mb-2"></i><h4 class="fw-bold text-dark mb-0">CHƯA THU TIỀN DỊCH VỤ</h4>
+                            </div></div>
+                           <p class="text-danger mt-3 fw-bold fs-5"><i class="bi bi-exclamation-triangle-fill me-1"></i> Bệnh nhân cần ra Quầy Thu Ngân nộp tiền trước khi lấy số!</p>`,
+                    icon: 'warning', showConfirmButton: true, confirmButtonText: 'Đã rõ', confirmButtonColor: '#ffc107', allowOutsideClick: false
+                }).then(() => { location.reload(); });
+            }
+            </text>
+        }
+    </script>
+}

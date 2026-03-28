@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
@@ -35,28 +35,33 @@
                     <li class="nav-item"><a class="nav-link" href="@Url.Action("LienHe", "Home")">Liên hệ</a></li>
 
                     <li class="nav-item ms-lg-4 mt-3 mt-lg-0">
-                        <a href="@Url.Action("DatLich", "Home")" class="btn-appointment">
+                        <a href="@Url.Action("DatLichKham", "BenhNhanPortal")" class="btn-appointment">
                             <i class="bi bi-calendar-check me-2"></i>Đặt lịch
                         </a>
                     </li>
 
-                    <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-                        @if (Session["TaiKhoan"] != null)
+                    <li class="nav-item ms-lg-4 mt-3 mt-lg-0">
+                        @if (Session["BenhNhan"] != null)
                         {
+                            var hoTenBN = Session["HoTenBN"] as string ?? "Bệnh nhân";
                             <div class="dropdown">
                                 <a class="btn-login dropdown-toggle text-decoration-none" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person-circle me-1"></i> @Session["HoTenBN"]
+                                    Chào, @hoTenBN
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#">Hồ sơ của tôi</a></li>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="border-radius:12px; min-width:220px;">
+                                    <li><a class="dropdown-item" href="@Url.Action("ThongTinCaNhan", "BenhNhanPortal")">Hồ sơ cá nhân</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("LichKham", "BenhNhanPortal")">Lịch khám của tôi</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("LichSuKham", "BenhNhanPortal")">Lịch sử khám bệnh</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("DonThuoc", "BenhNhanPortal")">Đơn thuốc</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("HoaDon", "BenhNhanPortal")">Hóa đơn</a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-danger" href="@Url.Action("Logout", "TaiKhoan", new { area = "" })">Đăng xuất</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Logout", "TaiKhoan")">Đăng xuất</a></li>
                                 </ul>
                             </div>
                         }
                         else
                         {
-                            <a href="@Url.Action("Login", "TaiKhoan", new { area = "" })" class="btn-login">
+                            <a href="@Url.Action("Login", "TaiKhoan")" class="btn-login">
                                 <i class="bi bi-person-circle me-2"></i>Đăng nhập
                             </a>
                         }

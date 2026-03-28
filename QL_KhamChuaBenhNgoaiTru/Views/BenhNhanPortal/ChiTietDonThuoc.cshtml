@@ -1,0 +1,122 @@
+@model QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.DonThuocChiTiet
+@{
+    ViewBag.Title = "Chi tiết đơn thuốc";
+    Layout = "~/Views/Shared/_Layout_Client.cshtml";
+    var chiTiet = Model?.ChiTiet
+        ?? new List<QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.ChiTietThuocItem>();
+}
+
+<div class="page-hero" style="background:linear-gradient(135deg,#991b1b 0%,#dc3545 100%);">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <div class="hero-title"><i class="bi bi-prescription2 me-2"></i>Chi tiết đơn thuốc</div>
+                <div class="hero-subtitle">Mã đơn: #@(Model?.MaDonThuoc ?? 0)</div>
+            </div>
+            <a href="@Url.Action("DonThuoc", "BenhNhanPortal")" class="btn btn-light rounded-pill fw-bold">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    @if (!chiTiet.Any())
+    {
+        <div class="patient-card">
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-exclamation-triangle"></i></div>
+                <div class="empty-state-title">Không có chi tiết đơn thuốc</div>
+                <div class="empty-state-desc">Đơn thuốc này chưa có thông tin thuốc.</div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="patient-card mb-4">
+            <div class="card-header">
+                <h5 class="patient-section-title mb-0">
+                    <i class="bi bi-capsule me-2"></i>Danh sách thuốc
+                    <span class="badge bg-danger rounded-pill ms-2">@chiTiet.Count thuốc</span>
+                </h5>
+            </div>
+            <div class="table-responsive">
+                <table class="patient-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Tên thuốc</th>
+                            <th class="text-center">Sáng</th>
+                            <th class="text-center">Trưa</th>
+                            <th class="text-center">Chiều</th>
+                            <th class="text-center">Tối</th>
+                            <th class="text-center">Số ngày</th>
+                            <th class="text-center">Tổng SL</th>
+                            <th>Đơn vị</th>
+                            <th class="text-end">Đơn giá</th>
+                            <th>Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int stt = 1;
+                            foreach (var item in chiTiet)
+                            {
+                                <tr>
+                                    <td class="text-muted">@stt</td>
+                                    <td>
+                                        <div class="fw-bold">@item.TenThuoc</div>
+                                        <div class="small text-muted">@item.MaThuoc</div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="fw-bold @(item.SoLuongSang > 0 ? "text-danger" : "text-muted")">
+                                            @(item.SoLuongSang > 0 ? item.SoLuongSang.ToString("0.##") : "-")
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="fw-bold @(item.SoLuongTrua > 0 ? "text-danger" : "text-muted")">
+                                            @(item.SoLuongTrua > 0 ? item.SoLuongTrua.ToString("0.##") : "-")
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="fw-bold @(item.SoLuongChieu > 0 ? "text-danger" : "text-muted")">
+                                            @(item.SoLuongChieu > 0 ? item.SoLuongChieu.ToString("0.##") : "-")
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="fw-bold @(item.SoLuongToi > 0 ? "text-danger" : "text-muted")">
+                                            @(item.SoLuongToi > 0 ? item.SoLuongToi.ToString("0.##") : "-")
+                                        </span>
+                                    </td>
+                                    <td class="text-center">@item.SoNgayDung</td>
+                                    <td class="text-center fw-bold text-primary">@item.SoLuong</td>
+                                    <td>@item.DonViTinh</td>
+                                    <td class="text-end text-muted">@(item.DonGia > 0 ? item.DonGia.ToString("N0") + " đ" : "—")</td>
+                                    <td class="small text-muted">@(string.IsNullOrEmpty(item.GhiChu) ? "—" : item.GhiChu)</td>
+                                </tr>
+                                stt++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="patient-card">
+            <div class="card-body">
+                <div class="d-flex align-items-start gap-3">
+                    <div style="width:44px;height:44px;border-radius:12px;background:#fef3c7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                        <i class="bi bi-exclamation-circle-fill text-warning fs-5"></i>
+                    </div>
+                    <div>
+                        <div class="fw-bold mb-1">Lưu ý khi dùng thuốc</div>
+                        <div class="text-muted small">
+                            Hãy dùng thuốc đúng theo chỉ dẫn của bác sĩ. Nếu có thắc mắc về thuốc,
+                            hãy liên hệ trực tiếp với cơ sở y tế để được tư vấn.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

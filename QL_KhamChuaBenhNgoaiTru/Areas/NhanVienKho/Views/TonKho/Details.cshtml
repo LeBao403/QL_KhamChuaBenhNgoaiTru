@@ -1,0 +1,149 @@
+@model QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.TonKhoViewModel
+@{
+    Layout = "~/Areas/NhanVienKho/Views/Shared/_Layout_NhanVienKho.cshtml";
+    ViewBag.Title = "Chi tiết tồn kho";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="fw-bold text-dark mb-0">
+        <i class="bi bi-info-circle text-primary me-2"></i>Chi tiết lô thuốc
+    </h4>
+    <div class="d-flex gap-2">
+        <a href="@Url.Action("Edit", "TonKho", new { area = "NhanVienKho", id = Model.MaTonKho })" class="btn btn-warning">
+            <i class="bi bi-pencil me-1"></i> Điều chỉnh số lượng
+        </a>
+        <a href="@Url.Action("Index", "TonKho", new { area = "NhanVienKho" })" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Thông tin lô thuốc -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-capsule text-primary me-2"></i>Thông tin thuốc
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless mb-0">
+                    <tr>
+                        <td class="text-muted" style="width:140px">Mã thuốc:</td>
+                        <td><code class="fs-6">@Model.MaThuoc</code></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Tên thuốc:</td>
+                        <td class="fw-bold">@Model.TenThuoc</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Đơn vị:</td>
+                        <td>@Model.DonViCoBan</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Kho:</td>
+                        <td><span class="badge bg-secondary">@Model.TenKho</span></td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.TenPhong))
+                    {
+                        <tr>
+                            <td class="text-muted">Phòng:</td>
+                            <td>@Model.TenPhong</td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-123 text-primary me-2"></i>Thông tin lô
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless mb-0">
+                    <tr>
+                        <td class="text-muted" style="width:140px">Mã lô:</td>
+                        <td><code class="fs-6">@Model.MaLo</code></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Ngày sản xuất:</td>
+                        <td>@(Model.NgaySanXuat?.ToString("dd/MM/yyyy") ?? "-")</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Hạn sử dụng:</td>
+                        <td>
+                            @if (Model.HanSuDung.HasValue)
+                            {
+                                var daysLeft = (Model.HanSuDung.Value - DateTime.Now).Days;
+                                <span>@Model.HanSuDung.Value.ToString("dd/MM/yyyy")</span>
+                                if (daysLeft < 0)
+                                {
+                                    <span class="badge bg-danger ms-2">Đã hết hạn</span>
+                                }
+                                else if (daysLeft <= 30)
+                                {
+                                    <span class="badge bg-warning text-dark ms-2">@daysLeft ngày</span>
+                                }
+                            }
+                            else
+                            {
+                                <span>-</span>
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Ngày cập nhật:</td>
+                        <td>@(Model.NgayCapNhat?.ToString("dd/MM/yyyy HH:mm") ?? "-")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Số lượng & Giá trị -->
+    <div class="col-md-6">
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-box-seam text-primary me-2"></i>Số lượng tồn kho
+            </div>
+            <div class="card-body text-center py-4">
+                <div class="mb-3">
+                    @{
+                        string qtyClass = Model.SoLuongTon <= 10 ? "text-danger" : (Model.SoLuongTon <= 50 ? "text-warning" : "text-success");
+                    }
+                    <div class="fw-bold @qtyClass" style="font-size:4rem; line-height:1">@Model.SoLuongTon.ToString("N0")</div>
+                    <div class="text-muted mt-2">@Model.DonViCoBan</div>
+                </div>
+
+                @if (Model.SoLuongTon <= 10)
+                {
+                    <div class="alert alert-danger mb-0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Sắp hết hàng! Cần nhập thêm.
+                    </div>
+                }
+                else if (Model.HanSuDung.HasValue && (Model.HanSuDung.Value - DateTime.Now).Days <= 30)
+                {
+                    <div class="alert alert-warning mb-0">
+                        <i class="bi bi-hourglass-split me-2"></i>Thuốc sắp hết hạn! Cần xử lý.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-currency-dollar text-primary me-2"></i>Giá trị lô thuốc
+            </div>
+            <div class="card-body text-center py-4">
+                <div class="text-muted small mb-1">Giá nhập / đơn vị</div>
+                <div class="fw-bold text-dark" style="font-size:1.5rem">
+                    @((Model.GiaNhap ?? 0).ToString("N0")) đ
+                </div>
+                <hr />
+                <div class="text-muted small mb-1">Thành tiền</div>
+                <div class="text-primary fw-bold" style="font-size:2rem">
+                    @((Model.ThanhTien ?? 0).ToString("N0")) đ
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

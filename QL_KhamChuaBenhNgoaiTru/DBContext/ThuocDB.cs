@@ -1,320 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Configuration;
 using QL_KhamChuaBenhNgoaiTru.Models;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Text;
+using System.Web;
 
 namespace QL_KhamChuaBenhNgoaiTru.DBContext
 {
     public class ThuocDB
     {
-        string connectionString = ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString;
+        private string connectStr = ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString;
 
-        // 1. LẤY DANH SÁCH THUỐC (CÓ PHÂN TRANG)
-        public List<ThuocManageViewModel> GetAllThuoc(int page, int pageSize)
-        {
-            var list = new List<ThuocManageViewModel>();
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                string sql = @"SELECT * FROM (
-                                SELECT T.*, DM.TenDanhMuc, ROW_NUMBER() OVER (ORDER BY T.MaThuoc) AS RowNum 
-                                FROM THUOC T LEFT JOIN DANHMUC_THUOC DM ON T.MaLoaiThuoc = DM.MaDanhMuc
-                               ) AS PagedResult WHERE RowNum >= @Start AND RowNum < @End";
-                SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@Start", (page - 1) * pageSize + 1);
-                cmd.Parameters.AddWithValue("@End", page * pageSize + 1);
-
-                con.Open();
-                using (SqlDataReader rd = cmd.ExecuteReader())
-                {
-                    while (rd.Read())
-                    {
-                        list.Add(new ThuocManageViewModel
-                        {
-                            Thuoc = MapThuoc(rd),
-                            TenLoaiThuoc = rd["TenDanhMuc"] != DBNull.Value ? rd["TenDanhMuc"].ToString() : "N/A"
-                        });
-                    }
-                }
-            }
-            return list;
-        }
-
-        public int GetCountThuoc()
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                SqlCommand cmd = new SqlCommand("SELECT COUNT(*) FROM THUOC", con);
-                con.Open();
-                return (int)cmd.ExecuteScalar();
-            }
-        }
-
-        public List<ThuocManageViewModel> SearchThuoc(string keyword)
-        {
-            var list = new List<ThuocManageViewModel>();
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                string sql = @"SELECT T.*, DM.TenDanhMuc FROM THUOC T 
-                               LEFT JOIN DANHMUC_THUOC DM ON T.MaLoaiThuoc = DM.MaDanhMuc 
-                               WHERE T.MaThuoc LIKE @Kw OR T.TenThuoc LIKE @Kw";
-                SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@Kw", "%" + keyword + "%");
-
-                con.Open();
-                using (SqlDataReader rd = cmd.ExecuteReader())
-                {
-                    while (rd.Read())
-                    {
-                        list.Add(new ThuocManageViewModel
-                        {
-                            Thuoc = MapThuoc(rd),
-                            TenLoaiThuoc = rd["TenDanhMuc"] != DBNull.Value ? rd["TenDanhMuc"].ToString() : "N/A"
-                        });
-                    }
-                }
-            }
-            return list;
-        }
-
-        // 2. LẤY CHI TIẾT 1 THUỐC
-        public Thuoc GetThuocById(string id)
-        {
-            Thuoc t = null;
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM THUOC WHERE MaThuoc = @Id", con);
-                cmd.Parameters.AddWithValue("@Id", id);
-                con.Open();
-                using (SqlDataReader rd = cmd.ExecuteReader())
-                {
-                    if (rd.Read()) t = MapThuoc(rd);
-                }
-            }
-            return t;
-        }
-
-        // 3. THAO TÁC CRUD VỚI TRANSACTION (THUỐC + THÀNH PHẦN)
-        public bool CreateThuoc(Thuoc thuoc, List<ThanhPhanThuoc> thanhPhans)
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                using (SqlTransaction trans = con.BeginTransaction())
-                {
-                    try
-                    {
-                        // 3.1 Thêm Thuốc
-                        string sqlThuoc = @"INSERT INTO THUOC (MaThuoc, TenThuoc, QuyCach, DonViCoBan, MaLoaiThuoc, DuongDung, GiaBan, CoBHYT, GiaBHYT, MaNSX, TrangThai) 
-                                            VALUES (@Ma, @Ten, @Qc, @Dvt, @Loai, @Dd, @Gia, @Bhyt, @GiaBhyt, @Nsx, @Tt)";
-                        SqlCommand cmd = new SqlCommand(sqlThuoc, con, trans);
-                        cmd.Parameters.AddWithValue("@Ma", thuoc.MaThuoc);
-                        cmd.Parameters.AddWithValue("@Ten", thuoc.TenThuoc);
-                        cmd.Parameters.AddWithValue("@Qc", (object)thuoc.QuyCach ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Dvt", thuoc.DonViCoBan);
-                        cmd.Parameters.AddWithValue("@Loai", (object)thuoc.MaLoaiThuoc ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Dd", (object)thuoc.DuongDung ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Gia", (object)thuoc.GiaBan ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Bhyt", thuoc.CoBHYT);
-                        cmd.Parameters.AddWithValue("@GiaBhyt", (object)thuoc.GiaBHYT ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Nsx", (object)thuoc.MaNSX ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Tt", thuoc.TrangThai ?? true);
-                        cmd.ExecuteNonQuery();
-
-                        // 3.2 Thêm Thành phần
-                        if (thanhPhans != null && thanhPhans.Count > 0)
-                        {
-                            string sqlTp = "INSERT INTO THANHPHAN_THUOC (MaThanhPhan, MaThuoc, MaHoatChat, HamLuong) VALUES (@MaTP, @MaThuoc, @MaHC, @HamLuong)";
-                            foreach (var tp in thanhPhans)
-                            {
-                                if (string.IsNullOrEmpty(tp.MaHoatChat)) continue; // Bỏ qua dòng trống
-                                SqlCommand cmdTp = new SqlCommand(sqlTp, con, trans);
-                                // Random chuỗi 10 ký tự cho Khóa chính bảng THANHPHAN_THUOC
-                                cmdTp.Parameters.AddWithValue("@MaTP", Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper());
-                                cmdTp.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
-                                cmdTp.Parameters.AddWithValue("@MaHC", tp.MaHoatChat);
-                                cmdTp.Parameters.AddWithValue("@HamLuong", (object)tp.HamLuong ?? DBNull.Value);
-                                cmdTp.ExecuteNonQuery();
-                            }
-                        }
-
-                        trans.Commit();
-                        return true;
-                    }
-                    catch
-                    {
-                        trans.Rollback();
-                        throw;
-                    }
-                }
-            }
-        }
-
-        public bool UpdateThuoc(Thuoc thuoc, List<ThanhPhanThuoc> thanhPhans)
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                using (SqlTransaction trans = con.BeginTransaction())
-                {
-                    try
-                    {
-                        // 1. Cập nhật bảng THUOC
-                        string sqlThuoc = @"UPDATE THUOC SET TenThuoc=@Ten, QuyCach=@Qc, DonViCoBan=@Dvt, MaLoaiThuoc=@Loai, 
-                                            DuongDung=@Dd, GiaBan=@Gia, CoBHYT=@Bhyt, GiaBHYT=@GiaBhyt, MaNSX=@Nsx, TrangThai=@Tt 
-                                            WHERE MaThuoc=@Ma";
-                        SqlCommand cmd = new SqlCommand(sqlThuoc, con, trans);
-                        cmd.Parameters.AddWithValue("@Ma", thuoc.MaThuoc);
-                        cmd.Parameters.AddWithValue("@Ten", thuoc.TenThuoc);
-                        cmd.Parameters.AddWithValue("@Qc", (object)thuoc.QuyCach ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Dvt", thuoc.DonViCoBan);
-                        cmd.Parameters.AddWithValue("@Loai", (object)thuoc.MaLoaiThuoc ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Dd", (object)thuoc.DuongDung ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Gia", (object)thuoc.GiaBan ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Bhyt", thuoc.CoBHYT);
-                        cmd.Parameters.AddWithValue("@GiaBhyt", (object)thuoc.GiaBHYT ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Nsx", (object)thuoc.MaNSX ?? DBNull.Value);
-                        cmd.Parameters.AddWithValue("@Tt", thuoc.TrangThai ?? true);
-                        cmd.ExecuteNonQuery();
-
-                        // 2. Xóa toàn bộ thành phần cũ của thuốc này
-                        SqlCommand cmdDel = new SqlCommand("DELETE FROM THANHPHAN_THUOC WHERE MaThuoc = @MaThuoc", con, trans);
-                        cmdDel.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
-                        cmdDel.ExecuteNonQuery();
-
-                        // 3. Thêm lại danh sách thành phần mới từ Form
-                        if (thanhPhans != null && thanhPhans.Count > 0)
-                        {
-                            string sqlTp = "INSERT INTO THANHPHAN_THUOC (MaThanhPhan, MaThuoc, MaHoatChat, HamLuong) VALUES (@MaTP, @MaThuoc, @MaHC, @HamLuong)";
-                            foreach (var tp in thanhPhans)
-                            {
-                                if (string.IsNullOrEmpty(tp.MaHoatChat)) continue;
-                                SqlCommand cmdTp = new SqlCommand(sqlTp, con, trans);
-                                cmdTp.Parameters.AddWithValue("@MaTP", Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper());
-                                cmdTp.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
-                                cmdTp.Parameters.AddWithValue("@MaHC", tp.MaHoatChat);
-                                cmdTp.Parameters.AddWithValue("@HamLuong", (object)tp.HamLuong ?? DBNull.Value);
-                                cmdTp.ExecuteNonQuery();
-                            }
-                        }
-
-                        trans.Commit();
-                        return true;
-                    }
-                    catch
-                    {
-                        trans.Rollback();
-                        throw;
-                    }
-                }
-            }
-        }
-
-        public bool DeleteThuoc(string id)
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                using (SqlTransaction trans = con.BeginTransaction())
-                {
-                    try
-                    {
-                        SqlCommand cmdTp = new SqlCommand("DELETE FROM THANHPHAN_THUOC WHERE MaThuoc = @Id", con, trans);
-                        cmdTp.Parameters.AddWithValue("@Id", id);
-                        cmdTp.ExecuteNonQuery();
-
-                        SqlCommand cmd = new SqlCommand("DELETE FROM THUOC WHERE MaThuoc = @Id", con, trans);
-                        cmd.Parameters.AddWithValue("@Id", id);
-                        int r = cmd.ExecuteNonQuery();
-
-                        trans.Commit();
-                        return r > 0;
-                    }
-                    catch { trans.Rollback(); throw; }
-                }
-            }
-        }
-
-        // 4. CÁC HÀM TIỆN ÍCH LẤY DANH MỤC & HIỂN THỊ
-        public List<ThanhPhanThuocDisplay> GetThanhPhanThuocDisplay(string maThuoc)
-        {
-            var list = new List<ThanhPhanThuocDisplay>();
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                string sql = @"SELECT TP.MaHoatChat, HC.TenHoatChat, TP.HamLuong 
-                               FROM THANHPHAN_THUOC TP 
-                               JOIN DANHMUC_HOATCHAT HC ON TP.MaHoatChat = HC.MaHoatChat 
-                               WHERE TP.MaThuoc = @MaThuoc";
-                SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@MaThuoc", maThuoc);
-                con.Open();
-                using (SqlDataReader rd = cmd.ExecuteReader())
-                {
-                    while (rd.Read())
-                    {
-                        list.Add(new ThanhPhanThuocDisplay
-                        {
-                            MaHoatChat = rd["MaHoatChat"].ToString(),
-                            TenHoatChat = rd["TenHoatChat"].ToString(),
-                            HamLuong = rd["HamLuong"] != DBNull.Value ? rd["HamLuong"].ToString() : ""
-                        });
-                    }
-                }
-            }
-            return list;
-        }
-
-        public List<ThanhPhanThuoc> GetThanhPhanThuocRaw(string maThuoc)
-        {
-            var list = new List<ThanhPhanThuoc>();
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM THANHPHAN_THUOC WHERE MaThuoc = @Ma", con);
-                cmd.Parameters.AddWithValue("@Ma", maThuoc);
-                con.Open();
-                using (SqlDataReader rd = cmd.ExecuteReader())
-                {
-                    while (rd.Read())
-                    {
-                        list.Add(new ThanhPhanThuoc
-                        {
-                            MaThanhPhan = rd["MaThanhPhan"].ToString(),
-                            MaThuoc = rd["MaThuoc"].ToString(),
-                            MaHoatChat = rd["MaHoatChat"].ToString(),
-                            HamLuong = rd["HamLuong"] != DBNull.Value ? rd["HamLuong"].ToString() : ""
-                        });
-                    }
-                }
-            }
-            return list;
-        }
-
-        // Các hàm lấy danh sách Dropdown (Bạn có thể gộp chung vào 1 class DB riêng nếu muốn)
-        public List<DanhMucThuoc> GetAllLoaiThuoc()
-        {
-            var list = new List<DanhMucThuoc>();
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM DANHMUC_THUOC", con);
-                con.Open();
-                using (SqlDataReader rd = cmd.ExecuteReader())
-                {
-                    while (rd.Read()) list.Add(new DanhMucThuoc { MaDanhMuc = rd["MaDanhMuc"].ToString(), TenDanhMuc = rd["TenDanhMuc"].ToString() });
-                }
-            }
-            return list;
-        }
+        // ==================== LẤY DROPDOWN DATA ====================
 
         public List<NhaSanXuat> GetAllNSX()
         {
             var list = new List<NhaSanXuat>();
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connectStr))
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM NHASANXUAT", con);
-                con.Open();
-                using (SqlDataReader rd = cmd.ExecuteReader())
+                string query = "SELECT MaNSX, TenNSX FROM NHASANXUAT ORDER BY TenNSX";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    while (rd.Read()) list.Add(new NhaSanXuat { MaNSX = Convert.ToInt32(rd["MaNSX"]), TenNSX = rd["TenNSX"].ToString() });
+                    while (dr.Read())
+                    {
+                        list.Add(new NhaSanXuat
+                        {
+                            MaNSX = Convert.ToInt32(dr["MaNSX"]),
+                            TenNSX = dr["TenNSX"].ToString()
+                        });
+                    }
                 }
             }
             return list;
@@ -323,38 +40,562 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public List<DanhMucHoatChat> GetAllHoatChat()
         {
             var list = new List<DanhMucHoatChat>();
-            using (SqlConnection con = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(connectStr))
             {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM DANHMUC_HOATCHAT", con);
-                con.Open();
-                using (SqlDataReader rd = cmd.ExecuteReader())
+                string query = "SELECT MaHoatChat, TenHoatChat FROM DANHMUC_HOATCHAT ORDER BY TenHoatChat";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    while (rd.Read()) list.Add(new DanhMucHoatChat { MaHoatChat = rd["MaHoatChat"].ToString(), TenHoatChat = rd["TenHoatChat"].ToString() });
+                    while (dr.Read())
+                    {
+                        list.Add(new DanhMucHoatChat
+                        {
+                            MaHoatChat = dr["MaHoatChat"].ToString(),
+                            TenHoatChat = dr["TenHoatChat"].ToString()
+                        });
+                    }
                 }
             }
             return list;
         }
 
-        public string GetTenLoaiThuoc(string ma) { /* Viết câu Query tương tự GetAll, trả về Tên */ return "Tên Loại (Code omitted for brevity)"; }
-        public string GetTenNSX(int ma) { return "Tên NSX (Code omitted for brevity)"; }
-
-        // Hàm Map data
-        private Thuoc MapThuoc(SqlDataReader rd)
+        public List<KhoNhapDB.LoaiThuocItem> GetAllLoaiThuoc()
         {
-            return new Thuoc
+            var list = new List<KhoNhapDB.LoaiThuocItem>();
+            using (SqlConnection conn = new SqlConnection(connectStr))
             {
-                MaThuoc = rd["MaThuoc"].ToString(),
-                TenThuoc = rd["TenThuoc"].ToString(),
-                QuyCach = rd["QuyCach"]?.ToString(),
-                DonViCoBan = rd["DonViCoBan"].ToString(),
-                MaLoaiThuoc = rd["MaLoaiThuoc"]?.ToString(),
-                DuongDung = rd["DuongDung"]?.ToString(),
-                GiaBan = rd["GiaBan"] != DBNull.Value ? Convert.ToDecimal(rd["GiaBan"]) : (decimal?)null,
-                CoBHYT = rd["CoBHYT"] != DBNull.Value ? Convert.ToBoolean(rd["CoBHYT"]) : false,
-                GiaBHYT = rd["GiaBHYT"] != DBNull.Value ? Convert.ToDecimal(rd["GiaBHYT"]) : (decimal?)null,
-                MaNSX = rd["MaNSX"] != DBNull.Value ? Convert.ToInt32(rd["MaNSX"]) : (int?)null,
-                TrangThai = rd["TrangThai"] != DBNull.Value ? Convert.ToBoolean(rd["TrangThai"]) : true
+                string query = "SELECT MaDanhMuc AS MaLoaiThuoc, TenDanhMuc AS TenLoaiThuoc FROM DANHMUC_THUOC ORDER BY TenDanhMuc";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(new KhoNhapDB.LoaiThuocItem
+                        {
+                            MaLoaiThuoc = dr["MaLoaiThuoc"] != DBNull.Value ? dr["MaLoaiThuoc"].ToString().Trim() : "",
+                            TenLoaiThuoc = dr["TenLoaiThuoc"] != DBNull.Value ? dr["TenLoaiThuoc"].ToString() : ""
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public List<string> GetAllDuongDung()
+        {
+            var list = new List<string>();
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                string query = "SELECT DISTINCT DuongDung FROM THUOC WHERE DuongDung IS NOT NULL ORDER BY DuongDung";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                conn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(dr["DuongDung"].ToString());
+                    }
+                }
+            }
+            return list;
+        }
+
+        // ==================== LẤY DANH SÁCH CÓ FILTER + PHÂN TRANG ====================
+
+        public List<ThuocManageViewModel> GetAll(int page, int pageSize, string keyword, string maLoaiThuoc, string duongDung, bool? coBHYT, bool? trangThai)
+        {
+            var list = new List<ThuocManageViewModel>();
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                StringBuilder queryBuilder = new StringBuilder(@"
+                    SELECT
+                        T.MaThuoc, T.TenThuoc, T.QuyCach, T.DonViCoBan, T.MaLoaiThuoc,
+                        T.DuongDung, T.GiaBan, T.CoBHYT, T.MaNSX, T.TrangThai,
+                        NSX.TenNSX
+                    FROM THUOC T
+                    LEFT JOIN NHASANXUAT NSX ON T.MaNSX = NSX.MaNSX
+                    WHERE 1=1");
+
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = conn;
+
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    queryBuilder.Append(@" AND (T.TenThuoc COLLATE SQL_Latin1_General_CP1_CI_AI LIKE @Keyword
+                                     OR T.MaThuoc LIKE @Keyword)");
+                    cmd.Parameters.AddWithValue("@Keyword", "%" + keyword.Trim() + "%");
+                }
+
+                if (!string.IsNullOrEmpty(maLoaiThuoc))
+                {
+                    queryBuilder.Append(" AND T.MaLoaiThuoc = @MaLoaiThuoc ");
+                    cmd.Parameters.AddWithValue("@MaLoaiThuoc", maLoaiThuoc);
+                }
+
+                if (!string.IsNullOrEmpty(duongDung))
+                {
+                    queryBuilder.Append(" AND T.DuongDung = @DuongDung ");
+                    cmd.Parameters.AddWithValue("@DuongDung", duongDung);
+                }
+
+                if (coBHYT.HasValue)
+                {
+                    queryBuilder.Append(" AND T.CoBHYT = @CoBHYT ");
+                    cmd.Parameters.AddWithValue("@CoBHYT", coBHYT.Value);
+                }
+
+                if (trangThai.HasValue)
+                {
+                    queryBuilder.Append(" AND T.TrangThai = @TrangThai ");
+                    cmd.Parameters.AddWithValue("@TrangThai", trangThai.Value);
+                }
+
+                queryBuilder.Append(" ORDER BY T.MaThuoc OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY");
+                cmd.CommandText = queryBuilder.ToString();
+                cmd.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+                cmd.Parameters.AddWithValue("@PageSize", pageSize);
+
+                conn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(new ThuocManageViewModel
+                        {
+                            MaThuoc = dr["MaThuoc"].ToString().Trim(),
+                            TenThuoc = dr["TenThuoc"].ToString(),
+                            QuyCach = dr["QuyCach"] != DBNull.Value ? dr["QuyCach"].ToString() : null,
+                            DonViCoBan = dr["DonViCoBan"].ToString(),
+                            MaLoaiThuoc = dr["MaLoaiThuoc"] != DBNull.Value ? dr["MaLoaiThuoc"].ToString() : null,
+                            DuongDung = dr["DuongDung"] != DBNull.Value ? dr["DuongDung"].ToString() : null,
+                            GiaBan = dr["GiaBan"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBan"]) : (decimal?)null,
+                            CoBHYT = dr["CoBHYT"] != DBNull.Value && Convert.ToBoolean(dr["CoBHYT"]),
+                            // Bỏ lấy GiaBHYT
+                            MaNSX = dr["MaNSX"] != DBNull.Value ? (int?)Convert.ToInt32(dr["MaNSX"]) : null,
+                            TenNSX = dr["TenNSX"] != DBNull.Value ? dr["TenNSX"].ToString() : null,
+                            TrangThai = dr["TrangThai"] != DBNull.Value && Convert.ToBoolean(dr["TrangThai"])
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public int GetCount(string keyword, string maLoaiThuoc, string duongDung, bool? coBHYT, bool? trangThai)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                StringBuilder queryBuilder = new StringBuilder("SELECT COUNT(*) FROM THUOC T WHERE 1=1");
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = conn;
+
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    queryBuilder.Append(@" AND (T.TenThuoc COLLATE SQL_Latin1_General_CP1_CI_AI LIKE @Keyword
+                                     OR T.MaThuoc LIKE @Keyword)");
+                    cmd.Parameters.AddWithValue("@Keyword", "%" + keyword.Trim() + "%");
+                }
+
+                if (!string.IsNullOrEmpty(maLoaiThuoc))
+                {
+                    queryBuilder.Append(" AND T.MaLoaiThuoc = @MaLoaiThuoc ");
+                    cmd.Parameters.AddWithValue("@MaLoaiThuoc", maLoaiThuoc);
+                }
+
+                if (!string.IsNullOrEmpty(duongDung))
+                {
+                    queryBuilder.Append(" AND T.DuongDung = @DuongDung ");
+                    cmd.Parameters.AddWithValue("@DuongDung", duongDung);
+                }
+
+                if (coBHYT.HasValue)
+                {
+                    queryBuilder.Append(" AND T.CoBHYT = @CoBHYT ");
+                    cmd.Parameters.AddWithValue("@CoBHYT", coBHYT.Value);
+                }
+
+                if (trangThai.HasValue)
+                {
+                    queryBuilder.Append(" AND T.TrangThai = @TrangThai ");
+                    cmd.Parameters.AddWithValue("@TrangThai", trangThai.Value);
+                }
+
+                cmd.CommandText = queryBuilder.ToString();
+                conn.Open();
+                return (int)cmd.ExecuteScalar();
+            }
+        }
+
+        // ==================== LẤY CHI TIẾT ====================
+
+        public Thuoc GetById(string maThuoc)
+        {
+            Thuoc t = null;
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                string query = "SELECT * FROM THUOC WHERE MaThuoc = @MaThuoc";
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@MaThuoc", maThuoc.Trim());
+                conn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        t = new Thuoc
+                        {
+                            MaThuoc = dr["MaThuoc"].ToString(),
+                            TenThuoc = dr["TenThuoc"].ToString(),
+                            QuyCach = dr["QuyCach"] != DBNull.Value ? dr["QuyCach"].ToString() : null,
+                            DonViCoBan = dr["DonViCoBan"].ToString(),
+                            MaLoaiThuoc = dr["MaLoaiThuoc"] != DBNull.Value ? dr["MaLoaiThuoc"].ToString() : null,
+                            DuongDung = dr["DuongDung"] != DBNull.Value ? dr["DuongDung"].ToString() : null,
+                            GiaBan = dr["GiaBan"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBan"]) : (decimal?)null,
+                            CoBHYT = dr["CoBHYT"] != DBNull.Value && Convert.ToBoolean(dr["CoBHYT"]),
+                            // Bỏ gán GiaBHYT
+                            MaNSX = dr["MaNSX"] != DBNull.Value ? (int?)Convert.ToInt32(dr["MaNSX"]) : null,
+                            TrangThai = dr["TrangThai"] != DBNull.Value ? (bool?)Convert.ToBoolean(dr["TrangThai"]) : null
+                        };
+                    }
+                }
+            }
+            return t;
+        }
+
+        // Lấy chi tiết đầy đủ (kèm thành phần)
+        public ThuocManageViewModel GetByIdWithThanhPhan(string maThuoc)
+        {
+            var t = GetById(maThuoc);
+            if (t == null) return null;
+
+            var vm = new ThuocManageViewModel
+            {
+                MaThuoc = t.MaThuoc,
+                TenThuoc = t.TenThuoc,
+                QuyCach = t.QuyCach,
+                DonViCoBan = t.DonViCoBan,
+                MaLoaiThuoc = t.MaLoaiThuoc,
+                DuongDung = t.DuongDung,
+                GiaBan = t.GiaBan,
+                CoBHYT = t.CoBHYT,
+                // Bỏ GiaBHYT
+                MaNSX = t.MaNSX,
+                TrangThai = t.TrangThai ?? true,
+                ThanhPhans = GetThanhPhanByMaThuoc(maThuoc)
             };
+
+            // Lấy thêm tên NSX
+            if (t.MaNSX.HasValue)
+            {
+                using (SqlConnection conn = new SqlConnection(connectStr))
+                {
+                    string q = "SELECT TenNSX FROM NHASANXUAT WHERE MaNSX = @MaNSX";
+                    SqlCommand cmd = new SqlCommand(q, conn);
+                    cmd.Parameters.AddWithValue("@MaNSX", t.MaNSX.Value);
+                    conn.Open();
+                    var o = cmd.ExecuteScalar();
+                    if (o != null && o != DBNull.Value)
+                        vm.TenNSX = o.ToString();
+                }
+            }
+
+            return vm;
+        }
+
+        // ==================== THÀNH PHẦN THUỐC ====================
+
+        public List<ThanhPhanViewModel> GetThanhPhanByMaThuoc(string maThuoc)
+        {
+            var list = new List<ThanhPhanViewModel>();
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                string query = @"
+                    SELECT TP.MaThanhPhan, TP.MaThuoc, TP.MaHoatChat, TP.HamLuong,
+                           HC.TenHoatChat
+                    FROM THANHPHAN_THUOC TP
+                    LEFT JOIN DANHMUC_HOATCHAT HC ON TP.MaHoatChat = HC.MaHoatChat
+                    WHERE TP.MaThuoc = @MaThuoc
+                    ORDER BY HC.TenHoatChat";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@MaThuoc", maThuoc.Trim());
+                conn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(new ThanhPhanViewModel
+                        {
+                            MaThanhPhan = dr["MaThanhPhan"].ToString(),
+                            MaThuoc = dr["MaThuoc"].ToString(),
+                            MaHoatChat = dr["MaHoatChat"].ToString(),
+                            TenHoatChat = dr["TenHoatChat"] != DBNull.Value ? dr["TenHoatChat"].ToString() : null,
+                            HamLuong = dr["HamLuong"] != DBNull.Value ? dr["HamLuong"].ToString() : null
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        // ==================== CRUD THUỐC ====================
+
+        /// <summary>
+        /// Lấy số bắt đầu cho MaThanhPhan (dùng MAX theo số, không theo chuỗi để tránh TP00000009 > TP00000010)
+        /// </summary>
+        private int GenerateNextMaThanhPhanStart(SqlConnection conn, SqlTransaction tran)
+        {
+            string sql = @"SELECT ISNULL(MAX(CAST(SUBSTRING(MaThanhPhan, 3, 10) AS INT)), 0) + 1 
+                          FROM THANHPHAN_THUOC WHERE MaThanhPhan LIKE 'TP%'";
+            SqlCommand cmd = new SqlCommand(sql, conn, tran);
+            var nextNum = cmd.ExecuteScalar();
+            return nextNum != null && nextNum != DBNull.Value ? Convert.ToInt32(nextNum) : 1;
+        }
+
+        public string GenerateNextMaThuoc()
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                // Sắp xếp theo phần số để tránh T0009 > T0010 > ... > T0006
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT TOP 1 MaThuoc FROM THUOC WHERE MaThuoc LIKE 'T%' " +
+                    "ORDER BY CAST(SUBSTRING(MaThuoc, 2, 10) AS INT) DESC", conn);
+                var result = cmd.ExecuteScalar() as string;
+
+                if (string.IsNullOrEmpty(result)) return "T0001";
+
+                string numberPart = System.Text.RegularExpressions.Regex.Match(result, @"\d+").Value;
+                if (int.TryParse(numberPart, out int num))
+                {
+                    num++;
+                    return "T" + num.ToString("D4");
+                }
+                return "T0001";
+            }
+        }
+
+        public bool Create(Thuoc thuoc, List<ThanhPhanThuoc> thanhPhans)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+                try
+                {
+                    // 1. Thêm thuốc (Bỏ GiaBHYT khỏi câu SQL)
+                    string queryThuoc = @"
+                        INSERT INTO THUOC (MaThuoc, TenThuoc, QuyCach, DonViCoBan, MaLoaiThuoc, DuongDung,
+                                         GiaBan, CoBHYT, MaNSX, TrangThai)
+                        VALUES (@MaThuoc, @TenThuoc, @QuyCach, @DonViCoBan, @MaLoaiThuoc, @DuongDung,
+                                @GiaBan, @CoBHYT, @MaNSX, @TrangThai)";
+
+                    SqlCommand cmdT = new SqlCommand(queryThuoc, conn, tran);
+                    cmdT.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
+                    cmdT.Parameters.AddWithValue("@TenThuoc", thuoc.TenThuoc);
+                    cmdT.Parameters.AddWithValue("@QuyCach", (object)thuoc.QuyCach ?? DBNull.Value);
+                    cmdT.Parameters.AddWithValue("@DonViCoBan", thuoc.DonViCoBan);
+                    cmdT.Parameters.AddWithValue("@MaLoaiThuoc", (object)thuoc.MaLoaiThuoc ?? DBNull.Value);
+                    cmdT.Parameters.AddWithValue("@DuongDung", (object)thuoc.DuongDung ?? DBNull.Value);
+                    cmdT.Parameters.AddWithValue("@GiaBan", (object)thuoc.GiaBan ?? DBNull.Value);
+                    cmdT.Parameters.AddWithValue("@CoBHYT", thuoc.CoBHYT);
+                    // Bỏ add parameter @GiaBHYT
+                    cmdT.Parameters.AddWithValue("@MaNSX", (object)thuoc.MaNSX ?? DBNull.Value);
+                    cmdT.Parameters.AddWithValue("@TrangThai", thuoc.TrangThai ?? true);
+
+                    cmdT.ExecuteNonQuery();
+
+                    // 2. Thêm thành phần
+                    if (thanhPhans != null && thanhPhans.Count > 0)
+                    {
+                        int nextSeq = GenerateNextMaThanhPhanStart(conn, tran);
+                        foreach (var tp in thanhPhans)
+                        {
+                            if (string.IsNullOrWhiteSpace(tp.MaHoatChat)) continue;
+
+                            string maTP = "TP" + nextSeq.ToString("D8");
+                            nextSeq++;
+                            string queryTP = @"
+                                INSERT INTO THANHPHAN_THUOC (MaThanhPhan, MaThuoc, MaHoatChat, HamLuong)
+                                VALUES (@MaThanhPhan, @MaThuoc, @MaHoatChat, @HamLuong)";
+                            SqlCommand cmdTP = new SqlCommand(queryTP, conn, tran);
+                            cmdTP.Parameters.AddWithValue("@MaThanhPhan", maTP);
+                            cmdTP.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
+                            cmdTP.Parameters.AddWithValue("@MaHoatChat", tp.MaHoatChat);
+                            cmdTP.Parameters.AddWithValue("@HamLuong", (object)tp.HamLuong ?? DBNull.Value);
+                            cmdTP.ExecuteNonQuery();
+                        }
+                    }
+
+                    tran.Commit();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+            }
+        }
+
+        public bool Update(Thuoc thuoc, List<ThanhPhanThuoc> thanhPhans)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+                try
+                {
+                    // 1. Cập nhật thuốc (Bỏ GiaBHYT khỏi câu SQL)
+                    string queryThuoc = @"
+                        UPDATE THUOC SET
+                            TenThuoc = @TenThuoc,
+                            QuyCach = @QuyCach,
+                            DonViCoBan = @DonViCoBan,
+                            MaLoaiThuoc = @MaLoaiThuoc,
+                            DuongDung = @DuongDung,
+                            GiaBan = @GiaBan,
+                            CoBHYT = @CoBHYT,
+                            MaNSX = @MaNSX,
+                            TrangThai = @TrangThai
+                        WHERE MaThuoc = @MaThuoc";
+
+                    SqlCommand cmdT = new SqlCommand(queryThuoc, conn, tran);
+                    cmdT.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
+                    cmdT.Parameters.AddWithValue("@TenThuoc", thuoc.TenThuoc);
+                    cmdT.Parameters.AddWithValue("@QuyCach", (object)thuoc.QuyCach ?? DBNull.Value);
+                    cmdT.Parameters.AddWithValue("@DonViCoBan", thuoc.DonViCoBan);
+                    cmdT.Parameters.AddWithValue("@MaLoaiThuoc", (object)thuoc.MaLoaiThuoc ?? DBNull.Value);
+                    cmdT.Parameters.AddWithValue("@DuongDung", (object)thuoc.DuongDung ?? DBNull.Value);
+                    cmdT.Parameters.AddWithValue("@GiaBan", (object)thuoc.GiaBan ?? DBNull.Value);
+                    cmdT.Parameters.AddWithValue("@CoBHYT", thuoc.CoBHYT);
+                    // Bỏ add parameter @GiaBHYT
+                    cmdT.Parameters.AddWithValue("@MaNSX", (object)thuoc.MaNSX ?? DBNull.Value);
+                    cmdT.Parameters.AddWithValue("@TrangThai", thuoc.TrangThai ?? true);
+
+                    cmdT.ExecuteNonQuery();
+
+                    // 2. Xóa thành phần cũ
+                    SqlCommand cmdDel = new SqlCommand("DELETE FROM THANHPHAN_THUOC WHERE MaThuoc = @MaThuoc", conn, tran);
+                    cmdDel.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
+                    cmdDel.ExecuteNonQuery();
+
+                    // 3. Thêm thành phần mới
+                    if (thanhPhans != null && thanhPhans.Count > 0)
+                    {
+                        int nextSeq = GenerateNextMaThanhPhanStart(conn, tran);
+                        foreach (var tp in thanhPhans)
+                        {
+                            if (string.IsNullOrWhiteSpace(tp.MaHoatChat)) continue;
+
+                            string maTP = "TP" + nextSeq.ToString("D8");
+                            nextSeq++;
+                            string queryTP = @"
+                                INSERT INTO THANHPHAN_THUOC (MaThanhPhan, MaThuoc, MaHoatChat, HamLuong)
+                                VALUES (@MaThanhPhan, @MaThuoc, @MaHoatChat, @HamLuong)";
+                            SqlCommand cmdTP = new SqlCommand(queryTP, conn, tran);
+                            cmdTP.Parameters.AddWithValue("@MaThanhPhan", maTP);
+                            cmdTP.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
+                            cmdTP.Parameters.AddWithValue("@MaHoatChat", tp.MaHoatChat);
+                            cmdTP.Parameters.AddWithValue("@HamLuong", (object)tp.HamLuong ?? DBNull.Value);
+                            cmdTP.ExecuteNonQuery();
+                        }
+                    }
+
+                    tran.Commit();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    throw ex;
+                }
+            }
+        }
+
+        public bool Delete(string maThuoc)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+                try
+                {
+                    // Xóa thành phần trước
+                    SqlCommand cmdTP = new SqlCommand("DELETE FROM THANHPHAN_THUOC WHERE MaThuoc = @MaThuoc", conn, tran);
+                    cmdTP.Parameters.AddWithValue("@MaThuoc", maThuoc.Trim());
+                    cmdTP.ExecuteNonQuery();
+
+                    // Xóa thuốc
+                    SqlCommand cmdT = new SqlCommand("DELETE FROM THUOC WHERE MaThuoc = @MaThuoc", conn, tran);
+                    cmdT.Parameters.AddWithValue("@MaThuoc", maThuoc.Trim());
+                    int rows = cmdT.ExecuteNonQuery();
+
+                    tran.Commit();
+                    return rows > 0;
+                }
+                catch
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        public bool? ToggleTrangThai(string maThuoc)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+                try
+                {
+                    string sqlGet = "SELECT TrangThai FROM THUOC WHERE MaThuoc = @MaThuoc";
+                    SqlCommand cmdGet = new SqlCommand(sqlGet, conn, tran);
+                    cmdGet.Parameters.AddWithValue("@MaThuoc", maThuoc.Trim());
+
+                    object o = cmdGet.ExecuteScalar();
+                    if (o == null || o == DBNull.Value) return null;
+
+                    bool current = Convert.ToBoolean(o);
+                    bool newStatus = !current;
+
+                    string sqlUp = "UPDATE THUOC SET TrangThai = @NewStatus WHERE MaThuoc = @MaThuoc";
+                    SqlCommand cmdUp = new SqlCommand(sqlUp, conn, tran);
+                    cmdUp.Parameters.AddWithValue("@NewStatus", newStatus);
+                    cmdUp.Parameters.AddWithValue("@MaThuoc", maThuoc.Trim());
+                    cmdUp.ExecuteNonQuery();
+
+                    tran.Commit();
+                    return newStatus;
+                }
+                catch
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        // ==================== KIỂM TRA TRÙNG ====================
+
+        public bool TenThuocExists(string tenThuoc, string excludeMaThuoc = null)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                string query = "SELECT COUNT(*) FROM THUOC WHERE TenThuoc = @TenThuoc";
+                if (!string.IsNullOrEmpty(excludeMaThuoc))
+                    query += " AND MaThuoc <> @MaThuoc";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@TenThuoc", tenThuoc.Trim());
+                if (!string.IsNullOrEmpty(excludeMaThuoc))
+                    cmd.Parameters.AddWithValue("@MaThuoc", excludeMaThuoc);
+
+                conn.Open();
+                return (int)cmd.ExecuteScalar() > 0;
+            }
         }
     }
 }

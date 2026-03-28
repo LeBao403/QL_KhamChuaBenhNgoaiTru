@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using System.ComponentModel;
-using System.Web.Mvc;
 
 namespace QL_KhamChuaBenhNgoaiTru.Models
 {
@@ -70,10 +69,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         [DisplayName("Có BHYT")]
         public bool CoBHYT { get; set; }
 
-        [DisplayName("Giá BHYT quy định")]
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public decimal? GiaBHYT { get; set; }
-
         [DisplayName("Nhà sản xuất")]
         public int? MaNSX { get; set; }
 
@@ -89,31 +84,47 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string MaHoatChat { get; set; }
         public string HamLuong { get; set; }
     }
+
+    // ==================== VIEW MODELS ====================
+
+    // ViewModel dùng cho trang Danh sách (Index)
     public class ThuocManageViewModel
     {
-        public Thuoc Thuoc { get; set; }
-
-        // Danh sách thành phần của thuốc (dùng cho Create/Edit)
-        public List<ThanhPhanThuoc> DanhSachThanhPhan { get; set; }
-
-        // Các SelectList để hiển thị Dropdown
-        public SelectList DanhSachLoaiThuoc { get; set; }
-        public SelectList DanhSachNSX { get; set; }
-
-        // Danh sách tất cả hoạt chất (để load vào dropdown khi thêm dòng thành phần mới)
-        public SelectList DanhSachHoatChat { get; set; }
-
-        // Tên hiển thị thêm cho trang Details/Index
-        public string TenLoaiThuoc { get; set; }
+        public string MaThuoc { get; set; }
+        public string TenThuoc { get; set; }
+        public string QuyCach { get; set; }
+        public string DonViCoBan { get; set; }
+        public string MaLoaiThuoc { get; set; }
+        public string DuongDung { get; set; }
+        public decimal? GiaBan { get; set; }
+        public bool CoBHYT { get; set; }
+        public int? MaNSX { get; set; }
         public string TenNSX { get; set; }
-        public List<ThanhPhanThuocDisplay> ChiTietThanhPhan { get; set; } // Class phụ hiển thị tên hoạt chất
+        public bool TrangThai { get; set; }
+        public List<ThanhPhanViewModel> ThanhPhans { get; set; }
     }
 
-    // Class phụ để hiển thị chi tiết có chứa Tên hoạt chất
-    public class ThanhPhanThuocDisplay
+    // ViewModel cho thành phần thuốc (dùng hiển thị)
+    public class ThanhPhanViewModel
     {
+        public string MaThanhPhan { get; set; }
+        public string MaThuoc { get; set; }
         public string MaHoatChat { get; set; }
         public string TenHoatChat { get; set; }
         public string HamLuong { get; set; }
+    }
+
+    // ViewModel dùng cho trang Details/Edit (chứa Thuoc + TaiKhoan) -- tương tự BenhNhanManageViewModel
+    public class ThuocManageViewModel2
+    {
+        public Thuoc Thuoc { get; set; } = new Thuoc();
+        public List<ThanhPhanThuoc> ThanhPhans { get; set; } = new List<ThanhPhanThuoc>();
+    }
+
+    // Helper class for LoaiThuoc dropdown
+    public class LoaiThuocItem
+    {
+        public string MaLoaiThuoc { get; set; }
+        public string TenLoaiThuoc { get; set; }
     }
 }

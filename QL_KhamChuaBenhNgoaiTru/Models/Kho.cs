@@ -11,10 +11,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
     {
         [Key]
         public int MaTonKho { get; set; }
-
-        [DisplayName("Phòng/Kho")]
-        [Required(ErrorMessage = "Vui lòng chọn phòng/kho")]
-        public int MaPhong { get; set; }
+        public int MaKho { get; set; }
 
         [DisplayName("Mã thuốc")]
         [Required(ErrorMessage = "Mã thuốc không được để trống")]

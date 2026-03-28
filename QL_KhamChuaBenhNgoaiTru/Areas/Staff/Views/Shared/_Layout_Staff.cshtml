@@ -2,74 +2,344 @@
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>@ViewBag.Title - Trạm làm việc Nhân viên</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
     <style>
+        :root {
+            --sidebar-bg: #1e293b; /* Xanh đen sang trọng */
+            --sidebar-hover: #334155;
+            --sidebar-color: #cbd5e1;
+            --sidebar-active: #3b82f6; /* Xanh dương nhẹ */
+            --body-bg: #f8fafc;
+            --navbar-bg: #ffffff;
+        }
+
         body {
-            background-color: #f4f6f9;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
+            overflow-x: hidden;
         }
 
-        .sidebar {
+        /* ========================
+           SIDEBAR STYLING
+           ======================== */
+        #sidebar {
+            min-width: 260px;
+            max-width: 260px;
             min-height: 100vh;
-            background-color: #343a40;
-            color: white;
+            background-color: var(--sidebar-bg);
+            color: #fff;
+            transition: all 0.3s;
+            position: fixed; /* Giữ sidebar cố định khi cuộn */
+            top: 0;
+            left: 0;
+            z-index: 1040;
         }
 
-            .sidebar a {
-                color: #c2c7d0;
-                text-decoration: none;
-                padding: 12px 20px;
-                display: block;
-            }
+        #sidebar.active {
+            margin-left: -260px; /* Thu gọn sidebar */
+        }
 
-                .sidebar a:hover, .sidebar a.active {
-                    background-color: #007bff;
-                    color: white;
-                }
+        .sidebar-header {
+            padding: 24px 20px;
+            background: rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .sidebar-header h5 {
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #f8fafc;
+        }
+
+        .sidebar-menu {
+            padding: 15px 10px;
+            list-style: none;
+            margin: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--sidebar-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .sidebar-menu a i {
+            font-size: 1.2rem;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .sidebar-menu a:hover {
+            color: #fff;
+            background-color: var(--sidebar-hover);
+            transform: translateX(5px); /* Hiệu ứng đẩy sang phải nhẹ */
+        }
+
+        .sidebar-menu a.active {
+            background-color: var(--sidebar-active);
+            color: #fff;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
+        }
+
+        .logout-link {
+            color: #ef4444 !important;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0 !important;
+            padding-top: 20px !important;
+        }
+
+        .logout-link:hover {
+            background-color: rgba(239, 68, 68, 0.1) !important;
+            color: #f87171 !important;
+        }
+
+        /* ========================
+           MAIN CONTENT & NAVBAR
+           ======================== */
+        #content {
+            width: calc(100% - 260px);
+            margin-left: 260px;
+            transition: all 0.3s;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #content.active {
+            width: 100%;
+            margin-left: 0;
+        }
 
         .top-navbar {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,.08);
+            background-color: var(--navbar-bg);
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        #sidebarCollapse {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+
+        #sidebarCollapse:hover {
+            background-color: #f1f5f9;
+            color: var(--sidebar-active);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--sidebar-active), #6366f1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.95rem;
+            line-height: 1.2;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .main-body {
+            padding: 25px;
+            flex: 1;
+        }
+
+        /* ========================
+           RESPONSIVE
+           ======================== */
+        @@media (max-width: 768px) {
+            #sidebar {
+                margin-left: -260px; /* Ẩn sidebar trên mobile mặc định */
+            }
+            #sidebar.active {
+                margin-left: 0; /* Hiện sidebar khi bấm toggle */
+            }
+            #content {
+                width: 100%;
+                margin-left: 0;
+            }
+            #content.active {
+                width: 100%;
+                /* Overlay làm mờ body khi mở menu trên mobile */
+            }
+
+            /* Lớp phủ đen (Overlay) khi mở sidebar trên mobile */
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0,0,0,0.5);
+                z-index: 1035;
+                backdrop-filter: blur(2px);
+            }
+            .sidebar-overlay.active {
+                display: block;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="d-flex">
-        <div class="sidebar col-md-2 p-0">
-            <div class="text-center py-4 border-bottom border-secondary">
-                <h5 class="mb-0 text-white fw-bold">QUẢN LÝ PHÒNG KHÁM</h5>
-            </div>
-            <nav class="mt-3">
-                <a href="@Url.Action("Index", "TiepTan", new { area = "Staff" })" class="active">
-                    <i class="bi bi-people-fill me-2"></i> Tiếp nhận Bệnh nhân
-                </a>
-                <a href="#">
-                    <i class="bi bi-calendar-check me-2"></i> Lịch hẹn khám
-                </a>
-                <a href="#">
-                    <i class="bi bi-receipt me-2"></i> Thu ngân & Viện phí
-                </a>
-                <a href="@Url.Action("Logout", "TaiKhoan", new { area = "" })" class="text-danger mt-5 border-top border-secondary">
-                    <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
-                </a>
-            </nav>
-        </div>
 
-        <div class="col-md-10">
-            <div class="top-navbar d-flex justify-content-between align-items-center p-3 mb-4">
-                <h4 class="mb-0 text-dark">@ViewBag.Title</h4>
-                <div class="user-info">
-                    <i class="bi bi-person-circle fs-4 me-2 align-middle"></i>
-                    <span class="fw-bold">Xin chào, @(Session["HoTenNV"] ?? "Nhân viên")</span>
+    <div class="wrapper d-flex align-items-stretch">
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h5 class="mb-0"><i class="bi bi-hospital-fill me-2 text-info"></i>HIS CLINIC</h5>
+            </div>
+
+            <ul class="sidebar-menu">
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "TiepTan", new { area = "Staff" })" class="nav-link active">
+                        <i class="bi bi-people-fill"></i> Tiếp nhận Bệnh nhân
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="bi bi-calendar2-check-fill"></i> Lịch hẹn khám
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "ThuNgan", new { area = "Staff" })" class="nav-link">
+                        <i class="bi bi-cash-coin"></i> Thu ngân & Viện phí
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "BacSi", new { area = "Staff" })" class="nav-link">
+                        <i class="bi bi-cash-coin"></i> Khám
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("Logout", "TaiKhoan", new { area = "" })" class="nav-link logout-link">
+                        <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="content">
+
+            <nav class="top-navbar">
+                <div class="d-flex align-items-center">
+                    <button type="button" id="sidebarCollapse">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h4 class="mb-0 ms-3 text-dark fw-bold d-none d-sm-block">@ViewBag.Title</h4>
                 </div>
-            </div>
 
-            <div class="container-fluid px-4">
+                <div class="user-profile">
+                    @{
+                        string hoTenNV = Session["HoTenNV"]?.ToString() ?? "Nhân viên";
+                        string chuCaiDau = !string.IsNullOrEmpty(hoTenNV) ? hoTenNV.Substring(0, 1).ToUpper() : "N";
+                    }
+                    <div class="user-info text-end d-none d-sm-flex">
+                        <span class="user-name">@hoTenNV</span>
+                        <span class="user-role">Bộ phận Tiếp tân</span>
+                    </div>
+                    <div class="user-avatar shadow-sm">
+                        @chuCaiDau
+                    </div>
+                </div>
+            </nav>
+
+            <div class="main-body container-fluid">
                 @RenderBody()
             </div>
+
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
+    <script>
+        $(document).ready(function () {
+            // Nút bấm Toggle
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar, #content').toggleClass('active');
+
+                // Bật/tắt lớp phủ overlay trên mobile
+                if ($(window).width() <= 768) {
+                    $('#sidebarOverlay').toggleClass('active');
+                }
+            });
+
+            // Bấm ra ngoài (lớp phủ) trên mobile để đóng sidebar
+            $('#sidebarOverlay').on('click', function () {
+                $('#sidebar, #content').removeClass('active');
+                $(this).removeClass('active');
+            });
+
+            // Tự động điều chỉnh class active dựa trên đường dẫn hiện tại (URL)
+            // Để menu nó sáng lên đúng trang đang đứng
+            var currentUrl = window.location.pathname;
+            $('.sidebar-menu a').removeClass('active');
+            $('.sidebar-menu a').each(function() {
+                var linkUrl = $(this).attr('href');
+                if (linkUrl && currentUrl.indexOf(linkUrl) !== -1 && linkUrl !== "#") {
+                    $(this).addClass('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

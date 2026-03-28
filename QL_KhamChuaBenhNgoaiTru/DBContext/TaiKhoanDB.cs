@@ -76,6 +76,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     nv.MaNV = rd["MaNV"].ToString();
                     nv.HoTen = rd["HoTen"].ToString();
                     nv.MaChucVu = rd["MaChucVu"] != DBNull.Value ? Convert.ToInt32(rd["MaChucVu"]) : 0;
+                    nv.MaPhong = rd["MaPhong"] != DBNull.Value ? Convert.ToInt32(rd["MaPhong"]) : (int?)null;
+                    nv.MaKhoa = rd["MaKhoa"] != DBNull.Value ? Convert.ToInt32(rd["MaKhoa"]) : (int?)null;
                 }
             }
             return nv;
@@ -107,31 +109,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 }
             }
             return bn;
-        }
-        // Thêm hàm này vào trong class TaiKhoanDB
-        public TaiKhoan GetTaiKhoanByUsername(string username)
-        {
-            TaiKhoan tk = null;
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                // Chỉ tìm theo Username, không gom chung Password và IsActive ở đây
-                string sql = "SELECT * FROM TAIKHOAN WHERE Username = @Username";
-                SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@Username", username);
-
-                con.Open();
-                SqlDataReader rd = cmd.ExecuteReader();
-                if (rd.Read())
-                {
-                    tk = new TaiKhoan();
-                    tk.MaTK = Convert.ToInt32(rd["MaTK"]);
-                    tk.Username = rd["Username"].ToString();
-                    tk.PasswordHash = rd["PasswordHash"].ToString();
-                    // Đảm bảo ép kiểu đúng cho cột IsActive (BIT trong SQL Server)
-                    tk.IsActive = rd["IsActive"] != DBNull.Value ? Convert.ToBoolean(rd["IsActive"]) : false;
-                }
-            }
-            return tk;
         }
     }
 }

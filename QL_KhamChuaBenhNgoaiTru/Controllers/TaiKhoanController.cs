@@ -1,4 +1,4 @@
-﻿using System.Web.Mvc;
+using System.Web.Mvc;
 using QL_KhamChuaBenhNgoaiTru.Models;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
 
@@ -16,7 +16,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         }
 
         // Xử lý logic Đăng nhập
-        // Xử lý logic Đăng nhập
         [HttpPost]
         public ActionResult Login(string username, string password)
         {
@@ -26,91 +25,76 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                 return View();
             }
 
-            // 1. Tìm tài khoản dựa trên Username
-            var tk = db.GetTaiKhoanByUsername(username);
-
-            // Bắt lỗi: Không có tài khoản
-            if (tk == null)
+            var tk = db.CheckLogin(username, password);
+            if (tk != null)
             {
-                ViewBag.Error = "Tài khoản không tồn tại trên hệ thống!";
-                return View();
-            }
+                // 1. Lưu session chung (Dùng cho cả Nhân viên lẫn Bệnh nhân)
+                Session["TaiKhoan"] = tk;
+                Session["Username"] = tk.Username;
+                Session["MaTK"] = tk.MaTK;
 
-            // Bắt lỗi: Sai mật khẩu
-            if (tk.PasswordHash != password)
-            {
-                ViewBag.Error = "Mật khẩu không chính xác!";
-                return View();
-            }
-
-            // Bắt lỗi: Tài khoản bị khóa (IsActive = 0 / false)
-            // Lưu ý: Tuỳ vào việc model TaiKhoan của bạn thuộc tính IsActive là bool hay bool?
-            // Nếu là bool? (có thể null) thì dùng tk.IsActive == false hoặc tk.IsActive != true
-            if (tk.IsActive == false)
-            {
-                ViewBag.Error = "Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên!";
-                return View();
-            }
-
-            // Nếu qua hết các kiểm tra trên -> Đăng nhập thành công
-            // 1. Lưu session chung
-            Session["TaiKhoan"] = tk;
-            Session["Username"] = tk.Username;
-            Session["MaTK"] = tk.MaTK;
-
-            // 2. Kiểm tra xem user này có phải là Nhân viên không
-            var nv = db.GetNhanVienByMaTK(tk.MaTK);
-            if (nv != null)
-            {
-                // Lưu session riêng cho Nhân viên
-                Session["NhanVien"] = nv;
-                Session["MaNV"] = nv.MaNV;
-                Session["HoTenNV"] = nv.HoTen;
-                Session["MaChucVu"] = nv.MaChucVu;
-
-                int chucVu = nv.MaChucVu.HasValue ? nv.MaChucVu.Value : 0;
-                switch (chucVu)
+                // 2. Kiểm tra xem user này có phải là Nhân viên không
+                var nv = db.GetNhanVienByMaTK(tk.MaTK);
+                if (nv != null)
                 {
-                    case 1: // Giám đốc
-                    case 2: // Admin
-                        return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+                    // Lưu session riêng cho Nhân viên
+                    Session["NhanVien"] = nv;
+                    Session["MaNV"] = nv.MaNV;
+                    Session["HoTenNV"] = nv.HoTen; // Lưu tên để hiển thị góc phải màn hình
+                    Session["MaChucVu"] = nv.MaChucVu;
 
-                    case 3: // Trưởng khoa
-                    case 4: // BS điều trị
-                        return RedirectToAction("Index", "BacSi", new { area = "Staff" });
+                    int chucVu = nv.MaChucVu.Value;
+                    switch (chucVu)
+                    {
+                        case 1: // Giám đốc
+                        case 2: // Admin
+                            return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
 
-                    case 8: // Tiếp đón
-                        return RedirectToAction("Index", "TiepTan", new { area = "Staff" });
+                        case 3: // Trưởng khoa
+                        case 4: // BS điều trị
+                            return RedirectToAction("Index", "BacSi", new { area = "Staff" });
 
-                    case 9: // Thu ngân
-                        return RedirectToAction("Index", "ThuNgan", new { area = "Staff" });
+                        case 8: // Tiếp đón
+                            return RedirectToAction("Index", "TiepTan", new { area = "Staff" });
 
-                    case 5: // Điều dưỡng
-                    case 6: // KTV CLS
-                    case 7: // Dược sĩ
-                    case 10: // Bảo vệ
-                    case 11: // Tạp vụ
-                        return RedirectToAction("Index", "Home", new { area = "" });
+                        case 9: // Thu ngân
+                            return RedirectToAction("Index", "ThuNgan", new { area = "Staff" });
 
-                    default:
-                        return RedirectToAction("Index", "Home", new { area = "" });
+                        case 12: // Nhân viên kho
+                            return RedirectToAction("Index", "Dashboard", new { area = "NhanVienKho" });
+
+                        case 5: // Điều dưỡng
+                        case 6: // KTV CLS
+                        case 7: // Dược sĩ
+                        case 10: // Bảo vệ
+                        case 11: // Tạp vụ
+                            return RedirectToAction("Index", "Home", new { area = "" });
+
+                        default:
+                            return RedirectToAction("Index", "Home", new { area = "" });
+                    }
+                }
+                else
+                {
+                    // 3. Nếu KHÔNG phải Nhân viên -> Đi tìm xem có phải Bệnh Nhân không
+                    // Bác nhớ viết hàm GetBenhNhanByMaTK bên file TaiKhoanDB nhé
+                    var bn = db.GetBenhNhanByMaTK(tk.MaTK);
+
+                    if (bn != null)
+                    {
+                        // Có thông tin bệnh nhân -> Lưu Session Bệnh nhân
+                        Session["BenhNhan"] = bn;
+                        Session["MaBN"] = bn.MaBN;
+                        Session["HoTenBN"] = bn.HoTen; // Giả sử cột tên trong DB của bác là HoTen
+                    }
+
+                    // Cuối cùng, điều hướng Bệnh nhân về trang Cổng Bệnh nhân
+                    return RedirectToAction("LichKham", "BenhNhanPortal");
                 }
             }
-            else
-            {
-                // 3. Bệnh Nhân
-                var bn = db.GetBenhNhanByMaTK(tk.MaTK);
 
-                if (bn != null)
-                {
-                    Session["BenhNhan"] = bn;
-                    Session["MaBN"] = bn.MaBN;
-                    Session["HoTenBN"] = bn.HoTen;
-                }
-
-                // Điều hướng Bệnh nhân về trang chủ
-                return RedirectToAction("Index", "Home", new { area = "" });
-            }
+            ViewBag.Error = "Tài khoản hoặc mật khẩu không chính xác, hoặc đã bị khóa!";
+            return View();
         }
 
         // Mở trang Đăng ký
