@@ -339,7 +339,7 @@ CREATE TABLE HOADON (
     TongTienBHYTChiTra DECIMAL(18,2) DEFAULT 0,
     TongTienBenhNhanTra DECIMAL(18,2) DEFAULT 0,
     TrangThaiThanhToan NVARCHAR(50) NOT NULL 
-        CHECK (TrangThaiThanhToan IN (N'Đã thanh toán', N'Chưa thanh toán'))
+        CHECK (TrangThaiThanhToan IN (N'Đã thanh toán', N'Chưa thanh toán', N'Đã hủy'))
         DEFAULT N'Chưa thanh toán',
     HinhThucThanhToan NVARCHAR(50) 
         CHECK (HinhThucThanhToan IN (N'Tiền mặt', N'Chuyển khoản', N'Thẻ')),

@@ -405,6 +405,7 @@
     <Content Include="Areas\Staff\Views\TiepTan\LichSuTiepNhan.cshtml" />
     <Content Include="Areas\Admin\Views\HoaDon\Index.cshtml" />
     <Content Include="Areas\Admin\Views\HoaDon\Details.cshtml" />
+    <Content Include="Areas\Staff\Views\ThuNgan\LichSu.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />

@@ -1,0 +1,259 @@
+﻿@{
+    ViewBag.Title = "Lịch Sử Thu Tiền";
+    Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
+    var dtHoaDon = ViewBag.LichSuHoaDon as System.Data.DataTable;
+
+    string GetSortIcon(string colName)
+    {
+        if (ViewBag.SortCol == colName) return ViewBag.SortDir == "asc" ? "<i class='bi bi-arrow-up text-primary fw-bold ms-1'></i>" : "<i class='bi bi-arrow-down text-primary fw-bold ms-1'></i>";
+        return "<i class='bi bi-arrow-down-up text-muted opacity-25 ms-1'></i>";
+    }
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    body {
+        background-color: #f4f7f6;
+    }
+
+    .filter-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+
+    .table-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .sortable-col {
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.2s;
+    }
+
+        .sortable-col:hover {
+            background-color: #f1f5f9 !important;
+        }
+
+    #loadingOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(2px);
+        z-index: 10;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+<div class="container-fluid px-4 mt-3">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <h3 class="fw-bold text-dark mb-0"><i class="bi bi-clock-history text-primary me-2"></i>Lịch Sử Thu Tiền / Hủy Bill</h3>
+        <a href="@Url.Action("Index", "ThuNgan")" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-1"></i> Về quầy thu ngân
+        </a>
+    </div>
+
+    <div class="filter-card mb-4">
+        <form id="filterForm" action="@Url.Action("LichSu", "ThuNgan")" method="get" class="row g-3 align-items-end m-0">
+            <input type="hidden" id="tuNgay" name="tuNgay" value="@ViewBag.TuNgay">
+            <input type="hidden" id="denNgay" name="denNgay" value="@ViewBag.DenNgay">
+            <input type="hidden" id="sortCol" name="sortCol" value="@ViewBag.SortCol">
+            <input type="hidden" id="sortDir" name="sortDir" value="@ViewBag.SortDir">
+
+            <div class="col-md-4">
+                <label class="form-label fw-bold text-muted small mb-1">TÌM KIẾM</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
+                    <input type="text" id="liveSearchInput" name="tuKhoa" class="form-control bg-light border-start-0" placeholder="Tên, Mã BN, Mã HĐ..." value="@ViewBag.TuKhoa">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold text-muted small mb-1">KHOẢNG NGÀY</label>
+                <input type="text" id="dateRangePicker" class="form-control bg-light" placeholder="Chọn ngày...">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label fw-bold text-muted small mb-1">TRẠNG THÁI</label>
+                <select id="statusFilter" name="trangThai" class="form-select bg-light">
+                    <option value="">-- Tất cả --</option>
+                    <option value="Đã thanh toán" @(ViewBag.TrangThai == "Đã thanh toán" ? "selected" : "")>Đã thanh toán</option>
+                    <option value="Đã hủy" @(ViewBag.TrangThai == "Đã hủy" ? "selected" : "")>Đã hủy</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-light border w-100" onclick="window.location.href='@Url.Action("LichSu")'"><i class="bi bi-arrow-clockwise"></i></button>
+            </div>
+        </form>
+    </div>
+
+    <div id="tableUpdateArea">
+        <div class="table-card">
+            <div id="loadingOverlay"><div class="spinner-border text-primary"></div></div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr class="text-muted small text-uppercase">
+                            <th class="ps-4 sortable-col" data-col="MaHD">Mã HĐ @Html.Raw(GetSortIcon("MaHD"))</th>
+                            <th class="sortable-col" data-col="HoTen">Bệnh Nhân @Html.Raw(GetSortIcon("HoTen"))</th>
+                            <th class="sortable-col" data-col="NgayThanhToan">Giờ Giao Dịch @Html.Raw(GetSortIcon("NgayThanhToan"))</th>
+                            <th>HT Thanh Toán</th>
+                            <th class="text-end sortable-col" data-col="TongTienBenhNhanTra">Khách Trả @Html.Raw(GetSortIcon("TongTienBenhNhanTra"))</th>
+                            <th class="text-center sortable-col" data-col="TrangThaiThanhToan">Trạng Thái @Html.Raw(GetSortIcon("TrangThaiThanhToan"))</th>
+                            <th class="text-center pe-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (dtHoaDon != null && dtHoaDon.Rows.Count > 0)
+                        {
+                            foreach (System.Data.DataRow row in dtHoaDon.Rows)
+                            {
+                                bool isHuy = row["TrangThaiThanhToan"].ToString() == "Đã hủy";
+                                <tr>
+                                    <td class="ps-4 fw-bold text-primary">#@row["MaHD"] <br /><small class="text-muted fw-normal">PKB: #@row["MaPhieuKhamBenh"]</small></td>
+                                    <td><span class="fw-bold text-dark">@row["HoTen"]</span><br /><small class="text-muted">@row["MaBN"]</small></td>
+                                    <td>@Convert.ToDateTime(row["NgayThanhToan"]).ToString("HH:mm - dd/MM/yyyy")</td>
+                                    <td>@(row["HinhThucThanhToan"] != DBNull.Value ? row["HinhThucThanhToan"] : "-")</td>
+                                    <td class="text-end fw-bold @(isHuy ? "text-muted text-decoration-line-through" : "text-danger")">@Convert.ToDecimal(row["TongTienBenhNhanTra"]).ToString("N0") ₫</td>
+                                    <td class="text-center">
+                                        <span class="badge @(isHuy ? "bg-danger" : "bg-success") bg-opacity-10 @(isHuy ? "text-danger" : "text-success") border @(isHuy ? "border-danger" : "border-success") rounded-pill px-3">
+                                            @row["TrangThaiThanhToan"]
+                                        </span>
+                                    </td>
+                                    <td class="text-center pe-4">
+                                        <button class="btn btn-sm btn-light border shadow-sm rounded-pill fw-bold text-primary" onclick="xemChiTiet(@row["MaPhieuKhamBenh"], '@row["HoTen"]')">
+                                            <i class="bi bi-eye me-1"></i> Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="7" class="text-center py-5 text-muted">Không tìm thấy dữ liệu.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (ViewBag.TotalPages > 1)
+            {
+                <div class="card-footer bg-white py-3 d-flex justify-content-center border-top">
+                    <ul class="pagination pagination-sm mb-0 shadow-sm">
+                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")"><a class="page-link ajax-page" href="@Url.Action("LichSu", new { page = ViewBag.CurrentPage - 1 })">Trước</a></li>
+                        <li class="page-item active"><span class="page-link bg-primary text-white border-primary">Trang @ViewBag.CurrentPage / @ViewBag.TotalPages</span></li>
+                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")"><a class="page-link ajax-page" href="@Url.Action("LichSu", new { page = ViewBag.CurrentPage + 1 })">Sau</a></li>
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/vn.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            // KHỞI TẠO LỊCH
+            flatpickr("#dateRangePicker", {
+                mode: "range", dateFormat: "Y-m-d", altInput: true, altFormat: "d/m/Y", locale: "vn",
+                defaultDate: [$("#tuNgay").val(), $("#denNgay").val()],
+                onChange: function(dates, dateStr, instance) {
+                    if (dates.length === 2) {
+                        $("#tuNgay").val(instance.formatDate(dates[0], "Y-m-d"));
+                        $("#denNgay").val(instance.formatDate(dates[1], "Y-m-d"));
+                        triggerSearch();
+                    }
+                }
+            });
+
+            // LIVE SEARCH
+            let timer;
+            $('#liveSearchInput').on('input', function () { clearTimeout(timer); timer = setTimeout(() => triggerSearch(1), 500); });
+            $('#statusFilter').on('change', () => triggerSearch(1));
+
+            // SẮP XẾP
+            $(document).on('click', '.sortable-col', function () {
+                let col = $(this).data('col');
+                $('#sortDir').val($('#sortCol').val() === col ? ($('#sortDir').val() === 'asc' ? 'desc' : 'asc') : 'desc');
+                $('#sortCol').val(col);
+                triggerSearch(1);
+            });
+
+            // PHÂN TRANG AJAX
+            $(document).on('click', '.ajax-page', function (e) {
+                e.preventDefault();
+                let url = $(this).attr('href');
+                let pageMatch = url.match(/page=(\d+)/);
+                if (pageMatch) triggerSearch(pageMatch[1]);
+            });
+
+            function triggerSearch(page = '@ViewBag.CurrentPage') {
+                $('#loadingOverlay').css('display', 'flex');
+                let url = `@Url.Action("LichSu")?tuNgay=${$('#tuNgay').val()}&denNgay=${$('#denNgay').val()}&tuKhoa=${encodeURIComponent($('#liveSearchInput').val())}&trangThai=${encodeURIComponent($('#statusFilter').val())}&sortCol=${$('#sortCol').val()}&sortDir=${$('#sortDir').val()}&page=${page}`;
+                $.get(url, function (data) {
+                    $('#tableUpdateArea').html($(data).find('#tableUpdateArea').html());
+                    window.history.pushState({path: url}, '', url);
+                });
+            }
+        });
+
+        // XEM CHI TIẾT ẢO DIỆU VỚI SWEETALERT
+        function xemChiTiet(maPKB, tenBN) {
+            Swal.fire({
+                title: 'Đang tải chi tiết...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            $.post('@Url.Action("GetChiTiet", "ThuNgan")', { maPKB: maPKB }, function (res) {
+                if (res.success) {
+                    let html = `<table class="table table-bordered text-start align-middle" style="font-size: 0.9rem">
+                                <thead class="table-light"><tr><th>Nội dung</th><th class="text-end">Tiền Khách</th><th>Trạng thái</th></tr></thead><tbody>`;
+                    let total = 0;
+
+                    res.data.forEach(i => {
+                        let isHuy = i.TrangThai === "Hủy";
+                        let rowCls = isHuy ? "text-muted text-decoration-line-through bg-light" : "";
+                        let badge = isHuy ? '<span class="badge bg-danger">Hủy</span>' : '<span class="badge bg-success">Đã đóng</span>';
+                        if(!isHuy) total += i.TienBenhNhan;
+
+                        html += `<tr class="${rowCls}">
+                                    <td class="fw-bold">${i.TenDV}</td>
+                                    <td class="text-end fw-bold text-danger">${isHuy ? 0 : i.TienBenhNhan.toLocaleString('vi-VN')} ₫</td>
+                                    <td class="text-center">${badge}</td>
+                                 </tr>`;
+                    });
+
+                    html += `</tbody></table>
+                             <div class="text-end mt-3 fs-5">
+                                Tổng khách đã trả: <strong class="text-danger fs-3">${total.toLocaleString('vi-VN')} ₫</strong>
+                             </div>`;
+
+                    Swal.fire({
+                        title: `Chi Tiết Bill - ${tenBN}`,
+                        html: html,
+                        width: '700px',
+                        confirmButtonText: 'Đóng',
+                        confirmButtonColor: '#6c757d'
+                    });
+                } else {
+                    Swal.fire('Lỗi', 'Không lấy được chi tiết.', 'error');
+                }
+            });
+        }
+    </script>
+}

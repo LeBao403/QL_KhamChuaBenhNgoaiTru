@@ -11,6 +11,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
+using System.Linq;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 {
@@ -36,16 +37,19 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetChiTiet(int maHD)
+        public JsonResult GetChiTiet(int maPKB) 
         {
             try
             {
-                DataTable dt = db.GetChiTietHoaDon(maHD);
+                DataTable dt = db.GetChiTietHoaDon(maPKB); 
                 var list = new List<object>();
                 foreach (DataRow row in dt.Rows)
                 {
                     list.Add(new
                     {
+                        MaCTHD = Convert.ToInt32(row["MaCTHD"]),
+                        LoaiItem = row["LoaiItem"].ToString(),
+                        TrangThai = row["TrangThaiThanhToan"].ToString(),
                         TenDV = row["TenDV"].ToString(),
                         DonGia = Convert.ToDecimal(row["DonGia"]),
                         TienBHYT = Convert.ToDecimal(row["TienBHYTChiTra"]),
@@ -61,12 +65,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult ThanhToan(int maHD, int maPKB)
+        public JsonResult ThanhToan(int maHD, int maPKB, string phuongThucTT, string dsHuyDV, string dsHuyThuoc)
         {
             if (maHD <= 0 || maPKB <= 0) return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
 
             string errorMsg;
-            bool result = db.XacNhanThuTien(maHD, maPKB, out errorMsg);
+            bool result = db.XacNhanThuTien(maHD, maPKB, phuongThucTT, dsHuyDV, dsHuyThuoc, out errorMsg);
 
             if (result) return Json(new { success = true });
             return Json(new { success = false, message = errorMsg });
@@ -189,6 +193,101 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             {
                 return Json(new { success = true, isPaid = false });
             }
+        }
+
+
+
+
+
+
+
+        // GET: Staff/ThuNgan/LichSu
+        public ActionResult LichSu(string tuNgay, string denNgay, string tuKhoa, string trangThai, string sortCol = "NgayThanhToan", string sortDir = "desc", int page = 1)
+        {
+            DateTime dtTuNgay = DateTime.Now.Date;
+            DateTime dtDenNgay = DateTime.Now.Date;
+
+            if (!string.IsNullOrEmpty(tuNgay)) DateTime.TryParse(tuNgay, out dtTuNgay);
+            if (!string.IsNullOrEmpty(denNgay)) DateTime.TryParse(denNgay, out dtDenNgay);
+
+            ViewBag.TuNgay = dtTuNgay.ToString("yyyy-MM-dd");
+            ViewBag.DenNgay = dtDenNgay.ToString("yyyy-MM-dd");
+            ViewBag.TuKhoa = tuKhoa;
+            ViewBag.TrangThai = trangThai;
+            ViewBag.SortCol = sortCol;
+            ViewBag.SortDir = sortDir;
+
+            DataTable fullDt = db.GetLichSuThuTien(dtTuNgay, dtDenNgay);
+
+            if (fullDt.Rows.Count > 0)
+            {
+                var rows = fullDt.AsEnumerable();
+
+                // 1. TÌM KIẾM
+                if (!string.IsNullOrEmpty(tuKhoa))
+                {
+                    string keyword = tuKhoa.ToLower().Trim();
+                    rows = rows.Where(r =>
+                        r["MaHD"].ToString().Contains(keyword) ||
+                        r["MaPhieuKhamBenh"].ToString().Contains(keyword) ||
+                        r["HoTen"].ToString().ToLower().Contains(keyword) ||
+                        r["SDT"].ToString().Contains(keyword)
+                    );
+                }
+
+                // 2. LỌC TRẠNG THÁI
+                if (!string.IsNullOrEmpty(trangThai))
+                {
+                    rows = rows.Where(r => r["TrangThaiThanhToan"].ToString() == trangThai);
+                }
+
+                // 3. SẮP XẾP CAO -> THẤP
+                if (rows.Any())
+                {
+                    if (sortDir == "asc")
+                    {
+                        switch (sortCol)
+                        {
+                            case "MaHD": rows = rows.OrderBy(r => Convert.ToInt32(r["MaHD"])); break;
+                            case "HoTen": rows = rows.OrderBy(r => r["HoTen"].ToString()); break;
+                            case "TongTienBenhNhanTra": rows = rows.OrderBy(r => Convert.ToDecimal(r["TongTienBenhNhanTra"])); break;
+                            case "TrangThaiThanhToan": rows = rows.OrderBy(r => r["TrangThaiThanhToan"].ToString()); break;
+                            default: rows = rows.OrderBy(r => Convert.ToDateTime(r["NgayThanhToan"])); break;
+                        }
+                    }
+                    else
+                    {
+                        switch (sortCol)
+                        {
+                            case "MaHD": rows = rows.OrderByDescending(r => Convert.ToInt32(r["MaHD"])); break;
+                            case "HoTen": rows = rows.OrderByDescending(r => r["HoTen"].ToString()); break;
+                            case "TongTienBenhNhanTra": rows = rows.OrderByDescending(r => Convert.ToDecimal(r["TongTienBenhNhanTra"])); break;
+                            case "TrangThaiThanhToan": rows = rows.OrderByDescending(r => r["TrangThaiThanhToan"].ToString()); break;
+                            default: rows = rows.OrderByDescending(r => Convert.ToDateTime(r["NgayThanhToan"])); break;
+                        }
+                    }
+                    fullDt = rows.CopyToDataTable();
+                }
+                else { fullDt = fullDt.Clone(); }
+            }
+
+            // 4. PHÂN TRANG
+            int pageSize = 15;
+            int totalRows = fullDt.Rows.Count;
+            int totalPages = (int)Math.Ceiling((double)totalRows / pageSize);
+
+            if (page < 1) page = 1;
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
+            DataTable pagedDt = fullDt.Clone();
+            if (totalRows > 0) { pagedDt = fullDt.AsEnumerable().Skip((page - 1) * pageSize).Take(pageSize).CopyToDataTable(); }
+
+            ViewBag.LichSuHoaDon = pagedDt;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalRows = totalRows;
+
+            return View();
         }
     }
 }
