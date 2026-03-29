@@ -8,31 +8,239 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewBag.Title - QL KCB Nội Trú</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
-
-    <link href="@Url.Content("~/Styles/_Layout_admin.css")" rel="stylesheet" />
 
     @RenderSection("Styles", required: false)
 
     <style>
-        .sidebar-overlay {
+        :root {
+            --sidebar-width: 280px;
+            --sidebar-collapsed-width: 80px;
+            --sidebar-bg: #0f172a; /* Xanh đen sang trọng */
+            --sidebar-color: #cbd5e1;
+            --sidebar-hover-bg: rgba(255, 255, 255, 0.1);
+            --sidebar-active-color: #38bdf8; /* Xanh nhạt nổi bật */
+            --header-height: 70px;
+            --body-bg: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--body-bg);
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ========================
+           1. SIDEBAR (MENU TRÁI)
+           ======================== */
+        .sidebar {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(2px);
-            z-index: 1029;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease-in-out;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--sidebar-bg);
+            color: var(--sidebar-color);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 1040;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
         }
 
-        .sidebar.show + .sidebar-overlay {
-            opacity: 1;
-            visibility: visible;
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            background-color: rgba(0,0,0,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .sidebar-logo i {
+            font-size: 1.8rem;
+            color: var(--sidebar-active-color);
+            margin-right: 12px;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 0;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .sidebar-nav {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 1rem 0.8rem;
+        }
+
+        /* Tùy chỉnh thanh cuộn của sidebar */
+        .sidebar-nav::-webkit-scrollbar { width: 5px; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 5px; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            color: var(--sidebar-color);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-link i:first-child {
+            font-size: 1.2rem;
+            width: 30px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background-color: var(--sidebar-hover-bg);
+        }
+
+        .nav-link.active {
+            color: #fff;
+            background-color: var(--sidebar-hover-bg);
+            border-left: 4px solid var(--sidebar-active-color);
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Dropdown Menu */
+        .sidebar-dropdown-toggle { cursor: pointer; }
+        .submenu-arrow {
+            margin-left: auto;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-dropdown-toggle[aria-expanded="true"] .submenu-arrow {
+            transform: rotate(180deg);
+        }
+
+        .sidebar-submenu {
+            background-color: rgba(0,0,0,0.15);
+            border-radius: 8px;
+            margin: 0 0.5rem 0.5rem 0.5rem;
+            overflow: hidden;
+        }
+        .sub-nav-link {
+            padding: 0.6rem 1rem 0.6rem 3.5rem;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .sub-nav-link:hover, .sub-nav-link.active {
+            color: var(--sidebar-active-color);
+            background-color: transparent;
+        }
+        .sub-nav-link.active { font-weight: 700; }
+
+        .logout-link:hover {
+            background-color: rgba(239, 68, 68, 0.1) !important;
+            color: #ef4444 !important;
+        }
+
+        /* TRẠNG THÁI THU GỌN (COLLAPSED) */
+        .sidebar.collapsed { width: var(--sidebar-collapsed-width); }
+        .sidebar.collapsed .sidebar-title,
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .submenu-arrow { display: none; }
+        .sidebar.collapsed .sidebar-header { padding: 0; justify-content: center; }
+        .sidebar.collapsed .sidebar-logo i { margin-right: 0; }
+        .sidebar.collapsed .nav-link { justify-content: center; padding: 0.8rem 0; }
+        .sidebar.collapsed .nav-link i:first-child { margin-right: 0; font-size: 1.4rem; }
+        .sidebar.collapsed .sidebar-submenu { display: none !important; } /* Tắt submenu khi thu gọn */
+
+        /* ========================
+           2. MAIN CONTENT & HEADER
+           ======================== */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-wrapper.expanded {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        .admin-header {
+            height: var(--header-height);
+            background-color: #ffffff;
+            box-shadow: 0 1px 15px rgba(0,0,0,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+        }
+
+        .toggle-btn {
+            background: #f1f5f9;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            transition: all 0.2s;
+        }
+        .toggle-btn:hover { background: #e2e8f0; color: #0f172a; }
+
+        .page-content {
+            flex-grow: 1;
+            padding: 1.5rem;
+        }
+
+        .admin-footer {
+            background-color: #ffffff;
+            border-top: 1px solid #f1f5f9;
+            padding: 1.2rem;
+            font-size: 0.85rem;
+        }
+
+        /* Avatar Dropdown */
+        .user-dropdown-toggle { cursor: pointer; border-radius: 50px; padding: 4px 10px 4px 4px; transition: background 0.2s; }
+        .user-dropdown-toggle:hover { background-color: #f1f5f9; }
+        .dropdown-menu { border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #f1f5f9; }
+
+        /* ========================
+           3. RESPONSIVE (MOBILE)
+           ======================== */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(3px);
+            z-index: 1035;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        .sidebar-overlay.show { opacity: 1; visibility: visible; }
+
+        @@media (max-width: 992px) {
+            .sidebar { left: calc(-1 * var(--sidebar-width)); } /* Giấu sidebar sang trái */
+            .sidebar.show { left: 0; } /* Hiện sidebar khi bấm menu */
+            .main-wrapper { margin-left: 0 !important; width: 100%; } /* Content full width */
+            .main-wrapper.expanded { margin-left: 0; }
         }
 
         /* Chút CSS cho Dropdown Avatar */
@@ -140,17 +348,15 @@
     </style>
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="sidebar-logo">
-                <i class="bi bi-heart-pulse-fill"></i>
-            </div>
+            <div class="sidebar-logo"><i class="bi bi-heart-pulse-fill"></i></div>
             <h6 class="sidebar-title">MedicHub Admin</h6>
         </div>
 
         <nav class="nav flex-column sidebar-nav">
             @{
-                string ctrl = ViewContext.RouteData.Values["controller"].ToString();
+                string ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
                 string act = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
                 bool isBenhVien = ctrl == "Thuoc" || ctrl == "LoaiThuoc" || ctrl == "BenhNhan" || ctrl == "Khoa" || ctrl == "Phong";
                 bool isVatTu = ctrl == "Kho" || ctrl == "HoaDon" || ctrl == "DichVu";
@@ -161,136 +367,111 @@
                 <i class="bi bi-grid-1x2-fill"></i> <span>Tổng quan</span>
             </a>
 
-            @* ========== NHÓM QUẢN LÝ BỆNH VIỆN (DROPDOWN) ========== *@
-            <div class="sidebar-dropdown">
-                <a class="nav-link sidebar-dropdown-toggle @(isBenhVien ? "active" : "")"
-                   href="#" data-bs-toggle="collapse"
-                   data-bs-target="#submenuBenhVien"
-                   aria-expanded="@isBenhVien.ToString().ToLower()">
-                    <i class="bi bi-hospital-fill"></i>
-                    <span>Quản lý Bệnh viện</span>
-                    <i class="bi bi-chevron-down ms-auto submenu-arrow @(isBenhVien ? "rotated" : "")"></i>
+            <div class="nav-item">
+                <a class="nav-link sidebar-dropdown-toggle @(isBenhVien ? "active" : "")" data-bs-toggle="collapse" href="#submenuBenhVien" aria-expanded="@isBenhVien.ToString().ToLower()">
+                    <i class="bi bi-hospital-fill"></i> <span>Quản lý Bệnh viện</span>
+                    <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <div class="sidebar-submenu collapse @(isBenhVien ? "show" : "")" id="submenuBenhVien">
+                <div class="collapse sidebar-submenu @(isBenhVien ? "show" : "")" id="submenuBenhVien">
                     <a class="nav-link sub-nav-link @(ctrl == "Thuoc" ? "active" : "")" href="@Url.Action("Index", "Thuoc", new { area = "Admin" })">
-                        <i class="bi bi-capsule"></i> <span>Danh sách Thuốc</span>
+                        Danh sách Thuốc
                     </a>
                     <a class="nav-link sub-nav-link @(ctrl == "LoaiThuoc" ? "active" : "")" href="@Url.Action("Index", "LoaiThuoc", new { area = "Admin" })">
-                        <i class="bi bi-tags-fill"></i> <span>Loại thuốc</span>
+                        Loại thuốc
                     </a>
                     <a class="nav-link sub-nav-link @(ctrl == "BenhNhan" ? "active" : "")" href="@Url.Action("Index", "BenhNhan", new { area = "Admin" })">
-                        <i class="bi bi-people-fill"></i> <span>Bệnh nhân nội trú</span>
+                        Bệnh nhân nội trú
                     </a>
                     <a class="nav-link sub-nav-link @(ctrl == "Khoa" || ctrl == "Phong" ? "active" : "")" href="@Url.Action("Index", "Khoa", new { area = "Admin" })">
-                        <i class="bi bi-diagram-3-fill"></i> <span>Khoa - Phòng</span>
+                        Khoa - Phòng
                     </a>
                 </div>
             </div>
 
-            @* ========== NHÓM VẬT TƯ & TÀI CHÍNH (DROPDOWN) ========== *@
-            <div class="sidebar-dropdown">
-                <a class="nav-link sidebar-dropdown-toggle @(isVatTu ? "active" : "")"
-                   href="#" data-bs-toggle="collapse"
-                   data-bs-target="#submenuVatTu"
-                   aria-expanded="@isVatTu.ToString().ToLower()">
-                    <i class="bi bi-wallet2-fill"></i>
-                    <span>Vật tư &amp; Tài chính</span>
-                    <i class="bi bi-chevron-down ms-auto submenu-arrow @(isVatTu ? "rotated" : "")"></i>
+            <div class="nav-item">
+                <a class="nav-link sidebar-dropdown-toggle @(isVatTu ? "active" : "")" data-bs-toggle="collapse" href="#submenuVatTu" aria-expanded="@isVatTu.ToString().ToLower()">
+                    <i class="bi bi-wallet2"></i> <span>Vật tư & Tài chính</span>
+                    <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <div class="sidebar-submenu collapse @(isVatTu ? "show" : "")" id="submenuVatTu">
-                    <a class="nav-link sub-nav-link @(ctrl == "Kho" && (act == "" || act == "Index") ? "active" : "")" href="@Url.Action("Index", "Kho", new { area = "Admin" })">
-                        <i class="bi bi-box-seam-fill"></i> <span>Kho Dược - Vật tư</span>
+                <div class="collapse sidebar-submenu @(isVatTu ? "show" : "")" id="submenuVatTu">
+                    <a class="nav-link sub-nav-link @(ctrl == "Kho" && act != "DanhSachPhieuNhap" ? "active" : "")" href="@Url.Action("Index", "Kho", new { area = "Admin" })">
+                        Kho Dược - Vật tư
                     </a>
-                    <a class="nav-link sub-nav-link @(ctrl == "Kho" && act == "DanhSachPhieuNhap" ? "active" : "")" href="@Url.Action("DanhSachPhieuNhap", "Kho", new { area = "Admin" })">
-                        <i class="bi bi-file-earmark-arrow-down-fill"></i>
+                    <a class="nav-link sub-nav-link d-flex justify-content-between @(ctrl == "Kho" && act == "DanhSachPhieuNhap" ? "active" : "")" href="@Url.Action("DanhSachPhieuNhap", "Kho", new { area = "Admin" })">
                         <span>Phiếu nhập kho</span>
-                        @if (ViewBag.PhieuChoDuyet > 0)
+                        @if (ViewBag.PhieuChoDuyet != null && ViewBag.PhieuChoDuyet > 0)
                         {
-                            <span class="badge bg-danger ms-auto">@ViewBag.PhieuChoDuyet</span>
+                            <span class="badge bg-danger rounded-pill">@ViewBag.PhieuChoDuyet</span>
                         }
                     </a>
                     <a class="nav-link sub-nav-link @(ctrl == "HoaDon" ? "active" : "")" href="@Url.Action("Index", "HoaDon", new { area = "Admin" })">
-                        <i class="bi bi-receipt-cutoff"></i> <span>Thu ngân - Viện phí</span>
+                        Thu ngân - Viện phí
                     </a>
                     <a class="nav-link sub-nav-link @(ctrl == "DichVu" ? "active" : "")" href="@Url.Action("Index", "DichVu", new { area = "Admin" })">
-                        <i class="bi bi-clipboard2-pulse"></i> <span>Dịch vụ viện phí</span>
+                        Dịch vụ viện phí
                     </a>
                 </div>
             </div>
 
-            @* ========== NHÓM HỆ THỐNG (DROPDOWN) ========== *@
-            <div class="sidebar-dropdown">
-                <a class="nav-link sidebar-dropdown-toggle @(isHeThong ? "active" : "")"
-                   href="#" data-bs-toggle="collapse"
-                   data-bs-target="#submenuHeThong"
-                   aria-expanded="@isHeThong.ToString().ToLower()">
-                    <i class="bi bi-gear-wide-connected"></i>
-                    <span>Hệ thống</span>
-                    <i class="bi bi-chevron-down ms-auto submenu-arrow @(isHeThong ? "rotated" : "")"></i>
+            <div class="nav-item">
+                <a class="nav-link sidebar-dropdown-toggle @(isHeThong ? "active" : "")" data-bs-toggle="collapse" href="#submenuHeThong" aria-expanded="@isHeThong.ToString().ToLower()">
+                    <i class="bi bi-gear-fill"></i> <span>Hệ thống</span>
+                    <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <div class="sidebar-submenu collapse @(isHeThong ? "show" : "")" id="submenuHeThong">
+                <div class="collapse sidebar-submenu @(isHeThong ? "show" : "")" id="submenuHeThong">
                     <a class="nav-link sub-nav-link @(ctrl == "NhanVien" ? "active" : "")" href="@Url.Action("Index", "NhanVien", new { area = "Admin" })">
-                        <i class="bi bi-person-badge-fill"></i> <span>Hồ sơ Nhân viên</span>
+                        Hồ sơ Nhân viên
                     </a>
                 </div>
             </div>
 
             <div class="mt-auto"></div>
 
-            <a class="nav-link logout-link text-danger fw-bold" href="@Url.Action("Logout", "TaiKhoan", new { area = "" })">
+            <a class="nav-link logout-link text-danger mt-3" href="@Url.Action("Logout", "TaiKhoan", new { area = "" })">
                 <i class="bi bi-box-arrow-right"></i> <span>Đăng xuất</span>
             </a>
         </nav>
-    </div>
+    </aside>
 
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <div class="main-content" id="main-content">
-        <header class="admin-header d-flex justify-content-between align-items-center px-4 py-2 bg-white shadow-sm">
-            <div class="d-flex align-items-center flex-shrink-0">
-                <button class="toggle-btn me-3 btn btn-light border-0" id="toggleSidebar"><i class="bi bi-list fs-4"></i></button>
-                <h5 class="header-title mb-0 fw-bold text-dark">@ViewBag.Title</h5>
+    <div class="main-wrapper" id="mainWrapper">
+        <header class="admin-header">
+            <div class="d-flex align-items-center">
+                <button class="toggle-btn me-3" id="toggleSidebar">
+                    <i class="bi bi-list fs-4"></i>
+                </button>
             </div>
 
-            <div class="user-info flex-shrink-0 dropdown p-1 transition" style="cursor: pointer;">
+            <div class="dropdown">
                 @{
                     int chucVu = (Session["MaChucVu"] != null) ? (int)Session["MaChucVu"] : 0;
                     string tenHienThi = Session["HoTenNV"] as string ?? Session["Username"] as string ?? "Quản trị viên";
                     string tenChucVu = "Nhân viên y tế";
                     if (chucVu == 1) { tenChucVu = "Giám đốc"; }
-                    else if (chucVu == 2) { tenChucVu = "Quản trị hệ thống (Admin)"; }
+                    else if (chucVu == 2) { tenChucVu = "Quản trị hệ thống"; }
                 }
 
                 <div class="d-flex align-items-center user-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="https://ui-avatars.com/api/?name=@tenHienThi&background=0d6efd&color=fff&rounded=true&bold=true" alt="Avatar" class="rounded-circle shadow-sm" width="40" height="40">
-
-                    <div class="d-none d-md-block ms-3 me-2 text-start">
-                        <div class="fw-bold text-dark" style="font-size: 0.95rem;">@tenHienThi</div>
-                        <div class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-shield-check text-success me-1"></i>@tenChucVu</div>
+                    <img src="https://ui-avatars.com/api/?name=@tenHienThi&background=38bdf8&color=fff&rounded=true&bold=true" alt="Avatar" class="rounded-circle" width="40" height="40">
+                    <div class="d-none d-md-block ms-2 text-start">
+                        <div class="fw-bold text-dark" style="font-size: 0.9rem; line-height: 1;">@tenHienThi</div>
+                        <small class="text-muted" style="font-size: 0.75rem;">@tenChucVu</small>
                     </div>
-                    <i class="bi bi-chevron-down text-muted ms-2 d-none d-md-block" style="font-size: 0.8rem;"></i>
+                    <i class="bi bi-chevron-down text-muted ms-2 d-none d-md-block" style="font-size: 0.75rem;"></i>
                 </div>
 
-                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-3" style="border-radius: 12px; min-width: 220px;">
+                <ul class="dropdown-menu dropdown-menu-end mt-2">
                     <li>
-                        <div class="px-3 py-2">
+                        <div class="px-3 py-2 border-bottom mb-1">
                             <span class="d-block fw-bold text-dark">@tenHienThi</span>
                             <small class="text-muted">Đang trực tuyến</small>
                         </div>
                     </li>
+                    <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person me-2"></i>Hồ sơ cá nhân</a></li>
+                    <li><a class="dropdown-item py-2" href="#"><i class="bi bi-gear me-2"></i>Đổi mật khẩu</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <a class="dropdown-item py-2" href="#"><i class="bi bi-person-vcard me-2 text-primary"></i>Hồ sơ cá nhân</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item py-2" href="#"><i class="bi bi-gear me-2 text-secondary"></i>Đổi mật khẩu</a>
-                    </li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li>
-                        <a class="dropdown-item py-2 text-danger fw-bold bg-danger-subtle" href="@Url.Action("Logout", "TaiKhoan", new { area = "" })">
-                            <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất ngay
-                        </a>
-                    </li>
+                    <li><a class="dropdown-item py-2 text-danger fw-bold" href="@Url.Action("Logout", "TaiKhoan", new { area = "" })"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất ngay</a></li>
                 </ul>
             </div>
         </header>
@@ -300,14 +481,13 @@
             <div class="notifications"></div>
         </main>
 
-        <footer class="admin-footer text-center py-3 text-muted">
-            <p class="mb-1">&copy; @DateTime.Now.Year <strong>Hệ thống Quản lý Khám chữa bệnh Nội trú - MedicHub</strong>.</p>
-            <p class="mb-0">Phát triển bởi <a href="#" class="text-decoration-none">Nhóm Kỹ sư Phần mềm</a></p>
+        <footer class="admin-footer text-center">
+            <p class="mb-0 text-muted">&copy; @DateTime.Now.Year <strong>Hệ thống Quản lý Khám chữa bệnh Nội trú - MedicHub</strong>. Phát triển bởi Nhóm Kỹ sư Phần mềm.</p>
         </footer>
+    </div>
 
-        <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 2000;">
-            <div id="toast-container" class="toast-container"></div>
-        </div>
+    <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 80px; right: 20px; z-index: 2000;">
+        <div id="toast-container" class="toast-container"></div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -318,50 +498,51 @@
         $(document).ready(function () {
             const toggleBtn = $('#toggleSidebar');
             const sidebar = $('#sidebar');
-            const mainContent = $('#main-content');
+            const mainWrapper = $('#mainWrapper');
             const sidebarOverlay = $('#sidebarOverlay');
-            const sidebarStateKey = 'sidebarCollapsed';
+            const sidebarStateKey = 'sidebarCollapsedAdmin';
 
+            // Khôi phục trạng thái sidebar từ localStorage
             function applySidebarState() {
                 const isCollapsed = localStorage.getItem(sidebarStateKey) === 'true';
                 if ($(window).width() > 992) {
                     sidebar.removeClass('show');
                     if (isCollapsed) {
                         sidebar.addClass('collapsed');
-                        mainContent.addClass('expanded');
+                        mainWrapper.addClass('expanded');
                     } else {
                         sidebar.removeClass('collapsed');
-                        mainContent.removeClass('expanded');
+                        mainWrapper.removeClass('expanded');
                     }
                 } else {
-                    sidebar.removeClass('collapsed');
-                    mainContent.removeClass('expanded');
+                    // Mobile mặc định ẩn
+                    sidebar.removeClass('collapsed').removeClass('show');
+                    mainWrapper.removeClass('expanded');
+                    sidebarOverlay.removeClass('show');
                 }
             }
 
-            function toggleSidebar() {
+            // Xử lý khi bấm nút Toggle
+            toggleBtn.on('click', function () {
                 if ($(window).width() > 992) {
+                    // Màn hình lớn: Thu gọn / Phóng to
                     sidebar.toggleClass('collapsed');
-                    mainContent.toggleClass('expanded');
+                    mainWrapper.toggleClass('expanded');
                     localStorage.setItem(sidebarStateKey, sidebar.hasClass('collapsed'));
                 } else {
+                    // Màn hình nhỏ: Trượt ra / Thụt vào
                     sidebar.toggleClass('show');
-                    if (sidebar.hasClass('show')) {
-                        $('body').append(sidebarOverlay);
-                        sidebarOverlay.show();
-                    } else {
-                        sidebarOverlay.hide();
-                    }
+                    sidebarOverlay.toggleClass('show');
                 }
-            }
-
-            toggleBtn.on('click', toggleSidebar);
-
-            sidebarOverlay.on('click', function () {
-                sidebar.removeClass('show');
-                $(this).hide();
             });
 
+            // Bấm vào vùng mờ (Overlay) trên Mobile để đóng Menu
+            sidebarOverlay.on('click', function () {
+                sidebar.removeClass('show');
+                $(this).removeClass('show');
+            });
+
+            // Xử lý khi resize màn hình
             $(window).on('resize', applySidebarState);
             applySidebarState();
         });

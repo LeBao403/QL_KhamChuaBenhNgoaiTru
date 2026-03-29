@@ -63,6 +63,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                         case 12: // Nhân viên kho
                             return RedirectToAction("Index", "Dashboard", new { area = "NhanVienKho" });
 
+                        case 5: // Điều dưỡng
                         case 6: // KTV CLS
                             return RedirectToAction("Index", "CLS", new { area = "Staff" });
 

@@ -117,6 +117,7 @@
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
@@ -229,6 +230,7 @@
     <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\BenhNhanController.cs" />
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Admin\Controllers\HoaDonController.cs" />
     <Compile Include="Areas\Admin\Controllers\KhoaController.cs" />
     <Compile Include="Areas\Admin\Controllers\KhoController.cs" />
     <Compile Include="Areas\Admin\Controllers\NhanVienController.cs" />
@@ -259,6 +261,7 @@
     <Compile Include="DBContext\BenhNhanPortalDB.cs" />
     <Compile Include="DBContext\DashboardDB.cs" />
     <Compile Include="DBContext\DichVuDB.cs" />
+    <Compile Include="DBContext\HoaDonDB.cs" />
     <Compile Include="DBContext\HomeDB.cs" />
     <Compile Include="DBContext\KhoaDB.cs" />
     <Compile Include="DBContext\KhoDB.cs" />
@@ -435,6 +438,10 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Staff\Views\Kiosk\Lobby.cshtml" />
     <Content Include="Areas\Staff\Views\ThuNgan\Index.cshtml" />
+    <Content Include="Areas\Staff\Views\TiepTan\LichSuTiepNhan.cshtml" />
+    <Content Include="Areas\Admin\Views\HoaDon\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\HoaDon\Details.cshtml" />
+    <Content Include="Areas\Staff\Views\ThuNgan\LichSu.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -537,12 +544,6 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target> -->
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

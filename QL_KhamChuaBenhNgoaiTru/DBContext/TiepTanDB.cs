@@ -278,11 +278,20 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         // 3.3. Quyết định Định tuyến (Phải ra Thu ngân đóng tiền hay không?)
                         if (tienBenhNhanTra == 0)
                         {
-                            requirePayment = false; // Có BHYT 100% và không bị phụ thu -> Đi thẳng vào khám
+                            requirePayment = false; // Nợ 0 đồng thì hiển nhiên đi thẳng vào khám
+                        }
+                        else if (!laKhachOnline && hasBHYT && dvCoBHYT)
+                        {
+                            // BÙA HỘ MỆNH: Khách Kiosk (Offline) + Có thẻ BHYT hợp lệ
+                            // -> Được phép nợ phần chênh lệch (Ví dụ nợ 30k) để gom đóng sau ở quầy Thuốc. Đi khám luôn!
+                            requirePayment = false;
                         }
                         else
                         {
-                            requirePayment = true;  // Nếu nợ dù chỉ 1 đồng (kể cả nợ 200k phí online) -> Ra Thu ngân
+                            // Các trường hợp PHẢI ra Thu ngân trước:
+                            // 1. Khách Online (Vướng 200k phí tiện ích)
+                            // 2. Khách Dịch vụ 100% (Không có BHYT)
+                            requirePayment = true;
                         }
 
                         // Xác định trạng thái Khám ban đầu:
@@ -394,21 +403,17 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return res;
         }
 
-        // 1. Lấy danh sách OFFLINE (Từ Kiosk) - HIỂN THỊ FULL THÔNG TIN
-        public DataTable GetDanhSachOffline(int maPhongTiepTan)
+        // 1. Lấy danh sách OFFLINE (Từ Kiosk) - CÓ THÊM LỌC NGÀY
+        public DataTable GetDanhSachOffline(int maPhongTiepTan, DateTime tuNgay, DateTime denNgay)
         {
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
             {
                 string sql = @"
         SELECT 
-            -- Thông tin Đăng ký
             pdk.MaPhieuDK, pdk.STT, pdk.NgayDangKy,
-            -- Thông tin Bệnh nhân
             pdk.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.CCCD, bn.SDT, bn.Email, bn.DiaChi, bn.AvatarPath,
-            -- Thông tin BHYT
             bn.BHYT, bn.SoTheBHYT, bn.HanSuDungBHYT, bn.TuyenKham, bn.MucHuongBHYT,
-            -- Thông tin Phiếu Khám Bệnh (Nếu đã được Tiếp tân xử lý)
             ISNULL(pkb.TrangThai, N'Chưa tiếp nhận') AS TrangThaiPKB, 
             pkb.MaPhieuKhamBenh, pkb.STT AS STT_Kham, pkb.MaPhong AS PhongKhamChiDinh
         FROM PHIEUDANGKY pdk
@@ -416,33 +421,33 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         LEFT JOIN PHIEUKHAMBENH pkb ON pdk.MaPhieuDK = pkb.MaPhieuDK
         WHERE pdk.MaPhong = @MaPhong
           AND pdk.HinhThucDangKy = N'Offline'
-          AND CAST(pdk.NgayDangKy AS DATE) = CAST(GETDATE() AS DATE)
+          -- ĐỔI THÀNH LỌC THEO KHOẢNG THỜI GIAN
+          AND CAST(pdk.NgayDangKy AS DATE) >= CAST(@TuNgay AS DATE)
+          AND CAST(pdk.NgayDangKy AS DATE) <= CAST(@DenNgay AS DATE)
           AND (pdk.TrangThai = N'Chờ xử lý' OR (pdk.TrangThai = N'Đã xác nhận' AND pkb.TrangThai IN (N'Chờ thanh toán', N'Chờ cấp số')))
-        ORDER BY pdk.STT ASC";
+        ORDER BY pdk.NgayDangKy ASC, pdk.STT ASC";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@MaPhong", maPhongTiepTan);
+                cmd.Parameters.AddWithValue("@TuNgay", tuNgay);
+                cmd.Parameters.AddWithValue("@DenNgay", denNgay);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
             }
             return dt;
         }
 
-        // 2. Lấy danh sách ONLINE (Từ Web) - HIỂN THỊ FULL THÔNG TIN
-        public DataTable GetDanhSachOnline(int maPhongTiepTan)
+        // 2. Lấy danh sách ONLINE (Từ Web) - CÓ THÊM LỌC NGÀY
+        public DataTable GetDanhSachOnline(int maPhongTiepTan, DateTime tuNgay, DateTime denNgay)
         {
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
             {
                 string sql = @"
         SELECT 
-            -- Thông tin Đăng ký
             pdk.MaPhieuDK, pdk.LyDo, pdk.NgayDangKy,
-            -- Thông tin Bệnh nhân
             pdk.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.CCCD, bn.SDT, bn.Email, bn.DiaChi, bn.AvatarPath,
-            -- Thông tin BHYT
             bn.BHYT, bn.SoTheBHYT, bn.HanSuDungBHYT, bn.TuyenKham, bn.MucHuongBHYT,
-            -- Thông tin Phiếu Khám Bệnh (Nếu đã được Tiếp tân xử lý)
             ISNULL(pkb.TrangThai, N'Chưa tiếp nhận') AS TrangThaiPKB, 
             pkb.MaPhieuKhamBenh, pkb.STT AS STT_Kham, pkb.MaPhong AS PhongKhamChiDinh
         FROM PHIEUDANGKY pdk
@@ -450,12 +455,16 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         LEFT JOIN PHIEUKHAMBENH pkb ON pdk.MaPhieuDK = pkb.MaPhieuDK
         WHERE pdk.MaPhong = @MaPhong
           AND pdk.HinhThucDangKy = N'Online'
-          AND CAST(pdk.NgayDangKy AS DATE) = CAST(GETDATE() AS DATE)
+          -- ĐỔI THÀNH LỌC THEO KHOẢNG THỜI GIAN
+          AND CAST(pdk.NgayDangKy AS DATE) >= CAST(@TuNgay AS DATE)
+          AND CAST(pdk.NgayDangKy AS DATE) <= CAST(@DenNgay AS DATE)
           AND (pdk.TrangThai = N'Chờ xử lý' OR (pdk.TrangThai = N'Đã xác nhận' AND pkb.TrangThai IN (N'Chờ thanh toán', N'Chờ cấp số')))
-        ORDER BY pdk.MaPhieuDK ASC";
+        ORDER BY pdk.NgayDangKy ASC, pdk.MaPhieuDK ASC";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@MaPhong", maPhongTiepTan);
+                cmd.Parameters.AddWithValue("@TuNgay", tuNgay);
+                cmd.Parameters.AddWithValue("@DenNgay", denNgay);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
             }
@@ -568,6 +577,37 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 object result = cmd.ExecuteScalar();
                 return result != null ? result.ToString() : "Quầy không xác định";
             }
+        }
+
+
+        // 4. HÀM ĐÃ SỬA: Lấy TẤT CẢ Lịch Sử Tiếp Nhận (Không phân biệt quầy)
+        public DataTable GetLichSuTiepNhan(DateTime tuNgay, DateTime denNgay)
+        {
+            DataTable dt = new DataTable();
+            using (SqlConnection con = new SqlConnection(connectStr))
+            {
+                string sql = @"
+        SELECT 
+            pdk.MaPhieuDK, pdk.HinhThucDangKy, pdk.NgayDangKy,
+            bn.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.SDT,
+            pkb.MaPhieuKhamBenh, pkb.STT AS STT_Kham, pkb.TrangThai AS TrangThaiPKB,
+            p.TenPhong AS PhongKhamChiDinh
+        FROM PHIEUDANGKY pdk
+        JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN
+        JOIN PHIEUKHAMBENH pkb ON pdk.MaPhieuDK = pkb.MaPhieuDK
+        JOIN PHONG p ON pkb.MaPhong = p.MaPhong
+        WHERE CAST(pdk.NgayDangKy AS DATE) >= CAST(@TuNgay AS DATE)
+          AND CAST(pdk.NgayDangKy AS DATE) <= CAST(@DenNgay AS DATE)
+          AND pkb.TrangThai IN (N'Chờ khám', N'Đang khám', N'Hoàn thành')
+        ORDER BY pdk.NgayDangKy DESC, pkb.STT ASC"; // Ưu tiên ngày mới nhất lên đầu
+
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@TuNgay", tuNgay);
+                cmd.Parameters.AddWithValue("@DenNgay", denNgay);
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+            }
+            return dt;
         }
     }
 }

@@ -1,7 +1,6 @@
-@{
+﻿@{
     ViewBag.Title = "Quầy Thu Ngân & Viện Phí";
     Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
-
     var dtThuTien = ViewBag.DanhSachThuTien as System.Data.DataTable;
 }
 
@@ -16,7 +15,7 @@
         height: calc(100vh - 120px);
         overflow-y: auto;
     }
-        /* Scrollbar gọn gàng */
+
         .split-panel::-webkit-scrollbar {
             width: 6px;
         }
@@ -68,7 +67,6 @@
         border-radius: 12px;
     }
 
-    /* Style cho Radio Button Chọn Phương thức TT */
     .payment-method .btn-outline-primary {
         border-color: #cbd5e1;
         color: #475569;
@@ -79,6 +77,38 @@
         background-color: #eff6ff;
         border-color: #3b82f6;
         color: #1d4ed8;
+    }
+
+    /* CSS cho thanh phân nhóm (Tiền Khám, Tiền Thuốc...) */
+    .group-header {
+        background-color: #f8fafc;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+    }
+
+    .group-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        margin-right: 8px;
+    }
+
+    .icon-kham {
+        background-color: #e0e7ff;
+        color: #3b82f6;
+    }
+
+    .icon-cls {
+        background-color: #fef08a;
+        color: #ca8a04;
+    }
+
+    .icon-thuoc {
+        background-color: #dcfce7;
+        color: #16a34a;
     }
 </style>
 
@@ -91,7 +121,6 @@
     </div>
 
     <div class="row g-4">
-
         <div class="col-xl-5 col-lg-5">
             <div class="card border-0 shadow-sm rounded-4 split-panel bg-white">
                 <div class="card-header bg-white py-3 border-0 sticky-top z-1">
@@ -108,6 +137,7 @@
                             {
                                 bool hasBHYT = row["BHYT"] != DBNull.Value && Convert.ToBoolean(row["BHYT"]);
                                 <li class="list-group-item patient-row p-3 border-bottom"
+                                    data-mahd="@row["MaHD"]"
                                     data-mapkb="@row["MaPhieuKhamBenh"]"
                                     data-mabn="@row["MaBN"]"
                                     data-hoten="@row["HoTen"]"
@@ -116,7 +146,7 @@
 
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <h6 class="mb-0 fw-bold text-primary">@row["HoTen"]</h6>
-                                        <span class="badge bg-danger rounded-pill">Đang nợ phí</span>
+                                        <span class="badge bg-danger rounded-pill">Nợ: @Convert.ToDecimal(row["TongTienBenhNhanTra"]).ToString("N0") ₫</span>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center text-muted small">
                                         <span><i class="bi bi-person-vcard me-1"></i>Mã BN: @row["MaBN"]</span>
@@ -159,21 +189,29 @@
                                 <p class="text-muted mb-0"><i class="bi bi-shield-plus me-2"></i>Đối tượng: <span id="lblBHYT" class="fw-bold text-primary">Dịch Vụ</span></p>
                             </div>
                             <div class="text-end">
-                                <span class="badge bg-warning text-dark fs-6 rounded-pill border border-warning"><i class="bi bi-hourglass-split me-1"></i>Chưa thanh toán</span>
-                                <p class="small text-muted mt-2 mb-0">Mã Hóa Đơn: <span id="lblMaHD" class="fw-bold">#HD123</span></p>
+                                <span class="badge bg-warning text-dark fs-6 rounded-pill border border-warning"><i class="bi bi-hourglass-split me-1"></i>Chờ thanh toán</span>
+                                <p class="small text-muted mt-2 mb-0">Mã Phiếu Khám: <span id="lblMaPKB" class="fw-bold text-primary">#PKB123</span></p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex-grow-1 p-4 overflow-y-auto">
-                        <h6 class="fw-bold text-secondary mb-3 text-uppercase fs-7">Chọn khoản phí cần thanh toán</h6>
-                        <div class="list-group mb-3" id="paymentOptions">
-                            <!-- Chờ render từ AJAX -->
-                        </div>
+                    <div class="flex-grow-1 p-0 overflow-y-auto">
+                        <table class="table table-borderless align-middle mb-0">
+                            <thead class="border-bottom border-2 bg-white sticky-top z-1">
+                                <tr class="text-muted small">
+                                    <th class="text-center px-4" style="width:60px"><i class="bi bi-check2-square fs-5"></i></th>
+                                    <th>Nội dung phát sinh</th>
+                                    <th class="text-end">Đơn giá</th>
+                                    <th class="text-end text-success">BHYT Trả</th>
+                                    <th class="text-end text-danger pe-4">BN Phải Trả</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbChiTiet">
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="p-4 bg-light rounded-bottom-4 mt-auto">
-
+                    <div class="p-4 bg-light rounded-bottom-4 mt-auto border-top">
                         <h6 class="fw-bold text-secondary mb-2 fs-7 text-uppercase">Phương thức thanh toán</h6>
                         <div class="payment-method d-flex gap-2 mb-4">
                             <input type="radio" class="btn-check" name="phuongThucTT" id="ptCash" value="TIEN_MAT" autocomplete="off" checked>
@@ -193,12 +231,12 @@
                         </div>
 
                         <div class="total-amount-box p-4 d-flex justify-content-between align-items-center mb-3 shadow-sm">
-                            <h5 class="mb-0 fw-bold opacity-75">TỔNG CẦN THU:</h5>
+                            <h5 class="mb-0 fw-bold opacity-75">TỔNG CẦN THU (Chưa thu):</h5>
                             <h1 class="mb-0 fw-bolder display-5" id="lblTongTien">0 ₫</h1>
                         </div>
 
+                        <input type="hidden" id="hdnMaHD" value="0" />
                         <input type="hidden" id="hdnMaPKB" value="0" />
-                        <input type="hidden" id="hdnTongTien" value="0" />
 
                         <div class="d-grid gap-2">
                             <button class="btn btn-primary btn-lg rounded-pill fw-bold shadow hover-lift" id="btnThanhToan" onclick="xuLyThanhToan()">
@@ -217,30 +255,41 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function () {
+            // Lọc bệnh nhân
             $("#searchPatient").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
                 $("#patientList li").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
-            
-            // Xử lý khi tick chọn checkbox tính tổng tiền
-            $(document).on('change', '.payment-check', function() {
-                let total = 0;
-                $('.payment-check:checked').each(function() {
-                    total += parseFloat($(this).data('price'));
-                });
-                $('#lblTongTien').text(total.toLocaleString('vi-VN') + ' ₫');
-                $('#hdnTongTien').val(total);
-                
-                if (total == 0) {
-                    $('#btnThanhToan').prop('disabled', true);
-                } else {
-                    $('#btnThanhToan').prop('disabled', false);
-                }
-            });
         });
 
+        // TÍNH LẠI TỔNG TIỀN MỖI KHI TICK/BỎ TICK
+        function tinhLaiTongTien() {
+            let tongTien = 0;
+            let soMonConLai = 0;
+
+            $('.chk-item:checked').each(function () {
+                tongTien += parseFloat($(this).data('tien'));
+                soMonConLai++;
+            });
+
+            $('#lblTongTien').text(tongTien.toLocaleString('vi-VN') + ' ₫');
+
+            let btn = $('#btnThanhToan');
+            let tongSoMonNangNo = $('.chk-item').length;
+
+            if (soMonConLai === 0 && tongSoMonNangNo > 0) {
+                // Đổi câu chữ cho đúng logic: Chỉ hủy các món đang nợ, không phải hủy cả Bill
+                btn.removeClass('btn-primary').addClass('btn-danger');
+                btn.html('<i class="bi bi-x-octagon me-2 fs-5 align-middle"></i>XÁC NHẬN HỦY MÓN NỢ');
+            } else {
+                btn.removeClass('btn-danger').addClass('btn-primary');
+                btn.html('<i class="bi bi-check2-circle me-2 fs-5 align-middle"></i>XÁC NHẬN THU TIỀN');
+            }
+        }
+
+        // LOAD CHI TIẾT VÀ PHÂN NHÓM
         function loadBillDetails(element) {
             $('.patient-row').removeClass('active');
             $(element).addClass('active');
@@ -248,183 +297,234 @@
             $('#emptyState').addClass('d-none');
             $('#billContent').removeClass('d-none');
 
+            let maHD = $(element).data('mahd');
             let maPKB = $(element).data('mapkb');
-            let maBN = $(element).data('mabn');
-            let hoTen = $(element).data('hoten');
-            let bhyt = $(element).data('bhyt');
 
-            $('#lblMaHD').text('#PKB' + maPKB);
-            $('#lblMaBN').text(maBN);
-            $('#lblHoTen').text(hoTen);
-            $('#lblBHYT').text(bhyt === "CÓ" ? "Bảo Hiểm Y Tế (BHYT)" : "Khám Dịch Vụ");
+            $('#lblMaHD').text('#' + maHD);
+            $('#lblMaBN').text($(element).data('mabn'));
+            $('#lblHoTen').text($(element).data('hoten'));
+            $('#lblMaPKB').text('#' + maPKB);
+            $('#lblBHYT').text($(element).data('bhyt') === "CÓ" ? "Bảo Hiểm Y Tế (BHYT)" : "Khám Dịch Vụ");
 
+            $('#hdnMaHD').val(maHD);
             $('#hdnMaPKB').val(maPKB);
-            $('#hdnTongTien').val(0);
-            $('#lblTongTien').text('0 ₫');
-            $('#btnThanhToan').prop('disabled', true);
-            $('#paymentOptions').html('<div class="text-center py-3"><div class="spinner-border text-primary spinner-border-sm"></div> Đang tải dữ liệu...</div>');
+
+            $('#tbChiTiet').html('<tr><td colspan="5" class="text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-2 text-muted">Đang tải dữ liệu...</p></td></tr>');
 
             $.post('@Url.Action("GetChiTiet", "ThuNgan")', { maPKB: maPKB }, function (res) {
                 if (res.success) {
-                    let d = res.data;
                     let html = '';
-                    
-                    if (!d.DaThuPhiKham && d.PhiKham > 0) {
-                        html += `
-                            <label class="list-group-item d-flex justify-content-between align-items-center shadow-sm mb-2 rounded border-primary">
-                                <div>
-                                    <input class="form-check-input me-1 payment-check fs-5" type="checkbox" id="chkKham" value="kh" data-price="${d.PhiKham}">
-                                    <span class="fw-bold text-primary ms-2 fs-6">Phí Khám Bệnh</span>
-                                </div>
-                                <span class="fw-bold text-danger fs-5">${d.PhiKham.toLocaleString('vi-VN')} ₫</span>
-                            </label>
-                        `;
-                    }
-                    if (!d.DaThuPhiDichVuCLS && d.PhiDichVuCLS > 0) {
-                        html += `
-                            <label class="list-group-item d-flex justify-content-between align-items-center shadow-sm mb-2 rounded border-success">
-                                <div>
-                                    <input class="form-check-input me-1 payment-check fs-5" type="checkbox" id="chkCLS" value="cls" data-price="${d.PhiDichVuCLS}">
-                                    <span class="fw-bold text-success ms-2 fs-6">Phí Cận Lâm Sàng</span>
-                                </div>
-                                <span class="fw-bold text-danger fs-5">${d.PhiDichVuCLS.toLocaleString('vi-VN')} ₫</span>
-                            </label>
-                        `;
-                    }
-                    if (!d.DaThuPhiThuoc && d.PhiThuoc > 0) {
-                        html += `
-                            <label class="list-group-item d-flex justify-content-between align-items-center shadow-sm mb-2 rounded border-info">
-                                <div>
-                                    <input class="form-check-input me-1 payment-check fs-5" type="checkbox" id="chkThuoc" value="thuoc" data-price="${d.PhiThuoc}">
-                                    <span class="fw-bold text-info ms-2 fs-6">Phí Thuốc Men</span>
-                                </div>
-                                <span class="fw-bold text-danger fs-5">${d.PhiThuoc.toLocaleString('vi-VN')} ₫</span>
-                            </label>
-                        `;
+                    let tongBenhNhanTra = 0;
+
+                    if (res.data.length === 0) {
+                        html = '<tr><td colspan="5" class="text-center text-muted py-5"><i class="bi bi-inbox fs-1 d-block mb-2"></i>Không có dịch vụ nào cần thanh toán.</td></tr>';
+                    } else {
+                        // 1. CHIA DATA THÀNH 3 NHÓM DỰA VÀO ĐẶC ĐIỂM
+                        let nhomKham = [];
+                        let nhomCLS = [];
+                        let nhomThuoc = [];
+
+                        res.data.forEach(item => {
+                            if (item.LoaiItem === "THUOC") {
+                                nhomThuoc.push(item);
+                            } else {
+                                // Quy ước: Nếu tên có chữ "Khám" thì nhét vào nhóm Tiền Khám, còn lại là Cận lâm sàng
+                                if (item.TenDV.toLowerCase().includes("khám")) {
+                                    nhomKham.push(item);
+                                } else {
+                                    nhomCLS.push(item);
+                                }
+                            }
+                        });
+
+                        // 2. HÀM PHỤ TRỢ RENDER TỪNG DÒNG (Tránh lặp code)
+                        const renderRow = (item) => {
+                            let chkHtml = '';
+                            let rowClass = '';
+                            let priceClass = 'fw-bold text-danger';
+                            let tienKhachTra = item.TienBenhNhan;
+
+                            if (item.TrangThai === "Đã thanh toán") {
+                                chkHtml = '<span class="badge bg-success"><i class="bi bi-check-circle"></i> Đã đóng</span>';
+                                rowClass = 'bg-light opacity-75';
+                                priceClass = 'text-muted fw-bold';
+                            }
+                            else if (item.TrangThai === "Hủy") {
+                                chkHtml = '<span class="badge bg-danger"><i class="bi bi-x-circle"></i> Khách bỏ</span>';
+                                rowClass = 'bg-light opacity-50 text-decoration-line-through';
+                                priceClass = 'text-muted';
+                                tienKhachTra = 0;
+                            }
+                            else {
+                                chkHtml = `<input type="checkbox" class="form-check-input chk-item fs-5 shadow-sm border-primary" style="cursor:pointer" data-macthd="${item.MaCTHD}" data-loai="${item.LoaiItem}" data-tien="${item.TienBenhNhan}" checked onchange="tinhLaiTongTien()">`;
+                                tongBenhNhanTra += item.TienBenhNhan;
+                            }
+
+                            return `
+                                <tr class="border-bottom ${rowClass}">
+                                    <td class="text-center align-middle px-4">${chkHtml}</td>
+                                    <td class="fw-bold text-dark py-3">${item.TenDV}</td>
+                                    <td class="text-end py-3 text-muted">${item.DonGia.toLocaleString('vi-VN')} ₫</td>
+                                    <td class="text-end text-success fw-medium py-3">${item.TienBHYT.toLocaleString('vi-VN')} ₫</td>
+                                    <td class="text-end ${priceClass} py-3 pe-4 fs-6">${tienKhachTra.toLocaleString('vi-VN')} ₫</td>
+                                </tr>
+                            `;
+                        };
+
+                        // 3. RENDER NHÓM TIỀN KHÁM
+                        if (nhomKham.length > 0) {
+                            html += `
+                                <tr class="group-header">
+                                    <td colspan="5" class="fw-bold text-primary py-2 px-4 border-bottom">
+                                        <span class="group-icon icon-kham"><i class="bi bi-stethoscope"></i></span> CÔNG KHÁM BỆNH
+                                    </td>
+                                </tr>
+                            `;
+                            nhomKham.forEach(item => html += renderRow(item));
+                        }
+
+                        // 4. RENDER NHÓM CLS
+                        if (nhomCLS.length > 0) {
+                            html += `
+                                <tr class="group-header">
+                                    <td colspan="5" class="fw-bold text-warning py-2 px-4 border-bottom" style="color: #b45309 !important;">
+                                        <span class="group-icon icon-cls"><i class="bi bi-activity"></i></span> XÉT NGHIỆM & CẬN LÂM SÀNG
+                                    </td>
+                                </tr>
+                            `;
+                            nhomCLS.forEach(item => html += renderRow(item));
+                        }
+
+                        // 5. RENDER NHÓM THUỐC
+                        if (nhomThuoc.length > 0) {
+                            html += `
+                                <tr class="group-header">
+                                    <td colspan="5" class="fw-bold text-success py-2 px-4 border-bottom">
+                                        <span class="group-icon icon-thuoc"><i class="bi bi-capsule"></i></span> ĐƠN THUỐC NGOẠI TRÚ
+                                    </td>
+                                </tr>
+                            `;
+                            nhomThuoc.forEach(item => html += renderRow(item));
+                        }
                     }
 
-                    if (html === '') {
-                        html = '<div class="alert alert-success mt-2"><i class="bi bi-check-circle me-2"></i>Bệnh nhân này đã thanh toán toàn bộ chi phí phát sinh.</div>';
-                    }
-
-                    $('#paymentOptions').html(html);
-
+                    $('#tbChiTiet').html(html);
+                    $('#lblTongTien').text(tongBenhNhanTra.toLocaleString('vi-VN') + ' ₫');
                 } else {
-                    Swal.fire('Lỗi', 'Không thể lấy chi tiết công nợ: ' + res.message, 'error');
+                    Swal.fire('Lỗi', 'Không thể lấy chi tiết hóa đơn: ' + res.message, 'error');
                 }
             });
         }
 
-        // BẤM XÁC NHẬN THU TIỀN
+        // XỬ LÝ THANH TOÁN
         function xuLyThanhToan() {
+            let maHD = $('#hdnMaHD').val();
             let maPKB = $('#hdnMaPKB').val();
-            let tongTien = $('#hdnTongTien').val();
-            
-            let thuPhiKham = $('#chkKham').is(':checked');
-            let thuPhiCLS = $('#chkCLS').is(':checked');
-            let thuPhiThuoc = $('#chkThuoc').is(':checked');
-
             let phuongThuc = $('input[name="phuongThucTT"]:checked').val();
             let phuongThucText = $('label[for="' + $('input[name="phuongThucTT"]:checked').attr('id') + '"]').text().trim();
 
-            if (maPKB == 0 || tongTien == 0) {
-                Swal.fire('Chú ý', 'Vui lòng chọn ít nhất một khoản phí để thanh toán!', 'warning');
+            if (maHD == 0) { Swal.fire('Chú ý', 'Chưa chọn hồ sơ cần thanh toán!', 'warning'); return; }
+
+            let arrHuyDV = [];
+            let arrHuyThuoc = [];
+            $('.chk-item:not(:checked)').each(function () {
+                if ($(this).data('loai') === 'DV') arrHuyDV.push($(this).data('macthd'));
+                if ($(this).data('loai') === 'THUOC') arrHuyThuoc.push($(this).data('macthd'));
+            });
+
+            let dsHuyDV = arrHuyDV.join(',');
+            let dsHuyThuoc = arrHuyThuoc.join(',');
+
+            let tongTien = parseInt($('#lblTongTien').text().replace(/\D/g, ''));
+            let soMonConLai = $('.chk-item:checked').length;
+
+            // TRƯỜNG HỢP 1: BỎ TICK HẾT TẤT CẢ CÁC MÓN ĐANG NỢ (Thu 0đ)
+            if (soMonConLai === 0) {
+                Swal.fire({
+                    title: 'Xác nhận Hủy món nợ?',
+                    html: `Bệnh nhân từ chối sử dụng các dịch vụ/thuốc đang nợ.<br/>Các món này sẽ được chuyển sang trạng thái <strong class="text-danger">Khách bỏ</strong>.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý Hủy',
+                    cancelButtonText: 'Quay lại',
+                    confirmButtonColor: '#dc3545'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // TRUYỀN CHUỖI RỖNG "" để SQL không cập nhật Hình Thức Thanh Toán
+                        thucHienGoiApiThanhToan(maHD, maPKB, "", dsHuyDV, dsHuyThuoc);
+                    }
+                });
                 return;
             }
 
-            // CHUYỂN KHOẢN (QR PAYOS ĐỘNG)
-            if(phuongThuc === "CHUYEN_KHOAN") {
+            // TRƯỜNG HỢP 2: THANH TOÁN CHUYỂN KHOẢN PAYOS
+            if (phuongThuc === "CHUYEN_KHOAN" && tongTien > 0) {
                 let btn = $('#btnThanhToan');
                 btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang tạo mã QR...');
 
-                $.post('@Url.Action("TaoMaQR", "ThuNgan")', { maPKB: maPKB, tongTien: tongTien }, function(res) {
+                $.post('@Url.Action("TaoMaQR", "ThuNgan")', { maHD: maHD, maPKB: maPKB }, function(res) {
                     btn.prop('disabled', false).html('<i class="bi bi-check2-circle me-2 fs-5 align-middle"></i>XÁC NHẬN THU TIỀN');
-
                     if(res.success) {
                         let qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(res.qrString);
                         let checkInterval;
-
                         Swal.fire({
                             title: 'Quét mã VietQR',
                             html: `
                                 <div class="p-3 text-center">
-                                    <img src="${qrImageUrl}" alt="QR Code" class="img-thumbnail border border-primary p-2 mb-3" style="width: 250px; height: 250px;"/>
+                                    <h4 class="text-danger fw-bolder mb-3">${$('#lblTongTien').text()}</h4>
+                                    <img src="${qrImageUrl}" class="img-thumbnail border border-primary p-2 mb-3" style="width: 250px; height: 250px;"/>
                                     <div class="alert alert-primary bg-primary bg-opacity-10 border-0 mb-0">
                                         <p class="mb-0 fw-bold text-primary"><span class="spinner-grow spinner-grow-sm me-2"></span>Hệ thống đang chờ nhận tiền...</p>
-                                        <small class="text-muted">Cửa sổ này sẽ tự động đóng khi thanh toán thành công.</small>
                                     </div>
                                 </div>
                             `,
-                            showCancelButton: true,
-                            showConfirmButton: false, 
-                            cancelButtonText: 'Hủy giao dịch',
-                            allowOutsideClick: false,
+                            showCancelButton: true, showConfirmButton: false, cancelButtonText: 'Hủy giao dịch', allowOutsideClick: false,
                             didOpen: () => {
                                 checkInterval = setInterval(function() {
                                     $.post('@Url.Action("KiemTraThanhToan", "ThuNgan")', { orderCode: res.orderCode }, function(checkRes) {
                                         if(checkRes.isPaid) {
-                                            clearInterval(checkInterval);
-                                            Swal.close();
-                                            thucHienGoiApiThanhToan(maPKB, thuPhiKham, thuPhiCLS, thuPhiThuoc, "Chuyển khoản VietQR");
+                                            clearInterval(checkInterval); Swal.close();
+                                            thucHienGoiApiThanhToan(maHD, maPKB, "Chuyển khoản", dsHuyDV, dsHuyThuoc);
                                         }
                                     });
                                 }, 3000);
                             },
-                            willClose: () => {
-                                clearInterval(checkInterval);
-                            }
+                            willClose: () => { clearInterval(checkInterval); }
                         });
-                    } else {
-                        Swal.fire('Lỗi tạo mã QR', res.message, 'error');
-                    }
-                }).fail(function() {
-                    btn.prop('disabled', false).html('<i class="bi bi-check2-circle me-2 fs-5 align-middle"></i>XÁC NHẬN THU TIỀN');
-                    Swal.fire('Lỗi kết nối', 'Không thể kết nối đến server PayOS.', 'error');
+                    } else { Swal.fire('Lỗi', res.message, 'error'); }
                 });
             }
-            // NẾU LÀ TIỀN MẶT HOẶC QUẸT THẺ
+            // TRƯỜNG HỢP 3: THANH TOÁN TIỀN MẶT / QUẸT THẺ
             else {
                 Swal.fire({
-                    title: 'Xác nhận thu tiền cục bộ?',
-                    html: `Tổng thu <b class="text-danger">${parseFloat(tongTien).toLocaleString('vi-VN')} ₫</b> qua <strong class="text-primary">${phuongThucText}</strong>. Hành động này không thể hoàn tác.`,
+                    title: 'Xác nhận chốt sổ?',
+                    html: `Tổng tiền: <strong class="text-danger fs-4">${$('#lblTongTien').text()}</strong><br/>Thu bằng: <strong class="text-primary">${phuongThucText}</strong>`,
                     icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: 'Đồng ý thu tiền',
-                    cancelButtonText: 'Hủy',
-                    confirmButtonColor: '#0d6efd'
+                    showCancelButton: true, confirmButtonText: 'Đồng ý thu tiền', cancelButtonText: 'Hủy', confirmButtonColor: '#0d6efd'
                 }).then((result) => {
-                    if (result.isConfirmed) { thucHienGoiApiThanhToan(maPKB, thuPhiKham, thuPhiCLS, thuPhiThuoc, phuongThucText); }
+                    if (result.isConfirmed) { thucHienGoiApiThanhToan(maHD, maPKB, phuongThucText, dsHuyDV, dsHuyThuoc); }
                 });
             }
         }
 
-        function thucHienGoiApiThanhToan(maPKB, thuPhiKham, thuPhiCLS, thuPhiThuoc, phuongThucText) {
+        // ĐẨY API
+        function thucHienGoiApiThanhToan(maHD, maPKB, phuongThuc, dsHuyDV, dsHuyThuoc) {
             let btn = $('#btnThanhToan');
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...');
 
-            $.post('@Url.Action("ThanhToan", "ThuNgan")', { 
-                maPKB: maPKB, 
-                thuPhiKham: thuPhiKham, 
-                thuPhiCLS: thuPhiCLS, 
-                thuPhiThuoc: thuPhiThuoc 
+            $.post('@Url.Action("ThanhToan", "ThuNgan")', {
+                maHD: maHD, maPKB: maPKB, phuongThucTT: phuongThuc, dsHuyDV: dsHuyDV, dsHuyThuoc: dsHuyThuoc
             }, function (res) {
                 if (res.success) {
                     Swal.fire({
-                        title: 'ĐÃ THU TIỀN!',
-                        html: `Ghi nhận thành công qua <strong>${phuongThucText}</strong>.<br/>Bệnh nhân có thể tiếp tục quy trình khám/chữa bệnh.`,
-                        icon: 'success',
-                        timer: 3000,
-                        timerProgressBar: true,
-                        showConfirmButton: false
-                    }).then(() => {
-                        location.reload();
-                    });
+                        title: 'ĐÃ THU TIỀN!', html: `Hóa đơn đã chốt xong qua <strong>${phuongThuc}</strong>.`, icon: 'success', timer: 2000, showConfirmButton: false
+                    }).then(() => { location.reload(); });
                 } else {
                     Swal.fire('Lỗi hệ thống', res.message, 'error');
                     btn.prop('disabled', false).html('<i class="bi bi-check2-circle me-2 fs-5 align-middle"></i>XÁC NHẬN THU TIỀN');
                 }
             }).fail(function() {
-                Swal.fire('Lỗi mạng', 'Không kết nối được server.', 'error');
+                Swal.fire('Lỗi kết nối', 'Không thể kết nối đến server.', 'error');
                 btn.prop('disabled', false).html('<i class="bi bi-check2-circle me-2 fs-5 align-middle"></i>XÁC NHẬN THU TIỀN');
             });
         }
