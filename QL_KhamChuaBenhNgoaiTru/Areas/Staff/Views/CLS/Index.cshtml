@@ -1,0 +1,367 @@
+@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.KetQuaCLS>
+@{
+    ViewBag.Title = "Phòng Cận Lâm Sàng";
+    Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml"; 
+}
+
+<style>
+    .patient-row { cursor: pointer; transition: 0.2s; }
+    .patient-row:hover { background-color: #f1f3f5 !important; }
+    .patient-active { background-color: #e3f2fd !important; border-left: 5px solid #0d6efd; }
+    .btn-action { margin-right: 5px; }
+    
+    /* STYLE CHO BẢN IN */
+    @@media screen {
+        #print-section { display: none; }
+    }
+    @@media print {
+        @@page { size: A5 landscape; margin: 1cm; }
+        body * { visibility: hidden; }
+        #print-section, #print-section * { visibility: visible; }
+        #print-section {
+            position: absolute; left: 0; top: 0; 
+            width: 100%; height: 100%;
+            font-family: 'Times New Roman', Times, serif; color: black;
+            font-size: 14px;
+        }
+        .text-center { text-align: center; }
+        .fw-bold { font-weight: bold; }
+        .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .print-table th, .print-table td { border: 1px solid black; padding: 10px; text-align: center; }
+        .stamp { border: 2px solid blue; color: blue; padding: 5px; display: inline-block; font-weight: bold; font-size: 16px; }
+    }
+</style>
+
+<div class="row">
+    <!-- CỘT TRÁI: DANH SÁCH CHỜ -->
+    <div class="col-md-5">
+        <div class="card shadow-sm mb-4 border-primary">
+            <div class="card-header bg-primary text-white text-uppercase font-weight-bold">
+                <i class="fas fa-list"></i> Bệnh Nhân Chờ Yêu Cầu Cận Lâm Sàng
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive" style="max-height: 700px; overflow-y: auto;">
+                    <table class="table table-hover table-bordered mb-0" id="table-cls">
+                        <thead class="bg-light sticky-top">
+                            <tr class="text-center">
+                                <th width="10%">STT</th>
+                                <th width="40%">Tên Bệnh Nhân</th>
+                                <th width="30%">Dịch Vụ CLS</th>
+                                <th width="20%">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                int stt = 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr id="row-@item.MaKetQua" class="patient-row">
+                                        <td class="text-center font-weight-bold">@(stt++)</td>
+                                        <td class="text-danger font-weight-bold">@item.TenBenhNhan</td>
+                                        <td>@item.TenDichVu</td>
+                                        <td class="text-center">
+                                            <button class="btn btn-sm btn-outline-primary btn-tiep-nhan" data-id="@item.MaKetQua">
+                                                Tiếp nhận <i class="fas fa-chevron-right"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr id="empty-row">
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i>Không có bệnh nhân nào đang chờ xét nghiệm tại phòng.</i>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CỘT PHẢI: CHI TIẾT VÀ KẾT QUẢ -->
+    <div class="col-md-7">
+        <div class="card shadow border-success" id="detail-card" style="display:none; border-width: 2px;">
+            <div class="card-header bg-success text-white text-uppercase font-weight-bold">
+                <i class="fas fa-microscope"></i> Thông Tin Tiếp Nhận & Trả Kết Quả
+            </div>
+            <div class="card-body">
+                <input type="hidden" id="hdnMaKetQua" />
+                <input type="hidden" id="hdnMaPhieuKham" />
+                
+                <div class="row mb-3 bg-light p-3 rounded border">
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Bệnh nhân:</strong> <span id="lblTenBN" class="text-danger font-weight-bold" style="font-size: 18px;"></span></p>
+                        <p class="mb-2"><strong>Tuổi / Giới tính:</strong> <span id="lblTuoiGT"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Chẩn đoán/Lý do:</strong> <span id="lblLyDo"></span></p>
+                    </div>
+                </div>
+
+                <div class="mb-2 text-right">
+                    <button class="btn btn-warning font-weight-bold text-dark shadow-sm" id="btn-ket-noi-lis">
+                        <i class="fas fa-satellite-dish"></i> Kết nối máy LIS (Đọc tự động)
+                    </button>
+                </div>
+
+                <!-- Bảng nhập liệu / Hiển thị kết quả -->
+                <div class="table-responsive">
+                    <table class="table table-bordered mt-2">
+                        <thead class="bg-dark text-white text-center">
+                            <tr>
+                                <th width="35%">Tên xét nghiệm</th>
+                                <th width="30%">Phương pháp</th>
+                                <th width="35%">Kết quả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="align-middle text-center font-weight-bold text-primary" id="ui-ten-xn"></td>
+                                <td>
+                                    <input type="text" class="form-control text-center" id="ui-phuong-phap" placeholder="VD: Test nhanh">
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control text-center font-weight-bold text-danger" id="ui-ket-qua" placeholder="VD: Âm tính">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-right mt-4 border-top pt-3">
+                    <button class="btn btn-outline-secondary font-weight-bold shadow-sm px-4 mr-2" id="btn-in-phieu" onclick="window.print()">
+                        <i class="fas fa-print"></i> In Phiếu Kết Quả
+                    </button>
+                    <button class="btn btn-success font-weight-bold shadow-sm px-4" id="btn-xac-nhan">
+                        <i class="fas fa-check-circle"></i> Xác nhận & Gửi Bác Sĩ
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm border-0" id="empty-card">
+            <div class="card-body text-center py-5">
+                <i class="fas fa-notes-medical fa-4x mb-3 text-secondary"></i>
+                <h4 class="text-secondary">Chưa chọn bệnh nhân</h4>
+                <p class="text-muted">Vui lòng bấm chọn "Tiếp nhận" ở danh sách bên trái để lấy thông tin ca xét nghiệm.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KHUNG GIAO DIỆN IN (ẨN TRÊN WEB, HIỆN KHI BẤM IN) -->
+<div id="print-section">
+    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5px;">
+        <div class="text-center" style="width: 45%;">
+            <p style="margin: 0; font-weight: bold; font-size: 13px;">SỞ Y TẾ ĐẮK LẮK</p>
+            <p style="margin: 0; font-weight: bold; font-size: 13px;">PHÒNG KHÁM ĐA KHOA</p>
+            <p style="margin: 0; font-weight: bold; font-size: 13px;">CHẤT LƯỢNG CAO SÀI GÒN</p>
+            <p style="margin: 0; color: red; font-size: 10px;">(Dấu tròn đỏ nội bộ)</p>
+        </div>
+        <div class="text-center" style="width: 55%;">
+            <p style="margin: 0; font-weight: bold; font-size: 14px;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
+            <p style="margin: 0; font-size: 13px; font-weight: bold;">Độc lập - Tự do - Hạnh phúc</p>
+        </div>
+    </div>
+    
+    <div class="text-center" style="margin-top: 15px;">
+        <h2 style="font-weight: bold; margin: 0; letter-spacing: 1px;">PHIẾU KẾT QUẢ XÉT NGHIỆM</h2>
+    </div>
+
+    <div style="margin-top: 15px; line-height: 1.6; font-size: 15px;">
+        <div style="display: flex;">
+            <div style="flex: 2;">Họ và tên: <b id="prt-ten"></b></div>
+            <div style="flex: 1;">Tuổi: <span id="prt-tuoi"></span></div>
+            <div style="flex: 1;">Giới tính: <span id="prt-gt"></span></div>
+        </div>
+        <div>Đơn vị (nếu có): ........................................................................</div>
+        <div>Địa chỉ: TP. Buôn Ma Thuột</div>
+        <div style="display: flex; justify-content: space-between;">
+            <div>Thời gian lấy mẫu: <b id="prt-h"></b> giờ <b id="prt-m"></b> phút</div>
+            <div>Ngày: <b id="prt-day"></b></div>
+        </div>
+        <div>Loại bệnh phẩm: Dịch tỵ hầu / Máu (Tùy XN)</div>
+        <div>Chẩn đoán: <span id="prt-chandoan"></span></div>
+    </div>
+    
+    <h4 class="text-center fw-bold" style="margin-top: 15px;">KẾT QUẢ XÉT NGHIỆM:</h4>
+    
+    <table class="print-table">
+        <thead>
+            <tr style="background-color: #f8f9fa;">
+                <th width="40%">Tên xét nghiệm</th>
+                <th width="30%">Phương pháp</th>
+                <th width="30%">Kết quả</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="fw-bold" id="prt-tenxn"></td>
+                <td id="prt-phuongphap"></td>
+                <td>
+                    <div class="stamp" id="prt-ketqua"></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div style="text-align: right; margin-top: 15px; margin-right: 30px; font-size: 14px;">
+        <p style="font-style: italic;" id="prt-date-footer"></p>
+        <p style="margin-top: 50px;" class="fw-bold">Bác sĩ / Kỹ thuật viên</p>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Thư viện SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            
+            // Tiếp nhận
+            $('.btn-tiep-nhan').click(function () {
+                var btn = $(this);
+                var maKetQua = btn.data('id');
+                
+                $('.patient-row').removeClass('patient-active');
+                $('#row-' + maKetQua).addClass('patient-active');
+
+                // Mở khoá input nếu có bệnh nhân mới
+                $('#ui-phuong-phap').prop('readonly', false).val('').removeClass('bg-white');
+                $('#ui-ket-qua').prop('readonly', false).val('').removeClass('bg-white');
+                $('#btn-in-phieu').show();
+                $('#btn-xac-nhan').show();
+                $('#btn-ket-noi-lis').prop('disabled', false).html('<i class="fas fa-satellite-dish"></i> Kết nối máy LIS (Đọc tự động)').removeClass('btn-success').addClass('btn-warning');
+
+                $.ajax({
+                    url: '/Staff/CLS/GetChiTiet',
+                    type: 'POST',
+                    data: { maKetQua: maKetQua },
+                    success: function (res) {
+                        if (res.success) {
+                            var d = res.Data;
+                            $('#hdnMaKetQua').val(d.MaKetQua);
+                            $('#hdnMaPhieuKham').val(d.MaPhieuKhamBenh);
+                            
+                            $('#lblTenBN').text(d.TenBenhNhan);
+                            $('#lblTuoiGT').text(d.Tuoi + " tuổi / " + d.GioiTinh);
+                            $('#lblLyDo').text(d.LyDoDenKham);
+                            $('#ui-ten-xn').text(d.TenDV);
+                            
+                            // Đổ dữ liệu in
+                            var now = new Date();
+                            $('#prt-ten').text(d.TenBenhNhan);
+                            $('#prt-tuoi').text(d.Tuoi);
+                            $('#prt-gt').text(d.GioiTinh);
+                            $('#prt-h').text(now.getHours());
+                            $('#prt-m').text(now.getMinutes());
+                            $('#prt-day').text(now.toLocaleDateString('vi-VN'));
+                            $('#prt-chandoan').text(d.LyDoDenKham);
+                            $('#prt-tenxn').text(d.TenDV);
+                            $('#prt-date-footer').html('Đắk Lắk, ngày ' + now.getDate() + ' tháng ' + (now.getMonth() + 1) + ' năm ' + now.getFullYear());
+
+                            $('#empty-card').hide();
+                            $('#detail-card').fadeIn();
+                        } else {
+                            Swal.fire('Lỗi', res.message, 'error');
+                        }
+                    }
+                });
+            });
+
+            // Lấy LIS tự động
+            $('#btn-ket-noi-lis').click(function() {
+                var maKQ = $('#hdnMaKetQua').val();
+                if(!maKQ) return;
+                
+                var btn = $(this);
+                btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang đọc...');
+
+                setTimeout(function() {
+                    btn.html('<i class="fas fa-check"></i> Đã đồng bộ LIS').addClass('btn-success').removeClass('btn-warning');
+                    
+                    // Khoá bảng thành dạng read-only
+                    $('#ui-phuong-phap').val("Máy tự động LIS").prop('readonly', true).addClass('bg-white');
+                    $('#ui-ket-qua').val("ÂM TÍNH / BÌNH THƯỜNG").prop('readonly', true).addClass('bg-white');
+                    
+                    Swal.fire({
+                        title: 'Thành công!',
+                        text: 'Dữ liệu đo tự động đã được điền. Vui lòng Xác nhận.',
+                        icon: 'success',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                }, 800);
+            });
+
+            // Xác nhận Gửi Bác Sĩ
+            $('#btn-xac-nhan').click(function () {
+                var maKetQua = $('#hdnMaKetQua').val();
+                var maPhieu = $('#hdnMaPhieuKham').val();
+                var pp = $('#ui-phuong-phap').val().trim();
+                var kq = $('#ui-ket-qua').val().trim();
+
+                if (!kq) {
+                    Swal.fire('Thiếu thông tin', 'Kết quả đang trống! Vui lòng nhập dữ liệu hoặc lấy từ máy LIS.', 'warning');
+                    $('#ui-ket-qua').focus();
+                    return;
+                }
+
+                var noiDung = 'Phương pháp: ' + (pp || 'Thủ công') + ' \nKết quả: ' + kq;
+
+                Swal.fire({
+                    title: 'Xác nhận hoàn thành?',
+                    text: "Bệnh nhân sẽ được đẩy ngay sang phòng Bác sĩ. Dữ liệu sẽ không thể đổi nữa!",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#198754',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Đồng ý & Lưu!',
+                    cancelButtonText: 'Huỷ thao tác'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var btn = $('#btn-xac-nhan');
+                        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang gửi...');
+
+                        $.ajax({
+                            url: '/Staff/CLS/XacNhanKetQua',
+                            type: 'POST',
+                            data: {
+                                maKetQua: maKetQua,
+                                noiDung: noiDung,
+                                maPhieuKhamBenh: maPhieu
+                            },
+                            success: function (res) {
+                                if (res.success) {
+                                    Swal.fire({
+                                        title: 'Hoàn tất!',
+                                        text: 'Bệnh nhân đã trở về hàng chờ ưu tiên của Bác sĩ.',
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                    
+                                    // Khoá bảng
+                                    $('#ui-phuong-phap').prop('readonly', true);
+                                    $('#ui-ket-qua').prop('readonly', true);
+                                    
+                                    // Đổ data qua bảng In
+                                    $('#prt-phuongphap').text(pp || 'Thủ công');
+                                    $('#prt-ketqua').html(kq.toUpperCase() + '<br><span style="font-size:12px; font-weight:normal;">TRÊN BỆNH PHẨM NÀY</span>');
+
+                                    // Chuyển nút
+                                    $('#btn-xac-nhan').hide();
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+        }
+        

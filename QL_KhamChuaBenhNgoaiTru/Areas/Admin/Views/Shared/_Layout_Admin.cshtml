@@ -242,6 +242,109 @@
             .main-wrapper { margin-left: 0 !important; width: 100%; } /* Content full width */
             .main-wrapper.expanded { margin-left: 0; }
         }
+
+        /* Chút CSS cho Dropdown Avatar */
+        .user-dropdown-toggle::after {
+            display: none;
+        }
+
+        .user-info:hover {
+            background-color: #f8f9fa;
+            border-radius: 50px;
+        }
+
+        /* ===== SIDEBAR DROPDOWN ===== */
+        .sidebar-dropdown {
+            position: relative;
+        }
+
+        .sidebar-dropdown-toggle {
+            cursor: pointer;
+            justify-content: flex-start !important;
+            gap: 15px;
+        }
+
+            .sidebar-dropdown-toggle .submenu-arrow {
+                font-size: 0.8rem;
+                margin-left: auto;
+                transition: transform 0.25s ease;
+                opacity: 0.6;
+            }
+
+            .sidebar-dropdown-toggle .submenu-arrow.rotated,
+            .sidebar-dropdown-toggle[aria-expanded="true"] .submenu-arrow {
+                transform: rotate(180deg);
+                opacity: 1;
+            }
+
+            .sidebar-dropdown-toggle:hover {
+                background-color: rgba(255, 255, 255, 0.08) !important;
+                color: #fff !important;
+                border-left-color: rgba(255, 255, 255, 0.3);
+            }
+
+            .sidebar-dropdown-toggle.active {
+                background-color: rgba(255, 255, 255, 0.12) !important;
+                color: #fff !important;
+                border-left-color: #f9c404;
+            }
+
+        /* Submenu */
+        .sidebar-submenu {
+            background: rgba(0, 0, 0, 0.15);
+            border-left: 3px solid rgba(249, 196, 4, 0.5);
+            margin-left: 0;
+            padding: 4px 0;
+        }
+
+            /* Fix Bootstrap collapse - ép hiển thị khi mở */
+            .sidebar-submenu.collapse.show {
+                display: block !important;
+                visibility: visible !important;
+                overflow: visible !important;
+                height: auto !important;
+                max-height: none !important;
+            }
+
+            .sidebar-submenu .sub-nav-link {
+                padding: 10px 20px 10px 54px !important;
+                font-size: 0.9rem;
+                color: #c8d6e8 !important;
+                display: flex !important;
+                align-items: center;
+                gap: 12px;
+                transition: all 0.2s ease;
+                border-left: none !important;
+                border-radius: 0;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+
+                .sidebar-submenu .sub-nav-link i {
+                    font-size: 1rem;
+                    width: 18px;
+                    text-align: center;
+                }
+
+                .sidebar-submenu .sub-nav-link:hover {
+                    background-color: rgba(255, 255, 255, 0.1) !important;
+                    color: #fff !important;
+                }
+
+                .sidebar-submenu .sub-nav-link.active {
+                    background-color: rgba(249, 196, 4, 0.2) !important;
+                    color: #f9c404 !important;
+                    font-weight: 600;
+                }
+
+        /* Collapsed sidebar - ẩn submenu */
+        .sidebar.collapsed .sidebar-submenu {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .sidebar-dropdown-toggle .submenu-arrow {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -373,7 +476,7 @@
             </div>
         </header>
 
-        <main class="page-content">
+        <main class="page-content p-4">
             @RenderBody()
             <div class="notifications"></div>
         </main>

@@ -1,5 +1,3 @@
-CREATE DATABASE QL_KhamBenhNgoaiTru;
-GO
 USE QL_KhamBenhNgoaiTru;
 GO
 
