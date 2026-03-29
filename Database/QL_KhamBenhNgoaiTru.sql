@@ -254,7 +254,7 @@ CREATE TABLE PHIEUKHAMBENH (
     MaBN CHAR(10), 
     STT INT NULL,
     LyDoDenKham NVARCHAR(MAX),
-    NgayLap DATE DEFAULT GETDATE(),
+    NgayLap DATETIME DEFAULT GETDATE(),
     TrangThai NVARCHAR(20) CHECK (TrangThai IN (N'Chờ thanh toán', N'Chờ cấp số', N'Chờ khám', N'Đang khám', N'Hoàn thành', N'Đã hủy')) DEFAULT N'Chờ thanh toán',
     TrieuChung NVARCHAR(MAX),
     KetLuan NVARCHAR(200),

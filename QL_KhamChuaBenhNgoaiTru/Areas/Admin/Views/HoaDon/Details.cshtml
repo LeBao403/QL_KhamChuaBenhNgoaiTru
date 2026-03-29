@@ -1,0 +1,260 @@
+﻿@{
+    ViewBag.Title = "Chi Tiết Hóa Đơn";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+    var info = ViewBag.HoaDonInfo as System.Data.DataRow;
+    var dtDV = ViewBag.ChiTietDV as System.Data.DataTable;
+
+    // Tính tuổi
+    int tuoi = 0;
+    if (info["NgaySinh"] != DBNull.Value)
+    {
+        tuoi = DateTime.Now.Year - Convert.ToDateTime(info["NgaySinh"]).Year;
+    }
+
+    string trangThai = info["TrangThaiThanhToan"].ToString();
+    bool isPaid = trangThai == "Đã thanh toán";
+}
+
+<style>
+    /* CSS CHO TRANG CHI TIẾT HÓA ĐƠN */
+    body { background-color: #f4f7f6; }
+
+    .action-bar {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+        margin-bottom: 2rem;
+        border: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .invoice-wrapper {
+        background-color: #ffffff;
+        border-radius: 8px; /* Giấy in thường vuông vức hơn */
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        padding: 3rem 4rem;
+        margin: 0 auto;
+        max-width: 900px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Dấu mộc chìm (Watermark) */
+    .invoice-watermark {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-30deg);
+        font-size: 6rem;
+        font-weight: 900;
+        color: @(isPaid ? "rgba(34, 197, 94, 0.05)" : "rgba(239, 68, 68, 0.05)");
+        white-space: nowrap;
+        pointer-events: none;
+        z-index: 0;
+        letter-spacing: 5px;
+    }
+
+    .invoice-header { border-bottom: 2px solid #1e293b; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    .clinic-name { font-weight: 900; color: #1e293b; font-size: 1.8rem; letter-spacing: -0.5px; }
+    .invoice-title { font-weight: 800; color: #3b82f6; font-size: 1.6rem; text-transform: uppercase; letter-spacing: 1px; }
+
+    .info-label { font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 0.2rem; }
+    .info-value { font-size: 1rem; color: #0f172a; font-weight: 600; margin-bottom: 1rem; }
+
+    .table-invoice { margin-top: 1.5rem; position: relative; z-index: 1; }
+    .table-invoice thead th {
+        background-color: #f8fafc !important;
+        color: #475569;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        padding: 1rem;
+        border-bottom: 2px solid #cbd5e1;
+    }
+    .table-invoice tbody td { padding: 1rem; vertical-align: middle; color: #334155; border-bottom: 1px dashed #e2e8f0; }
+
+    .summary-box { background-color: #f8fafc; border-radius: 8px; padding: 1.5rem; border: 1px solid #e2e8f0; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1.05rem; }
+    .summary-row.total { border-top: 2px solid #cbd5e1; padding-top: 1rem; margin-top: 0.5rem; font-size: 1.3rem; font-weight: 800; color: #0f172a; }
+
+    .signature-area { margin-top: 4rem; text-align: center; }
+    .signature-title { font-weight: 700; color: #334155; margin-bottom: 4rem; }
+
+    /* LỆNH CSS MA THUẬT: Chỉ áp dụng khi bấm In (Ctrl+P) */
+    @@media print {
+        body { background-color: #fff; }
+        /* Giấu sạch UI của Web */
+        #sidebar, .top-navbar, .action-bar, .d-print-none { display: none !important; }
+        #content { margin-left: 0 !important; width: 100% !important; padding: 0 !important; }
+        .main-body { padding: 0 !important; }
+
+        /* Căn chỉnh tờ Hóa đơn cho vừa trang A4 */
+        .invoice-wrapper {
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+        }
+        .table-invoice tbody td { border-bottom: 1px solid #000; } /* Máy in thích viền nét liền hơn dashed */
+    }
+</style>
+
+<div class="action-bar d-flex justify-content-between align-items-center d-print-none">
+    <div class="d-flex align-items-center gap-3">
+        <a href="@Url.Action("Index", "HoaDon")" class="btn btn-light border shadow-sm rounded-pill fw-bold text-secondary px-3">
+            <i class="bi bi-arrow-left me-1"></i> Trở về
+        </a>
+        <h5 class="mb-0 fw-bold text-dark border-start ps-3 ms-1 py-1">Chi Tiết Hóa Đơn</h5>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-primary fw-bold shadow-sm" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> In Hóa Đơn
+        </button>
+        <button type="button" class="btn btn-primary fw-bold shadow-sm">
+            <i class="bi bi-file-earmark-pdf me-1"></i> Xuất PDF
+        </button>
+    </div>
+</div>
+
+<div class="invoice-wrapper" id="invoiceArea">
+    <div class="invoice-watermark">
+        @(isPaid ? "ĐÃ THANH TOÁN" : "CHƯA THANH TOÁN")
+    </div>
+
+    <div class="invoice-header row align-items-center">
+        <div class="col-sm-7">
+            <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-hospital-fill text-primary" style="font-size: 2.5rem;"></i>
+                <div>
+                    <h2 class="clinic-name mb-0">HIS CLINIC CENTER</h2>
+                    <p class="text-muted mb-0" style="font-size: 0.85rem;">MST: 0312345678 - Hotline: 1900 8888</p>
+                    <p class="text-muted mb-0" style="font-size: 0.85rem;">ĐC: Số 123 Nguyễn Văn Cừ, Quận 5, TP.HCM</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-5 text-sm-end mt-4 mt-sm-0">
+            <h3 class="invoice-title">HÓA ĐƠN VIỆN PHÍ</h3>
+            <p class="mb-0 fw-bold text-dark fs-5">Mã HĐ: <span class="text-danger">#@info["MaHD"]</span></p>
+            <span class="badge @(isPaid ? "bg-success" : "bg-danger") px-3 py-2 rounded-pill mt-2 fs-6 shadow-sm">
+                <i class="bi @(isPaid ? "bi-check-circle" : "bi-exclamation-circle") me-1"></i> @trangThai
+            </span>
+        </div>
+    </div>
+
+    <div class="row mt-4 position-relative z-1">
+        <div class="col-md-7">
+            <div class="info-label">Thông tin bệnh nhân</div>
+            <div class="info-value text-primary fs-5">@info["HoTen"]</div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="info-label">Mã Bệnh Nhân</div>
+                    <div class="info-value">@info["MaBN"]</div>
+                </div>
+                <div class="col-6">
+                    <div class="info-label">Ngày sinh / Giới tính</div>
+                    <div class="info-value">@(info["NgaySinh"] != DBNull.Value ? Convert.ToDateTime(info["NgaySinh"]).ToString("dd/MM/yyyy") : "N/A") (@tuoi tuổi) - @info["GioiTinh"]</div>
+                </div>
+                <div class="col-6">
+                    <div class="info-label">Số điện thoại</div>
+                    <div class="info-value">@info["SDT"]</div>
+                </div>
+                <div class="col-6">
+                    <div class="info-label">Địa chỉ liên hệ</div>
+                    <div class="info-value">@info["DiaChi"]</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="summary-box bg-white border h-100">
+                <div class="info-label">Thông tin chứng từ</div>
+                <div class="mb-3"></div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted fw-bold fs-7">Ngày thanh toán:</span>
+                    <strong class="text-dark">@Convert.ToDateTime(info["NgayThanhToan"]).ToString("dd/MM/yyyy HH:mm")</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted fw-bold fs-7">Mã phiếu khám:</span>
+                    <strong class="text-dark">@(info["MaPhieuKhamBenh"] != DBNull.Value ? "#" + info["MaPhieuKhamBenh"] : "N/A")</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted fw-bold fs-7">Thu ngân:</span>
+                    <strong class="text-dark">@Session["HoTenNV"]</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive table-invoice mt-4">
+        <table class="table mb-0">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 50px;">STT</th>
+                    <th>Nội dung dịch vụ phát sinh</th>
+                    <th class="text-end" style="width: 150px;">Đơn giá</th>
+                    <th class="text-end text-success" style="width: 150px;">BHYT Gánh</th>
+                    <th class="text-end" style="width: 150px;">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (dtDV != null && dtDV.Rows.Count > 0)
+                {
+                    int stt = 1;
+                    foreach (System.Data.DataRow row in dtDV.Rows)
+                    {
+                        <tr>
+                            <td class="text-center text-muted fw-bold">@stt</td>
+                            <td class="fw-bold">@row["TenDV"]</td>
+                            <td class="text-end text-muted">@Convert.ToDecimal(row["DonGia"]).ToString("N0") ₫</td>
+                            <td class="text-end text-success fw-bold">- @Convert.ToDecimal(row["TienBHYTChiTra"]).ToString("N0") ₫</td>
+                            <td class="text-end fw-bold text-dark">@Convert.ToDecimal(row["TienBenhNhanTra"]).ToString("N0") ₫</td>
+                        </tr>
+                        stt++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row justify-content-end mt-4 position-relative z-1">
+        <div class="col-md-6 col-12">
+            <div class="summary-box shadow-sm">
+                <div class="summary-row">
+                    <span class="text-muted fw-bold">Cộng tiền dịch vụ:</span>
+                    <strong class="text-dark">@Convert.ToDecimal(info["TongTienGoc"]).ToString("N0") ₫</strong>
+                </div>
+                <div class="summary-row">
+                    <span class="text-success fw-bold">Quỹ BHYT chi trả:</span>
+                    <strong class="text-success">- @Convert.ToDecimal(info["TongTienBHYTChiTra"]).ToString("N0") ₫</strong>
+                </div>
+                <div class="summary-row total">
+                    <span class="text-primary">TỔNG KHÁCH TRẢ:</span>
+                    <span class="text-danger fs-2">@Convert.ToDecimal(info["TongTienBenhNhanTra"]).ToString("N0") ₫</span>
+                </div>
+
+                <div class="text-end mt-2 fst-italic text-muted" style="font-size: 0.85rem;">
+                    (Bằng chữ: Xin vui lòng bổ sung hàm đọc số thành chữ tại Controller)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row signature-area position-relative z-1">
+        <div class="col-6">
+            <div class="signature-title">Người nộp tiền</div>
+            <div class="text-muted fst-italic" style="font-size: 0.8rem;">(Ký, ghi rõ họ tên)</div>
+        </div>
+        <div class="col-6">
+            <div class="signature-title">Nhân viên thu ngân</div>
+            <div class="text-muted fst-italic" style="font-size: 0.8rem;">(Ký, ghi rõ họ tên)</div>
+            <div class="fw-bold mt-5 text-dark">@Session["HoTenNV"]</div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5 pt-3 border-top position-relative z-1">
+        <p class="text-muted mb-1 fw-bold fs-7">Cảm ơn Quý khách đã tin tưởng và sử dụng dịch vụ tại HIS Clinic.</p>
+        <p class="text-muted fst-italic" style="font-size: 0.75rem;">Hóa đơn điện tử có giá trị lưu hành nội bộ. Quý khách vui lòng kiểm tra kỹ thông tin trước khi rời quầy.</p>
+    </div>
+</div>
