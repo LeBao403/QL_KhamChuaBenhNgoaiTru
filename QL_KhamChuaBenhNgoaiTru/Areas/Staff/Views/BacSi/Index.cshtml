@@ -1,4 +1,4 @@
-﻿@model QL_KhamChuaBenhNgoaiTru.Models.KhamBenhViewModel
+@model QL_KhamChuaBenhNgoaiTru.Models.KhamBenhViewModel
 @{
     Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
     ViewBag.Title = "Phòng Khám Bác Sĩ";
@@ -40,10 +40,17 @@
                             {
                                 foreach (var item in ViewBag.ChoKham)
                                 {
-                                    <tr id="row-wait-@item.MaPhieuKhamBenh">
+                                    string bgClass = item.TrangThai == "Đã có kết quả CLS" ? "table-warning border-warning" : "";
+                                    <tr id="row-wait-@item.MaPhieuKhamBenh" class="@bgClass">
                                         <td><span class="badge bg-danger fs-6">@item.STT</span></td>
-                                        <td class="align-middle fw-bold">@item.TenBN</td>
-                                        <td>
+                                        <td class="align-middle fw-bold">
+                                            @item.TenBN
+                                            @if (item.TrangThai == "Đã có kết quả CLS")
+                                            {
+                                                <div class="mt-1"><span class="badge bg-warning text-dark"><i class="fas fa-check-circle"></i> Đã có KQ CLS</span></div>
+                                            }
+                                        </td>
+                                        <td class="align-middle text-center">
                                             <button class="btn btn-sm btn-success shadow-sm" onclick="TiepNhanBN(@item.MaPhieuKhamBenh)">
                                                 Tiếp nhận
                                             </button>
@@ -110,6 +117,13 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold">Triệu chứng lâm sàng / Khám thực thể:</label>
                             <textarea name="TrieuChung" id="TrieuChung" class="form-control" rows="3" placeholder="Nhập triệu chứng, dấu hiệu sinh tồn..."></textarea>
+                        </div>
+
+                        <!-- Vùng hiển thị Kết Quả CLS từ máy LIS (ẩn mặc định) -->
+                        <div id="vungHienThiKQCLS" class="alert alert-info" style="display: none;">
+                            <h5 class="fw-bold text-dark"><i class="fas fa-file-medical-alt"></i> Kết Quả Cận Lâm Sàng Tự Động</h5>
+                            <hr />
+                            <div id="noiDungKQCLS"></div>
                         </div>
 
                         <div class="form-check form-switch mb-3 p-3 border rounded bg-light border-danger">
@@ -452,6 +466,8 @@
             $('#tbBenhDaChọn tbody').empty();
             $('#tbDonThuoc tbody').empty();
             $('#tbDichVu tbody').empty();
+            $('#noiDungKQCLS').empty();
+            $('#vungHienThiKQCLS').slideUp();
 
             thuocIndex = 0;
             dvIndex = 0;
@@ -476,6 +492,7 @@
                     $('#table-dangkham tbody').append(rowDangKham);
 
                     ResetFormAndBindData(res.Data);
+                    LoadKetQuaCLS(res.Data.MaPhieuKhamBenh); // Nạp nếu bệnh nhân này bị gọi ngang
                 } else {
                     alert('Có lỗi xảy ra khi tiếp nhận bệnh nhân!');
                 }
@@ -486,13 +503,37 @@
         function LoadDangKham(maPhieu) {
             $.post('@Url.Action("ChiTietDangKham", "BacSi", new { area = "Staff" })', { maPhieu: maPhieu }, function (res) {
                 if (res.success) {
-                    // Highlight dòng đang chọn
                     $('#table-dangkham tr').removeClass('table-active');
                     $('#row-dang-' + maPhieu).addClass('table-active');
 
                     ResetFormAndBindData(res.Data);
+                    LoadKetQuaCLS(maPhieu); // Load thêm KQ LIS
                 } else {
                     alert('Không lấy được thông tin bệnh nhân này!');
+                }
+            });
+        }
+
+        // Tải kết quả Cận lâm sàng từ máy LIS
+        function LoadKetQuaCLS(maPhieu) {
+            $.post('@Url.Action("GetKetQuaCLS", "BacSi", new { area = "Staff" })', { maPhieu: maPhieu }, function (data) {
+                if (data && data.length > 0) {
+                    $('#vungHienThiKQCLS').slideDown();
+                    var content = '';
+                    data.forEach(function(item) {
+                        content += `
+                        <div class="card mb-3 border-info">
+                            <div class="card-header bg-info text-white fw-bold py-1">
+                               Dịch vụ: ${item.TenDV} <span class="float-end">Ngày trả: ${item.NgayThucHien}</span>
+                            </div>
+                            <div class="card-body py-2">
+                                ${item.NoiDungKetQua}
+                            </div>
+                        </div>`;
+                    });
+                    $('#noiDungKQCLS').html(content);
+                } else {
+                    $('#vungHienThiKQCLS').slideUp();
                 }
             });
         }

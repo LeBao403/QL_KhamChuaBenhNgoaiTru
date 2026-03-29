@@ -1,4 +1,4 @@
-﻿using QL_KhamChuaBenhNgoaiTru.Models;
+using QL_KhamChuaBenhNgoaiTru.Models;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
 using System.Web.Mvc;
 
@@ -51,18 +51,27 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             return Json(list);
         }
 
+        // MỚI: API Lấy kết quả CLS của Phiếu Khám
+        [HttpPost]
+        public JsonResult GetKetQuaCLS(int maPhieu)
+        {
+            var list = db.GetKetQuaCLS(maPhieu);
+            return Json(list);
+        }
+
         [HttpPost]
         public ActionResult LuuKhamBenh(KhamBenhViewModel model)
         {
             string maBS = Session["MaNV"]?.ToString() ?? "NV001";
             if (model.MaPhieuKhamBenh == 0) return RedirectToAction("Index");
 
-            bool result = db.LuuKhamBenh(model, maBS); // Truyền thêm maBS
+            string errorMsg = "";
+            bool result = db.LuuKhamBenh(model, maBS, out errorMsg); // Truyền thêm maBS
 
             if (result)
                 TempData["SuccessMsg"] = model.YeuCauCanLamSang ? "Đã chuyển bệnh nhân đi Cận Lâm Sàng." : "Hoàn tất khám và kê đơn!";
             else
-                TempData["ErrorMsg"] = "Lỗi khi lưu dữ liệu.";
+                TempData["ErrorMsg"] = "Lỗi khi lưu dữ liệu. Chi tiết: " + errorMsg;
 
             return RedirectToAction("Index");
         }

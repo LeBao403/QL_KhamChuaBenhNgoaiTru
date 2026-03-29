@@ -1,4 +1,4 @@
-﻿using QL_KhamChuaBenhNgoaiTru.Models;
+using QL_KhamChuaBenhNgoaiTru.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -36,24 +36,25 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                    BN.HoTen, BN.GioiTinh, BN.NgaySinh
             FROM PHIEUKHAMBENH PKB
             JOIN BENHNHAN BN ON PKB.MaBN = BN.MaBN
-            WHERE PKB.TrangThai = @TrangThai ";
+            WHERE 1=1 ";
 
                 // LOGIC MỚI:
-                // - Nếu là danh sách "Chờ khám": Lấy tất cả bệnh nhân được phân vào PHÒNG của bác sĩ này
-                // - Nếu là danh sách "Đang khám": Lấy đích danh các ca mà BÁC SĨ NÀY đã bấm tiếp nhận
+                // - Ưu tiên bệnh nhân 'Đã có kết quả CLS' lên đầu, sau đó mới tới 'Chờ khám'
                 if (trangThai == "Chờ khám" || trangThai == "Chờ Khám")
                 {
-                    sql += " AND PKB.MaPhong = @MaPhong ";
+                    sql += " AND PKB.MaPhong = @MaPhong AND (PKB.TrangThai = N'Chờ khám' OR PKB.TrangThai = N'Đã có kết quả CLS') ";
+                    // Order by ưu tiên: Đã có kết quả CLS (ưu tiên 1), Chờ khám (ưu tiên 2), sau đó sắp xếp theo STT
+                    sql += " ORDER BY CASE WHEN PKB.TrangThai = N'Đã có kết quả CLS' THEN 1 ELSE 2 END ASC, PKB.STT ASC";
                 }
                 else
                 {
-                    sql += " AND PKB.MaBacSiKham = @MaBS ";
+                    sql += " AND PKB.MaBacSiKham = @MaBS AND PKB.TrangThai = @TrangThai ";
+                    sql += " ORDER BY PKB.STT ASC";
                 }
-
-                sql += " ORDER BY PKB.STT ASC";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
+                    // Vẫn giữ parameter nhưng không map cứng ở WHERE nữa vì câu lệnh if trên đã gộp chung hoặc tách riêng.
                     cmd.Parameters.AddWithValue("@TrangThai", trangThai);
                     cmd.Parameters.AddWithValue("@MaPhong", maPhongBS);
                     cmd.Parameters.AddWithValue("@MaBS", maBS);
@@ -340,7 +341,14 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             var list = new List<DichVu>();
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
-                string sql = "SELECT MaDV, TenDV, GiaDichVu FROM DICHVU WHERE TrangThai = 1";
+                // Chỉ lấy các dịch vụ thuộc nhóm Cận Lâm Sàng dựa theo DB thực tế:
+                // LDV02: Xét nghiệm, LDV03: Chẩn đoán hình ảnh, LDV04: Thăm dò chức năng, LDV05: Nội soi
+                string sql = @"
+                    SELECT MaDV, TenDV, GiaDichVu 
+                    FROM DICHVU 
+                    WHERE TrangThai = 1 
+                      AND MaLoaiDV IN ('LDV02', 'LDV03', 'LDV04', 'LDV05')";
+
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     conn.Open();
@@ -400,8 +408,9 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         }
 
         // 4. BẠN CẦN CẬP NHẬT LẠI HÀM LuuKhamBenh để thêm tham số maBS và xử lý lưu CLS
-        public bool LuuKhamBenh(KhamBenhViewModel model, string maBS)
+        public bool LuuKhamBenh(KhamBenhViewModel model, string maBS, out string errorMsg)
         {
+            errorMsg = "";
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
                 conn.Open();
@@ -457,20 +466,132 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         }
                     }
                     // ======= NẾU KHÔNG CÓ CLS THÌ LƯU BỆNH & KÊ THUỐC (Code cũ giữ nguyên) =======
-                    else
+                    else if (!model.YeuCauCanLamSang)
                     {
-                        // ... (Giữ nguyên đoạn code Insert CHITIET_CHANDOAN và DON_THUOC của bạn trước đó ở đây) ...
+                        // 5.2 Lưu danh sách Bệnh (Chẩn đoán)
+                        if (model.DanhSachMaBenh != null && model.DanhSachMaBenh.Count > 0)
+                        {
+                            string sqlChanDoan = "INSERT INTO CHITIET_CHANDOAN (MaPhieuKhamBenh, MaBenh, LoaiBenh, GiaiDoan) VALUES (@MaPhieu, @MaBenh, N'Bệnh chính', 0)";
+                            using (SqlCommand cmdCD = new SqlCommand(sqlChanDoan, conn, tran))
+                            {
+                                cmdCD.Parameters.Add("@MaPhieu", System.Data.SqlDbType.Int);
+                                cmdCD.Parameters.Add("@MaBenh", System.Data.SqlDbType.Char, 10);
+                                foreach (var maBenh in model.DanhSachMaBenh)
+                                {
+                                    cmdCD.Parameters["@MaPhieu"].Value = model.MaPhieuKhamBenh;
+                                    cmdCD.Parameters["@MaBenh"].Value = maBenh;
+                                    cmdCD.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        // 5.3 Kê Đơn Thuốc
+                        if (model.DonThuoc != null && model.DonThuoc.Count > 0)
+                        {
+                            string sqlTaoDon = "INSERT INTO DON_THUOC (MaPhieuKhamBenh, NgayKe, TrangThai) OUTPUT INSERTED.MaDonThuoc VALUES (@MaPhieu, GETDATE(), N'Chưa phát')";
+                            int maDonThuoc = 0;
+                            using (SqlCommand cmdDT = new SqlCommand(sqlTaoDon, conn, tran))
+                            {
+                                cmdDT.Parameters.AddWithValue("@MaPhieu", model.MaPhieuKhamBenh);
+                                maDonThuoc = (int)cmdDT.ExecuteScalar();
+                            }
+
+                            string sqlChiTietThuoc = @"INSERT INTO CT_DON_THUOC 
+                                (MaDonThuoc, MaThuoc, SoLuongSang, SoLuongTrua, SoLuongChieu, SoLuongToi, SoNgayDung, SoLuong, DonViTinh, DonGia, GhiChu) 
+                                VALUES (@MaDon, @MaThuoc, @S, @T, @C, @Toi, @SoNgay, @TongSL, @DVT, @DonGia, @GhiChu)";
+
+                            using (SqlCommand cmdCT = new SqlCommand(sqlChiTietThuoc, conn, tran))
+                            {
+                                cmdCT.Parameters.Add("@MaDon", System.Data.SqlDbType.Int);
+                                cmdCT.Parameters.Add("@MaThuoc", System.Data.SqlDbType.Char, 10);
+                                cmdCT.Parameters.Add("@S", System.Data.SqlDbType.Decimal);
+                                cmdCT.Parameters.Add("@T", System.Data.SqlDbType.Decimal);
+                                cmdCT.Parameters.Add("@C", System.Data.SqlDbType.Decimal);
+                                cmdCT.Parameters.Add("@Toi", System.Data.SqlDbType.Decimal);
+                                cmdCT.Parameters.Add("@SoNgay", System.Data.SqlDbType.Int);
+                                cmdCT.Parameters.Add("@TongSL", System.Data.SqlDbType.Int);
+                                cmdCT.Parameters.Add("@DVT", System.Data.SqlDbType.NVarChar, 20);
+                                cmdCT.Parameters.Add("@DonGia", System.Data.SqlDbType.Decimal);
+                                cmdCT.Parameters.Add("@GhiChu", System.Data.SqlDbType.NVarChar, 200);
+
+                                foreach (var t in model.DonThuoc)
+                                {
+                                    string dvt = "Viên";
+                                    decimal donGia = 0;
+                                    string sqlInfo = "SELECT DonViCoBan, GiaBan FROM THUOC WHERE MaThuoc = @MaTh";
+                                    using (SqlCommand cmdInfo = new SqlCommand(sqlInfo, conn, tran))
+                                    {
+                                        cmdInfo.Parameters.AddWithValue("@MaTh", t.MaThuoc);
+                                        using (SqlDataReader drInfo = cmdInfo.ExecuteReader())
+                                        {
+                                            if (drInfo.Read())
+                                            {
+                                                dvt = drInfo["DonViCoBan"].ToString();
+                                                donGia = drInfo["GiaBan"] != DBNull.Value ? Convert.ToDecimal(drInfo["GiaBan"]) : 0;
+                                            }
+                                        }
+                                    }
+
+                                    decimal tongSLLeo = (t.Sang + t.Trua + t.Chieu + t.Toi) * t.SoNgay;
+                                    int tongSoLuong = (int)Math.Ceiling(tongSLLeo);
+
+                                    cmdCT.Parameters["@MaDon"].Value = maDonThuoc;
+                                    cmdCT.Parameters["@MaThuoc"].Value = t.MaThuoc;
+                                    cmdCT.Parameters["@S"].Value = t.Sang;
+                                    cmdCT.Parameters["@T"].Value = t.Trua;
+                                    cmdCT.Parameters["@C"].Value = t.Chieu;
+                                    cmdCT.Parameters["@Toi"].Value = t.Toi;
+                                    cmdCT.Parameters["@SoNgay"].Value = t.SoNgay;
+                                    cmdCT.Parameters["@TongSL"].Value = tongSoLuong;
+                                    cmdCT.Parameters["@DVT"].Value = dvt;
+                                    cmdCT.Parameters["@DonGia"].Value = donGia;
+                                    cmdCT.Parameters["@GhiChu"].Value = t.GhiChu ?? (object)DBNull.Value;
+                                    cmdCT.ExecuteNonQuery();
+                                }
+                            }
+                        }
                     }
 
                     tran.Commit();
                     return true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     tran.Rollback();
+                    errorMsg = ex.Message;
                     return false;
                 }
             }
+        }
+        // Lấy danh sách kết quả Cận lâm sàng của Phiếu khám
+        public List<dynamic> GetKetQuaCLS(int maPKB)
+        {
+            var list = new List<dynamic>();
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                string sql = @"
+                    SELECT k.MaKetQua, d.TenDV, k.NoiDungKetQua, k.NgayThucHien
+                    FROM KETQUA_CLS k
+                    JOIN DICHVU d ON k.MaDV = d.MaDV
+                    WHERE k.MaPhieuKhamBenh = @MaPKB AND k.TrangThai = N'Đã có kết quả'";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@MaPKB", maPKB);
+                    conn.Open();
+                    using (SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            list.Add(new {
+                                TenDV = dr["TenDV"].ToString(),
+                                NoiDungKetQua = dr["NoiDungKetQua"].ToString(),
+                                NgayThucHien = dr["NgayThucHien"] != DBNull.Value ? Convert.ToDateTime(dr["NgayThucHien"]).ToString("dd/MM/yyyy HH:mm") : ""
+                            });
+                        }
+                    }
+                }
+            }
+            return list;
         }
     }
 }

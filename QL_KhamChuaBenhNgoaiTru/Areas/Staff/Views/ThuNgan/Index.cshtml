@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewBag.Title = "Quầy Thu Ngân & Viện Phí";
     Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
 
@@ -108,7 +108,6 @@
                             {
                                 bool hasBHYT = row["BHYT"] != DBNull.Value && Convert.ToBoolean(row["BHYT"]);
                                 <li class="list-group-item patient-row p-3 border-bottom"
-                                    data-mahd="@row["MaHD"]"
                                     data-mapkb="@row["MaPhieuKhamBenh"]"
                                     data-mabn="@row["MaBN"]"
                                     data-hoten="@row["HoTen"]"
@@ -117,7 +116,7 @@
 
                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                         <h6 class="mb-0 fw-bold text-primary">@row["HoTen"]</h6>
-                                        <span class="badge bg-danger rounded-pill">Nợ: @Convert.ToDecimal(row["TongTienBenhNhanTra"]).ToString("N0") ₫</span>
+                                        <span class="badge bg-danger rounded-pill">Đang nợ phí</span>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center text-muted small">
                                         <span><i class="bi bi-person-vcard me-1"></i>Mã BN: @row["MaBN"]</span>
@@ -167,19 +166,10 @@
                     </div>
 
                     <div class="flex-grow-1 p-4 overflow-y-auto">
-                        <h6 class="fw-bold text-secondary mb-3 text-uppercase fs-7">Chi tiết các khoản phí</h6>
-                        <table class="table table-borderless table-hover align-middle">
-                            <thead class="border-bottom border-2">
-                                <tr class="text-muted small">
-                                    <th>Nội dung</th>
-                                    <th class="text-end">Đơn giá</th>
-                                    <th class="text-end text-success">BHYT Trả</th>
-                                    <th class="text-end text-danger">BN Phải Trả</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tbChiTiet">
-                            </tbody>
-                        </table>
+                        <h6 class="fw-bold text-secondary mb-3 text-uppercase fs-7">Chọn khoản phí cần thanh toán</h6>
+                        <div class="list-group mb-3" id="paymentOptions">
+                            <!-- Chờ render từ AJAX -->
+                        </div>
                     </div>
 
                     <div class="p-4 bg-light rounded-bottom-4 mt-auto">
@@ -207,8 +197,8 @@
                             <h1 class="mb-0 fw-bolder display-5" id="lblTongTien">0 ₫</h1>
                         </div>
 
-                        <input type="hidden" id="hdnMaHD" value="0" />
                         <input type="hidden" id="hdnMaPKB" value="0" />
+                        <input type="hidden" id="hdnTongTien" value="0" />
 
                         <div class="d-grid gap-2">
                             <button class="btn btn-primary btn-lg rounded-pill fw-bold shadow hover-lift" id="btnThanhToan" onclick="xuLyThanhToan()">
@@ -227,16 +217,30 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function () {
-            // Lọc danh sách bệnh nhân
             $("#searchPatient").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
                 $("#patientList li").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
+            
+            // Xử lý khi tick chọn checkbox tính tổng tiền
+            $(document).on('change', '.payment-check', function() {
+                let total = 0;
+                $('.payment-check:checked').each(function() {
+                    total += parseFloat($(this).data('price'));
+                });
+                $('#lblTongTien').text(total.toLocaleString('vi-VN') + ' ₫');
+                $('#hdnTongTien').val(total);
+                
+                if (total == 0) {
+                    $('#btnThanhToan').prop('disabled', true);
+                } else {
+                    $('#btnThanhToan').prop('disabled', false);
+                }
+            });
         });
 
-        // HÀM CLICK VÀO BỆNH NHÂN -> GỌI AJAX LẤY CHI TIẾT HÓA ĐƠN
         function loadBillDetails(element) {
             $('.patient-row').removeClass('active');
             $(element).addClass('active');
@@ -244,79 +248,99 @@
             $('#emptyState').addClass('d-none');
             $('#billContent').removeClass('d-none');
 
-            let maHD = $(element).data('mahd');
             let maPKB = $(element).data('mapkb');
             let maBN = $(element).data('mabn');
             let hoTen = $(element).data('hoten');
             let bhyt = $(element).data('bhyt');
 
-            $('#lblMaHD').text('#' + maHD);
+            $('#lblMaHD').text('#PKB' + maPKB);
             $('#lblMaBN').text(maBN);
             $('#lblHoTen').text(hoTen);
             $('#lblBHYT').text(bhyt === "CÓ" ? "Bảo Hiểm Y Tế (BHYT)" : "Khám Dịch Vụ");
 
-            $('#hdnMaHD').val(maHD);
             $('#hdnMaPKB').val(maPKB);
+            $('#hdnTongTien').val(0);
+            $('#lblTongTien').text('0 ₫');
+            $('#btnThanhToan').prop('disabled', true);
+            $('#paymentOptions').html('<div class="text-center py-3"><div class="spinner-border text-primary spinner-border-sm"></div> Đang tải dữ liệu...</div>');
 
-            $('#tbChiTiet').html('<tr><td colspan="4" class="text-center py-3"><div class="spinner-border text-primary spinner-border-sm"></div> Đang tải dữ liệu...</td></tr>');
-            $('#lblTongTien').text('Đang tính...');
-
-            $.post('@Url.Action("GetChiTiet", "ThuNgan")', { maHD: maHD }, function (res) {
+            $.post('@Url.Action("GetChiTiet", "ThuNgan")', { maPKB: maPKB }, function (res) {
                 if (res.success) {
+                    let d = res.data;
                     let html = '';
-                    let tongBenhNhanTra = 0;
-
-                    if (res.data.length === 0) {
-                        html = '<tr><td colspan="4" class="text-center text-muted py-3">Không có dịch vụ nào cần thanh toán.</td></tr>';
-                    } else {
-                        res.data.forEach(item => {
-                            tongBenhNhanTra += item.TienBenhNhan;
-                            html += `
-                                <tr class="border-bottom">
-                                    <td class="fw-bold text-dark py-3">${item.TenDV}</td>
-                                    <td class="text-end py-3">${item.DonGia.toLocaleString('vi-VN')} ₫</td>
-                                    <td class="text-end text-success fw-medium py-3">${item.TienBHYT.toLocaleString('vi-VN')} ₫</td>
-                                    <td class="text-end text-danger fw-bold py-3 fs-6">${item.TienBenhNhan.toLocaleString('vi-VN')} ₫</td>
-                                </tr>
-                            `;
-                        });
+                    
+                    if (!d.DaThuPhiKham && d.PhiKham > 0) {
+                        html += `
+                            <label class="list-group-item d-flex justify-content-between align-items-center shadow-sm mb-2 rounded border-primary">
+                                <div>
+                                    <input class="form-check-input me-1 payment-check fs-5" type="checkbox" id="chkKham" value="kh" data-price="${d.PhiKham}">
+                                    <span class="fw-bold text-primary ms-2 fs-6">Phí Khám Bệnh</span>
+                                </div>
+                                <span class="fw-bold text-danger fs-5">${d.PhiKham.toLocaleString('vi-VN')} ₫</span>
+                            </label>
+                        `;
+                    }
+                    if (!d.DaThuPhiDichVuCLS && d.PhiDichVuCLS > 0) {
+                        html += `
+                            <label class="list-group-item d-flex justify-content-between align-items-center shadow-sm mb-2 rounded border-success">
+                                <div>
+                                    <input class="form-check-input me-1 payment-check fs-5" type="checkbox" id="chkCLS" value="cls" data-price="${d.PhiDichVuCLS}">
+                                    <span class="fw-bold text-success ms-2 fs-6">Phí Cận Lâm Sàng</span>
+                                </div>
+                                <span class="fw-bold text-danger fs-5">${d.PhiDichVuCLS.toLocaleString('vi-VN')} ₫</span>
+                            </label>
+                        `;
+                    }
+                    if (!d.DaThuPhiThuoc && d.PhiThuoc > 0) {
+                        html += `
+                            <label class="list-group-item d-flex justify-content-between align-items-center shadow-sm mb-2 rounded border-info">
+                                <div>
+                                    <input class="form-check-input me-1 payment-check fs-5" type="checkbox" id="chkThuoc" value="thuoc" data-price="${d.PhiThuoc}">
+                                    <span class="fw-bold text-info ms-2 fs-6">Phí Thuốc Men</span>
+                                </div>
+                                <span class="fw-bold text-danger fs-5">${d.PhiThuoc.toLocaleString('vi-VN')} ₫</span>
+                            </label>
+                        `;
                     }
 
-                    $('#tbChiTiet').html(html);
-                    $('#lblTongTien').text(tongBenhNhanTra.toLocaleString('vi-VN') + ' ₫');
+                    if (html === '') {
+                        html = '<div class="alert alert-success mt-2"><i class="bi bi-check-circle me-2"></i>Bệnh nhân này đã thanh toán toàn bộ chi phí phát sinh.</div>';
+                    }
+
+                    $('#paymentOptions').html(html);
 
                 } else {
-                    Swal.fire('Lỗi', 'Không thể lấy chi tiết hóa đơn: ' + res.message, 'error');
+                    Swal.fire('Lỗi', 'Không thể lấy chi tiết công nợ: ' + res.message, 'error');
                 }
             });
         }
 
-        // ========================================================
-        // HÀM BẤM NÚT XÁC NHẬN THU TIỀN (TÍCH HỢP PAYOS)
-        // ========================================================
+        // BẤM XÁC NHẬN THU TIỀN
         function xuLyThanhToan() {
-            let maHD = $('#hdnMaHD').val();
             let maPKB = $('#hdnMaPKB').val();
+            let tongTien = $('#hdnTongTien').val();
+            
+            let thuPhiKham = $('#chkKham').is(':checked');
+            let thuPhiCLS = $('#chkCLS').is(':checked');
+            let thuPhiThuoc = $('#chkThuoc').is(':checked');
 
             let phuongThuc = $('input[name="phuongThucTT"]:checked').val();
             let phuongThucText = $('label[for="' + $('input[name="phuongThucTT"]:checked').attr('id') + '"]').text().trim();
 
-            if (maHD == 0 || maPKB == 0) {
-                Swal.fire('Chú ý', 'Vui lòng chọn hóa đơn cần thanh toán!', 'warning');
+            if (maPKB == 0 || tongTien == 0) {
+                Swal.fire('Chú ý', 'Vui lòng chọn ít nhất một khoản phí để thanh toán!', 'warning');
                 return;
             }
 
-            // NẾU CHỌN CHUYỂN KHOẢN (QR PAYOS ĐỘNG)
+            // CHUYỂN KHOẢN (QR PAYOS ĐỘNG)
             if(phuongThuc === "CHUYEN_KHOAN") {
                 let btn = $('#btnThanhToan');
                 btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang tạo mã QR...');
 
-                // Gọi API Tạo mã QR bên Controller
-                $.post('@Url.Action("TaoMaQR", "ThuNgan")', { maHD: maHD, maPKB: maPKB }, function(res) {
+                $.post('@Url.Action("TaoMaQR", "ThuNgan")', { maPKB: maPKB, tongTien: tongTien }, function(res) {
                     btn.prop('disabled', false).html('<i class="bi bi-check2-circle me-2 fs-5 align-middle"></i>XÁC NHẬN THU TIỀN');
 
                     if(res.success) {
-                        // Dùng API public để vẽ ảnh QR từ chuỗi string VietQR
                         let qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(res.qrString);
                         let checkInterval;
 
@@ -332,24 +356,22 @@
                                 </div>
                             `,
                             showCancelButton: true,
-                            showConfirmButton: false, // Ẩn nút OK để ép hệ thống tự quét
+                            showConfirmButton: false, 
                             cancelButtonText: 'Hủy giao dịch',
                             allowOutsideClick: false,
                             didOpen: () => {
-                                // POLLING: Tự động hỏi thăm PayOS mỗi 3 giây
                                 checkInterval = setInterval(function() {
                                     $.post('@Url.Action("KiemTraThanhToan", "ThuNgan")', { orderCode: res.orderCode }, function(checkRes) {
                                         if(checkRes.isPaid) {
-                                            clearInterval(checkInterval); // Tiền về -> Dừng vòng lặp
+                                            clearInterval(checkInterval);
                                             Swal.close();
-                                            // Chốt DB
-                                            thucHienGoiApiThanhToan(maHD, maPKB, "Chuyển khoản VietQR");
+                                            thucHienGoiApiThanhToan(maPKB, thuPhiKham, thuPhiCLS, thuPhiThuoc, "Chuyển khoản VietQR");
                                         }
                                     });
                                 }, 3000);
                             },
                             willClose: () => {
-                                clearInterval(checkInterval); // Tắt popup -> dừng quét
+                                clearInterval(checkInterval);
                             }
                         });
                     } else {
@@ -363,29 +385,33 @@
             // NẾU LÀ TIỀN MẶT HOẶC QUẸT THẺ
             else {
                 Swal.fire({
-                    title: 'Xác nhận thu tiền?',
-                    html: `Bạn đang xác nhận thu tiền bằng hình thức <strong class="text-primary">${phuongThucText}</strong>. Hành động này không thể hoàn tác.`,
+                    title: 'Xác nhận thu tiền cục bộ?',
+                    html: `Tổng thu <b class="text-danger">${parseFloat(tongTien).toLocaleString('vi-VN')} ₫</b> qua <strong class="text-primary">${phuongThucText}</strong>. Hành động này không thể hoàn tác.`,
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonText: 'Đồng ý thu tiền',
                     cancelButtonText: 'Hủy',
                     confirmButtonColor: '#0d6efd'
                 }).then((result) => {
-                    if (result.isConfirmed) { thucHienGoiApiThanhToan(maHD, maPKB, phuongThucText); }
+                    if (result.isConfirmed) { thucHienGoiApiThanhToan(maPKB, thuPhiKham, thuPhiCLS, thuPhiThuoc, phuongThucText); }
                 });
             }
         }
 
-        // HÀM LƯU DB CHUNG
-        function thucHienGoiApiThanhToan(maHD, maPKB, phuongThucText) {
+        function thucHienGoiApiThanhToan(maPKB, thuPhiKham, thuPhiCLS, thuPhiThuoc, phuongThucText) {
             let btn = $('#btnThanhToan');
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...');
 
-            $.post('@Url.Action("ThanhToan", "ThuNgan")', { maHD: maHD, maPKB: maPKB }, function (res) {
+            $.post('@Url.Action("ThanhToan", "ThuNgan")', { 
+                maPKB: maPKB, 
+                thuPhiKham: thuPhiKham, 
+                thuPhiCLS: thuPhiCLS, 
+                thuPhiThuoc: thuPhiThuoc 
+            }, function (res) {
                 if (res.success) {
                     Swal.fire({
                         title: 'ĐÃ THU TIỀN!',
-                        html: `Hóa đơn đã được thanh toán thành công qua <strong>${phuongThucText}</strong>.<br/>Bệnh nhân có thể tiếp tục quy trình khám.`,
+                        html: `Ghi nhận thành công qua <strong>${phuongThucText}</strong>.<br/>Bệnh nhân có thể tiếp tục quy trình khám/chữa bệnh.`,
                         icon: 'success',
                         timer: 3000,
                         timerProgressBar: true,

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
@@ -18,7 +18,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
     {
         ThuNganDB db = new ThuNganDB();
 
-        // CHẶN QUYỀN
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             base.OnActionExecuting(filterContext);
@@ -36,23 +35,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetChiTiet(int maHD)
+        public JsonResult GetChiTiet(int maPKB)
         {
             try
             {
-                DataTable dt = db.GetChiTietHoaDon(maHD);
-                var list = new List<object>();
-                foreach (DataRow row in dt.Rows)
-                {
-                    list.Add(new
-                    {
-                        TenDV = row["TenDV"].ToString(),
-                        DonGia = Convert.ToDecimal(row["DonGia"]),
-                        TienBHYT = Convert.ToDecimal(row["TienBHYTChiTra"]),
-                        TienBenhNhan = Convert.ToDecimal(row["TienBenhNhanTra"])
-                    });
-                }
-                return Json(new { success = true, data = list });
+                var vm = db.GetChiTietCongNo(maPKB);
+                return Json(new { success = true, data = vm });
             }
             catch (Exception ex)
             {
@@ -61,25 +49,26 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult ThanhToan(int maHD, int maPKB)
+        public JsonResult ThanhToan(int maPKB, bool thuPhiKham, bool thuPhiCLS, bool thuPhiThuoc)
         {
-            if (maHD <= 0 || maPKB <= 0) return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+            if (maPKB <= 0) return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+            
+            var nv = Session["NhanVien"] as NhanVien;
+            string maNV = nv != null ? nv.MaNV : "NV001";
 
             string errorMsg;
-            bool result = db.XacNhanThuTien(maHD, maPKB, out errorMsg);
+            bool result = db.XacNhanThuTienTungPhan(maPKB, thuPhiKham, thuPhiCLS, thuPhiThuoc, maNV, out errorMsg);
 
             if (result) return Json(new { success = true });
             return Json(new { success = false, message = errorMsg });
         }
 
         // ======================================================================
-        // CÁC HÀM TÍCH HỢP PAYOS "GỌI CHAY" (KHÔNG CẦN NUGET)
+        // CÁC HÀM TÍCH HỢP PAYOS
         // ======================================================================
 
-        // Hàm hỗ trợ băm chữ ký bảo mật (Signature) chuẩn thuật toán PayOS
         private string CreateSignature(long amount, string cancelUrl, string description, long orderCode, string returnUrl, string checksumKey)
         {
-            // Các tham số phải được sắp xếp theo thứ tự alphabet A-Z
             string data = $"amount={amount}&cancelUrl={cancelUrl}&description={description}&orderCode={orderCode}&returnUrl={returnUrl}";
             using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(checksumKey)))
             {
@@ -89,31 +78,21 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> TaoMaQR(int maHD, int maPKB)
+        public async Task<JsonResult> TaoMaQR(int maPKB, int tongTien)
         {
             try
             {
-                // 1. Tính tổng tiền cần thu
-                DataTable dt = db.GetChiTietHoaDon(maHD);
-                int tongTien = 0;
-                foreach (DataRow row in dt.Rows)
-                {
-                    tongTien += Convert.ToInt32(row["TienBenhNhanTra"]);
-                }
+                if (tongTien <= 0) return Json(new { success = false, message = "Không có số tiền cần thanh toán." });
 
-                if (tongTien <= 0) return Json(new { success = false, message = "Hóa đơn 0đ, không cần quét QR." });
-
-                // 2. Chuẩn bị dữ liệu gửi đi
                 string clientId = ConfigurationManager.AppSettings["PayOS:ClientId"];
                 string apiKey = ConfigurationManager.AppSettings["PayOS:ApiKey"];
                 string checksumKey = ConfigurationManager.AppSettings["PayOS:ChecksumKey"];
 
-                long orderCode = long.Parse(maHD.ToString() + DateTime.Now.ToString("HHmmss"));
+                long orderCode = long.Parse(maPKB.ToString() + DateTime.Now.ToString("HHmmss"));
                 string returnUrl = ConfigurationManager.AppSettings["PayOS:ReturnUrl"] ?? "https://localhost:44326/Staff/ThuNgan";
                 string cancelUrl = returnUrl;
-                string description = "Thanh toan vien phi";
+                string description = "Thu tien PKB " + maPKB;
 
-                // Băm mã Signature
                 string signature = CreateSignature(tongTien, cancelUrl, description, orderCode, returnUrl, checksumKey);
 
                 var requestData = new
@@ -121,13 +100,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                     orderCode = orderCode,
                     amount = tongTien,
                     description = description,
-                    items = new[] { new { name = "Vien phi Kham benh", quantity = 1, price = tongTien } },
+                    items = new[] { new { name = "Thanh toan tung phan", quantity = 1, price = tongTien } },
                     returnUrl = returnUrl,
                     cancelUrl = cancelUrl,
                     signature = signature
                 };
 
-                // 3. GỌI API TRỰC TIẾP LÊN PAYOS
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("x-client-id", clientId);
@@ -139,7 +117,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                     HttpResponseMessage response = await client.PostAsync("https://api-merchant.payos.vn/v2/payment-requests", content);
                     string responseString = await response.Content.ReadAsStringAsync();
 
-                    // 4. Đọc dữ liệu trả về
                     JObject resJson = JObject.Parse(responseString);
 
                     if (resJson["code"]?.ToString() == "00")

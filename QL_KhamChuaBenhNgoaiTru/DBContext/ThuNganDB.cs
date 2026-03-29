@@ -1,4 +1,4 @@
-﻿using QL_KhamChuaBenhNgoaiTru.Models;
+using QL_KhamChuaBenhNgoaiTru.Models;
 using System;
 using System.Configuration;
 using System.Data;
@@ -10,22 +10,21 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
     {
         private string connectStr = ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString;
 
-        // 1. Lấy danh sách bệnh nhân đang nợ tiền (Chưa thanh toán)
+        // 1. Lấy danh sách bệnh nhân đang nợ tiền (Khám, CLS, Thuốc)
         public DataTable GetDanhSachChoThuTien()
         {
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
             {
-                // Lấy những hóa đơn Chưa thanh toán trong ngày hôm nay
+                // Gom 3 nhóm nợ (Khám, CLS, Thuốc)
                 string sql = @"
-                    SELECT hd.MaHD, hd.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.BHYT,
-                           hd.TongTienBenhNhanTra, hd.NgayThanhToan, pkb.MaPhieuKhamBenh, pkb.TrangThai
-                    FROM HOADON hd
-                    JOIN BENHNHAN bn ON hd.MaBN = bn.MaBN
-                    JOIN PHIEUKHAMBENH pkb ON hd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
-                    WHERE hd.TrangThaiThanhToan = N'Chưa thanh toán' 
-                      AND CAST(hd.NgayThanhToan AS DATE) = CAST(GETDATE() AS DATE)
-                    ORDER BY hd.MaHD ASC";
+                    SELECT DISTINCT pkb.MaPhieuKhamBenh, bn.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.BHYT, pkb.NgayLap, pkb.TrangThai
+                    FROM PHIEUKHAMBENH pkb
+                    JOIN BENHNHAN bn ON pkb.MaBN = bn.MaBN
+                    WHERE (pkb.TrangThai = N'Chờ thanh toán')
+                       OR EXISTS (SELECT 1 FROM PHIEU_CHIDINH pcd WHERE pcd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh AND pcd.TrangThai = N'Chưa thanh toán')
+                       OR EXISTS (SELECT 1 FROM DON_THUOC dt WHERE dt.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh AND dt.TrangThai = N'Chưa phát')
+                    ORDER BY pkb.MaPhieuKhamBenh ASC";
 
                 SqlDataAdapter da = new SqlDataAdapter(sql, con);
                 da.Fill(dt);
@@ -33,29 +32,64 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return dt;
         }
 
-        // 2. Xem chi tiết các dịch vụ trong 1 Hóa Đơn
-        public DataTable GetChiTietHoaDon(int maHD)
+        // 2. Lấy Chi tiết nợ từng phần của 1 Bệnh Nhân
+        public ThanhToanViewModel GetChiTietCongNo(int maPKB)
         {
-            DataTable dt = new DataTable();
+            ThanhToanViewModel vm = new ThanhToanViewModel { MaPhieuKhamBenh = maPKB };
             using (SqlConnection con = new SqlConnection(connectStr))
             {
-                // Lấy chi tiết chưa thanh toán (Không có cột SoLuong vì đã bỏ như bác dặn)
-                string sql = @"
-                    SELECT ct.MaDV, dv.TenDV, ct.DonGia, ct.TongTienGoc, ct.TienBHYTChiTra, ct.TienBenhNhanTra
-                    FROM CT_HOADON_DV ct
-                    JOIN DICHVU dv ON ct.MaDV = dv.MaDV
-                    WHERE ct.MaHD = @MaHD AND ct.TrangThaiThanhToan = N'Chưa thanh toán'";
+                con.Open();
+                
+                // 1. Phí Khám
+                string sqlPKB = "SELECT bn.HoTen, pkb.TrangThai FROM PHIEUKHAMBENH pkb JOIN BENHNHAN bn ON pkb.MaBN = bn.MaBN WHERE pkb.MaPhieuKhamBenh = @MaPKB";
+                using (SqlCommand cmd = new SqlCommand(sqlPKB, con))
+                {
+                    cmd.Parameters.AddWithValue("@MaPKB", maPKB);
+                    using (SqlDataReader rd = cmd.ExecuteReader())
+                    {
+                        if (rd.Read())
+                        {
+                            vm.TenBenhNhan = rd["HoTen"].ToString();
+                            vm.TrangThai = rd["TrangThai"].ToString();
+                            vm.PhiKham = 150000;
+                            vm.DaThuPhiKham = (vm.TrangThai != "Chờ thanh toán");
+                        }
+                    }
+                }
 
-                SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@MaHD", maHD);
-                SqlDataAdapter da = new SqlDataAdapter(cmd);
-                da.Fill(dt);
+                // 2. Phí Dịch vụ CLS
+                string sqlCLS = "SELECT SUM(DonGia) FROM CHITIET_CHIDINH cd JOIN PHIEU_CHIDINH pcd ON cd.MaPhieuChiDinh = pcd.MaPhieuChiDinh WHERE pcd.MaPhieuKhamBenh = @MaPKB AND pcd.TrangThai = N'Chưa thanh toán'";
+                using (SqlCommand cmd = new SqlCommand(sqlCLS, con))
+                {
+                    cmd.Parameters.AddWithValue("@MaPKB", maPKB);
+                    var obj = cmd.ExecuteScalar();
+                    if (obj != null && obj != DBNull.Value)
+                    {
+                        vm.PhiDichVuCLS = Convert.ToDecimal(obj);
+                        vm.DaThuPhiDichVuCLS = false;
+                    }
+                    else vm.DaThuPhiDichVuCLS = true;
+                }
+
+                // 3. Phí Thuốc
+                string sqlThuoc = "SELECT SUM(DonGia * SoLuong) FROM CT_DON_THUOC ctdt JOIN DON_THUOC dt ON ctdt.MaDonThuoc = dt.MaDonThuoc WHERE dt.MaPhieuKhamBenh = @MaPKB AND dt.TrangThai = N'Chưa phát'";
+                using (SqlCommand cmd = new SqlCommand(sqlThuoc, con))
+                {
+                    cmd.Parameters.AddWithValue("@MaPKB", maPKB);
+                    var obj = cmd.ExecuteScalar();
+                    if (obj != null && obj != DBNull.Value)
+                    {
+                        vm.PhiThuoc = Convert.ToDecimal(obj);
+                        vm.DaThuPhiThuoc = false;
+                    }
+                    else vm.DaThuPhiThuoc = true;
+                }
             }
-            return dt;
+            return vm;
         }
 
-        // 3. XÁC NHẬN THU TIỀN (Chốt sổ)
-        public bool XacNhanThuTien(int maHD, int maPhieuKhamBenh, out string message)
+        // 3. XÁC NHẬN THU TIỀN TỪNG PHẦN
+        public bool XacNhanThuTienTungPhan(int maPKB, bool thuPhiKham, bool thuPhiCLS, bool thuPhiThuoc, string maNV, out string message)
         {
             message = "";
             using (SqlConnection con = new SqlConnection(connectStr))
@@ -65,33 +99,77 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 {
                     try
                     {
-                        // 3.1. Cập nhật Hóa Đơn Tổng
-                        string updateHD = "UPDATE HOADON SET TrangThaiThanhToan = N'Đã thanh toán', NgayThanhToan = GETDATE() WHERE MaHD = @MaHD";
-                        SqlCommand cmdHD = new SqlCommand(updateHD, con, trans);
-                        cmdHD.Parameters.AddWithValue("@MaHD", maHD);
-                        cmdHD.ExecuteNonQuery();
-
-                        // 3.2. Cập nhật Chi tiết Hóa Đơn Dịch Vụ
-                        string updateCTHD = "UPDATE CT_HOADON_DV SET TrangThaiThanhToan = N'Đã thanh toán' WHERE MaHD = @MaHD";
-                        SqlCommand cmdCTHD = new SqlCommand(updateCTHD, con, trans);
-                        cmdCTHD.Parameters.AddWithValue("@MaHD", maHD);
-                        cmdCTHD.ExecuteNonQuery();
-
-                        // 3.3. Móc nối quy trình: Kiểm tra xem đang ở khâu nào để búng trạng thái cho đúng
-                        string checkPKB = "SELECT TrangThai FROM PHIEUKHAMBENH WHERE MaPhieuKhamBenh = @MaPKB";
-                        SqlCommand cmdCheck = new SqlCommand(checkPKB, con, trans);
-                        cmdCheck.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
-                        string trangThaiHienTai = cmdCheck.ExecuteScalar()?.ToString();
-
-                        // Nếu là thu tiền Công Khám Lần 1 (Tiếp tân đẩy qua) -> Đổi thành "Chờ cấp số"
-                        if (trangThaiHienTai == "Chờ thanh toán")
+                        if (thuPhiKham)
                         {
                             string updatePKB = "UPDATE PHIEUKHAMBENH SET TrangThai = N'Chờ cấp số' WHERE MaPhieuKhamBenh = @MaPKB";
                             SqlCommand cmdPKB = new SqlCommand(updatePKB, con, trans);
-                            cmdPKB.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                            cmdPKB.Parameters.AddWithValue("@MaPKB", maPKB);
                             cmdPKB.ExecuteNonQuery();
+
+                            // Huỷ Hoá đơn cũ (nếu Tiếp Tân đã lỡ tạo để không nợ lủng củng)
+                            string updateHD = "UPDATE HOADON SET TrangThaiThanhToan = N'Đã thanh toán', NgayThanhToan = GETDATE() WHERE MaPhieuKhamBenh = @MaPKB AND TrangThaiThanhToan = N'Chưa thanh toán'";
+                            SqlCommand cmdHD = new SqlCommand(updateHD, con, trans);
+                            cmdHD.Parameters.AddWithValue("@MaPKB", maPKB);
+                            cmdHD.ExecuteNonQuery();
+
+                            string insertBL = "INSERT INTO BIENLAI_THUTIEN (MaPhieuKhamBenh, LoaiBienLai, TongTien, MaNV_ThuNgan) VALUES (@MaPKB, 1, 150000, @MaNV)";
+                            SqlCommand cmdBL = new SqlCommand(insertBL, con, trans);
+                            cmdBL.Parameters.AddWithValue("@MaPKB", maPKB);
+                            cmdBL.Parameters.AddWithValue("@MaNV", maNV);
+                            cmdBL.ExecuteNonQuery();
                         }
-                        // (Sau này nếu thu tiền Cận Lâm Sàng thì thêm IF else ở đây)
+
+                        if (thuPhiCLS)
+                        {
+                            string sqlCLS = "SELECT SUM(DonGia) FROM CHITIET_CHIDINH cd JOIN PHIEU_CHIDINH pcd ON cd.MaPhieuChiDinh = pcd.MaPhieuChiDinh WHERE pcd.MaPhieuKhamBenh = @MaPKB AND pcd.TrangThai = N'Chưa thanh toán'";
+                            SqlCommand cmdSum = new SqlCommand(sqlCLS, con, trans);
+                            cmdSum.Parameters.AddWithValue("@MaPKB", maPKB);
+                            decimal sumCLS = Convert.ToDecimal(cmdSum.ExecuteScalar() ?? 0);
+
+                            // TRIGGER đẩy sang KETQUA_CLS trước khi update TrangThai
+                            string insertKQ = @"
+                                INSERT INTO KETQUA_CLS (MaPhieuKhamBenh, MaDV, TrangThai)
+                                SELECT pcd.MaPhieuKhamBenh, ct.MaDV, N'Chờ thực hiện'
+                                FROM CHITIET_CHIDINH ct
+                                JOIN PHIEU_CHIDINH pcd ON ct.MaPhieuChiDinh = pcd.MaPhieuChiDinh
+                                WHERE pcd.MaPhieuKhamBenh = @MaPKB AND pcd.TrangThai = N'Chưa thanh toán'
+                            ";
+                            SqlCommand cmdKQ = new SqlCommand(insertKQ, con, trans);
+                            cmdKQ.Parameters.AddWithValue("@MaPKB", maPKB);
+                            cmdKQ.ExecuteNonQuery();
+
+                            string updatePCD = "UPDATE PHIEU_CHIDINH SET TrangThai = N'Đã thanh toán' WHERE MaPhieuKhamBenh = @MaPKB AND TrangThai = N'Chưa thanh toán'";
+                            SqlCommand cmdPCD = new SqlCommand(updatePCD, con, trans);
+                            cmdPCD.Parameters.AddWithValue("@MaPKB", maPKB);
+                            cmdPCD.ExecuteNonQuery();
+
+                            string insertBL = "INSERT INTO BIENLAI_THUTIEN (MaPhieuKhamBenh, LoaiBienLai, TongTien, MaNV_ThuNgan) VALUES (@MaPKB, 2, @Sum, @MaNV)";
+                            SqlCommand cmdBL = new SqlCommand(insertBL, con, trans);
+                            cmdBL.Parameters.AddWithValue("@MaPKB", maPKB);
+                            cmdBL.Parameters.AddWithValue("@Sum", sumCLS);
+                            cmdBL.Parameters.AddWithValue("@MaNV", maNV);
+                            cmdBL.ExecuteNonQuery();
+                        }
+
+                        if (thuPhiThuoc)
+                        {
+                            string sqlThuoc = "SELECT SUM(DonGia * SoLuong) FROM CT_DON_THUOC ctdt JOIN DON_THUOC dt ON ctdt.MaDonThuoc = dt.MaDonThuoc WHERE dt.MaPhieuKhamBenh = @MaPKB AND dt.TrangThai = N'Chưa phát'";
+                            SqlCommand cmdSumThuoc = new SqlCommand(sqlThuoc, con, trans);
+                            cmdSumThuoc.Parameters.AddWithValue("@MaPKB", maPKB);
+                            decimal sumThuoc = Convert.ToDecimal(cmdSumThuoc.ExecuteScalar() ?? 0);
+
+                            string updateDT = "UPDATE DON_THUOC SET TrangThai = N'Đã thanh toán' WHERE MaPhieuKhamBenh = @MaPKB AND TrangThai = N'Chưa phát'";
+                            SqlCommand cmdDT = new SqlCommand(updateDT, con, trans);
+                            cmdDT.Parameters.AddWithValue("@MaPKB", maPKB);
+                            cmdDT.ExecuteNonQuery();
+
+                            string insertBL = "INSERT INTO BIENLAI_THUTIEN (MaPhieuKhamBenh, LoaiBienLai, TongTien, MaNV_ThuNgan) VALUES (@MaPKB, 3, @Sum, @MaNV)";
+                            SqlCommand cmdBL = new SqlCommand(insertBL, con, trans);
+                            cmdBL.Parameters.AddWithValue("@MaPKB", maPKB);
+                            cmdBL.Parameters.AddWithValue("@Sum", sumThuoc);
+                            cmdBL.Parameters.AddWithValue("@MaNV", maNV);
+                            cmdBL.ExecuteNonQuery();
+                        }
 
                         trans.Commit();
                         return true;
