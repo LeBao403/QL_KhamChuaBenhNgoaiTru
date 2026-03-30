@@ -1,5 +1,6 @@
 using QL_KhamChuaBenhNgoaiTru.Models;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -16,17 +17,24 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
             {
-                // Bổ sung thêm hd.GhiChu để Thu Ngân biết là đang thu tiền Khám, CLS hay Thuốc
+                // LOGIC MỚI: Dùng Subquery để SUM(TienBenhNhanTra) CHỈ những món 'Chưa thanh toán'
                 string sql = @"
-                    SELECT hd.MaHD, hd.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.BHYT,
-                           hd.TongTienBenhNhanTra, hd.NgayThanhToan, hd.GhiChu, 
-                           pkb.MaPhieuKhamBenh, pkb.TrangThai
-                    FROM HOADON hd
-                    JOIN BENHNHAN bn ON hd.MaBN = bn.MaBN
-                    JOIN PHIEUKHAMBENH pkb ON hd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
-                    WHERE hd.TrangThaiThanhToan = N'Chưa thanh toán' 
-                      AND CAST(hd.NgayThanhToan AS DATE) = CAST(GETDATE() AS DATE)
-                    ORDER BY hd.MaHD ASC";
+            SELECT * FROM (
+                SELECT hd.MaHD, hd.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.BHYT,
+                       hd.NgayThanhToan, hd.GhiChu, 
+                       pkb.MaPhieuKhamBenh, pkb.TrangThai,
+                       (
+                           ISNULL((SELECT SUM(TienBenhNhanTra) FROM CT_HOADON_DV WHERE MaHD = hd.MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'), 0) +
+                           ISNULL((SELECT SUM(TienBenhNhanTra) FROM CT_HOADON_THUOC WHERE MaHD = hd.MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'), 0)
+                       ) AS TongTienBenhNhanTra
+                FROM HOADON hd
+                JOIN BENHNHAN bn ON hd.MaBN = bn.MaBN
+                JOIN PHIEUKHAMBENH pkb ON hd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
+                WHERE hd.TrangThaiThanhToan = N'Chưa thanh toán' 
+                  AND CAST(hd.NgayThanhToan AS DATE) = CAST(GETDATE() AS DATE)
+            ) AS DanhSachNo
+            WHERE TongTienBenhNhanTra > 0
+            ORDER BY MaHD ASC";
 
                 SqlDataAdapter da = new SqlDataAdapter(sql, con);
                 da.Fill(dt);
@@ -64,7 +72,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return dt;
         }
 
-        // 3. XÁC NHẬN THU TIỀN (Có xử lý Hủy món & Tính lại tiền Hóa Đơn)
+        // 3. XÁC NHẬN THU TIỀN (Có xử lý Hủy món & Tính lại tiền Hóa Đơn + TẠO PHIẾU PHÁT THUỐC)
         public bool XacNhanThuTien(int maHD, int maPhieuKhamBenh, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, out string message)
         {
             message = "";
@@ -75,7 +83,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 {
                     try
                     {
-                        // 3.1. Hủy các Dịch vụ khách không lấy (Trừ tiền về 0)
+                        // 3.1. Hủy các Dịch vụ khách không lấy
                         if (!string.IsNullOrEmpty(dsHuyDV))
                         {
                             string sqlHuyDV = $"UPDATE CT_HOADON_DV SET TrangThaiThanhToan = N'Hủy', TongTienGoc = 0, TienBHYTChiTra = 0, TienBenhNhanTra = 0 WHERE MaHD = @MaHD AND MaCTHD IN (SELECT value FROM STRING_SPLIT(@ds, ','))";
@@ -85,7 +93,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             cmdHuyDV.ExecuteNonQuery();
                         }
 
-                        // 3.2. Hủy các loại Thuốc khách không lấy (Trừ tiền về 0)
+                        // 3.2. Hủy các loại Thuốc khách không lấy
                         if (!string.IsNullOrEmpty(dsHuyThuoc))
                         {
                             string sqlHuyThuoc = $"UPDATE CT_HOADON_THUOC SET TrangThaiThanhToan = N'Hủy', TongTienGoc = 0, TienBHYTChiTra = 0, TienBenhNhanTra = 0 WHERE MaHD = @MaHD AND MaCTHD IN (SELECT value FROM STRING_SPLIT(@ds, ','))";
@@ -95,53 +103,93 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             cmdHuyThuoc.ExecuteNonQuery();
                         }
 
-                        // 3.3. Xác nhận "Đã thanh toán" cho các món còn lại
+                        // 3.3. Xác nhận "Đã thanh toán"
                         SqlCommand cmdThanhToanDV = new SqlCommand("UPDATE CT_HOADON_DV SET TrangThaiThanhToan = N'Đã thanh toán' WHERE MaHD = @MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'", con, trans);
                         cmdThanhToanDV.Parameters.AddWithValue("@MaHD", maHD); cmdThanhToanDV.ExecuteNonQuery();
 
                         SqlCommand cmdThanhToanThuoc = new SqlCommand("UPDATE CT_HOADON_THUOC SET TrangThaiThanhToan = N'Đã thanh toán' WHERE MaHD = @MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'", con, trans);
                         cmdThanhToanThuoc.Parameters.AddWithValue("@MaHD", maHD); cmdThanhToanThuoc.ExecuteNonQuery();
 
-                        // 3.4. Cập nhật lại TỔNG TIỀN cho Hóa Đơn (Xử lý thông minh trạng thái 0đ)
                         // 3.4. Cập nhật lại TỔNG TIỀN cho Hóa Đơn
                         string updateHD = @"
-                        UPDATE hd
-                        SET TongTienGoc = ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0),
-                            TongTienBHYTChiTra = ISNULL(dv.TongBHYT, 0) + ISNULL(th.TongBHYT, 0),
-                            TongTienBenhNhanTra = ISNULL(dv.TongBN, 0) + ISNULL(th.TongBN, 0),
-        
-                            -- Nếu tổng tiền sau khi hủy món = 0 thì Hủy bill. Nếu > 0 thì là Đã thanh toán trọn vẹn
-                            TrangThaiThanhToan = CASE 
-                                                    WHEN ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0) = 0 THEN N'Đã hủy' 
-                                                    ELSE N'Đã thanh toán' 
-                                                 END,
-                             
-                            NgayThanhToan = GETDATE(), 
-        
-                            -- Chỉ update Hình thức TT nếu có thu tiền. Nếu bỏ tick hết (truyền rỗng) thì GIỮ NGUYÊN HTTT cũ
-                            HinhThucThanhToan = CASE 
-                                                    WHEN @PhuongThuc IN (N'Tiền mặt', N'Chuyển khoản', N'Thẻ') THEN @PhuongThuc 
-                                                    ELSE hd.HinhThucThanhToan 
-                                                END
-                        FROM HOADON hd
-                        LEFT JOIN (SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN FROM CT_HOADON_DV WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD) dv ON hd.MaHD = dv.MaHD
-                        LEFT JOIN (SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN FROM CT_HOADON_THUOC WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD) th ON hd.MaHD = th.MaHD
-                        WHERE hd.MaHD = @MaHD";
+                UPDATE hd
+                SET TongTienGoc = ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0),
+                    TongTienBHYTChiTra = ISNULL(dv.TongBHYT, 0) + ISNULL(th.TongBHYT, 0),
+                    TongTienBenhNhanTra = ISNULL(dv.TongBN, 0) + ISNULL(th.TongBN, 0),
+                    TrangThaiThanhToan = CASE WHEN ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0) = 0 THEN N'Đã hủy' ELSE N'Đã thanh toán' END,
+                    NgayThanhToan = GETDATE(), 
+                    HinhThucThanhToan = CASE WHEN @PhuongThuc IN (N'Tiền mặt', N'Chuyển khoản', N'Thẻ') THEN @PhuongThuc ELSE hd.HinhThucThanhToan END
+                FROM HOADON hd
+                LEFT JOIN (SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN FROM CT_HOADON_DV WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD) dv ON hd.MaHD = dv.MaHD
+                LEFT JOIN (SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN FROM CT_HOADON_THUOC WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD) th ON hd.MaHD = th.MaHD
+                WHERE hd.MaHD = @MaHD";
 
                         SqlCommand cmdHD = new SqlCommand(updateHD, con, trans);
                         cmdHD.Parameters.AddWithValue("@MaHD", maHD);
-                        cmdHD.Parameters.AddWithValue("@PhuongThuc", phuongThucTT ?? ""); // Truyền vào
+                        cmdHD.Parameters.AddWithValue("@PhuongThuc", phuongThucTT ?? "");
                         cmdHD.ExecuteNonQuery();
 
-                        // 3.5. Búng trạng thái Phiếu Khám
-                        string checkPKB = "SELECT TrangThai FROM PHIEUKHAMBENH WHERE MaPhieuKhamBenh = @MaPKB";
-                        string trangThaiHienTai = new SqlCommand(checkPKB, con, trans) { Parameters = { new SqlParameter("@MaPKB", maPhieuKhamBenh) } }.ExecuteScalar()?.ToString();
+                        // =========================================================================
+                        // 3.5. LOGIC PHÂN PHÒNG PHÁT THUỐC (Mã phòng 22 -> 26)
+                        // =========================================================================
+                        string sqlKiemTraThuoc = @"
+                    SELECT DISTINCT cdt.MaDonThuoc 
+                    FROM CT_HOADON_THUOC cht
+                    JOIN CT_DON_THUOC cdt ON cht.MaCTDonThuoc = cdt.MaCTDonThuoc
+                    WHERE cht.MaHD = @MaHD AND cht.TrangThaiThanhToan = N'Đã thanh toán'";
 
-                        if (trangThaiHienTai == "Chờ thanh toán")
+                        List<int> danhSachDonThuoc = new List<int>();
+                        using (SqlCommand cmdKiemTraThuoc = new SqlCommand(sqlKiemTraThuoc, con, trans))
                         {
-                            SqlCommand cmdPKB = new SqlCommand("UPDATE PHIEUKHAMBENH SET TrangThai = N'Chờ cấp số' WHERE MaPhieuKhamBenh = @MaPKB", con, trans);
-                            cmdPKB.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh); cmdPKB.ExecuteNonQuery();
+                            cmdKiemTraThuoc.Parameters.AddWithValue("@MaHD", maHD);
+                            using (SqlDataReader dr = cmdKiemTraThuoc.ExecuteReader())
+                            {
+                                while (dr.Read()) danhSachDonThuoc.Add(Convert.ToInt32(dr["MaDonThuoc"]));
+                            }
                         }
+
+                        if (danhSachDonThuoc.Count > 0)
+                        {
+                            // Thuật toán: Lấy tổng số phiếu đã tạo trong ngày % 5 để chọn phòng từ 22-26
+                            string sqlGetOrder = "SELECT COUNT(*) FROM PHIEU_PHAT_THUOC WHERE CAST(NgayPhat AS DATE) = CAST(GETDATE() AS DATE)";
+                            int totalToday = 0;
+                            using (SqlCommand cmdOrder = new SqlCommand(sqlGetOrder, con, trans))
+                            {
+                                totalToday = (int)cmdOrder.ExecuteScalar();
+                            }
+
+                            // Tính mã phòng: 22 + (số dư khi chia 5) -> Luôn ra kết quả từ 22 tới 26
+                            int targetRoomId = 22 + (totalToday % 5);
+
+                            foreach (int maDT in danhSachDonThuoc)
+                            {
+                                string checkTonTai = "SELECT COUNT(*) FROM PHIEU_PHAT_THUOC WHERE MaHD = @MaHD AND MaDonThuoc = @MaDT";
+                                using (SqlCommand cmdCheck = new SqlCommand(checkTonTai, con, trans))
+                                {
+                                    cmdCheck.Parameters.AddWithValue("@MaHD", maHD);
+                                    cmdCheck.Parameters.AddWithValue("@MaDT", maDT);
+                                    if ((int)cmdCheck.ExecuteScalar() == 0)
+                                    {
+                                        string insertPhieuPhat = @"
+                                    INSERT INTO PHIEU_PHAT_THUOC (MaDonThuoc, MaHD, MaPhong, NgayPhat, TrangThai)
+                                    VALUES (@MaDT, @MaHD, @MaPhong, GETDATE(), N'Hoàn thành')";
+
+                                        using (SqlCommand cmdInsertPP = new SqlCommand(insertPhieuPhat, con, trans))
+                                        {
+                                            cmdInsertPP.Parameters.AddWithValue("@MaDT", maDT);
+                                            cmdInsertPP.Parameters.AddWithValue("@MaHD", maHD);
+                                            cmdInsertPP.Parameters.AddWithValue("@MaPhong", targetRoomId); // GÁN MÃ PHÒNG ĐÃ TÍNH
+                                            cmdInsertPP.ExecuteNonQuery();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // 3.6. Cập nhật trạng thái Phiếu Khám
+                        SqlCommand cmdPKB = new SqlCommand("UPDATE PHIEUKHAMBENH SET TrangThai = N'Chờ cấp số' WHERE MaPhieuKhamBenh = @MaPKB AND TrangThai = N'Chờ thanh toán'", con, trans);
+                        cmdPKB.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                        cmdPKB.ExecuteNonQuery();
 
                         trans.Commit();
                         return true;
@@ -155,7 +203,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 }
             }
         }
-
 
         // 4. LẤY LỊCH SỬ THU TIỀN (Đã thanh toán / Đã hủy)
         public DataTable GetLichSuThuTien(DateTime tuNgay, DateTime denNgay)

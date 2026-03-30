@@ -462,7 +462,7 @@
                 let btn = $('#btnThanhToan');
                 btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang tạo mã QR...');
 
-                $.post('@Url.Action("TaoMaQR", "ThuNgan")', { maHD: maHD, maPKB: maPKB }, function(res) {
+                $.post('@Url.Action("TaoMaQR", "ThuNgan")', { maHD: maHD, maPKB: maPKB, tongTien: tongTien }, function(res) {
                     btn.prop('disabled', false).html('<i class="bi bi-check2-circle me-2 fs-5 align-middle"></i>XÁC NHẬN THU TIỀN');
                     if(res.success) {
                         let qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(res.qrString);

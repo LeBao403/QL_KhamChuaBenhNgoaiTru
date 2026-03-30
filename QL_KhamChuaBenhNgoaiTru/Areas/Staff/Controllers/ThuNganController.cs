@@ -93,21 +93,14 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> TaoMaQR(int maHD, int maPKB)
+        public async Task<JsonResult> TaoMaQR(int maHD, int maPKB, int tongTien) // <-- THÊM THAM SỐ tongTien
         {
             try
             {
-                // 1. Tính tổng tiền cần thu
-                DataTable dt = db.GetChiTietHoaDon(maHD);
-                int tongTien = 0;
-                foreach (DataRow row in dt.Rows)
-                {
-                    tongTien += Convert.ToInt32(row["TienBenhNhanTra"]);
-                }
-
+                // 1. Kiểm tra tiền trực tiếp từ Giao diện truyền xuống
                 if (tongTien <= 0) return Json(new { success = false, message = "Hóa đơn 0đ, không cần quét QR." });
 
-                // 2. Chuẩn bị dữ liệu gửi đi
+                // 2. Chuẩn bị dữ liệu gửi đi PayOS
                 string clientId = ConfigurationManager.AppSettings["PayOS:ClientId"];
                 string apiKey = ConfigurationManager.AppSettings["PayOS:ApiKey"];
                 string checksumKey = ConfigurationManager.AppSettings["PayOS:ChecksumKey"];
@@ -123,7 +116,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 var requestData = new
                 {
                     orderCode = orderCode,
-                    amount = tongTien,
+                    amount = tongTien, // <-- Truyền đúng số tiền đang nợ
                     description = description,
                     items = new[] { new { name = "Vien phi Kham benh", quantity = 1, price = tongTien } },
                     returnUrl = returnUrl,
