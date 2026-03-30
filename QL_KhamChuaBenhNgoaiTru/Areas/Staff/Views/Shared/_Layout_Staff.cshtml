@@ -63,12 +63,12 @@
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
 
-        .sidebar-header h5 {
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            color: #f8fafc;
-            margin: 0;
-        }
+            .sidebar-header h5 {
+                font-weight: 800;
+                letter-spacing: 0.5px;
+                color: #f8fafc;
+                margin: 0;
+            }
 
         .sidebar-menu {
             padding: 1.5rem 1rem;
@@ -78,8 +78,14 @@
             overflow-y: auto;
         }
 
-        .sidebar-menu::-webkit-scrollbar { width: 5px; }
-        .sidebar-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 5px; }
+            .sidebar-menu::-webkit-scrollbar {
+                width: 5px;
+            }
+
+            .sidebar-menu::-webkit-scrollbar-thumb {
+                background: rgba(255,255,255,0.2);
+                border-radius: 5px;
+            }
 
         .menu-label {
             font-size: 0.75rem;
@@ -90,7 +96,9 @@
             letter-spacing: 1px;
         }
 
-        .sidebar-menu li { margin-bottom: 4px; }
+        .sidebar-menu li {
+            margin-bottom: 4px;
+        }
 
         .sidebar-menu a {
             display: flex;
@@ -103,40 +111,53 @@
             transition: all 0.2s ease;
         }
 
-        .sidebar-menu a i {
-            font-size: 1.2rem;
-            margin-right: 12px;
-            width: 24px;
-            text-align: center;
+            .sidebar-menu a i {
+                font-size: 1.2rem;
+                margin-right: 12px;
+                width: 24px;
+                text-align: center;
+            }
+
+            .sidebar-menu a:hover {
+                color: #fff;
+                background-color: var(--sidebar-hover);
+                transform: translateX(3px);
+            }
+
+            .sidebar-menu a.active {
+                background-color: rgba(59, 130, 246, 0.15);
+                color: var(--sidebar-active);
+                border-left: 4px solid var(--sidebar-active);
+                border-radius: 0 8px 8px 0;
+                font-weight: 600;
+            }
+
+        .logout-link {
+            color: #ef4444 !important;
+            transition: all 0.2s;
         }
 
-        .sidebar-menu a:hover {
-            color: #fff;
-            background-color: var(--sidebar-hover);
-            transform: translateX(3px);
-        }
-
-        .sidebar-menu a.active {
-            background-color: rgba(59, 130, 246, 0.15);
-            color: var(--sidebar-active);
-            border-left: 4px solid var(--sidebar-active);
-            border-radius: 0 8px 8px 0;
-            font-weight: 600;
-        }
-
-        .logout-link { color: #ef4444 !important; transition: all 0.2s; }
-        .logout-link:hover { background-color: rgba(239, 68, 68, 0.1) !important; color: #f87171 !important; transform: none !important; }
+            .logout-link:hover {
+                background-color: rgba(239, 68, 68, 0.1) !important;
+                color: #f87171 !important;
+                transform: none !important;
+            }
 
         /* ========================
            2. MAIN CONTENT & NAVBAR
            ======================== */
         #content {
             margin-left: var(--sidebar-width);
-            width: calc(100% - var(--sidebar-width)); /* DÒNG CODE CỨU RỖI GIAO DIỆN Ở ĐÂY */
+            width: calc(100% - var(--sidebar-width));
             min-height: 100vh;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             display: flex;
             flex-direction: column;
+        }
+        #main-content {
+            flex: 1;
+            width: 100%;
+            transition: all 0.3s ease; /* Để nó giãn ra mượt mà */
         }
 
         .top-navbar {
@@ -155,51 +176,104 @@
         #sidebarCollapse {
             background: #f1f5f9;
             border: none;
-            width: 40px; height: 40px;
+            width: 40px;
+            height: 40px;
             border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: #475569;
             transition: 0.2s;
         }
 
-        #sidebarCollapse:hover { background-color: #e2e8f0; color: var(--sidebar-active); }
+            #sidebarCollapse:hover {
+                background-color: #e2e8f0;
+                color: var(--sidebar-active);
+            }
 
-        .user-profile { display: flex; align-items: center; gap: 12px; }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
         .user-avatar {
-            width: 42px; height: 42px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--sidebar-active), #6366f1);
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: bold; font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
             box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
         }
 
-        .user-info { display: flex; flex-direction: column; text-align: right; }
-        .user-name { font-weight: 700; color: #0f172a; font-size: 0.95rem; line-height: 1.2; }
-        .user-role { font-size: 0.8rem; color: #64748b; font-weight: 500; }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+        }
 
-        .main-body { flex-grow: 1; padding: 1.5rem; }
+        .user-name {
+            font-weight: 700;
+            color: #0f172a;
+            font-size: 0.95rem;
+            line-height: 1.2;
+        }
+
+        .user-role {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .main-body {
+            flex-grow: 1;
+            padding: 1.5rem;
+        }
 
         /* ========================
            3. RESPONSIVE MOBILE
            ======================== */
         .sidebar-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(3px);
             z-index: 1035;
-            opacity: 0; visibility: hidden;
+            opacity: 0;
+            visibility: hidden;
             transition: all 0.3s;
         }
 
         @@media (max-width: 992px) {
-            #sidebar { left: calc(-1 * var(--sidebar-width)); }
-            #sidebar.show { left: 0; }
-            #content { margin-left: 0; width: 100%; }
-            .sidebar-overlay.show { opacity: 1; visibility: visible; }
-            .top-navbar { padding: 0 1rem; }
+            #sidebar {
+                left: calc(-1 * var(--sidebar-width));
+            }
+
+                #sidebar.show {
+                    left: 0;
+                }
+
+            #content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .sidebar-overlay.show {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .top-navbar {
+                padding: 0 1rem;
+            }
         }
     </style>
 </head>
@@ -243,6 +317,18 @@
                         <i class="bi bi-receipt-cutoff"></i> Lịch sử thu tiền
                     </a>
                 </li>
+
+                <div class="menu-label mt-4">Bộ phận Quầy Dược</div>
+                <li>
+                    <a href="@Url.Action("Index", "PhatThuoc", new { area = "Staff" })" class="@(ctrl == "PhatThuoc" && act == "Index" ? "active" : "")">
+                        <i class="bi bi-capsule"></i> Chờ Phát Thuốc
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("LichSu", "PhatThuoc", new { area = "Staff" })" class="@(ctrl == "PhatThuoc" && act == "LichSu" ? "active" : "")">
+                        <i class="bi bi-clock-history"></i> Lịch Sử Phát Thuốc
+                    </a>
+                </li>
             </ul>
 
             <div class="mt-auto p-3 border-top" style="border-color: rgba(255,255,255,0.05) !important;">
@@ -269,6 +355,7 @@
                         string phongBan = "Bộ phận Staff";
                         if (ctrl == "ThuNgan") { phongBan = "Bộ phận Kế toán / Thu ngân"; }
                         else if (ctrl == "TiepTan") { phongBan = "Bộ phận Lễ tân / CSKH"; }
+                        else if (ctrl == "PhatThuoc") { phongBan = "Bộ phận Quầy Dược"; } // Thêm logic hiển thị tên phòng ban Quầy Dược
                     }
                     <div class="user-info d-none d-sm-flex">
                         <span class="user-name">@hoTenNV</span>

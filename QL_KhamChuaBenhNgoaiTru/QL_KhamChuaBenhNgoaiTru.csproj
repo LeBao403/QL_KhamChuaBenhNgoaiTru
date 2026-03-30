@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -238,6 +238,7 @@
     <Compile Include="Areas\Admin\Controllers\ThuocController.cs" />
     <Compile Include="Areas\Admin\Controllers\LoaiThuocController.cs" />
     <Compile Include="Areas\Staff\Controllers\KioskController.cs" />
+    <Compile Include="Areas\Staff\Controllers\PhatThuocController.cs" />
     <Compile Include="Areas\Staff\Controllers\ThuNganController.cs" />
     <Compile Include="Controllers\BenhNhanPortalController.cs" />
     <Compile Include="Areas\NhanVienKho\Controllers\BaseNhanVienKhoController.cs" />
@@ -267,6 +268,7 @@
     <Compile Include="DBContext\KhoDB.cs" />
     <Compile Include="DBContext\KhoNhapDB.cs" />
     <Compile Include="DBContext\NhanVienDB.cs" />
+    <Compile Include="DBContext\PhatThuocDB.cs" />
     <Compile Include="DBContext\PhongDB.cs" />
     <Compile Include="DBContext\TaiKhoanDB.cs" />
     <Compile Include="DBContext\ThuNganDB.cs" />
@@ -291,6 +293,7 @@
     <Compile Include="Models\PhieuDangKy.cs" />
     <Compile Include="Models\PhieuKhamBenh.cs" />
     <Compile Include="Models\PhieuKhamSangLoc.cs" />
+    <Compile Include="Models\PhieuPhatThuoc.cs" />
     <Compile Include="Models\TaiKhoan.cs" />
     <Compile Include="Models\Thuoc.cs" />
     <Compile Include="Models\KetQuaCLS.cs" />
@@ -418,6 +421,8 @@
     <Content Include="Areas\NhanVienKho\Views\NhaCungCap\Index.cshtml" />
     <Content Include="Areas\NhanVienKho\Views\web.config" />
     <Content Include="Areas\NhanVienKho\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Staff\Views\PhatThuoc\Index.cshtml" />
+    <Content Include="Areas\Staff\Views\PhatThuoc\LichSu.cshtml" />
     <None Include="Scripts\jquery-3.7.0-vsdoc.js" />
     <Content Include="Views\BenhNhanPortal\ChiTietDonThuoc.cshtml" />
     <Content Include="Views\BenhNhanPortal\ChiTietHoaDon.cshtml" />
