@@ -20,6 +20,7 @@
     <style>
         :root {
             --sidebar-width: 260px;
+            --sidebar-mini-width: 75px; /* Thêm chiều rộng cho mini sidebar */
             --sidebar-bg: #0f172a;
             --sidebar-hover: rgba(255, 255, 255, 0.1);
             --sidebar-color: #cbd5e1;
@@ -52,6 +53,7 @@
             display: flex;
             flex-direction: column;
             box-shadow: 4px 0 15px rgba(0,0,0,0.05);
+            overflow: hidden; /* Cực quan trọng để khi thu nhỏ không bị tràn chữ */
         }
 
         .sidebar-header {
@@ -61,6 +63,7 @@
             padding: 0 1.5rem;
             background: rgba(0,0,0,0.2);
             border-bottom: 1px solid rgba(255,255,255,0.05);
+            white-space: nowrap;
         }
 
             .sidebar-header h5 {
@@ -68,6 +71,7 @@
                 letter-spacing: 0.5px;
                 color: #f8fafc;
                 margin: 0;
+                transition: all 0.3s;
             }
 
         .sidebar-menu {
@@ -76,6 +80,7 @@
             margin: 0;
             flex-grow: 1;
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
             .sidebar-menu::-webkit-scrollbar {
@@ -94,6 +99,8 @@
             color: #64748b;
             margin: 1rem 0 0.5rem 1rem;
             letter-spacing: 1px;
+            transition: all 0.3s;
+            white-space: nowrap;
         }
 
         .sidebar-menu li {
@@ -109,6 +116,7 @@
             border-radius: 8px;
             font-weight: 500;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
             .sidebar-menu a i {
@@ -116,6 +124,7 @@
                 margin-right: 12px;
                 width: 24px;
                 text-align: center;
+                transition: all 0.3s;
             }
 
             .sidebar-menu a:hover {
@@ -135,6 +144,7 @@
         .logout-link {
             color: #ef4444 !important;
             transition: all 0.2s;
+            white-space: nowrap;
         }
 
             .logout-link:hover {
@@ -154,10 +164,10 @@
             display: flex;
             flex-direction: column;
         }
-        #main-content {
-            flex: 1;
-            width: 100%;
-            transition: all 0.3s ease; /* Để nó giãn ra mượt mà */
+
+        .main-body {
+            flex-grow: 1;
+            padding: 1.5rem;
         }
 
         .top-navbar {
@@ -230,11 +240,6 @@
             font-weight: 500;
         }
 
-        .main-body {
-            flex-grow: 1;
-            padding: 1.5rem;
-        }
-
         /* ========================
            3. RESPONSIVE MOBILE
            ======================== */
@@ -275,6 +280,63 @@
                 padding: 0 1rem;
             }
         }
+
+        /* ========================
+           4. CHẾ ĐỘ MINI SIDEBAR (CHỈ HIỆN ICON TRÊN PC)
+           ======================== */
+        @@media (min-width: 993px) {
+            body.sidebar-toggled #sidebar {
+                width: var(--sidebar-mini-width);
+            }
+
+            body.sidebar-toggled #content {
+                margin-left: var(--sidebar-mini-width);
+                width: calc(100% - var(--sidebar-mini-width));
+            }
+            /* Giấu chữ HIS CLINIC, canh giữa Icon Bệnh viện */
+            body.sidebar-toggled .sidebar-header {
+                justify-content: center;
+                padding: 0;
+            }
+
+                body.sidebar-toggled .sidebar-header h5 {
+                    font-size: 0; /* Ép chữ biến mất */
+                }
+
+                    body.sidebar-toggled .sidebar-header h5 i {
+                        font-size: 1.8rem;
+                        margin-right: 0 !important;
+                    }
+            /* Biến chữ "Bộ phận..." thành dấu ba chấm */
+            body.sidebar-toggled .menu-label {
+                display: none;
+            }
+            /* Ẩn chữ trong Menu, canh giữa Icon */
+            body.sidebar-toggled .sidebar-menu a {
+                font-size: 0;
+                justify-content: center;
+                padding: 1rem 0;
+            }
+
+                body.sidebar-toggled .sidebar-menu a i {
+                    font-size: 1.3rem;
+                    margin-right: 0;
+                }
+
+                body.sidebar-toggled .sidebar-menu a:hover {
+                    transform: none; /* Tắt hiệu ứng giật ngang khi hover ở chế độ mini */
+                }
+            /* Ẩn chữ nút Đăng xuất */
+            body.sidebar-toggled .logout-link {
+                font-size: 0;
+                justify-content: center;
+            }
+
+                body.sidebar-toggled .logout-link i {
+                    font-size: 1.5rem !important;
+                    margin-right: 0 !important;
+                }
+        }
     </style>
 </head>
 <body>
@@ -291,48 +353,48 @@
             <ul class="sidebar-menu">
                 <div class="menu-label">Bộ phận Tiếp tân</div>
                 <li>
-                    <a href="@Url.Action("Index", "TiepTan", new { area = "Staff" })" class="@(ctrl == "TiepTan" && act == "Index" ? "active" : "")">
+                    <a href="@Url.Action("Index", "TiepTan", new { area = "Staff" })" class="@(ctrl == "TiepTan" && act == "Index" ? "active" : "")" title="Lấy số & Tiếp nhận">
                         <i class="bi bi-person-vcard"></i> Lấy số & Tiếp nhận
                     </a>
                 </li>
                 <li>
-                    <a href="@Url.Action("LichSuTiepNhan", "TiepTan", new { area = "Staff" })" class="@(ctrl == "TiepTan" && act == "LichSuTiepNhan" ? "active" : "")">
+                    <a href="@Url.Action("LichSuTiepNhan", "TiepTan", new { area = "Staff" })" class="@(ctrl == "TiepTan" && act == "LichSuTiepNhan" ? "active" : "")" title="Lịch sử cấp số">
                         <i class="bi bi-clock-history"></i> Lịch sử cấp số
                     </a>
                 </li>
                 <li>
-                    <a href="#" class="">
+                    <a href="#" class="" title="Lịch hẹn khám">
                         <i class="bi bi-calendar2-check"></i> Lịch hẹn khám
                     </a>
                 </li>
 
                 <div class="menu-label mt-4">Bộ phận Thu Ngân</div>
                 <li>
-                    <a href="@Url.Action("Index", "ThuNgan", new { area = "Staff" })" class="@(ctrl == "ThuNgan" && act == "Index" ? "active" : "")">
+                    <a href="@Url.Action("Index", "ThuNgan", new { area = "Staff" })" class="@(ctrl == "ThuNgan" && act == "Index" ? "active" : "")" title="Quầy thu viện phí">
                         <i class="bi bi-cash-coin"></i> Quầy thu viện phí
                     </a>
                 </li>
                 <li>
-                    <a href="@Url.Action("LichSu", "ThuNgan", new { area = "Staff" })" class="@(ctrl == "ThuNgan" && act == "LichSu" ? "active" : "")">
+                    <a href="@Url.Action("LichSu", "ThuNgan", new { area = "Staff" })" class="@(ctrl == "ThuNgan" && act == "LichSu" ? "active" : "")" title="Lịch sử thu tiền">
                         <i class="bi bi-receipt-cutoff"></i> Lịch sử thu tiền
                     </a>
                 </li>
 
                 <div class="menu-label mt-4">Bộ phận Quầy Dược</div>
                 <li>
-                    <a href="@Url.Action("Index", "PhatThuoc", new { area = "Staff" })" class="@(ctrl == "PhatThuoc" && act == "Index" ? "active" : "")">
+                    <a href="@Url.Action("Index", "PhatThuoc", new { area = "Staff" })" class="@(ctrl == "PhatThuoc" && act == "Index" ? "active" : "")" title="Chờ Phát Thuốc">
                         <i class="bi bi-capsule"></i> Chờ Phát Thuốc
                     </a>
                 </li>
                 <li>
-                    <a href="@Url.Action("LichSu", "PhatThuoc", new { area = "Staff" })" class="@(ctrl == "PhatThuoc" && act == "LichSu" ? "active" : "")">
+                    <a href="@Url.Action("LichSu", "PhatThuoc", new { area = "Staff" })" class="@(ctrl == "PhatThuoc" && act == "LichSu" ? "active" : "")" title="Lịch Sử Phát Thuốc">
                         <i class="bi bi-clock-history"></i> Lịch Sử Phát Thuốc
                     </a>
                 </li>
             </ul>
 
             <div class="mt-auto p-3 border-top" style="border-color: rgba(255,255,255,0.05) !important;">
-                <a href="@Url.Action("Logout", "TaiKhoan", new { area = "" })" class="sidebar-menu a logout-link d-flex align-items-center p-2 rounded text-decoration-none fw-bold">
+                <a href="@Url.Action("Logout", "TaiKhoan", new { area = "" })" class="sidebar-menu a logout-link d-flex align-items-center p-2 rounded text-decoration-none fw-bold" title="Đăng xuất">
                     <i class="bi bi-box-arrow-right fs-5 me-2"></i> Đăng xuất hệ thống
                 </a>
             </div>
@@ -355,7 +417,7 @@
                         string phongBan = "Bộ phận Staff";
                         if (ctrl == "ThuNgan") { phongBan = "Bộ phận Kế toán / Thu ngân"; }
                         else if (ctrl == "TiepTan") { phongBan = "Bộ phận Lễ tân / CSKH"; }
-                        else if (ctrl == "PhatThuoc") { phongBan = "Bộ phận Quầy Dược"; } // Thêm logic hiển thị tên phòng ban Quầy Dược
+                        else if (ctrl == "PhatThuoc") { phongBan = "Bộ phận Quầy Dược"; }
                     }
                     <div class="user-info d-none d-sm-flex">
                         <span class="user-name">@hoTenNV</span>
@@ -379,20 +441,15 @@
 
     <script>
         $(document).ready(function () {
-            // Xử lý bật tắt Sidebar trên Mobile/Tablet
+            // Xử lý bật tắt Sidebar đa nền tảng
             $('#sidebarCollapse').on('click', function () {
                 if ($(window).width() <= 992) {
+                    // Mobile/Tablet: Trượt menu ra/vào
                     $('#sidebar').toggleClass('show');
                     $('#sidebarOverlay').toggleClass('show');
                 } else {
-                    $('#sidebar').css('margin-left', $('#sidebar').css('margin-left') === '0px' ? '-260px' : '0px');
-                    $('#content').css('margin-left', $('#content').css('margin-left') === '260px' ? '0px' : '260px');
-                    // Tự động giãn full width khi đóng menu ở màn PC
-                    if ($('#content').css('margin-left') === '0px') {
-                        $('#content').css('width', '100%');
-                    } else {
-                        $('#content').css('width', 'calc(100% - 260px)');
-                    }
+                    // PC: Bật/tắt class thu gọn mini-sidebar
+                    $('body').toggleClass('sidebar-toggled');
                 }
             });
 
@@ -400,6 +457,16 @@
             $('#sidebarOverlay').on('click', function () {
                 $('#sidebar').removeClass('show');
                 $(this).removeClass('show');
+            });
+
+            // Tự động điều chỉnh khi resize màn hình
+            $(window).resize(function () {
+                if ($(window).width() > 992) {
+                    $('#sidebar').removeClass('show');
+                    $('#sidebarOverlay').removeClass('show');
+                } else {
+                    $('body').removeClass('sidebar-toggled');
+                }
             });
         });
     </script>
