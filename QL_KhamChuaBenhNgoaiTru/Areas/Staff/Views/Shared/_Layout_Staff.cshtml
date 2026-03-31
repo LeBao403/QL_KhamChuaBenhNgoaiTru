@@ -368,6 +368,23 @@
                     </a>
                 </li>
 
+                <div class="menu-label mt-4">Bộ phận Bác sĩ & CLS</div>
+                <li>
+                    <a href="@Url.Action("Index", "BacSi", new { area = "Staff" })" class="@(ctrl == "BacSi" ? "active" : "")" title="Khám bệnh bác sĩ">
+                        <i class="bi bi-heart-pulse"></i> Khám bệnh Bác sĩ
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "CLS", new { area = "Staff" })" class="@(ctrl == "CLS" ? "active" : "")" title="Cận lâm sàng">
+                        <i class="bi bi-clipboard2-pulse"></i> Cận lâm sàng
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("LichSu", "CLS", new { area = "Staff" })" class="@(ctrl == "CLS" && act == "LichSu" ? "active" : "")" title="Lịch sử xét nghiệm">
+                        <i class="bi bi-clock-history"></i> Lịch sử xét nghiệm
+                    </a>
+                </li>
+
                 <div class="menu-label mt-4">Bộ phận Thu Ngân</div>
                 <li>
                     <a href="@Url.Action("Index", "ThuNgan", new { area = "Staff" })" class="@(ctrl == "ThuNgan" && act == "Index" ? "active" : "")" title="Quầy thu viện phí">
@@ -417,6 +434,8 @@
                         string phongBan = "Bộ phận Staff";
                         if (ctrl == "ThuNgan") { phongBan = "Bộ phận Kế toán / Thu ngân"; }
                         else if (ctrl == "TiepTan") { phongBan = "Bộ phận Lễ tân / CSKH"; }
+                        else if (ctrl == "BacSi") { phongBan = "Bộ phận Bác sĩ"; }
+                        else if (ctrl == "CLS") { phongBan = "Bộ phận Cận lâm sàng"; }
                         else if (ctrl == "PhatThuoc") { phongBan = "Bộ phận Quầy Dược"; }
                     }
                     <div class="user-info d-none d-sm-flex">

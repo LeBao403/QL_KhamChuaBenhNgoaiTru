@@ -4,35 +4,184 @@
     ViewBag.Title = "Phòng Khám Bác Sĩ";
 }
 
-<div class="container-fluid mt-3">
-    @if (TempData["SuccessMsg"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Thành công!</strong> @TempData["SuccessMsg"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-    @if (TempData["ErrorMsg"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Lỗi!</strong> @TempData["ErrorMsg"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+<style>
+    :root {
+        --primary-blue: #0d6efd;
+        --dark-blue: #0a58ca;
+        --soft-bg: #f8f9fa;
     }
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card shadow mb-4 border-left-primary">
-                <div class="card-header bg-primary text-white">
-                    <h6 class="m-0 font-weight-bold">Bệnh Nhân Chờ Khám</h6>
+    body { background-color: #f4f7f6; }
+
+    .page-header-card {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+        border: none;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+    }
+
+    .queue-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+        overflow: hidden;
+        margin-bottom: 1.25rem;
+    }
+    .queue-card .card-header {
+        padding: .85rem 1.25rem;
+        font-weight: 700;
+        font-size: .85rem;
+        letter-spacing: .3px;
+        text-transform: uppercase;
+    }
+    .queue-table thead th {
+        background-color: var(--soft-bg);
+        color: #495057;
+        font-weight: 700;
+        font-size: .78rem;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        border-bottom: 2px solid #e9ecef;
+        padding: .9rem 1rem;
+    }
+    .queue-table tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+        transition: background .15s;
+    }
+    .queue-table tbody tr:hover { background: #f0f7ff; }
+    .queue-table tbody tr.table-active { background: #dbeafe; }
+
+    .exam-card {
+        border: none;
+        border-radius: 14px;
+        box-shadow: 0 8px 28px rgba(0,0,0,0.09);
+        overflow: hidden;
+    }
+    .exam-card .card-header {
+        background: linear-gradient(90deg, #0d6efd 0%, #6ea8fe 100%);
+        color: #fff;
+        padding: 1rem 1.5rem;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .patient-info-bar {
+        background: #f8f9fa;
+        border-radius: 10px;
+        border-left: 5px solid var(--primary-blue);
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.25rem;
+    }
+    .info-label {
+        color: #6c757d;
+        font-size: .7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+    .info-value {
+        color: #212529;
+        font-weight: 700;
+        font-size: .9rem;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: .5rem 0;
+        border-bottom: 2px solid #e9ecef;
+        margin-bottom: .75rem;
+    }
+    .section-header.blue  { color: #0d6efd; border-color: #0d6efd; }
+    .section-header.red   { color: #dc3545; border-color: #dc3545; }
+    .section-header.green { color: #198754; border-color: #198754; }
+
+    .cls-result-card {
+        border: none;
+        border-radius: 10px;
+        background: #e8f4fd;
+        border-left: 4px solid #0d6efd;
+        margin-bottom: .5rem;
+    }
+    .cls-result-card .card-header {
+        background: linear-gradient(90deg,#0d6efd 0%,#6ea8fe 100%);
+        border-radius: 10px 10px 0 0;
+        color:#fff;
+        font-weight:700;
+        padding:.5rem 1rem;
+        font-size:.85rem;
+    }
+
+    .btn-action {
+        border-radius: 8px;
+        transition: all .25s;
+        font-weight: 600;
+    }
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    .table thead th {
+        background-color: var(--soft-bg);
+        color: #495057;
+        font-weight: 700;
+        font-size: .8rem;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        border-bottom: 2px solid #e9ecef;
+        padding: .9rem;
+    }
+    .table tbody tr:hover { background: #f8fbff; }
+</style>
+
+<div class="container-fluid py-4">
+    <!-- PAGE HEADER -->
+    <div class="card page-header-card shadow-sm mb-4">
+        <div class="card-body text-white p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h3 class="mb-1 fw-bold"><i class="fas fa-stethoscope me-2"></i> PHÒNG KHÁM BÁC SĨ</h3>
+                    <p class="mb-0 opacity-75">Tiếp nhận, khám bệnh, kế đơn và quản lý kết quả cận lâm sàng</p>
                 </div>
-                <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
-                    <table class="table table-striped table-hover mb-0">
-                        <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                <div class="d-flex align-items-center gap-2">
+                    @if (TempData["SuccessMsg"] != null) {
+                        <span class="badge bg-success bg-opacity-25 border border-success border-opacity-50 text-white px-3 py-2">
+                            <i class="fas fa-check-circle me-1"></i> @TempData["SuccessMsg"]
+                        </span>
+                    }
+                    @if (TempData["ErrorMsg"] != null) {
+                        <span class="badge bg-danger bg-opacity-25 border border-danger border-opacity-50 text-white px-3 py-2">
+                            <i class="fas fa-exclamation-circle me-1"></i> @TempData["ErrorMsg"]
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <!-- Hàng chờ khám -->
+            <div class="card queue-card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-users me-2"></i>Bệnh Nhân Chờ Khám</span>
+                    @if (ViewBag.ChoKham != null) {
+                        <span class="badge bg-light text-primary rounded-pill">@(((System.Collections.ICollection)ViewBag.ChoKham).Count)</span>
+                    }
+                </div>
+                <div class="card-body p-0" style="max-height: 380px; overflow-y: auto;">
+                    <table class="table queue-table mb-0">
+                        <thead>
                             <tr>
-                                <th>STT</th>
+                                <th class="text-center" style="width:50px">#</th>
                                 <th>Tên Bệnh Nhân</th>
-                                <th>Thao tác</th>
+                                <th class="text-center" style="width:100px">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,13 +212,15 @@
                 </div>
             </div>
 
-            <div class="card shadow mb-4 border-left-warning">
-                <div class="card-header bg-warning text-dark">
-                    <h6 class="m-0 font-weight-bold">Bệnh Nhân Đang Khám (Click để nạp)</h6>
+            <!-- Bệnh nhân đang khám -->
+            <div class="card queue-card">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-user-md me-2"></i>Danh sách Đang Khám</span>
+                    <small class="text-dark opacity-75">Click để nạp</small>
                 </div>
-                <div class="card-body p-0" style="max-height: 300px; overflow-y: auto;">
-                    <table class="table table-hover mb-0" id="table-dangkham">
-                        <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                <div class="card-body p-0" style="max-height: 280px; overflow-y: auto;">
+                    <table class="table queue-table mb-0" id="table-dangkham">
+                        <thead>
                             <tr>
                                 <th>Tên Bệnh Nhân</th>
                                 <th>Lý do</th>
@@ -93,9 +244,9 @@
         </div>
 
         <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-info text-white">
-                    <h6 class="m-0 font-weight-bold"><i class="fas fa-stethoscope"></i> Khung Khám Bệnh & Kê Đơn</h6>
+            <div class="card exam-card">
+                <div class="card-header">
+                    <i class="fas fa-file-medical me-2"></i> Khung Khám Bệnh &amp; Kê Đơn
                 </div>
                 <div class="card-body">
                     @using (Html.BeginForm("LuuKhamBenh", "BacSi", FormMethod.Post, new { id = "frmKhamBenh", @class = "form-horizontal" }))
@@ -103,14 +254,24 @@
                         @Html.AntiForgeryToken()
                         <input type="hidden" id="MaPhieuKhamBenh" name="MaPhieuKhamBenh" value="0" />
 
-                        <div class="row mb-3 bg-light p-3 border rounded mx-0">
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Họ tên: </strong> <span id="lblTenBN" class="text-danger fw-bold fs-5">Chưa tiếp nhận</span></p>
-                                <p class="mb-0"><strong>Tuổi: </strong> <span id="lblTuoi">...</span></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Giới tính: </strong> <span id="lblGioiTinh">...</span></p>
-                                <p class="mb-0"><strong>Lý do khám: </strong> <span id="lblLyDo" class="text-primary fw-bold">...</span></p>
+                        <div class="patient-info-bar">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="info-label">Họ tên bệnh nhân</div>
+                                    <div class="info-value text-danger fs-5" id="lblTenBN">Chưa tiếp nhận</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="info-label">Tuổi</div>
+                                    <div class="info-value" id="lblTuoi">&mdash;</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="info-label">Giới tính</div>
+                                    <div class="info-value" id="lblGioiTinh">&mdash;</div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="info-label">Lý do khám</div>
+                                    <div class="info-value text-primary" id="lblLyDo">&mdash;</div>
+                                </div>
                             </div>
                         </div>
 
@@ -119,23 +280,25 @@
                             <textarea name="TrieuChung" id="TrieuChung" class="form-control" rows="3" placeholder="Nhập triệu chứng, dấu hiệu sinh tồn..."></textarea>
                         </div>
 
-                        <!-- Vùng hiển thị Kết Quả CLS từ máy LIS (ẩn mặc định) -->
-                        <div id="vungHienThiKQCLS" class="alert alert-info" style="display: none;">
-                            <h5 class="fw-bold text-dark"><i class="fas fa-file-medical-alt"></i> Kết Quả Cận Lâm Sàng Tự Động</h5>
-                            <hr />
+                        <!-- Kết quả CLS -->
+                        <div id="vungHienThiKQCLS" class="mb-3" style="display: none;">
+                            <div class="section-header blue">
+                                <i class="fas fa-file-medical-alt"></i> Kết Quả Cận Lâm Sàng Tự Động từ LIS
+                            </div>
                             <div id="noiDungKQCLS"></div>
                         </div>
 
-                        <div class="form-check form-switch mb-3 p-3 border rounded bg-light border-danger">
+                        <div class="form-check form-switch mb-3 p-3 border rounded-3 bg-danger bg-opacity-10 border-danger">
                             <input type="checkbox" class="form-check-input ms-0" id="chkCLS" name="YeuCauCanLamSang" value="true" style="width: 2.5em; height: 1.25em;">
                             <label class="form-check-label text-danger fw-bold ms-5 mt-1" for="chkCLS" style="cursor: pointer;">
-                                Yêu cầu khám Cận Lâm Sàng (Chưa thể kết luận bệnh)
+                                <i class="fas fa-x-ray me-1"></i> Yêu cầu khám Cận Lâm Sàng (Chưa thể kết luận bệnh)
                             </label>
                         </div>
 
                         <div id="vungChiDinhCLS" style="display: none;">
-                            <hr />
-                            <h5 class="fw-bold text-danger"><i class="fas fa-x-ray"></i> Chỉ Định Dịch Vụ Cận Lâm Sàng</h5>
+                            <div class="section-header red mt-3">
+                                <i class="fas fa-x-ray"></i> Chỉ Định Dịch Vụ Cận Lâm Sàng
+                            </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Chọn dịch vụ (Sẽ tự động thêm xuống dưới):</label>
@@ -167,7 +330,9 @@
                         </div>
 
                         <div id="vungKetLuan">
-                            <hr />
+                            <div class="section-header blue mt-3">
+                                <i class="fas fa-diagnoses"></i> Kết Luận và Kê Đơn Thuốc
+                            </div>
                             <div class="mb-3">
                                 <label class="form-label fw-bold">Kết luận bệnh (Nhập tay):</label>
                                 <input type="text" name="KetLuan" id="KetLuan" class="form-control" placeholder="Ví dụ: Viêm họng cấp / Theo dõi viêm loét dạ dày..." />
@@ -201,8 +366,9 @@
                                 </table>
                             </div>
 
-                            <hr />
-                            <h5 class="mt-4 fw-bold text-success"><i class="fas fa-pills"></i> Kê Đơn Thuốc</h5>
+                            <div class="section-header green mt-3">
+                                <i class="fas fa-pills"></i> Kê Đơn Thuốc
+                            </div>
 
                             <div class="mb-3">
                                 <label class="form-label">Chọn thuốc (Chọn để tự động thêm xuống đơn):</label>
@@ -239,8 +405,9 @@
                             </div>
                         </div>
 
-                        <div class="text-end mt-4 border-top pt-3">
-                            <button type="submit" class="btn btn-success btn-lg px-5 shadow" id="btnHoanThanh" disabled>
+                        <div class="d-flex justify-content-between align-items-center mt-4 border-top pt-3">
+                            <span class="text-muted small"><i class="fas fa-info-circle me-1"></i> Đảm bảo đã điền đầy đủ thông tin trước khi lưu</span>
+                            <button type="submit" class="btn btn-success btn-lg px-5 shadow-sm btn-action" id="btnHoanThanh" disabled>
                                 <i class="fas fa-save me-2"></i>Hoàn thành / Lưu kết quả
                             </button>
                         </div>
@@ -521,13 +688,35 @@
                     $('#vungHienThiKQCLS').slideDown();
                     var content = '';
                     data.forEach(function(item) {
+                        var htmlNoiDung = item.NoiDungKetQua || '';
+                        if (htmlNoiDung.startsWith('[')) {
+                            try {
+                                var ls = JSON.parse(htmlNoiDung);
+                                htmlNoiDung = '<table class="table table-sm table-bordered mt-2"><thead><tr class="table-light"><th>Chỉ số</th><th class="text-center">Kết quả</th><th class="text-center">Đơn vị</th><th class="text-center">CS Bình thường</th></tr></thead><tbody>';
+                                ls.forEach(function(i) {
+                                    var isWarn = i.Warning ? 'text-danger fw-bold' : 'fw-bold';
+                                    htmlNoiDung += '<tr><td>' + i.Ten + '</td><td class="text-center ' + isWarn + '">' + i.GiaTri + '</td><td class="text-center">' + i.DonVi + '</td><td class="text-center">' + i.ThamChieu + '</td></tr>';
+                                });
+                                htmlNoiDung += '</tbody></table>';
+                            } catch(e) {}
+                        } else {
+                            htmlNoiDung = '<div style="white-space:pre-wrap;">' + htmlNoiDung + '</div>';
+                        }
+                        
+                        // Parse NgayThucHien
+                        var ngayTra = item.NgayThucHien || '';
+                        if (ngayTra && ngayTra.indexOf('/Date(') >= 0) {
+                            var date = new Date(parseInt(ngayTra.substr(6)));
+                            ngayTra = date.toLocaleString('vi-VN');
+                        }
+
                         content += `
-                        <div class="card mb-3 border-info">
-                            <div class="card-header bg-info text-white fw-bold py-1">
-                               Dịch vụ: ${item.TenDV} <span class="float-end">Ngày trả: ${item.NgayThucHien}</span>
+                        <div class="cls-result-card mb-3">
+                            <div class="card-header">
+                               <i class="fas fa-flask me-1"></i> Dịch vụ: ${item.TenDichVu || item.TenDV} <span class="float-end">Ngày trả: ${ngayTra}</span>
                             </div>
                             <div class="card-body py-2">
-                                ${item.NoiDungKetQua}
+                                ${htmlNoiDung}
                             </div>
                         </div>`;
                     });

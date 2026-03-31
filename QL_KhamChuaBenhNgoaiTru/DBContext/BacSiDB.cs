@@ -1,4 +1,4 @@
-using QL_KhamChuaBenhNgoaiTru.Models;
+﻿using QL_KhamChuaBenhNgoaiTru.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -190,7 +190,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 try
                 {
                     // 5.1 Cập nhật trạng thái và kết luận phiếu khám
-                    string trangThai = model.YeuCauCanLamSang ? "Chờ cận lâm sàng" : "Hoàn thành";
+                    string trangThai = model.YeuCauCanLamSang ? "Chờ thanh toán" : "Hoàn thành";
                     string sqlUpdatePhieu = @"UPDATE PHIEUKHAMBENH 
                                               SET TrieuChung = @TrieuChung, KetLuan = @KetLuan, TrangThai = @TrangThai 
                                               WHERE MaPhieuKhamBenh = @MaPhieu";
@@ -418,7 +418,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 try
                 {
                     // Cập nhật trạng thái phiếu khám chính
-                    string trangThai = model.YeuCauCanLamSang ? "Chờ cận lâm sàng" : "Hoàn thành";
+                    string trangThai = model.YeuCauCanLamSang ? "Chờ thanh toán" : "Hoàn thành";
                     string sqlUpdatePhieu = @"UPDATE PHIEUKHAMBENH 
                                       SET TrieuChung = @TrieuChung, KetLuan = @KetLuan, TrangThai = @TrangThai 
                                       WHERE MaPhieuKhamBenh = @MaPhieu";
@@ -434,35 +434,141 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     // ======= NẾU CHỈ ĐỊNH CẬN LÂM SÀNG =======
                     if (model.YeuCauCanLamSang && model.ChiDinhs != null && model.ChiDinhs.Count > 0)
                     {
-                        // Gom nhóm các dịch vụ theo Phòng để tạo Phiếu Chỉ Định
+                        int maHD = 0;
+
+                        string sqlGetHD = "SELECT TOP 1 MaHD FROM HOADON WHERE MaPhieuKhamBenh = @MaPKB ORDER BY MaHD DESC";
+                        using (SqlCommand cmdGetHD = new SqlCommand(sqlGetHD, conn, tran))
+                        {
+                            cmdGetHD.Parameters.AddWithValue("@MaPKB", model.MaPhieuKhamBenh);
+                            object hdObj = cmdGetHD.ExecuteScalar();
+                            maHD = hdObj != null ? Convert.ToInt32(hdObj) : 0;
+                        }
+
+                        if (maHD == 0)
+                        {
+                            string maBN = "";
+                            using (SqlCommand cmdBN = new SqlCommand("SELECT MaBN FROM PHIEUKHAMBENH WHERE MaPhieuKhamBenh = @MaPKB", conn, tran))
+                            {
+                                cmdBN.Parameters.AddWithValue("@MaPKB", model.MaPhieuKhamBenh);
+                                object bnObj = cmdBN.ExecuteScalar();
+                                if (bnObj == null) throw new Exception("Không tìm thấy bệnh nhân của phiếu khám.");
+                                maBN = bnObj.ToString();
+                            }
+
+                            string sqlCreateHD = @"
+                                INSERT INTO HOADON (MaBN, MaPhieuKhamBenh, NgayThanhToan, TongTienGoc, TongTienBHYTChiTra, TongTienBenhNhanTra, TrangThaiThanhToan)
+                                OUTPUT INSERTED.MaHD
+                                VALUES (@MaBN, @MaPKB, GETDATE(), 0, 0, 0, N'Chưa thanh toán')";
+                            using (SqlCommand cmdCreateHD = new SqlCommand(sqlCreateHD, conn, tran))
+                            {
+                                cmdCreateHD.Parameters.AddWithValue("@MaBN", maBN);
+                                cmdCreateHD.Parameters.AddWithValue("@MaPKB", model.MaPhieuKhamBenh);
+                                maHD = Convert.ToInt32(cmdCreateHD.ExecuteScalar());
+                            }
+                        }
+
                         var groupByPhong = model.ChiDinhs.GroupBy(x => x.MaPhong);
                         foreach (var group in groupByPhong)
                         {
-                            string sqlPhieuCD = @"INSERT INTO PHIEU_CHIDINH (MaPhieuKhamBenh, MaBacSiChiDinh, NgayChiDinh, TrangThai, MaPhong) 
-                                          OUTPUT INSERTED.MaPhieuChiDinh 
-                                          VALUES (@MaP, @MaBS, GETDATE(), N'Chưa thanh toán', @MaPhong)";
+                            decimal tongTienPhieu = 0;
+                            foreach (var dvTmp in group)
+                            {
+                                using (SqlCommand cmdTong = new SqlCommand("SELECT GiaDichVu FROM DICHVU WHERE MaDV = @MaDV", conn, tran))
+                                {
+                                    cmdTong.Parameters.AddWithValue("@MaDV", dvTmp.MaDV);
+                                    object giaObj = cmdTong.ExecuteScalar();
+                                    if (giaObj == null) throw new Exception("Không tìm thấy giá dịch vụ CLS: " + dvTmp.MaDV);
+                                    tongTienPhieu += Convert.ToDecimal(giaObj);
+                                }
+                            }
 
-                            int maPhieuCD = 0;
+                            string sqlPhieuCD = @"
+                                INSERT INTO PHIEU_CHIDINH (MaPhieuKhamBenh, MaBacSiChiDinh, NgayChiDinh, TrangThai, TongTien, MaPhong)
+                                OUTPUT INSERTED.MaPhieuChiDinh
+                                VALUES (@MaP, @MaBS, GETDATE(), N'Chưa thanh toán', @TongTien, @MaPhong)";
+
+                            int maPhieuCD;
                             using (SqlCommand cmdPCD = new SqlCommand(sqlPhieuCD, conn, tran))
                             {
                                 cmdPCD.Parameters.AddWithValue("@MaP", model.MaPhieuKhamBenh);
                                 cmdPCD.Parameters.AddWithValue("@MaBS", maBS);
+                                cmdPCD.Parameters.AddWithValue("@TongTien", tongTienPhieu);
                                 cmdPCD.Parameters.AddWithValue("@MaPhong", group.Key);
                                 maPhieuCD = (int)cmdPCD.ExecuteScalar();
                             }
 
-                            // Lưu chi tiết từng dịch vụ vào Phiếu
                             foreach (var dv in group)
                             {
-                                string sqlCT = @"INSERT INTO CHITIET_CHIDINH (MaPhieuChiDinh, MaDV, DonGia, TrangThai) 
-                                         VALUES (@MaPCD, @MaDV, (SELECT GiaDichVu FROM DICHVU WHERE MaDV = @MaDV), N'Chưa thực hiện')";
+                                decimal donGia;
+                                using (SqlCommand cmdGia = new SqlCommand("SELECT GiaDichVu FROM DICHVU WHERE MaDV = @MaDV", conn, tran))
+                                {
+                                    cmdGia.Parameters.AddWithValue("@MaDV", dv.MaDV);
+                                    object g = cmdGia.ExecuteScalar();
+                                    if (g == null) throw new Exception("Không tìm thấy giá dịch vụ CLS: " + dv.MaDV);
+                                    donGia = Convert.ToDecimal(g);
+                                }
+
+                                string sqlCT = @"
+                                    INSERT INTO CHITIET_CHIDINH (MaPhieuChiDinh, MaDV, DonGia, TrangThai)
+                                    VALUES (@MaPCD, @MaDV, @DonGia, N'Chưa thực hiện')";
                                 using (SqlCommand cmdCT = new SqlCommand(sqlCT, conn, tran))
                                 {
                                     cmdCT.Parameters.AddWithValue("@MaPCD", maPhieuCD);
                                     cmdCT.Parameters.AddWithValue("@MaDV", dv.MaDV);
+                                    cmdCT.Parameters.AddWithValue("@DonGia", donGia);
                                     cmdCT.ExecuteNonQuery();
                                 }
+
+                                string sqlInsHD = @"
+                                    INSERT INTO CT_HOADON_DV (MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
+                                    VALUES (@MaHD, @MaDV, @DonGia, @DonGia, 0, @DonGia, N'Chưa thanh toán')";
+                                using (SqlCommand cmdInsHD = new SqlCommand(sqlInsHD, conn, tran))
+                                {
+                                    cmdInsHD.Parameters.AddWithValue("@MaHD", maHD);
+                                    cmdInsHD.Parameters.AddWithValue("@MaDV", dv.MaDV);
+                                    cmdInsHD.Parameters.AddWithValue("@DonGia", donGia);
+                                    cmdInsHD.ExecuteNonQuery();
+                                }
                             }
+                        }
+
+                        string sqlRecalcHD = @"
+                            UPDATE hd
+                            SET TongTienGoc = ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0),
+                                TongTienBHYTChiTra = ISNULL(dv.TongBHYT, 0) + ISNULL(th.TongBHYT, 0),
+                                TongTienBenhNhanTra = ISNULL(dv.TongBN, 0) + ISNULL(th.TongBN, 0),
+                                TrangThaiThanhToan = CASE
+                                    WHEN (ISNULL(dv.Unpaid, 0) + ISNULL(th.Unpaid, 0)) > 0 THEN N'Chưa thanh toán'
+                                    WHEN (ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0)) = 0 THEN N'Đã hủy'
+                                    ELSE N'Đã thanh toán'
+                                END,
+                                NgayThanhToan = GETDATE()
+                            FROM HOADON hd
+                            LEFT JOIN (
+                                SELECT MaHD,
+                                       SUM(TongTienGoc) AS TongGoc,
+                                       SUM(TienBHYTChiTra) AS TongBHYT,
+                                       SUM(TienBenhNhanTra) AS TongBN,
+                                       SUM(CASE WHEN TrangThaiThanhToan = N'Chưa thanh toán' THEN 1 ELSE 0 END) AS Unpaid
+                                FROM CT_HOADON_DV
+                                WHERE TrangThaiThanhToan != N'Hủy'
+                                GROUP BY MaHD
+                            ) dv ON hd.MaHD = dv.MaHD
+                            LEFT JOIN (
+                                SELECT MaHD,
+                                       SUM(TongTienGoc) AS TongGoc,
+                                       SUM(TienBHYTChiTra) AS TongBHYT,
+                                       SUM(TienBenhNhanTra) AS TongBN,
+                                       SUM(CASE WHEN TrangThaiThanhToan = N'Chưa thanh toán' THEN 1 ELSE 0 END) AS Unpaid
+                                FROM CT_HOADON_THUOC
+                                WHERE TrangThaiThanhToan != N'Hủy'
+                                GROUP BY MaHD
+                            ) th ON hd.MaHD = th.MaHD
+                            WHERE hd.MaHD = @MaHD";
+                        using (SqlCommand cmdRecalc = new SqlCommand(sqlRecalcHD, conn, tran))
+                        {
+                            cmdRecalc.Parameters.AddWithValue("@MaHD", maHD);
+                            cmdRecalc.ExecuteNonQuery();
                         }
                     }
                     // ======= NẾU KHÔNG CÓ CLS THÌ LƯU BỆNH & KÊ THUỐC (Code cũ giữ nguyên) =======
@@ -570,10 +676,17 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
                 string sql = @"
-                    SELECT k.MaKetQua, d.TenDV, k.NoiDungKetQua, k.NgayThucHien
-                    FROM KETQUA_CLS k
-                    JOIN DICHVU d ON k.MaDV = d.MaDV
-                    WHERE k.MaPhieuKhamBenh = @MaPKB AND k.TrangThai = N'Đã có kết quả'";
+                    SELECT
+                        d.TenDV,
+                        ct.KetQua,
+                        pc.NgayChiDinh,
+                        ct.ThoiGianCoKetQua
+                    FROM CHITIET_CHIDINH ct
+                    JOIN PHIEU_CHIDINH pc ON ct.MaPhieuChiDinh = pc.MaPhieuChiDinh
+                    JOIN DICHVU d ON ct.MaDV = d.MaDV
+                    WHERE pc.MaPhieuKhamBenh = @MaPKB
+                      AND ct.TrangThai = N'Đã có kết quả'
+                    ORDER BY pc.NgayChiDinh DESC, ct.MaCTChiDinh DESC";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@MaPKB", maPKB);
@@ -582,10 +695,21 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         while (dr.Read())
                         {
-                            list.Add(new {
+                            string ngayThucHien = "";
+                            if (dr["NgayChiDinh"] != DBNull.Value)
+                            {
+                                DateTime ngay = Convert.ToDateTime(dr["NgayChiDinh"]);
+                                string gio = dr["ThoiGianCoKetQua"] != DBNull.Value ? dr["ThoiGianCoKetQua"].ToString() : "";
+                                ngayThucHien = string.IsNullOrEmpty(gio)
+                                    ? ngay.ToString("dd/MM/yyyy")
+                                    : $"{ngay:dd/MM/yyyy} {gio}";
+                            }
+
+                            list.Add(new
+                            {
                                 TenDV = dr["TenDV"].ToString(),
-                                NoiDungKetQua = dr["NoiDungKetQua"].ToString(),
-                                NgayThucHien = dr["NgayThucHien"] != DBNull.Value ? Convert.ToDateTime(dr["NgayThucHien"]).ToString("dd/MM/yyyy HH:mm") : ""
+                                NoiDungKetQua = dr["KetQua"] != DBNull.Value ? dr["KetQua"].ToString() : "",
+                                NgayThucHien = ngayThucHien
                             });
                         }
                     }
