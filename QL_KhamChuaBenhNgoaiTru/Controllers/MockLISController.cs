@@ -13,7 +13,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         {
             try
             {
-                var ketQua = db.GetKetQuaById(maKetQua);
+                var ketQua = db.GetThongTinChiTietCLS(maKetQua);
                 if (ketQua == null)
                 {
                     return Json(new { success = false, message = "Không tìm thấy yêu cầu xét nghiệm/siêu âm này." });
@@ -60,7 +60,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                     noiDungSinhRa = "<p class='mt-2 text-success'>Các chỉ số phân tích sinh hoá cơ bản đo lường ổn định.</p>";
                 }
 
-                bool IsUpdated = db.CapNhatKetQuaTuLIS(maKetQua, noiDungSinhRa, ketQua.MaPhieuKhamBenh);
+                bool IsUpdated = db.CapNhatKetQuaTuLIS(maKetQua, noiDungSinhRa, ketQua.MaPhieuKhamBenh, "", "", null, null);
                 
                 if (IsUpdated)
                 {

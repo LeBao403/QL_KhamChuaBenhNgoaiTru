@@ -1,16 +1,13 @@
 using QL_KhamChuaBenhNgoaiTru.DBContext;
 using System;
 using System.Web.Mvc;
-//using QL_KhamChuaBenhNgoaiTru.Helpers; // Uncomment nếu project cần Auth login để vô Staff
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 {
-    // [StaffAuthorize(Roles = "1,3")] // Tuỳ chỉnh theo file Auth của project
     public class CLSController : Controller
     {
-        private CLSDB db = new CLSDB();
+        private readonly CLSDB db = new CLSDB();
 
-        // GET: Staff/CLS
         public ActionResult Index()
         {
             try
@@ -25,6 +22,20 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             }
         }
 
+        public ActionResult LichSu()
+        {
+            try
+            {
+                var lichSu = db.GetLichSuXetNghiem(300);
+                return View(lichSu);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Lỗi khi lấy lịch sử xét nghiệm: " + ex.Message;
+                return View(new System.Collections.Generic.List<QL_KhamChuaBenhNgoaiTru.Models.KetQuaCLS>());
+            }
+        }
+
         [HttpPost]
         public JsonResult GetChiTiet(int maKetQua)
         {
@@ -34,14 +45,17 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult XacNhanKetQua(int maKetQua, string noiDung, int maPhieuKhamBenh)
+        public JsonResult XacNhanKetQua(int maKetQua, string noiDung, int maPhieuKhamBenh, string mauXN, string chatLuong)
         {
-            if (string.IsNullOrEmpty(noiDung))
+            if (string.IsNullOrWhiteSpace(noiDung))
                 return Json(new { success = false, message = "Vui lòng nhập kết quả." });
 
-            bool res = db.CapNhatKetQuaTuLIS(maKetQua, noiDung, maPhieuKhamBenh);
-            if (res) return Json(new { success = true });
-            else return Json(new { success = false, message = "Lỗi khi lưu kết quả." });
+            string maBS = Session["MaNV"]?.ToString() ?? "NV001";
+            string fileKetQua = "KQCLS_" + maKetQua + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".pdf";
+
+            bool res = db.CapNhatKetQuaTuLIS(maKetQua, noiDung, maPhieuKhamBenh, maBS, fileKetQua, mauXN, chatLuong);
+            if (res) return Json(new { success = true, fileKetQua = fileKetQua, maBacSi = maBS });
+            return Json(new { success = false, message = "Lỗi khi lưu kết quả." });
         }
     }
 }

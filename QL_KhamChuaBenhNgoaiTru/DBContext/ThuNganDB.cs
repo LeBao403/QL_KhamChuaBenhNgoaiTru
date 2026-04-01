@@ -186,10 +186,68 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             }
                         }
 
-                        // 3.6. Cập nhật trạng thái Phiếu Khám
-                        SqlCommand cmdPKB = new SqlCommand("UPDATE PHIEUKHAMBENH SET TrangThai = N'Chờ cấp số' WHERE MaPhieuKhamBenh = @MaPKB AND TrangThai = N'Chờ thanh toán'", con, trans);
-                        cmdPKB.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
-                        cmdPKB.ExecuteNonQuery();
+                        // 3.6. Dong bo trang thai cho luong CLS neu co:
+                        // Chi danh dau "Da thanh toan" cho phieu co it nhat 1 DV CLS da thu tien.
+                        SqlCommand cmdUpdatePCD = new SqlCommand(@"
+                            UPDATE pc
+                            SET pc.TrangThai = N'Đã thanh toán'
+                            FROM PHIEU_CHIDINH pc
+                            WHERE pc.MaPhieuKhamBenh = @MaPKB
+                              AND pc.TrangThai = N'Chưa thanh toán'
+                              AND EXISTS (
+                                  SELECT 1
+                                  FROM CHITIET_CHIDINH ct
+                                  JOIN HOADON hd ON hd.MaPhieuKhamBenh = pc.MaPhieuKhamBenh
+                                  JOIN CT_HOADON_DV dv ON dv.MaHD = hd.MaHD
+                                  WHERE ct.MaPhieuChiDinh = pc.MaPhieuChiDinh
+                                    AND dv.MaDV = ct.MaDV
+                                    AND dv.TrangThaiThanhToan = N'Đã thanh toán'
+                              )", con, trans);
+                        cmdUpdatePCD.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                        cmdUpdatePCD.ExecuteNonQuery();
+
+                        // 3.7. Cap nhat trang thai phieu kham theo nghiep vu:
+                        // - Neu co chi dinh CLS chua thuc hien sau khi da thu tien => Cho can lam sang
+                        // - Neu khong => flow cu Cho cap so
+                        bool hasPendingCls = false;
+                        using (SqlCommand cmdCheckCLS = new SqlCommand(@"
+                            SELECT COUNT(*)
+                            FROM PHIEU_CHIDINH pc
+                            JOIN CHITIET_CHIDINH ct ON pc.MaPhieuChiDinh = ct.MaPhieuChiDinh
+                            WHERE pc.MaPhieuKhamBenh = @MaPKB
+                              AND ct.ThoiGianCoKetQua IS NULL
+                              AND EXISTS (
+                                  SELECT 1
+                                  FROM HOADON hd
+                                  JOIN CT_HOADON_DV dv ON dv.MaHD = hd.MaHD
+                                  WHERE hd.MaPhieuKhamBenh = pc.MaPhieuKhamBenh
+                                    AND dv.MaDV = ct.MaDV
+                                    AND dv.TrangThaiThanhToan = N'Đã thanh toán'
+                              )", con, trans))
+                        {
+                            cmdCheckCLS.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                            hasPendingCls = Convert.ToInt32(cmdCheckCLS.ExecuteScalar()) > 0;
+                        }
+
+                        if (hasPendingCls)
+                        {
+                            SqlCommand cmdPKB = new SqlCommand(@"
+                                UPDATE PHIEUKHAMBENH
+                                SET TrangThai = N'Chờ cận lâm sàng'
+                                WHERE MaPhieuKhamBenh = @MaPKB", con, trans);
+                            cmdPKB.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                            cmdPKB.ExecuteNonQuery();
+                        }
+                        else
+                        {
+                            SqlCommand cmdPKB = new SqlCommand(@"
+                                UPDATE PHIEUKHAMBENH
+                                SET TrangThai = N'Chờ cấp số'
+                                WHERE MaPhieuKhamBenh = @MaPKB
+                                  AND TrangThai = N'Chờ thanh toán'", con, trans);
+                            cmdPKB.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                            cmdPKB.ExecuteNonQuery();
+                        }
 
                         trans.Commit();
                         return true;

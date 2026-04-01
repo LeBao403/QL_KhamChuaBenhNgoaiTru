@@ -1,0 +1,334 @@
+@{
+    ViewBag.Title = "Sao Lưu & Phục Hồi Dữ Liệu";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_Admin.cshtml";
+    var files = ViewBag.BackupFiles as IEnumerable<QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers.BackupFileInfo>;
+    var config = ViewBag.Config as QL_KhamChuaBenhNgoaiTru.Services.BackupConfig;
+}
+
+<style>
+    .backup-card {
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border: 1px solid #e9ecef;
+    }
+    .custom-icon-bg {
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 1.3rem;
+    }
+    .nav-tabs .nav-link {
+        font-weight: 600;
+        color: #495057;
+        padding: 12px 20px;
+        border: none;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s;
+    }
+    .nav-tabs .nav-link.active {
+        color: #0d6efd;
+        background-color: transparent;
+        border-bottom: 3px solid #0d6efd;
+    }
+    .nav-tabs .nav-link:hover {
+        border-bottom: 3px solid #dee2e6;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1 text-primary fw-bold">
+                <i class="bi bi-shield-lock me-2"></i> Quản lý An Toàn Dữ Liệu Nâng Cao
+            </h4>
+            <span class="text-muted small">Cấu hình hệ thống sao lưu Toàn bộ (Full) và Từng phần chênh lệch (Differential).</span>
+        </div>
+        <button class="btn btn-primary fw-bold px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#backupModal">
+            <i class="bi bi-cloud-arrow-up-fill me-2"></i> TẠO BẢN SAO NGAY
+        </button>
+    </div>
+
+    <!-- Modal Chọn Kiểu Sao Lưu -->
+    <div class="modal fade" id="backupModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold"><i class="bi bi-cloud-plus-fill me-2"></i>Chọn Hình thức Sao Lưu</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-4">Mỗi phiên bản sao lưu có trọng lượng và ưu điểm riêng, hãy chọn tuỳ thuộc vào tình trạng hiện tại.</p>
+                    
+                    <button class="btn btn-outline-primary w-100 text-start mb-3 p-3 btn-manual-backup" data-diff="false">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-database-fill fs-1 me-3"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Toàn bộ (Full Backup)</h6>
+                                <span class="small text-muted d-block" style="white-space:normal">Đóng gói toàn vẹn CSDL. Chạy khá nặng mất thời gian, nhưng là Xương sống an toàn tuyệt đối.</span>
+                            </div>
+                        </div>
+                    </button>
+
+                    <button class="btn btn-outline-success w-100 text-start p-3 btn-manual-backup" data-diff="true">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-file-earmark-diff fs-1 me-3"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Chỉ những thay đổi (Differential)</h6>
+                                <span class="small text-muted d-block" style="white-space:normal">Lưu lại đúng những điểm khác biệt so với lần Full Backup gần nhất. Tốc độ cực nhanh và rất nhẹ ổ cứng.</span>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card backup-card border-0 mb-4">
+        <div class="card-header bg-white pt-3 pb-0 border-bottom-0">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">
+                        <i class="bi bi-clock-history me-1"></i> Lịch sử sao lưu
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+                        <i class="bi bi-gear-fill me-1"></i> Lịch Trình Tự Động Máy Chủ
+                    </button>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="card-body p-4">
+            <div class="tab-content" id="myTabContent">
+                
+                <!-- TAB 1: HISTORY -->
+                <div class="tab-pane fade show active" id="history" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle bg-white mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Cột mốc Bản sao lưu</th>
+                                    <th>Phân loại</th>
+                                    <th class="text-center">Kích thước</th>
+                                    <th class="text-center">Ngày tạo</th>
+                                    <th class="text-center" style="width: 200px">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (files != null && files.Any())
+                                {
+                                    foreach (var f in files)
+                                    {
+                                        <tr>
+                                            <td class="fw-semibold text-dark">
+                                                <i class="bi bi-file-earmark-zip-fill text-warning me-2 fs-5 align-middle"></i> 
+                                                @f.FileName
+                                            </td>
+                                            <td>
+                                                @if (f.IsDifferential) {
+                                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25"><i class="bi bi-lightning-charge-fill me-1"></i> Differential</span>
+                                                } else {
+                                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25"><i class="bi bi-database-fill-check me-1"></i> Full Master</span>
+                                                }
+                                            </td>
+                                            <td class="text-center fw-bold text-secondary">@f.FileSize</td>
+                                            <td class="text-center text-muted">@f.CreationTime.ToString("dd/MM/yyyy • HH:mm")</td>
+                                            <td class="text-center">
+                                                <button class="btn btn-sm btn-outline-danger btn-restore fw-semibold rounded-pill px-3 me-1" data-file="@f.FileName" data-diff="@(f.IsDifferential ? "true" : "false")" title="Khôi phục máy chủ về trạng thái này">
+                                                    <i class="bi bi-arrow-counterclockwise"></i> Khôi phục
+                                                </button>
+                                                <button class="btn btn-sm btn-light btn-delete text-danger rounded-circle" data-file="@f.FileName" title="Xóa thùng rác">
+                                                    <i class="bi bi-trash-fill"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-5">
+                                            <i class="bi bi-inbox fs-1 text-light"></i><br/>
+                                            <p class="mt-2">Chưa có dữ liệu nào được dự phòng trên máy chủ hệ thống.</p>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- TAB 2: SETTINGS -->
+                <div class="tab-pane fade" id="settings" role="tabpanel">
+                    <div class="row gx-4">
+                        
+                        <!-- Block Full Backup -->
+                        <div class="col-md-6 mb-4">
+                            <div class="p-4 bg-light rounded bg-opacity-50 h-100 border">
+                                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-database-fill me-2"></i> Toàn bộ (Full Master)</h5>
+                                <p class="text-muted small mb-4">Tiến hành thu thập toàn bộ cơ sở dữ liệu nặng. Rất cần thiết duy trì hằng ngày khi về đêm nhưng sẽ chiếm dụng máy chủ.</p>
+                                
+                                <div class="form-check form-switch mb-4">
+                                    <input class="form-check-input mt-1" type="checkbox" id="chkAutoFull" @(config.FullBackup.IsEnabled ? "checked" : "") style="transform: scale(1.4); transform-origin: left;">
+                                    <label class="form-check-label fw-bold ms-3" for="chkAutoFull">Bật lập lịch Toàn Bộ</label>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold text-secondary">Giờ chạy nền (HH:mm)</label>
+                                    <input type="time" class="form-control bg-white" id="timeFull" value="@config.FullBackup.BackupTime" />
+                                </div>
+                                
+                                <div class="text-muted small">
+                                    Lần tự động gần nhất: <strong class="text-dark">@(config.FullBackup.LastBackupDate.HasValue ? config.FullBackup.LastBackupDate.Value.ToString("dd/MM/yyyy HH:mm:ss") : "Chưa từng kích hoạt")</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Block Differential Backup -->
+                        <div class="col-md-6 mb-4">
+                            <div class="p-4 bg-light rounded bg-opacity-50 h-100 border">
+                                <h5 class="fw-bold text-success mb-3"><i class="bi bi-file-earmark-diff me-2"></i> Chênh lệch (Differential)</h5>
+                                <p class="text-muted small mb-4">Mô hình thu thập cực nhanh (nhưng file sẽ bị vô tác dụng nếu lỡ quên xoá mất bản Full Master gốc trước đó).</p>
+                                
+                                <div class="form-check form-switch mb-4">
+                                    <input class="form-check-input mt-1 custom-switch-success" type="checkbox" id="chkAutoDiff" @(config.DiffBackup.IsEnabled ? "checked" : "") style="transform: scale(1.4); transform-origin: left;">
+                                    <label class="form-check-label fw-bold ms-3" for="chkAutoDiff">Bật lập lịch Nhanh (Diff)</label>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold text-secondary">Giờ chạy nền (HH:mm)</label>
+                                    <input type="time" class="form-control bg-white" id="timeDiff" value="@config.DiffBackup.BackupTime" />
+                                </div>
+                                
+                                <div class="text-muted small">
+                                    Lần tự động gần nhất: <strong class="text-dark">@(config.DiffBackup.LastBackupDate.HasValue ? config.DiffBackup.LastBackupDate.Value.ToString("dd/MM/yyyy HH:mm:ss") : "Chưa từng kích hoạt")</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <hr class="my-3 text-muted">
+
+                    <div class="text-end">
+                        <button id="btnSaveSchedule" class="btn btn-primary fw-bold px-5 py-2 shadow-sm">
+                            <i class="bi bi-check-circle me-2"></i> LƯU 2 NHÁNH CẤU HÌNH TRÊN
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function() {
+            // Save Schedule
+            $('#btnSaveSchedule').click(function() {
+                var isFullAuto = $('#chkAutoFull').is(':checked');
+                var timeFull = $('#timeFull').val();
+                
+                var isDiffAuto = $('#chkAutoDiff').is(':checked');
+                var timeDiff = $('#timeDiff').val();
+                
+                $.post('@Url.Action("SaveSchedule", "Backup", new { area = "Admin" })', { 
+                    isFullAuto: isFullAuto, backupFullTime: timeFull,
+                    isDiffAuto: isDiffAuto, backupDiffTime: timeDiff
+                }, function(res) {
+                    if (res.success) {
+                        Swal.fire({ icon: 'success', title: 'Máy chủ đã ghi nhận!', text: res.message, timer: 2000, showConfirmButton: false }).then(() => location.reload());
+                    } else {
+                        Swal.fire('Lỗi', res.message, 'error');
+                    }
+                });
+            });
+
+            // Handle Manual Backup Buttons in Modal
+            $('.btn-manual-backup').click(function() {
+                var isDiff = $(this).data('diff');
+                $('#backupModal').modal('hide');
+                
+                var t = isDiff ? "Chênh lệch nhẹ (Differential)" : "Toàn bộ Máy Chủ (Full)";
+                Swal.fire({
+                    title: 'Đang tiến hành Sao lưu',
+                    html: `<b>Kiểu: ${t}</b><br><br>Hệ thống đang xuất file, đừng đóng trình duyệt nha...`,
+                    allowOutsideClick: false, 
+                    didOpen: () => { Swal.showLoading(); }
+                });
+
+                $.post('@Url.Action("CreateBackup", "Backup", new { area = "Admin" })', { isDifferential: isDiff }, function(res) {
+                    if (res.success) {
+                        Swal.fire('Hoàn tất!', res.message, 'success').then(() => { location.reload(); });
+                    } else {
+                        Swal.fire('Lỗi Ghi File SQL!', res.message, 'error');
+                    }
+                });
+            });
+
+
+            // Restore Backup
+            $('.btn-restore').click(function() {
+                var file = $(this).data('file');
+                var isDiff = $(this).data('diff');
+                
+                var extraWarning = isDiff 
+                    ? `<div class="alert alert-danger p-2 text-start mt-3"><b>⚠ KIẾN TRÚC DIFFERENTIAL:</b> Thuật toán này sẽ dò ngược <b>xoá trắng</b> csdl và cài đè Bản Full cũ gốc trước, sau đó mới lắp ráp bản Differential này lên.<br>Nếu làm mất file gốc, Quá trình sẽ lập tức từ chối chạy.</div>`
+                    : "";
+
+                Swal.fire({
+                    title: 'ĐỌC MỘT LẦN VÀ CẬN THẬN!',
+                    html: `Mọi diễn biến Báo cáo từ sau file <b>${file}</b> sẽ BỊ GHI ĐÈ VÀ MẤT CHẮC CHẮN.<br>Tất cả Bác sĩ & Tiếp tân sẽ rớt kết nối mạng ảo một chút xíu.<br>${extraWarning}`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    cancelButtonColor: '#adb5bd',
+                    confirmButtonText: 'Đã Rõ Khái Niệm - Cài Đè!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({ title: 'Hệ thống đang thắt Single_User Mode...', html: '<b>XIN ĐƯỢC CHỜ, CẤM F5!</b>', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+                        
+                        $.post('@Url.Action("RestoreBackup", "Backup", new { area = "Admin" })', { fileName: file }, function(res) {
+                            if (res.success) {
+                                Swal.fire('Khôi phục Thần Tốc!', res.message, 'success').then(() => { location.reload(); });
+                            } else {
+                                Swal.fire('Lỗi Dịch Sự Cố Tệp', res.message, 'error');
+                            }
+                        }).fail(function() {
+                            Swal.fire('Mất Liên Lạc', 'Nếu bạn thấy lỗi, hãy thử Refresh lại trình duyệt.', 'warning');
+                        });
+                    }
+                });
+            });
+
+            // Delete File
+            $('.btn-delete').click(function() {
+                var file = $(this).data('file');
+                Swal.fire({
+                    title: 'Xóa File .bak?',
+                    text: 'Giải phóng thùng chứa của Server. Không thể Undo!',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#dc3545',
+                    confirmButtonText: 'Xóa Vĩnh Viễn',
+                    cancelButtonText: 'Không Xoá'
+                }).then((r) => {
+                    if(r.isConfirmed){
+                        $.post('@Url.Action("DeleteBackup", "Backup", new { area = "Admin" })', { fileName: file }, function(res) {
+                            if(res.success) location.reload();
+                            else Swal.fire('Lỗi Gỡ File', res.message, 'error');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

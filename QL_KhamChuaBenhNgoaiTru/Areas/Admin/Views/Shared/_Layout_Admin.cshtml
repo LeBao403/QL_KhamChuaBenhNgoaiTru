@@ -360,7 +360,7 @@
                 string act = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
                 bool isBenhVien = ctrl == "Thuoc" || ctrl == "LoaiThuoc" || ctrl == "BenhNhan" || ctrl == "Khoa" || ctrl == "Phong";
                 bool isVatTu = ctrl == "Kho" || ctrl == "HoaDon" || ctrl == "DichVu";
-                bool isHeThong = ctrl == "NhanVien";
+                bool isHeThong = ctrl == "NhanVien" || ctrl == "Backup";
             }
 
             <a class="nav-link @(ctrl == "Dashboard" ? "active" : "")" href="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
@@ -421,6 +421,9 @@
                 <div class="collapse sidebar-submenu @(isHeThong ? "show" : "")" id="submenuHeThong">
                     <a class="nav-link sub-nav-link @(ctrl == "NhanVien" ? "active" : "")" href="@Url.Action("Index", "NhanVien", new { area = "Admin" })">
                         Hồ sơ Nhân viên
+                    </a>
+                    <a class="nav-link sub-nav-link @(ctrl == "Backup" ? "active" : "")" href="@Url.Action("Index", "Backup", new { area = "Admin" })">
+                        Sao lưu & Khôi phục
                     </a>
                 </div>
             </div>

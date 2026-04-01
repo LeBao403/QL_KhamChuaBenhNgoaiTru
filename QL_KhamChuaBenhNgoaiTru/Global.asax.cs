@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -16,6 +16,9 @@ namespace QL_KhamChuaBenhNgoaiTru
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            
+            // Khởi động trình lên lịch sao lưu tự động
+            QL_KhamChuaBenhNgoaiTru.Services.BackupScheduler.Start();
         }
     }
 }
