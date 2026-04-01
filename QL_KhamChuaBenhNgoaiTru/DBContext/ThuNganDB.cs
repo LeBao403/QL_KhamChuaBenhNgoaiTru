@@ -11,30 +11,32 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
     {
         private string connectStr = ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString;
 
-        // 1. LẤY DANH SÁCH BỆNH NHÂN ĐANG NỢ TIỀN (Chưa thanh toán)
+        // 1. LẤY DANH SÁCH BỆNH NHÂN ĐANG NỢ TIỀN (Chưa thanh toán hoặc Thanh toán 1 phần)
         public DataTable GetDanhSachChoThuTien()
         {
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
             {
-                // LOGIC MỚI: Dùng Subquery để SUM(TienBenhNhanTra) CHỈ những món 'Chưa thanh toán'
+                // LOGIC: Lấy các Hóa đơn còn nợ và CHỈ SUM(TienBenhNhanTra) ở các chi tiết chưa thanh toán
                 string sql = @"
-            SELECT * FROM (
-                SELECT hd.MaHD, hd.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.BHYT,
-                       hd.NgayThanhToan, hd.GhiChu, 
-                       pkb.MaPhieuKhamBenh, pkb.TrangThai,
-                       (
-                           ISNULL((SELECT SUM(TienBenhNhanTra) FROM CT_HOADON_DV WHERE MaHD = hd.MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'), 0) +
-                           ISNULL((SELECT SUM(TienBenhNhanTra) FROM CT_HOADON_THUOC WHERE MaHD = hd.MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'), 0)
-                       ) AS TongTienBenhNhanTra
-                FROM HOADON hd
-                JOIN BENHNHAN bn ON hd.MaBN = bn.MaBN
-                JOIN PHIEUKHAMBENH pkb ON hd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
-                WHERE hd.TrangThaiThanhToan = N'Chưa thanh toán' 
-                  AND CAST(hd.NgayThanhToan AS DATE) = CAST(GETDATE() AS DATE)
-            ) AS DanhSachNo
-            WHERE TongTienBenhNhanTra > 0
-            ORDER BY MaHD ASC";
+    SELECT * FROM (
+        SELECT hd.MaHD, hd.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.BHYT,
+               hd.NgayThanhToan, hd.GhiChu, 
+               pkb.MaPhieuKhamBenh, pkb.TrangThai,
+               (
+                   ISNULL((SELECT SUM(TienBenhNhanTra) FROM CT_HOADON_DV WHERE MaHD = hd.MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'), 0) +
+                   ISNULL((SELECT SUM(TienBenhNhanTra) FROM CT_HOADON_THUOC WHERE MaHD = hd.MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'), 0)
+               ) AS TongTienBenhNhanTra
+        FROM HOADON hd
+        JOIN BENHNHAN bn ON hd.MaBN = bn.MaBN
+        JOIN PHIEUKHAMBENH pkb ON hd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
+        
+        -- SỬA Ở ĐÂY: Quét cả 2 trạng thái còn nợ tiền
+        WHERE hd.TrangThaiThanhToan IN (N'Chưa thanh toán', N'Thanh toán 1 phần') 
+          AND CAST(hd.NgayThanhToan AS DATE) = CAST(GETDATE() AS DATE)
+    ) AS DanhSachNo
+    WHERE TongTienBenhNhanTra > 0
+    ORDER BY MaHD ASC";
 
                 SqlDataAdapter da = new SqlDataAdapter(sql, con);
                 da.Fill(dt);

@@ -407,7 +407,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        // 4. BẠN CẦN CẬP NHẬT LẠI HÀM LuuKhamBenh để thêm tham số maBS và xử lý lưu CLS
+        // 4. HÀM LƯU KHÁM BỆNH (Đã tích hợp Tự động trừ BHYT và cập nhật Thanh toán 1 phần)
         public bool LuuKhamBenh(KhamBenhViewModel model, string maBS, out string errorMsg)
         {
             errorMsg = "";
@@ -417,7 +417,17 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 SqlTransaction tran = conn.BeginTransaction();
                 try
                 {
-                    // Cập nhật trạng thái phiếu khám chính
+                    // 1. Lấy mã bệnh nhân (Cần dùng chung cho việc tạo Hóa đơn và tính BHYT)
+                    string maBN = "";
+                    using (SqlCommand cmdBN = new SqlCommand("SELECT MaBN FROM PHIEUKHAMBENH WHERE MaPhieuKhamBenh = @MaPKB", conn, tran))
+                    {
+                        cmdBN.Parameters.AddWithValue("@MaPKB", model.MaPhieuKhamBenh);
+                        object bnObj = cmdBN.ExecuteScalar();
+                        if (bnObj == null) throw new Exception("Không tìm thấy bệnh nhân của phiếu khám.");
+                        maBN = bnObj.ToString();
+                    }
+
+                    // 2. Cập nhật trạng thái phiếu khám chính
                     string trangThai = model.YeuCauCanLamSang ? "Chờ thanh toán" : "Hoàn thành";
                     string sqlUpdatePhieu = @"UPDATE PHIEUKHAMBENH 
                                       SET TrieuChung = @TrieuChung, KetLuan = @KetLuan, TrangThai = @TrangThai 
@@ -436,6 +446,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         int maHD = 0;
 
+                        // Tìm hóa đơn hiện tại của lượt khám
                         string sqlGetHD = "SELECT TOP 1 MaHD FROM HOADON WHERE MaPhieuKhamBenh = @MaPKB ORDER BY MaHD DESC";
                         using (SqlCommand cmdGetHD = new SqlCommand(sqlGetHD, conn, tran))
                         {
@@ -444,21 +455,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             maHD = hdObj != null ? Convert.ToInt32(hdObj) : 0;
                         }
 
+                        // Nếu chưa có Hóa đơn thì tạo mới
                         if (maHD == 0)
                         {
-                            string maBN = "";
-                            using (SqlCommand cmdBN = new SqlCommand("SELECT MaBN FROM PHIEUKHAMBENH WHERE MaPhieuKhamBenh = @MaPKB", conn, tran))
-                            {
-                                cmdBN.Parameters.AddWithValue("@MaPKB", model.MaPhieuKhamBenh);
-                                object bnObj = cmdBN.ExecuteScalar();
-                                if (bnObj == null) throw new Exception("Không tìm thấy bệnh nhân của phiếu khám.");
-                                maBN = bnObj.ToString();
-                            }
-
                             string sqlCreateHD = @"
-                                INSERT INTO HOADON (MaBN, MaPhieuKhamBenh, NgayThanhToan, TongTienGoc, TongTienBHYTChiTra, TongTienBenhNhanTra, TrangThaiThanhToan)
-                                OUTPUT INSERTED.MaHD
-                                VALUES (@MaBN, @MaPKB, GETDATE(), 0, 0, 0, N'Chưa thanh toán')";
+                        INSERT INTO HOADON (MaBN, MaPhieuKhamBenh, NgayThanhToan, TongTienGoc, TongTienBHYTChiTra, TongTienBenhNhanTra, TrangThaiThanhToan)
+                        OUTPUT INSERTED.MaHD
+                        VALUES (@MaBN, @MaPKB, GETDATE(), 0, 0, 0, N'Chưa thanh toán')";
                             using (SqlCommand cmdCreateHD = new SqlCommand(sqlCreateHD, conn, tran))
                             {
                                 cmdCreateHD.Parameters.AddWithValue("@MaBN", maBN);
@@ -482,11 +485,11 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 }
                             }
 
+                            // Tạo phiếu chỉ định cho từng phòng
                             string sqlPhieuCD = @"
-                                INSERT INTO PHIEU_CHIDINH (MaPhieuKhamBenh, MaBacSiChiDinh, NgayChiDinh, TrangThai, TongTien, MaPhong)
-                                OUTPUT INSERTED.MaPhieuChiDinh
-                                VALUES (@MaP, @MaBS, GETDATE(), N'Chưa thanh toán', @TongTien, @MaPhong)";
-
+                        INSERT INTO PHIEU_CHIDINH (MaPhieuKhamBenh, MaBacSiChiDinh, NgayChiDinh, TrangThai, TongTien, MaPhong)
+                        OUTPUT INSERTED.MaPhieuChiDinh
+                        VALUES (@MaP, @MaBS, GETDATE(), N'Chưa thanh toán', @TongTien, @MaPhong)";
                             int maPhieuCD;
                             using (SqlCommand cmdPCD = new SqlCommand(sqlPhieuCD, conn, tran))
                             {
@@ -497,20 +500,20 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 maPhieuCD = (int)cmdPCD.ExecuteScalar();
                             }
 
+                            // Xử lý từng dịch vụ
                             foreach (var dv in group)
                             {
                                 decimal donGia;
                                 using (SqlCommand cmdGia = new SqlCommand("SELECT GiaDichVu FROM DICHVU WHERE MaDV = @MaDV", conn, tran))
                                 {
                                     cmdGia.Parameters.AddWithValue("@MaDV", dv.MaDV);
-                                    object g = cmdGia.ExecuteScalar();
-                                    if (g == null) throw new Exception("Không tìm thấy giá dịch vụ CLS: " + dv.MaDV);
-                                    donGia = Convert.ToDecimal(g);
+                                    donGia = Convert.ToDecimal(cmdGia.ExecuteScalar());
                                 }
 
+                                // Lưu vào chi tiết chỉ định
                                 string sqlCT = @"
-                                    INSERT INTO CHITIET_CHIDINH (MaPhieuChiDinh, MaDV, DonGia, TrangThai)
-                                    VALUES (@MaPCD, @MaDV, @DonGia, N'Chưa thực hiện')";
+                            INSERT INTO CHITIET_CHIDINH (MaPhieuChiDinh, MaDV, DonGia, TrangThai)
+                            VALUES (@MaPCD, @MaDV, @DonGia, N'Chưa thực hiện')";
                                 using (SqlCommand cmdCT = new SqlCommand(sqlCT, conn, tran))
                                 {
                                     cmdCT.Parameters.AddWithValue("@MaPCD", maPhieuCD);
@@ -519,52 +522,66 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                     cmdCT.ExecuteNonQuery();
                                 }
 
+                                // SỬA ĐIỂM 1: Đẩy vào Hóa đơn & TỰ ĐỘNG TRỪ BHYT
                                 string sqlInsHD = @"
-                                    INSERT INTO CT_HOADON_DV (MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
-                                    VALUES (@MaHD, @MaDV, @DonGia, @DonGia, 0, @DonGia, N'Chưa thanh toán')";
+                            INSERT INTO CT_HOADON_DV (MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
+                            SELECT 
+                                @MaHD, @MaDV, @DonGia, @DonGia,
+                                CASE WHEN bn.BHYT = 1 AND dv.CoBHYT = 1 THEN @DonGia * (ISNULL(bn.MucHuongBHYT, 0) / 100.0) ELSE 0 END AS BHYTChiTra,
+                                @DonGia - (CASE WHEN bn.BHYT = 1 AND dv.CoBHYT = 1 THEN @DonGia * (ISNULL(bn.MucHuongBHYT, 0) / 100.0) ELSE 0 END) AS BenhNhanTra,
+                                N'Chưa thanh toán'
+                            FROM BENHNHAN bn
+                            CROSS JOIN DICHVU dv
+                            WHERE bn.MaBN = @MaBN AND dv.MaDV = @MaDV";
+
                                 using (SqlCommand cmdInsHD = new SqlCommand(sqlInsHD, conn, tran))
                                 {
                                     cmdInsHD.Parameters.AddWithValue("@MaHD", maHD);
                                     cmdInsHD.Parameters.AddWithValue("@MaDV", dv.MaDV);
                                     cmdInsHD.Parameters.AddWithValue("@DonGia", donGia);
+                                    cmdInsHD.Parameters.AddWithValue("@MaBN", maBN);
                                     cmdInsHD.ExecuteNonQuery();
                                 }
                             }
                         }
 
+                        // SỬA ĐIỂM 2: Tính tổng tiền Hóa đơn và chốt Trạng thái (Đã thêm logic Thanh toán 1 phần)
                         string sqlRecalcHD = @"
-                            UPDATE hd
-                            SET TongTienGoc = ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0),
-                                TongTienBHYTChiTra = ISNULL(dv.TongBHYT, 0) + ISNULL(th.TongBHYT, 0),
-                                TongTienBenhNhanTra = ISNULL(dv.TongBN, 0) + ISNULL(th.TongBN, 0),
-                                TrangThaiThanhToan = CASE
-                                    WHEN (ISNULL(dv.Unpaid, 0) + ISNULL(th.Unpaid, 0)) > 0 THEN N'Chưa thanh toán'
-                                    WHEN (ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0)) = 0 THEN N'Đã hủy'
-                                    ELSE N'Đã thanh toán'
-                                END,
-                                NgayThanhToan = GETDATE()
-                            FROM HOADON hd
-                            LEFT JOIN (
-                                SELECT MaHD,
-                                       SUM(TongTienGoc) AS TongGoc,
-                                       SUM(TienBHYTChiTra) AS TongBHYT,
-                                       SUM(TienBenhNhanTra) AS TongBN,
-                                       SUM(CASE WHEN TrangThaiThanhToan = N'Chưa thanh toán' THEN 1 ELSE 0 END) AS Unpaid
-                                FROM CT_HOADON_DV
-                                WHERE TrangThaiThanhToan != N'Hủy'
-                                GROUP BY MaHD
-                            ) dv ON hd.MaHD = dv.MaHD
-                            LEFT JOIN (
-                                SELECT MaHD,
-                                       SUM(TongTienGoc) AS TongGoc,
-                                       SUM(TienBHYTChiTra) AS TongBHYT,
-                                       SUM(TienBenhNhanTra) AS TongBN,
-                                       SUM(CASE WHEN TrangThaiThanhToan = N'Chưa thanh toán' THEN 1 ELSE 0 END) AS Unpaid
-                                FROM CT_HOADON_THUOC
-                                WHERE TrangThaiThanhToan != N'Hủy'
-                                GROUP BY MaHD
-                            ) th ON hd.MaHD = th.MaHD
-                            WHERE hd.MaHD = @MaHD";
+                    UPDATE hd
+                    SET TongTienGoc = ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0),
+                        TongTienBHYTChiTra = ISNULL(dv.TongBHYT, 0) + ISNULL(th.TongBHYT, 0),
+                        TongTienBenhNhanTra = ISNULL(dv.TongBN, 0) + ISNULL(th.TongBN, 0),
+                        TrangThaiThanhToan = CASE 
+                            WHEN (ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0)) = 0 THEN N'Đã hủy'
+                            WHEN (ISNULL(dv.Unpaid, 0) + ISNULL(th.Unpaid, 0)) > 0 AND (ISNULL(dv.Paid, 0) + ISNULL(th.Paid, 0)) > 0 THEN N'Thanh toán 1 phần'
+                            WHEN (ISNULL(dv.Unpaid, 0) + ISNULL(th.Unpaid, 0)) > 0 THEN N'Chưa thanh toán'
+                            ELSE N'Đã thanh toán' 
+                        END
+                    FROM HOADON hd
+                    LEFT JOIN (
+                        SELECT MaHD,
+                               SUM(TongTienGoc) AS TongGoc,
+                               SUM(TienBHYTChiTra) AS TongBHYT,
+                               SUM(TienBenhNhanTra) AS TongBN,
+                               SUM(CASE WHEN TrangThaiThanhToan = N'Chưa thanh toán' THEN 1 ELSE 0 END) AS Unpaid,
+                               SUM(CASE WHEN TrangThaiThanhToan = N'Đã thanh toán' THEN 1 ELSE 0 END) AS Paid
+                        FROM CT_HOADON_DV
+                        WHERE TrangThaiThanhToan != N'Hủy'
+                        GROUP BY MaHD
+                    ) dv ON hd.MaHD = dv.MaHD
+                    LEFT JOIN (
+                        SELECT MaHD,
+                               SUM(TongTienGoc) AS TongGoc,
+                               SUM(TienBHYTChiTra) AS TongBHYT,
+                               SUM(TienBenhNhanTra) AS TongBN,
+                               SUM(CASE WHEN TrangThaiThanhToan = N'Chưa thanh toán' THEN 1 ELSE 0 END) AS Unpaid,
+                               SUM(CASE WHEN TrangThaiThanhToan = N'Đã thanh toán' THEN 1 ELSE 0 END) AS Paid
+                        FROM CT_HOADON_THUOC
+                        WHERE TrangThaiThanhToan != N'Hủy'
+                        GROUP BY MaHD
+                    ) th ON hd.MaHD = th.MaHD
+                    WHERE hd.MaHD = @MaHD";
+
                         using (SqlCommand cmdRecalc = new SqlCommand(sqlRecalcHD, conn, tran))
                         {
                             cmdRecalc.Parameters.AddWithValue("@MaHD", maHD);
@@ -603,8 +620,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             }
 
                             string sqlChiTietThuoc = @"INSERT INTO CT_DON_THUOC 
-                                (MaDonThuoc, MaThuoc, SoLuongSang, SoLuongTrua, SoLuongChieu, SoLuongToi, SoNgayDung, SoLuong, DonViTinh, DonGia, GhiChu) 
-                                VALUES (@MaDon, @MaThuoc, @S, @T, @C, @Toi, @SoNgay, @TongSL, @DVT, @DonGia, @GhiChu)";
+                        (MaDonThuoc, MaThuoc, SoLuongSang, SoLuongTrua, SoLuongChieu, SoLuongToi, SoNgayDung, SoLuong, DonViTinh, DonGia, GhiChu) 
+                        VALUES (@MaDon, @MaThuoc, @S, @T, @C, @Toi, @SoNgay, @TongSL, @DVT, @DonGia, @GhiChu)";
 
                             using (SqlCommand cmdCT = new SqlCommand(sqlChiTietThuoc, conn, tran))
                             {
