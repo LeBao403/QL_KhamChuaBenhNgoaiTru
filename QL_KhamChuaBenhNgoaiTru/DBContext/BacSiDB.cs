@@ -160,7 +160,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             var list = new List<Thuoc>();
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
-                string sql = "SELECT MaThuoc, TenThuoc, DonViCoBan FROM THUOC WHERE TrangThai = 1";
+                // Đã bổ sung GiaBan và CoBHYT vào câu SELECT
+                string sql = "SELECT MaThuoc, TenThuoc, DonViCoBan, GiaBan, CoBHYT FROM THUOC WHERE TrangThai = 1";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     conn.Open();
@@ -172,7 +173,9 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             {
                                 MaThuoc = dr["MaThuoc"].ToString(),
                                 TenThuoc = dr["TenThuoc"].ToString(),
-                                DonViCoBan = dr["DonViCoBan"].ToString()
+                                DonViCoBan = dr["DonViCoBan"].ToString(),
+                                GiaBan = dr["GiaBan"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBan"]) : 0,
+                                CoBHYT = dr["CoBHYT"] != DBNull.Value ? Convert.ToBoolean(dr["CoBHYT"]) : false
                             });
                         }
                     }
@@ -180,7 +183,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             }
             return list;
         }
-
         public PhieuKhamBenhInfo GetThongTinPhieuKham(int maPhieu)
         {
             using (SqlConnection conn = new SqlConnection(connectStr))
@@ -286,9 +288,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        // 4. HÀM LƯU KHÁM BỆNH (Đã tích hợp Tự động trừ BHYT và cập nhật Thanh toán 1 phần)
-        // 4. HÀM LƯU KHÁM BỆNH (Đã tích hợp Tự động trừ BHYT, cập nhật Hóa đơn và Thuốc)
-        // 4. HÀM LƯU KHÁM BỆNH (Đã tích hợp Tự động trừ BHYT, cập nhật Hóa đơn CLS và Hóa đơn Thuốc)
         // 4. HÀM LƯU KHÁM BỆNH (Đã tích hợp Tự động trừ BHYT, cập nhật Hóa đơn CLS và Hóa đơn Thuốc)
         public bool LuuKhamBenh(KhamBenhViewModel model, string maBS, out string errorMsg)
         {
@@ -432,21 +431,21 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                         // 1.4 Tính tổng tiền Hóa đơn CLS và chốt Trạng thái (ĐÃ SỬA ÉP CỨNG TẠI ĐÂY)
                         string sqlRecalcHD = @"
-                    UPDATE hd
-                    SET TongTienGoc = ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0),
-                        TongTienBHYTChiTra = ISNULL(dv.TongBHYT, 0) + ISNULL(th.TongBHYT, 0),
-                        TongTienBenhNhanTra = ISNULL(dv.TongBN, 0) + ISNULL(th.TongBN, 0),
-                        TrangThaiThanhToan = N'Đã thanh toán' 
-                    FROM HOADON hd
-                    LEFT JOIN (
-                        SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN
-                        FROM CT_HOADON_DV WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD
-                    ) dv ON hd.MaHD = dv.MaHD
-                    LEFT JOIN (
-                        SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN
-                        FROM CT_HOADON_THUOC WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD
-                    ) th ON hd.MaHD = th.MaHD
-                    WHERE hd.MaHD = @MaHD";
+UPDATE hd
+SET TongTienGoc = ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0),
+    TongTienBHYTChiTra = ISNULL(dv.TongBHYT, 0) + ISNULL(th.TongBHYT, 0),
+    TongTienBenhNhanTra = ISNULL(dv.TongBN, 0) + ISNULL(th.TongBN, 0),
+    TrangThaiThanhToan = N'Thanh toán 1 phần'  -- <--- ĐÃ SỬA Ở ĐÂY
+FROM HOADON hd
+LEFT JOIN (
+    SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN
+    FROM CT_HOADON_DV WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD
+) dv ON hd.MaHD = dv.MaHD
+LEFT JOIN (
+    SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN
+    FROM CT_HOADON_THUOC WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD
+) th ON hd.MaHD = th.MaHD
+WHERE hd.MaHD = @MaHD";
 
                         using (SqlCommand cmdRecalc = new SqlCommand(sqlRecalcHD, conn, tran))
                         {
@@ -514,36 +513,34 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                             // Thêm Chi Tiết Thuốc và đẩy sang Hóa Đơn
                             string sqlChiTietThuoc = @"INSERT INTO CT_DON_THUOC 
-                        (MaDonThuoc, MaThuoc, SoLuongSang, SoLuongTrua, SoLuongChieu, SoLuongToi, SoNgayDung, SoLuong, DonViTinh, DonGia, GhiChu) 
-                        OUTPUT INSERTED.MaCTDonThuoc
-                        VALUES (@MaDon, @MaThuoc, @S, @T, @C, @Toi, @SoNgay, @TongSL, @DVT, @DonGia, @GhiChu)";
+    (MaDonThuoc, MaThuoc, SoLuongSang, SoLuongTrua, SoLuongChieu, SoLuongToi, SoNgayDung, SoLuong, DonViTinh, DonGia, GhiChu) 
+    OUTPUT INSERTED.MaCTDonThuoc
+    VALUES (@MaDon, @MaThuoc, @S, @T, @C, @Toi, @SoNgay, @TongSL, @DVT, @DonGia, @GhiChu)";
 
                             string sqlHDThuoc = @"INSERT INTO CT_HOADON_THUOC 
-                        (MaHD, MaCTDonThuoc, SoLuong, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
-                        VALUES (@MaHD, @MaCTDonThuoc, @TongSL, @TongGoc, @TienBHYT, @TienBN, N'Chưa thanh toán')";
+    (MaHD, MaCTDonThuoc, SoLuong, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
+    VALUES (@MaHD, @MaCTDonThuoc, @TongSL, @TongGoc, @TienBHYT, @TienBN, N'Chưa thanh toán')";
+
+                            // Lấy thông tin BHYT của Bệnh Nhân (LẤY 1 LẦN TRƯỚC VÒNG LẶP ĐỂ TỐI ƯU HIỆU NĂNG)
+                            bool bnCoBHYT = false;
+                            decimal mucHuongBHYT = 0;
+                            string sqlBN = "SELECT BHYT, MucHuongBHYT FROM BENHNHAN WHERE MaBN = @MaBN";
+                            using (SqlCommand cmdBNInfo = new SqlCommand(sqlBN, conn, tran))
+                            {
+                                cmdBNInfo.Parameters.AddWithValue("@MaBN", maBN);
+                                using (SqlDataReader drBN = cmdBNInfo.ExecuteReader())
+                                {
+                                    if (drBN.Read())
+                                    {
+                                        bnCoBHYT = drBN["BHYT"] != DBNull.Value ? Convert.ToBoolean(drBN["BHYT"]) : false;
+                                        mucHuongBHYT = drBN["MucHuongBHYT"] != DBNull.Value ? Convert.ToDecimal(drBN["MucHuongBHYT"]) : 0;
+                                    }
+                                }
+                            }
 
                             using (SqlCommand cmdCT = new SqlCommand(sqlChiTietThuoc, conn, tran))
                             using (SqlCommand cmdHDT = new SqlCommand(sqlHDThuoc, conn, tran))
                             {
-                                cmdCT.Parameters.Add("@MaDon", System.Data.SqlDbType.Int);
-                                cmdCT.Parameters.Add("@MaThuoc", System.Data.SqlDbType.Char, 20);
-                                cmdCT.Parameters.Add("@S", System.Data.SqlDbType.Decimal);
-                                cmdCT.Parameters.Add("@T", System.Data.SqlDbType.Decimal);
-                                cmdCT.Parameters.Add("@C", System.Data.SqlDbType.Decimal);
-                                cmdCT.Parameters.Add("@Toi", System.Data.SqlDbType.Decimal);
-                                cmdCT.Parameters.Add("@SoNgay", System.Data.SqlDbType.Int);
-                                cmdCT.Parameters.Add("@TongSL", System.Data.SqlDbType.Int);
-                                cmdCT.Parameters.Add("@DVT", System.Data.SqlDbType.NVarChar, 20);
-                                cmdCT.Parameters.Add("@DonGia", System.Data.SqlDbType.Decimal);
-                                cmdCT.Parameters.Add("@GhiChu", System.Data.SqlDbType.NVarChar, 200);
-
-                                cmdHDT.Parameters.Add("@MaHD", System.Data.SqlDbType.Int);
-                                cmdHDT.Parameters.Add("@MaCTDonThuoc", System.Data.SqlDbType.Int);
-                                cmdHDT.Parameters.Add("@TongSL", System.Data.SqlDbType.Int);
-                                cmdHDT.Parameters.Add("@TongGoc", System.Data.SqlDbType.Decimal);
-                                cmdHDT.Parameters.Add("@TienBHYT", System.Data.SqlDbType.Decimal);
-                                cmdHDT.Parameters.Add("@TienBN", System.Data.SqlDbType.Decimal);
-
                                 foreach (var t in model.DonThuoc)
                                 {
                                     string dvt = "Viên";
@@ -566,74 +563,60 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                         }
                                     }
 
-                                    // Lấy thông tin BHYT của Bệnh Nhân
-                                    bool bnCoBHYT = false;
-                                    decimal mucHuongBHYT = 0;
-                                    string sqlBN = "SELECT BHYT, MucHuongBHYT FROM BENHNHAN WHERE MaBN = @MaBN";
-                                    using (SqlCommand cmdBNInfo = new SqlCommand(sqlBN, conn, tran))
-                                    {
-                                        cmdBNInfo.Parameters.AddWithValue("@MaBN", maBN);
-                                        using (SqlDataReader drBN = cmdBNInfo.ExecuteReader())
-                                        {
-                                            if (drBN.Read())
-                                            {
-                                                bnCoBHYT = drBN["BHYT"] != DBNull.Value ? Convert.ToBoolean(drBN["BHYT"]) : false;
-                                                mucHuongBHYT = drBN["MucHuongBHYT"] != DBNull.Value ? Convert.ToDecimal(drBN["MucHuongBHYT"]) : 0;
-                                            }
-                                        }
-                                    }
-
-                                    // Tính toán tiền bạc
-                                    decimal tongSLLeo = (t.Sang + t.Trua + t.Chieu + t.Toi) * t.SoNgay;
-                                    int tongSoLuong = (int)Math.Ceiling(tongSLLeo);
+                                    // TÍNH TOÁN (Lấy trực tiếp Tổng Số lượng nguyên từ giao diện để né lỗi ép kiểu thập phân)
+                                    int tongSoLuong = t.SoLuong > 0 ? t.SoLuong : (int)Math.Ceiling((t.Sang + t.Trua + t.Chieu + t.Toi) * t.SoNgay);
 
                                     decimal tongGoc = tongSoLuong * donGia;
+                                    // BHYT chỉ trừ khi Khách có BHYT VÀ Thuốc đó nằm trong danh mục hỗ trợ BHYT
                                     decimal tienBHYT = (bnCoBHYT && coBHYT) ? (tongGoc * (mucHuongBHYT / 100m)) : 0;
                                     decimal tienBN = tongGoc - tienBHYT;
 
-                                    // 1. Thêm vào CT_DON_THUOC
-                                    cmdCT.Parameters["@MaDon"].Value = maDonThuoc;
-                                    cmdCT.Parameters["@MaThuoc"].Value = t.MaThuoc;
-                                    cmdCT.Parameters["@S"].Value = t.Sang;
-                                    cmdCT.Parameters["@T"].Value = t.Trua;
-                                    cmdCT.Parameters["@C"].Value = t.Chieu;
-                                    cmdCT.Parameters["@Toi"].Value = t.Toi;
-                                    cmdCT.Parameters["@SoNgay"].Value = t.SoNgay;
-                                    cmdCT.Parameters["@TongSL"].Value = tongSoLuong;
-                                    cmdCT.Parameters["@DVT"].Value = dvt;
-                                    cmdCT.Parameters["@DonGia"].Value = donGia;
-                                    cmdCT.Parameters["@GhiChu"].Value = t.GhiChu ?? (object)DBNull.Value;
+                                    // 1. Thêm vào CT_DON_THUOC (Sử dụng AddWithValue để ép chuẩn định dạng dữ liệu xuống CSDL)
+                                    cmdCT.Parameters.Clear();
+                                    cmdCT.Parameters.AddWithValue("@MaDon", maDonThuoc);
+                                    cmdCT.Parameters.AddWithValue("@MaThuoc", t.MaThuoc);
+                                    cmdCT.Parameters.AddWithValue("@S", t.Sang);
+                                    cmdCT.Parameters.AddWithValue("@T", t.Trua);
+                                    cmdCT.Parameters.AddWithValue("@C", t.Chieu);
+                                    cmdCT.Parameters.AddWithValue("@Toi", t.Toi);
+                                    cmdCT.Parameters.AddWithValue("@SoNgay", t.SoNgay);
+                                    cmdCT.Parameters.AddWithValue("@TongSL", tongSoLuong);
+                                    cmdCT.Parameters.AddWithValue("@DVT", dvt);
+                                    cmdCT.Parameters.AddWithValue("@DonGia", donGia);
+                                    cmdCT.Parameters.AddWithValue("@GhiChu", t.GhiChu ?? (object)DBNull.Value);
 
                                     int maCTDonThuoc = (int)cmdCT.ExecuteScalar();
 
                                     // 2. Đẩy sang Thu Ngân (CT_HOADON_THUOC)
-                                    cmdHDT.Parameters["@MaHD"].Value = maHD;
-                                    cmdHDT.Parameters["@MaCTDonThuoc"].Value = maCTDonThuoc;
-                                    cmdHDT.Parameters["@TongSL"].Value = tongSoLuong;
-                                    cmdHDT.Parameters["@TongGoc"].Value = tongGoc;
-                                    cmdHDT.Parameters["@TienBHYT"].Value = tienBHYT;
-                                    cmdHDT.Parameters["@TienBN"].Value = tienBN;
+                                    cmdHDT.Parameters.Clear();
+                                    cmdHDT.Parameters.AddWithValue("@MaHD", maHD);
+                                    cmdHDT.Parameters.AddWithValue("@MaCTDonThuoc", maCTDonThuoc);
+                                    cmdHDT.Parameters.AddWithValue("@TongSL", tongSoLuong);
+                                    cmdHDT.Parameters.AddWithValue("@TongGoc", tongGoc);
+                                    cmdHDT.Parameters.AddWithValue("@TienBHYT", tienBHYT);
+                                    cmdHDT.Parameters.AddWithValue("@TienBN", tienBN);
+
                                     cmdHDT.ExecuteNonQuery();
                                 }
                             }
 
                             // Cập nhật lại tổng tiền Hóa Đơn chính (ĐÃ SỬA ÉP CỨNG TẠI ĐÂY)
                             string sqlRecalcHD2 = @"
-                        UPDATE hd
-                        SET TongTienGoc = ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0),
-                            TongTienBHYTChiTra = ISNULL(dv.TongBHYT, 0) + ISNULL(th.TongBHYT, 0),
-                            TongTienBenhNhanTra = ISNULL(dv.TongBN, 0) + ISNULL(th.TongBN, 0),
-                            TrangThaiThanhToan = N'Đã thanh toán' 
-                        FROM HOADON hd
-                        LEFT JOIN (
-                            SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN
-                            FROM CT_HOADON_DV WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD
-                        ) dv ON hd.MaHD = dv.MaHD
-                        LEFT JOIN (
-                            SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN
-                            FROM CT_HOADON_THUOC WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD
-                        ) th ON hd.MaHD = th.MaHD
-                        WHERE hd.MaHD = @MaHD";
+UPDATE hd
+SET TongTienGoc = ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0),
+    TongTienBHYTChiTra = ISNULL(dv.TongBHYT, 0) + ISNULL(th.TongBHYT, 0),
+    TongTienBenhNhanTra = ISNULL(dv.TongBN, 0) + ISNULL(th.TongBN, 0),
+    TrangThaiThanhToan = N'Thanh toán 1 phần'  -- <--- ĐÃ SỬA Ở ĐÂY
+FROM HOADON hd
+LEFT JOIN (
+    SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN
+    FROM CT_HOADON_DV WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD
+) dv ON hd.MaHD = dv.MaHD
+LEFT JOIN (
+    SELECT MaHD, SUM(TongTienGoc) AS TongGoc, SUM(TienBHYTChiTra) AS TongBHYT, SUM(TienBenhNhanTra) AS TongBN
+    FROM CT_HOADON_THUOC WHERE TrangThaiThanhToan != N'Hủy' GROUP BY MaHD
+) th ON hd.MaHD = th.MaHD
+WHERE hd.MaHD = @MaHD";
 
                             using (SqlCommand cmdRecalc2 = new SqlCommand(sqlRecalcHD2, conn, tran))
                             {
