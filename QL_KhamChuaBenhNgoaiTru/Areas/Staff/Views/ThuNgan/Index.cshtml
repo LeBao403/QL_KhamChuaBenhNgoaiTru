@@ -311,7 +311,7 @@
 
             $('#tbChiTiet').html('<tr><td colspan="5" class="text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-2 text-muted">Đang tải dữ liệu...</p></td></tr>');
 
-            $.post('@Url.Action("GetChiTiet", "ThuNgan")', { maPKB: maPKB }, function (res) {
+            $.post('@Url.Action("GetChiTiet", "ThuNgan")', { maHD: maHD }, function (res) {
                 if (res.success) {
                     let html = '';
                     let tongBenhNhanTra = 0;

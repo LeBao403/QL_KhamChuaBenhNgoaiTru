@@ -37,11 +37,11 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetChiTiet(int maPKB) 
+        public JsonResult GetChiTiet(int maHD)
         {
             try
             {
-                DataTable dt = db.GetChiTietHoaDon(maPKB); 
+                DataTable dt = db.GetChiTietHoaDon(maHD);
                 var list = new List<object>();
                 foreach (DataRow row in dt.Rows)
                 {

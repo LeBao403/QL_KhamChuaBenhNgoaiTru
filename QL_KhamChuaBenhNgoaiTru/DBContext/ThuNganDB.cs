@@ -44,30 +44,30 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return dt;
         }
 
-        // 2. LẤY CHI TIẾT TỔNG HỢP THEO LƯỢT KHÁM (Lấy tất cả các Hóa Đơn của lượt khám đó)
-        public DataTable GetChiTietHoaDon(int maPKB)
+        // 2. LẤY CHI TIẾT TỔNG HỢP (Theo Mã Hóa Đơn thay vì Mã PKB)
+        public DataTable GetChiTietHoaDon(int maHD)
         {
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
             {
                 string sql = @"
-            SELECT ct.MaCTHD, 'DV' AS LoaiItem, ct.MaDV AS MaItem, dv.TenDV, ct.DonGia, ct.TongTienGoc, ct.TienBHYTChiTra, ct.TienBenhNhanTra, ct.TrangThaiThanhToan
-            FROM CT_HOADON_DV ct
-            JOIN DICHVU dv ON ct.MaDV = dv.MaDV
-            JOIN HOADON hd ON ct.MaHD = hd.MaHD
-            WHERE hd.MaPhieuKhamBenh = @MaPKB AND ct.TrangThaiThanhToan IN (N'Chưa thanh toán', N'Đã thanh toán', N'Hủy')
-            
-            UNION ALL
-            
-            SELECT ctt.MaCTHD, 'THUOC' AS LoaiItem, t.MaThuoc AS MaItem, t.TenThuoc AS TenDV, t.GiaBan AS DonGia, ctt.TongTienGoc, ctt.TienBHYTChiTra, ctt.TienBenhNhanTra, ctt.TrangThaiThanhToan
-            FROM CT_HOADON_THUOC ctt
-            JOIN CT_DON_THUOC ctdt ON ctt.MaCTDonThuoc = ctdt.MaCTDonThuoc
-            JOIN THUOC t ON ctdt.MaThuoc = t.MaThuoc
-            JOIN HOADON hd ON ctt.MaHD = hd.MaHD
-            WHERE hd.MaPhieuKhamBenh = @MaPKB AND ctt.TrangThaiThanhToan IN (N'Chưa thanh toán', N'Đã thanh toán', N'Hủy')";
+                    SELECT ct.MaCTHD, 'DV' AS LoaiItem, ct.MaDV AS MaItem, dv.TenDV, ct.DonGia, ct.TongTienGoc, ct.TienBHYTChiTra, ct.TienBenhNhanTra, ct.TrangThaiThanhToan
+                    FROM CT_HOADON_DV ct
+                    JOIN DICHVU dv ON ct.MaDV = dv.MaDV
+                    JOIN HOADON hd ON ct.MaHD = hd.MaHD
+                    WHERE hd.MaHD = @MaHD AND ct.TrangThaiThanhToan IN (N'Chưa thanh toán', N'Đã thanh toán', N'Hủy')
+    
+                    UNION ALL
+    
+                    SELECT ctt.MaCTHD, 'THUOC' AS LoaiItem, t.MaThuoc AS MaItem, t.TenThuoc AS TenDV, t.GiaBan AS DonGia, ctt.TongTienGoc, ctt.TienBHYTChiTra, ctt.TienBenhNhanTra, ctt.TrangThaiThanhToan
+                    FROM CT_HOADON_THUOC ctt
+                    JOIN CT_DON_THUOC ctdt ON ctt.MaCTDonThuoc = ctdt.MaCTDonThuoc
+                    JOIN THUOC t ON ctdt.MaThuoc = t.MaThuoc
+                    JOIN HOADON hd ON ctt.MaHD = hd.MaHD
+                    WHERE hd.MaHD = @MaHD AND ctt.TrangThaiThanhToan IN (N'Chưa thanh toán', N'Đã thanh toán', N'Hủy')";
 
                 SqlCommand cmd = new SqlCommand(sql, con);
-                cmd.Parameters.AddWithValue("@MaPKB", maPKB);
+                cmd.Parameters.AddWithValue("@MaHD", maHD);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
             }

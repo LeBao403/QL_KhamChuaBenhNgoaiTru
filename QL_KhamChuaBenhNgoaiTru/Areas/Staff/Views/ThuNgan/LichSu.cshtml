@@ -131,7 +131,7 @@
                                         </span>
                                     </td>
                                     <td class="text-center pe-4">
-                                        <button class="btn btn-sm btn-light border shadow-sm rounded-pill fw-bold text-primary" onclick="xemChiTiet(@row["MaPhieuKhamBenh"], '@row["HoTen"]')">
+                                        <button class="btn btn-sm btn-light border shadow-sm rounded-pill fw-bold text-primary" onclick="xemChiTiet(@row["MaHD"], '@row["HoTen"]')">
                                             <i class="bi bi-eye me-1"></i> Chi tiết
                                         </button>
                                     </td>
@@ -211,16 +211,17 @@
             }
         });
 
-        // XEM CHI TIẾT ẢO DIỆU VỚI SWEETALERT
-        function xemChiTiet(maPKB, tenBN) {
+        // XEM CHI TIẾT ĐÃ ĐƯỢC CHUYỂN SANG DÙNG MaHD
+        function xemChiTiet(maHD, tenBN) {
             Swal.fire({
                 title: 'Đang tải chi tiết...',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); }
             });
 
-            $.post('@Url.Action("GetChiTiet", "ThuNgan")', { maPKB: maPKB }, function (res) {
+            $.post('@Url.Action("GetChiTiet", "ThuNgan")', { maHD: maHD }, function (res) {
                 if (res.success) {
+                    // (Giữ nguyên đoạn tạo HTML ở đây...)
                     let html = `<table class="table table-bordered text-start align-middle" style="font-size: 0.9rem">
                                 <thead class="table-light"><tr><th>Nội dung</th><th class="text-end">Tiền Khách</th><th>Trạng thái</th></tr></thead><tbody>`;
                     let total = 0;
