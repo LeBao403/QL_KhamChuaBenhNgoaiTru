@@ -1,0 +1,35 @@
+## --- Visual Studio ---
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.docstates
+
+## --- NuGet Packages ---
+# Chặn thư mục packages vì máy khác pull về sẽ dùng lệnh "Restore NuGet" để tải lại
+packages/
+*.nupkg
+
+## --- Test Results ---
+# Chặn các file sinh ra khi bạn chạy Unit Test
+TestResults/
+[Tt]est[Rr]esult*/
+
+## --- Entity Framework / Database ---
+# Nếu bạn dùng SQL Server Express file (.mdf) hoặc log dự phòng
+*.mdf
+*.ldf
+*.sdf
+
+## --- Web / Frontend ---
+# Chặn các file sinh ra nếu bạn có dùng npm/node (thường thấy trong MVC hiện đại)
+node_modules/
+.env
+.env.development.local
+.env.local
+
+## --- Operating System ---
+# Các file rác của Windows
+Thumbs.db
+desktop.ini 
