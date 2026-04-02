@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 
 namespace QL_KhamChuaBenhNgoaiTru.Models
@@ -38,6 +38,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string TenBN { get; set; }
         public int STT { get; set; }
         public string LyDoDenKham { get; set; }
+        public string TrieuChung { get; set; }
         public string TrangThai { get; set; }
         public string GioiTinh { get; set; }
         public int Tuoi { get; set; }
