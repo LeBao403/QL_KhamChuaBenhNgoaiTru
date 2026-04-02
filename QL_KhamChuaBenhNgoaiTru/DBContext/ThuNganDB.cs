@@ -277,7 +277,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                    pkb.MaPhieuKhamBenh
             FROM HOADON hd
             JOIN BENHNHAN bn ON hd.MaBN = bn.MaBN
-            JOIN PHIEUKHAMBENH pkb ON hd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
+            LEFT JOIN PHIEUKHAMBENH pkb ON hd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
             WHERE CAST(hd.NgayThanhToan AS DATE) >= CAST(@TuNgay AS DATE)
               AND CAST(hd.NgayThanhToan AS DATE) <= CAST(@DenNgay AS DATE)
               AND hd.TrangThaiThanhToan IN (N'Đã thanh toán', N'Đã hủy')

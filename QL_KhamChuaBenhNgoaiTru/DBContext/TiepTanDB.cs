@@ -216,10 +216,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         // 1. LẤY THÔNG TIN BỆNH NHÂN & HÌNH THỨC ĐĂNG KÝ
                         string sqlGetBN = @"
-                    SELECT pdk.MaBN, pdk.HinhThucDangKy, bn.BHYT, bn.MucHuongBHYT 
-                    FROM PHIEUDANGKY pdk 
-                    JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN 
-                    WHERE pdk.MaPhieuDK = @MaPDK";
+                            SELECT pdk.MaBN, pdk.HinhThucDangKy, bn.BHYT, bn.MucHuongBHYT 
+                            FROM PHIEUDANGKY pdk 
+                            JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN 
+                            WHERE pdk.MaPhieuDK = @MaPDK";
                         SqlCommand cmdGetBN = new SqlCommand(sqlGetBN, con, trans);
                         cmdGetBN.Parameters.AddWithValue("@MaPDK", maPhieuDK);
 
@@ -255,49 +255,30 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             }
                         }
 
-                        // 3. TÍNH TOÁN TIỀN NONG CHO DỊCH VỤ CHÍNH & PHỤ THU
+                        // 3. TÍNH TOÁN TIỀN NONG CHO DỊCH VỤ CHÍNH
                         decimal tienBHYTChiTra = 0;
                         decimal tienBenhNhanTra = giaDichVuChinh;
                         decimal tongTienGoc = giaDichVuChinh;
 
-                        // 3.1. Tính phần BHYT gánh cho dịch vụ chính
                         if (hasBHYT && dvCoBHYT)
                         {
                             tienBHYTChiTra = giaDichVuChinh * mucHuong / 100;
                             tienBenhNhanTra = giaDichVuChinh - tienBHYTChiTra;
                         }
 
-                        // 3.2. Tính toán Phụ thu Online (DV999 - 200k)
-                        bool laKhachOnline = (hinhThucDK == "Online");
-                        if (laKhachOnline)
+                        // 3.2. Quyết định Định tuyến (Bác sửa chỗ này rất chuẩn!)
+                        if (tienBenhNhanTra == 0 || (hasBHYT && dvCoBHYT))
                         {
-                            tongTienGoc += 200000;
-                            tienBenhNhanTra += 200000; // Cộng thẳng 200k vào phần bệnh nhân phải trả (BHYT không gánh cái này)
-                        }
-
-                        // 3.3. Quyết định Định tuyến (Phải ra Thu ngân đóng tiền hay không?)
-                        if (tienBenhNhanTra == 0)
-                        {
-                            requirePayment = false; // Nợ 0 đồng thì hiển nhiên đi thẳng vào khám
-                        }
-                        else if (!laKhachOnline && hasBHYT && dvCoBHYT)
-                        {
-                            // BÙA HỘ MỆNH: Khách Kiosk (Offline) + Có thẻ BHYT hợp lệ
-                            // -> Được phép nợ phần chênh lệch (Ví dụ nợ 30k) để gom đóng sau ở quầy Thuốc. Đi khám luôn!
-                            requirePayment = false;
+                            requirePayment = false; // Có BHYT là được nợ tiền khám, đi thẳng vào lấy STT
                         }
                         else
                         {
-                            // Các trường hợp PHẢI ra Thu ngân trước:
-                            // 1. Khách Online (Vướng 200k phí tiện ích)
-                            // 2. Khách Dịch vụ 100% (Không có BHYT)
-                            requirePayment = true;
+                            requirePayment = true; // Khách Dịch vụ thì phải ra nộp tiền
                         }
 
-                        // Xác định trạng thái Khám ban đầu:
                         string trangThaiKham = requirePayment ? "Chờ thanh toán" : "Chờ khám";
 
-                        // 4. TÍNH STT (Chỉ cấp số ngay lập tức nếu KHÔNG CẦN ĐÓNG TIỀN, ngược lại để NULL)
+                        // 4. TÍNH STT
                         int sttPhong = 0;
                         object sttValue = DBNull.Value;
 
@@ -310,11 +291,11 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             sttValue = sttPhong;
                         }
 
-                        // 5. TẠO PHIEUKHAMBENH (STT có thể là số hoặc NULL)
+                        // 5. TẠO PHIEUKHAMBENH
                         string sqlInsertPKB = @"
-                    INSERT INTO PHIEUKHAMBENH (MaPhieuDK, MaBN, STT, NgayLap, TrangThai, MaPhong, LyDoDenKham) 
-                    OUTPUT INSERTED.MaPhieuKhamBenh
-                    VALUES (@MaPDK, @MaBN, @STT, GETDATE(), @TrangThai, @MaPhong, @LyDo)";
+                            INSERT INTO PHIEUKHAMBENH (MaPhieuDK, MaBN, STT, NgayLap, TrangThai, MaPhong, LyDoDenKham) 
+                            OUTPUT INSERTED.MaPhieuKhamBenh
+                            VALUES (@MaPDK, @MaBN, @STT, GETDATE(), @TrangThai, @MaPhong, @LyDo)";
                         SqlCommand cmdPKB = new SqlCommand(sqlInsertPKB, con, trans);
                         cmdPKB.Parameters.AddWithValue("@MaPDK", maPhieuDK);
                         cmdPKB.Parameters.AddWithValue("@MaBN", maBN);
@@ -325,45 +306,86 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                         int maPhieuKhamBenh = Convert.ToInt32(cmdPKB.ExecuteScalar());
 
-                        // 6. TẠO HÓA ĐƠN TỔNG
-                        string sqlInsertHD = @"
-                    INSERT INTO HOADON (MaBN, MaPhieuKhamBenh, NgayThanhToan, TongTienGoc, TongTienBHYTChiTra, TongTienBenhNhanTra, TrangThaiThanhToan)
-                    OUTPUT INSERTED.MaHD
-                    VALUES (@MaBN, @MaPKB, GETDATE(), @TienGoc, @TienBHYT, @TienBN, N'Chưa thanh toán')";
-                        SqlCommand cmdHD = new SqlCommand(sqlInsertHD, con, trans);
-                        cmdHD.Parameters.AddWithValue("@MaBN", maBN);
-                        cmdHD.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
-                        cmdHD.Parameters.AddWithValue("@TienGoc", tongTienGoc);
-                        cmdHD.Parameters.AddWithValue("@TienBHYT", tienBHYTChiTra);
-                        cmdHD.Parameters.AddWithValue("@TienBN", tienBenhNhanTra);
+                        // 6. XỬ LÝ HÓA ĐƠN TỔNG & RÀO CHẮN BẢO MẬT
+                        int maHD = 0;
+                        string sqlCheckHD = "SELECT MaHD, TrangThaiThanhToan FROM HOADON WHERE MaPhieuDK = @MaPDK";
+                        SqlCommand cmdCheckHD = new SqlCommand(sqlCheckHD, con, trans);
+                        cmdCheckHD.Parameters.AddWithValue("@MaPDK", maPhieuDK);
 
-                        int maHD = Convert.ToInt32(cmdHD.ExecuteScalar());
+                        using (SqlDataReader drHD = cmdCheckHD.ExecuteReader())
+                        {
+                            if (drHD.Read())
+                            {
+                                maHD = Convert.ToInt32(drHD["MaHD"]);
+                                string trangThaiHDOld = drHD["TrangThaiThanhToan"].ToString();
 
-                        // 7. TẠO CHI TIẾT HÓA ĐƠN: 
-                        // 7.1. Chèn dòng Dịch vụ khám chính
+                                // LƯỚI BẢO MẬT: Bắt quả tang khách Online chưa đóng 100k
+                                if (trangThaiHDOld == "Chưa thanh toán")
+                                {
+                                    requirePayment = true; // Lật kèo, bắt ra Thu Ngân!
+                                    trangThaiKham = "Chờ thanh toán";
+
+                                    // Tước quyền STT vừa cấp ở trên
+                                    sttValue = DBNull.Value;
+                                    sttPhong = 0;
+
+                                    // Update lại cái Phiếu Khám Bệnh thành Chờ thanh toán
+                                    string sqlRevertPKB = "UPDATE PHIEUKHAMBENH SET TrangThai = N'Chờ thanh toán', STT = NULL WHERE MaPhieuKhamBenh = @MaPKB";
+                                    SqlCommand cmdRevert = new SqlCommand(sqlRevertPKB, con, trans);
+                                    cmdRevert.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                                    cmdRevert.ExecuteNonQuery();
+                                }
+                            }
+                        }
+
+                        if (maHD > 0)
+                        {
+                            // Cập nhật Hóa đơn Online cũ
+                            string sqlUpdateHD = @"
+                                UPDATE HOADON 
+                                SET MaPhieuKhamBenh = @MaPKB,
+                                    TongTienGoc = TongTienGoc + @TienGoc,
+                                    TongTienBHYTChiTra = TongTienBHYTChiTra + @TienBHYT,
+                                    TongTienBenhNhanTra = TongTienBenhNhanTra + @TienBN,
+                                    TrangThaiThanhToan = CASE WHEN @TienBN > 0 THEN N'Chưa thanh toán' ELSE TrangThaiThanhToan END
+                                WHERE MaHD = @MaHD";
+                            SqlCommand cmdUpdateHD = new SqlCommand(sqlUpdateHD, con, trans);
+                            cmdUpdateHD.Parameters.AddWithValue("@MaHD", maHD);
+                            cmdUpdateHD.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                            cmdUpdateHD.Parameters.AddWithValue("@TienGoc", tongTienGoc);
+                            cmdUpdateHD.Parameters.AddWithValue("@TienBHYT", tienBHYTChiTra);
+                            cmdUpdateHD.Parameters.AddWithValue("@TienBN", tienBenhNhanTra);
+                            cmdUpdateHD.ExecuteNonQuery();
+                        }
+                        else
+                        {
+                            // Tạo Hóa đơn Offline mới
+                            string sqlInsertHD = @"
+                                INSERT INTO HOADON (MaBN, MaPhieuDK, MaPhieuKhamBenh, NgayThanhToan, TongTienGoc, TongTienBHYTChiTra, TongTienBenhNhanTra, TrangThaiThanhToan)
+                                OUTPUT INSERTED.MaHD
+                                VALUES (@MaBN, @MaPDK, @MaPKB, NULL, @TienGoc, @TienBHYT, @TienBN, N'Chưa thanh toán')";
+                            SqlCommand cmdHD = new SqlCommand(sqlInsertHD, con, trans);
+                            cmdHD.Parameters.AddWithValue("@MaBN", maBN);
+                            cmdHD.Parameters.AddWithValue("@MaPDK", (maPhieuDK > 0) ? (object)maPhieuDK : DBNull.Value);
+                            cmdHD.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
+                            cmdHD.Parameters.AddWithValue("@TienGoc", tongTienGoc);
+                            cmdHD.Parameters.AddWithValue("@TienBHYT", tienBHYTChiTra);
+                            cmdHD.Parameters.AddWithValue("@TienBN", tienBenhNhanTra);
+                            maHD = Convert.ToInt32(cmdHD.ExecuteScalar());
+                        }
+
+                        // 7. TẠO CHI TIẾT HÓA ĐƠN CHO DỊCH VỤ KHÁM CHÍNH
                         string sqlInsertCTHD_Chinh = @"
-                INSERT INTO CT_HOADON_DV (MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
-                VALUES (@MaHD, @MaDV, @DonGia, @TienGoc, @TienBHYT, @TienBN, N'Chưa thanh toán')";
+                            INSERT INTO CT_HOADON_DV (MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
+                            VALUES (@MaHD, @MaDV, @DonGia, @TienGoc, @TienBHYT, @TienBN, N'Chưa thanh toán')";
                         SqlCommand cmdCTHD_Chinh = new SqlCommand(sqlInsertCTHD_Chinh, con, trans);
                         cmdCTHD_Chinh.Parameters.AddWithValue("@MaHD", maHD);
                         cmdCTHD_Chinh.Parameters.AddWithValue("@MaDV", maDV);
                         cmdCTHD_Chinh.Parameters.AddWithValue("@DonGia", giaDichVuChinh);
                         cmdCTHD_Chinh.Parameters.AddWithValue("@TienGoc", giaDichVuChinh);
-                        // BHYT gánh bao nhiêu thì móc từ biến tienBHYTChiTra đã tính ở trên
                         cmdCTHD_Chinh.Parameters.AddWithValue("@TienBHYT", tienBHYTChiTra);
-                        cmdCTHD_Chinh.Parameters.AddWithValue("@TienBN", giaDichVuChinh - tienBHYTChiTra);
+                        cmdCTHD_Chinh.Parameters.AddWithValue("@TienBN", tienBenhNhanTra);
                         cmdCTHD_Chinh.ExecuteNonQuery();
-
-                        // 7.2. Chèn dòng Phụ thu 200k (Nếu là khách Online)
-                        if (laKhachOnline)
-                        {
-                            string sqlInsertCTHD_PhuThu = @"
-                    INSERT INTO CT_HOADON_DV (MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
-                    VALUES (@MaHD, 'DV999', 200000, 200000, 0, 200000, N'Chưa thanh toán')"; // BHYT Trả = 0đ
-                            SqlCommand cmdCTHD_PhuThu = new SqlCommand(sqlInsertCTHD_PhuThu, con, trans);
-                            cmdCTHD_PhuThu.Parameters.AddWithValue("@MaHD", maHD);
-                            cmdCTHD_PhuThu.ExecuteNonQuery();
-                        }
 
                         // 8. CẬP NHẬT PHIẾU ĐĂNG KÝ
                         string sqlUpdatePDK = "UPDATE PHIEUDANGKY SET TrangThai = N'Đã xác nhận' WHERE MaPhieuDK = @MaPDK";
@@ -371,7 +393,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         cmdUpdatePDK.Parameters.AddWithValue("@MaPDK", maPhieuDK);
                         cmdUpdatePDK.ExecuteNonQuery();
 
-                        // 9. LẤY TÊN PHÒNG/KHOA ĐỂ TRẢ VỀ UI HIỂN THỊ
+                        // 9. LẤY TÊN PHÒNG/KHOA ĐỂ HIỂN THỊ
                         string sqlInfo = "SELECT p.TenPhong, k.TenKhoa FROM PHONG p JOIN KHOA k ON p.MaKhoa = k.MaKhoa WHERE p.MaPhong = @MaPhong";
                         SqlCommand cmdInfo = new SqlCommand(sqlInfo, con, trans);
                         cmdInfo.Parameters.AddWithValue("@MaPhong", maPhong);
@@ -388,8 +410,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         res.Success = true;
                         res.MaPhieuDK = maPhieuDK;
                         res.MaBN = maBN;
-
-                        // Nếu cần đóng tiền thì chưa có STT (trả về 0 để UI biết hiển thị Popup Vàng)
                         res.STT = requirePayment ? 0 : sttPhong;
                     }
                     catch (Exception ex)

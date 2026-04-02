@@ -13,11 +13,19 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public int MaHD { get; set; }
         public string MaBN { get; set; }
         public int? MaPhieuKhamBenh { get; set; }
+        public int? MaPhieuDK { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime? NgayThanhToan { get; set; }
 
-        public decimal? TongTien { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public decimal? TongTienGoc { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public decimal? TongTienBHYTChiTra { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:N0}")]
+        public decimal? TongTienBenhNhanTra { get; set; }
         public string TrangThaiThanhToan { get; set; }
         public string HinhThucThanhToan { get; set; }
         public string GhiChu { get; set; }

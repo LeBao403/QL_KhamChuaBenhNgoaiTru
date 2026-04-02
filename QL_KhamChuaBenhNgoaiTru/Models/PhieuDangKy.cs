@@ -6,6 +6,15 @@ using System.Web;
 
 namespace QL_KhamChuaBenhNgoaiTru.Models
 {
+    public class DanhMucKhungGio
+    {
+        [Key]
+        public int MaKhungGio { get; set; }
+        public string TenKhungGio { get; set; }
+        public int GioiHanSoNguoi { get; set; }
+        public bool? TrangThai { get; set; }
+    }
+
     public class PhieuDangKy
     {
         [Key]
@@ -14,10 +23,11 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
 
         [DataType(DataType.Date)]
         public DateTime? NgayDangKy { get; set; }
-        public int? STT { get; set; } // Thêm luôn STT vào Model cho đồng bộ với Database nhé bác
-        public string HinhThucDangKy { get; set; } // Online/Offline
-        public string TrangThai { get; set; }      // Chờ xử lý/Đã xác nhận...
+        public int? STT { get; set; }
+        public string HinhThucDangKy { get; set; }
+        public string TrangThai { get; set; }
         public int? MaPhong { get; set; }
+        public int? MaKhungGio { get; set; }
     }
 
     public class PhieuDangKyResult
@@ -29,5 +39,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public int STT { get; set; }
         public int MaPhieuDK { get; set; }
         public string TenPhong { get; set; }
+        public string TenKhungGio { get; set; }
     }
 }
