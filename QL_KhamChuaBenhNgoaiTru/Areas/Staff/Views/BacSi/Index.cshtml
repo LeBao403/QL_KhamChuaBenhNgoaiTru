@@ -773,7 +773,7 @@
                             <td><input type="number" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].SoNgay" value="1" min="1"></td>
 
                             <td>
-                                <input type="number" class="form-control form-control-sm text-center bg-warning text-dark fw-bold tong-sl border-warning" readonly value="0">
+                                <input type="number" class="form-control form-control-sm text-center bg-warning text-dark fw-bold tong-sl border-warning" readonly value="0" name="DonThuoc[${thuocIndex}].SoLuong">
                             </td>
 
                             <td>
@@ -802,16 +802,49 @@
                 $(this).val(null).trigger('change');
             });
 
-            $(document).on('input', '.input-calc', function() {
+            $(document).on('input change', '.input-calc', function (e) {
                 var row = $(this).closest('tr');
-                var sang = parseFloat(row.find('input[name*=".Sang"]').val()) || 0;
-                var trua = parseFloat(row.find('input[name*=".Trua"]').val()) || 0;
-                var chieu = parseFloat(row.find('input[name*=".Chieu"]').val()) || 0;
-                var toi = parseFloat(row.find('input[name*=".Toi"]').val()) || 0;
-                var songay = parseFloat(row.find('input[name*=".SoNgay"]').val()) || 0;
 
-                var tong = (sang + trua + chieu + toi) * songay;
-                row.find('.tong-sl').val(Math.ceil(tong));
+                var sangElem = row.find('input[name*=".Sang"]');
+                var truaElem = row.find('input[name*=".Trua"]');
+                var chieuElem = row.find('input[name*=".Chieu"]');
+                var toiElem = row.find('input[name*=".Toi"]');
+                var songayElem = row.find('input[name*=".SoNgay"]');
+
+                var sang = parseFloat(sangElem.val()) || 0;
+                var trua = parseFloat(truaElem.val()) || 0;
+                var chieu = parseFloat(chieuElem.val()) || 0;
+                var toi = parseFloat(toiElem.val()) || 0;
+                var songay = parseInt(songayElem.val()) || 1; // Số ngày phải là số nguyên
+
+                // CHỈ XỬ LÝ LÀM TRÒN VÀ TỰ ĐỘNG TĂNG NGÀY KHI SỰ KIỆN LÀ 'CHANGE' 
+                // (nghĩa là khi click mũi tên tăng/giảm hoặc sau khi gõ xong và click ra ngoài)
+                if (e.type === 'change') {
+                    // 1. Ép các liều dùng về đúng các số có đuôi .0 hoặc .5 (VD: gõ 0.3 sẽ thành 0.5)
+                    sang = Math.round(sang * 2) / 2; sangElem.val(sang);
+                    trua = Math.round(trua * 2) / 2; truaElem.val(trua);
+                    chieu = Math.round(chieu * 2) / 2; chieuElem.val(chieu);
+                    toi = Math.round(toi * 2) / 2; toiElem.val(toi);
+
+                    var tong1Ngay = sang + trua + chieu + toi;
+
+                    // 2. LOGIC ĐIỀU CHỈNH NGÀY
+                    // Nếu tổng 1 ngày là số lẻ (VD: 0.5, 1.5...) thì Số ngày BẮT BUỘC phải là số chẵn 
+                    // để Tổng số lượng xuất kho = (Tổng 1 ngày * Số ngày) luôn là một số Nguyên.
+                    if (tong1Ngay > 0 && tong1Ngay % 1 !== 0) {
+                        if (songay % 2 !== 0) { // Nếu ngày đang là số lẻ (1, 3, 5...)
+                            songay += 1;        // Tự động cộng thêm 1 ngày
+                            songayElem.val(songay);
+                        }
+                    }
+                }
+
+                // 3. Tính toán lại tổng lần cuối dựa trên các giá trị đã chuẩn hóa
+                var tong1NgayCalc = sang + trua + chieu + toi;
+                var tong = tong1NgayCalc * songay;
+
+                // 4. Cập nhật vào Ô tổng số lượng (Bỏ Math.ceil đi vì số lúc này cam kết là số nguyên)
+                row.find('.tong-sl').val(tong);
             });
         });
 

@@ -29,6 +29,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public decimal Toi { get; set; }
         public int SoNgay { get; set; }
         public string GhiChu { get; set; }
+        public int SoLuong { get; set; }
     }
     // Thêm class này vào trong file KhamBenhViewModel.cs hoặc tạo file mới trong Models
     public class PhieuKhamBenhInfo
