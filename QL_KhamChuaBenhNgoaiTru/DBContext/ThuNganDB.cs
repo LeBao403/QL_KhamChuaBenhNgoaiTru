@@ -44,14 +44,18 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return dt;
         }
 
-        // 2. LẤY CHI TIẾT TỔNG HỢP (Theo Mã Hóa Đơn thay vì Mã PKB)
+        // 2. LẤY CHI TIẾT TỔNG HỢP (Móc thêm liều lượng Sáng/Trưa/Chiều/Tối)
         public DataTable GetChiTietHoaDon(int maHD)
         {
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
             {
                 string sql = @"
-                    SELECT ct.MaCTHD, 'DV' AS LoaiItem, ct.MaDV AS MaItem, dv.TenDV, ct.DonGia, ct.TongTienGoc, ct.TienBHYTChiTra, ct.TienBenhNhanTra, ct.TrangThaiThanhToan
+                    SELECT ct.MaCTHD, 'DV' AS LoaiItem, ct.MaDV AS MaItem, dv.TenDV, 
+                           ct.DonGia, ct.TongTienGoc, ct.TienBHYTChiTra, ct.TienBenhNhanTra, ct.TrangThaiThanhToan, 
+                           1 AS SoNgayDung, 1 AS SoLuong, 1 AS SoLuongGoc,
+                           CAST(0 AS DECIMAL(5,2)) AS SoLuongSang, CAST(0 AS DECIMAL(5,2)) AS SoLuongTrua, 
+                           CAST(0 AS DECIMAL(5,2)) AS SoLuongChieu, CAST(0 AS DECIMAL(5,2)) AS SoLuongToi
                     FROM CT_HOADON_DV ct
                     JOIN DICHVU dv ON ct.MaDV = dv.MaDV
                     JOIN HOADON hd ON ct.MaHD = hd.MaHD
@@ -59,7 +63,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
     
                     UNION ALL
     
-                    SELECT ctt.MaCTHD, 'THUOC' AS LoaiItem, t.MaThuoc AS MaItem, t.TenThuoc AS TenDV, t.GiaBan AS DonGia, ctt.TongTienGoc, ctt.TienBHYTChiTra, ctt.TienBenhNhanTra, ctt.TrangThaiThanhToan
+                    SELECT ctt.MaCTHD, 'THUOC' AS LoaiItem, t.MaThuoc AS MaItem, t.TenThuoc AS TenDV, 
+                           t.GiaBan AS DonGia, ctt.TongTienGoc, ctt.TienBHYTChiTra, ctt.TienBenhNhanTra, ctt.TrangThaiThanhToan, 
+                           ctdt.SoNgayDung, ctt.SoLuong, ctdt.SoLuong AS SoLuongGoc,
+                           ctdt.SoLuongSang, ctdt.SoLuongTrua, ctdt.SoLuongChieu, ctdt.SoLuongToi
                     FROM CT_HOADON_THUOC ctt
                     JOIN CT_DON_THUOC ctdt ON ctt.MaCTDonThuoc = ctdt.MaCTDonThuoc
                     JOIN THUOC t ON ctdt.MaThuoc = t.MaThuoc
@@ -74,8 +81,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return dt;
         }
 
-        // 3. XÁC NHẬN THU TIỀN (Có xử lý Hủy món & Tính lại tiền Hóa Đơn + TẠO PHIẾU PHÁT THUỐC)
-        public bool XacNhanThuTien(int maHD, int maPhieuKhamBenh, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, out string message)
+        // 3. XÁC NHẬN THU TIỀN (Có xử lý Hủy món, Cập nhật Số lượng thuốc khách mua, Tính lại tiền)
+        // Tham so moi dsThuocCapNhat: Danh sach cac mon thuoc ma khach muon doi so luong mua.
+        // Moi item la 1 object chua { MaCTHD, SoLuongMoi }
+        public bool XacNhanThuTien(int maHD, int maPhieuKhamBenh, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, List<dynamic> dsThuocCapNhat, out string message)
         {
             message = "";
             using (SqlConnection con = new SqlConnection(connectStr))
@@ -105,14 +114,88 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             cmdHuyThuoc.ExecuteNonQuery();
                         }
 
-                        // 3.3. Xác nhận "Đã thanh toán"
+                        // 3.3. CẬP NHẬT LẠI SỐ LƯỢNG THUỐC & TÍNH LẠI TIỀN THEO YÊU CẦU KHÁCH
+                        if (dsThuocCapNhat != null && dsThuocCapNhat.Count > 0)
+                        {
+                            // Đọc lại thông tin Hóa Đơn để lấy % BHYT
+                            string sqlInfo = @"
+                                SELECT bn.BHYT, bn.MucHuongBHYT 
+                                FROM HOADON hd 
+                                JOIN BENHNHAN bn ON hd.MaBN = bn.MaBN 
+                                WHERE hd.MaHD = @MaHD";
+                            SqlCommand cmdInfo = new SqlCommand(sqlInfo, con, trans);
+                            cmdInfo.Parameters.AddWithValue("@MaHD", maHD);
+                            bool hasBHYT = false;
+                            int mucHuong = 0;
+                            using (SqlDataReader dr = cmdInfo.ExecuteReader())
+                            {
+                                if (dr.Read())
+                                {
+                                    hasBHYT = Convert.ToBoolean(dr["BHYT"]);
+                                    mucHuong = dr["MucHuongBHYT"] != DBNull.Value ? Convert.ToInt32(dr["MucHuongBHYT"]) : 0;
+                                }
+                            }
+
+                            foreach (var thuoc in dsThuocCapNhat)
+                            {
+                                int maCTHD = Convert.ToInt32(thuoc.MaCTHD);
+                                int soLuongMoi = Convert.ToInt32(thuoc.SoLuongMoi);
+
+                                // Lấy giá bán gốc và xem thuốc này có BHYT gánh không
+                                string sqlGia = @"
+                                    SELECT t.GiaBan, t.CoBHYT 
+                                    FROM CT_HOADON_THUOC cht
+                                    JOIN CT_DON_THUOC cdt ON cht.MaCTDonThuoc = cdt.MaCTDonThuoc
+                                    JOIN THUOC t ON cdt.MaThuoc = t.MaThuoc
+                                    WHERE cht.MaCTHD = @MaCTHD";
+                                SqlCommand cmdGia = new SqlCommand(sqlGia, con, trans);
+                                cmdGia.Parameters.AddWithValue("@MaCTHD", maCTHD);
+
+                                decimal donGia = 0;
+                                bool coBHYT = false;
+                                using (SqlDataReader drGia = cmdGia.ExecuteReader())
+                                {
+                                    if (drGia.Read())
+                                    {
+                                        donGia = Convert.ToDecimal(drGia["GiaBan"]);
+                                        coBHYT = Convert.ToBoolean(drGia["CoBHYT"]);
+                                    }
+                                }
+
+                                // Tính lại tiền
+                                decimal tienGocMoi = donGia * soLuongMoi;
+                                decimal tienBHYTMoi = 0;
+                                decimal tienKhachMoi = tienGocMoi;
+
+                                if (hasBHYT && coBHYT)
+                                {
+                                    tienBHYTMoi = tienGocMoi * mucHuong / 100;
+                                    tienKhachMoi = tienGocMoi - tienBHYTMoi;
+                                }
+
+                                // Update lại database cho dòng chi tiết thuốc đó
+                                string sqlUpdateCTThuoc = @"
+                                    UPDATE CT_HOADON_THUOC 
+                                    SET SoLuong = @SL, TongTienGoc = @Goc, TienBHYTChiTra = @BHYT, TienBenhNhanTra = @BN
+                                    WHERE MaCTHD = @MaCTHD AND TrangThaiThanhToan != N'Hủy'";
+                                SqlCommand cmdUpdateThuoc = new SqlCommand(sqlUpdateCTThuoc, con, trans);
+                                cmdUpdateThuoc.Parameters.AddWithValue("@SL", soLuongMoi);
+                                cmdUpdateThuoc.Parameters.AddWithValue("@Goc", tienGocMoi);
+                                cmdUpdateThuoc.Parameters.AddWithValue("@BHYT", tienBHYTMoi);
+                                cmdUpdateThuoc.Parameters.AddWithValue("@BN", tienKhachMoi);
+                                cmdUpdateThuoc.Parameters.AddWithValue("@MaCTHD", maCTHD);
+                                cmdUpdateThuoc.ExecuteNonQuery();
+                            }
+                        }
+
+                        // 3.4. Xác nhận "Đã thanh toán"
                         SqlCommand cmdThanhToanDV = new SqlCommand("UPDATE CT_HOADON_DV SET TrangThaiThanhToan = N'Đã thanh toán' WHERE MaHD = @MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'", con, trans);
                         cmdThanhToanDV.Parameters.AddWithValue("@MaHD", maHD); cmdThanhToanDV.ExecuteNonQuery();
 
                         SqlCommand cmdThanhToanThuoc = new SqlCommand("UPDATE CT_HOADON_THUOC SET TrangThaiThanhToan = N'Đã thanh toán' WHERE MaHD = @MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'", con, trans);
                         cmdThanhToanThuoc.Parameters.AddWithValue("@MaHD", maHD); cmdThanhToanThuoc.ExecuteNonQuery();
 
-                        // 3.4. Cập nhật lại TỔNG TIỀN cho Hóa Đơn
+                        // 3.5. Cập nhật lại TỔNG TIỀN cho Hóa Đơn (Tự động Sum từ chi tiết lên)
                         string updateHD = @"
                 UPDATE hd
                 SET TongTienGoc = ISNULL(dv.TongGoc, 0) + ISNULL(th.TongGoc, 0),
@@ -132,7 +215,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         cmdHD.ExecuteNonQuery();
 
                         // =========================================================================
-                        // 3.5. LOGIC PHÂN PHÒNG PHÁT THUỐC (Mã phòng 22 -> 26)
+                        // 3.6. LOGIC PHÂN PHÒNG PHÁT THUỐC (Mã phòng 22 -> 26)
                         // =========================================================================
                         string sqlKiemTraThuoc = @"
                     SELECT DISTINCT cdt.MaDonThuoc 
@@ -152,7 +235,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                         if (danhSachDonThuoc.Count > 0)
                         {
-                            // Thuật toán: Lấy tổng số phiếu đã tạo trong ngày % 5 để chọn phòng từ 22-26
                             string sqlGetOrder = "SELECT COUNT(*) FROM PHIEU_PHAT_THUOC WHERE CAST(NgayPhat AS DATE) = CAST(GETDATE() AS DATE)";
                             int totalToday = 0;
                             using (SqlCommand cmdOrder = new SqlCommand(sqlGetOrder, con, trans))
@@ -160,7 +242,6 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 totalToday = (int)cmdOrder.ExecuteScalar();
                             }
 
-                            // Tính mã phòng: 22 + (số dư khi chia 5) -> Luôn ra kết quả từ 22 tới 26
                             int targetRoomId = 22 + (totalToday % 5);
 
                             foreach (int maDT in danhSachDonThuoc)
@@ -180,7 +261,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                         {
                                             cmdInsertPP.Parameters.AddWithValue("@MaDT", maDT);
                                             cmdInsertPP.Parameters.AddWithValue("@MaHD", maHD);
-                                            cmdInsertPP.Parameters.AddWithValue("@MaPhong", targetRoomId); // GÁN MÃ PHÒNG ĐÃ TÍNH
+                                            cmdInsertPP.Parameters.AddWithValue("@MaPhong", targetRoomId);
                                             cmdInsertPP.ExecuteNonQuery();
                                         }
                                     }
@@ -188,8 +269,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             }
                         }
 
-                        // 3.6. Dong bo trang thai cho luong CLS neu co:
-                        // Chi danh dau "Da thanh toan" cho phieu co it nhat 1 DV CLS da thu tien.
+                        // 3.7. Đồng bộ trạng thái Cận Lâm Sàng
                         SqlCommand cmdUpdatePCD = new SqlCommand(@"
                             UPDATE pc
                             SET pc.TrangThai = N'Đã thanh toán'
@@ -208,9 +288,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         cmdUpdatePCD.Parameters.AddWithValue("@MaPKB", maPhieuKhamBenh);
                         cmdUpdatePCD.ExecuteNonQuery();
 
-                        // 3.7. Cap nhat trang thai phieu kham theo nghiep vu:
-                        // - Neu co chi dinh CLS chua thuc hien sau khi da thu tien => Cho can lam sang
-                        // - Neu khong => flow cu Cho cap so
+                        // 3.8. Cập nhật trạng thái phiếu khám bệnh
                         bool hasPendingCls = false;
                         using (SqlCommand cmdCheckCLS = new SqlCommand(@"
                             SELECT COUNT(*)

@@ -53,7 +53,17 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                         TenDV = row["TenDV"].ToString(),
                         DonGia = Convert.ToDecimal(row["DonGia"]),
                         TienBHYT = Convert.ToDecimal(row["TienBHYTChiTra"]),
-                        TienBenhNhan = Convert.ToDecimal(row["TienBenhNhanTra"])
+                        TienBenhNhan = Convert.ToDecimal(row["TienBenhNhanTra"]),
+
+                        SoLuong = row["SoLuong"] != DBNull.Value ? Convert.ToInt32(row["SoLuong"]) : 1,
+                        SoNgayDung = row["SoNgayDung"] != DBNull.Value ? Convert.ToInt32(row["SoNgayDung"]) : 1,
+                        SoLuongGoc = row.Table.Columns.Contains("SoLuongGoc") && row["SoLuongGoc"] != DBNull.Value ? Convert.ToInt32(row["SoLuongGoc"]) : 1,
+
+                        // ĐỌC THÊM LIỀU LƯỢNG
+                        LiSang = row.Table.Columns.Contains("SoLuongSang") && row["SoLuongSang"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongSang"]) : 0,
+                        LiTrua = row.Table.Columns.Contains("SoLuongTrua") && row["SoLuongTrua"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongTrua"]) : 0,
+                        LiChieu = row.Table.Columns.Contains("SoLuongChieu") && row["SoLuongChieu"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongChieu"]) : 0,
+                        LiToi = row.Table.Columns.Contains("SoLuongToi") && row["SoLuongToi"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongToi"]) : 0
                     });
                 }
                 return Json(new { success = true, data = list });
@@ -65,12 +75,28 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult ThanhToan(int maHD, int maPKB, string phuongThucTT, string dsHuyDV, string dsHuyThuoc)
+        public JsonResult ThanhToan(int maHD, int maPKB, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, string dsThuocCapNhat)
         {
             if (maHD <= 0 || maPKB <= 0) return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
 
             string errorMsg;
-            bool result = db.XacNhanThuTien(maHD, maPKB, phuongThucTT, dsHuyDV, dsHuyThuoc, out errorMsg);
+            List<dynamic> listThuoc = new List<dynamic>();
+
+            // Chuyển chuỗi JSON từ View gửi lên thành List object để truyền xuống tầng DB
+            if (!string.IsNullOrEmpty(dsThuocCapNhat))
+            {
+                try
+                {
+                    listThuoc = JsonConvert.DeserializeObject<List<dynamic>>(dsThuocCapNhat);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = "Dữ liệu cập nhật thuốc không hợp lệ: " + ex.Message });
+                }
+            }
+
+            // Gọi hàm đã nâng cấp ở tầng ThuNganDB
+            bool result = db.XacNhanThuTien(maHD, maPKB, phuongThucTT, dsHuyDV, dsHuyThuoc, listThuoc, out errorMsg);
 
             if (result) return Json(new { success = true });
             return Json(new { success = false, message = errorMsg });

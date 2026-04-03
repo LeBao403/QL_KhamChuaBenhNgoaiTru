@@ -395,7 +395,7 @@ function viewDetail(maDT, maHD) {
                     <div class="info-box p-3 m-0" style="border-left-color: #198754;">
                         <h6 class="fw-bold text-success border-bottom pb-2 mb-2"><i class="fas fa-stethoscope me-2"></i>KHÁM BỆNH & CHUẨN ĐOÁN</h6>
                         <div class="row g-2">
-                            <div class="col-sm-4"><div class="info-label">Phiếu khám</div><div class="info-value small">PKB-` + d.MaPhieuKhamBenh + `</div></div>
+                            <div class="col-sm-4"><div class="info-label">Phiếu khám</div><div class="info-value small">#` + d.MaPhieuKhamBenh + `</div></div>
                             <div class="col-sm-8"><div class="info-label">Kết luận</div><div class="info-value text-primary small fw-bold">` + d.KetLuan + `</div></div>
                             <div class="col-12 mt-1"><div class="info-label">Triệu chứng</div><div class="info-value small">` + (d.TrieuChung || "---") + `</div></div>
                         </div>
@@ -407,13 +407,13 @@ function viewDetail(maDT, maHD) {
                         <h6 class="fw-bold text-warning border-bottom pb-2 mb-2"><i class="fas fa-file-invoice me-2"></i>CHỨNG TỪ & ĐƠN THUỐC</h6>
 
                         <div class="d-flex justify-content-between mb-2">
-                            <div><div class="info-label">Hóa Đơn</div><div class="info-value small fw-bold">` + d.MaHD + `</div></div>
-                            <div class="text-end"><div class="info-label">Đơn Thuốc</div><div class="info-value small fw-bold">` + d.MaDonThuoc + `</div></div>
+                            <div><div class="info-label">Hóa Đơn</div><div class="info-value small fw-bold">#` + d.MaHD + `</div></div>
+                            <div class="text-end"><div class="info-label">Đơn Thuốc</div><div class="info-value small fw-bold">#` + d.MaDonThuoc + `</div></div>
                         </div>
 
                         <div class="mb-3">
                             <div class="info-label">Mã Phiếu Phát (Xuất Kho)</div>
-                            <div class="info-value text-primary fw-bold fs-6">` + (d.MaPhieuPhat ? d.MaPhieuPhat : '<span class="text-muted fw-normal">Chưa phát</span>') + `</div>
+                            <div class="info-value text-primary fw-bold fs-6">#` + (d.MaPhieuPhat ? d.MaPhieuPhat : '<span class="text-muted fw-normal">Chưa phát</span>') + `</div>
                         </div>
 
                         <hr class="my-2 border-warning opacity-25">

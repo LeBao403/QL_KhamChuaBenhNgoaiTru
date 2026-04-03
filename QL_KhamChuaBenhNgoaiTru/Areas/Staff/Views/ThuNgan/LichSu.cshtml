@@ -12,34 +12,114 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
+    /* BỘ CSS SANG TRỌNG CHO LỊCH SỬ THU NGÂN */
     body {
         background-color: #f4f7f6;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1e293b;
+        letter-spacing: -0.5px;
     }
 
     .filter-card {
-        background: #fff;
+        background: #ffffff;
         border-radius: 16px;
         padding: 1.5rem;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+        border: 1px solid #f1f5f9;
     }
 
+    .custom-input-group {
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        transition: all 0.2s ease;
+    }
+
+        .custom-input-group:focus-within {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            background: #ffffff;
+        }
+
+        .custom-input-group .form-control, .custom-input-group .form-select {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            font-weight: 500;
+        }
+
     .table-card {
-        background: #fff;
+        background: #ffffff;
         border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+        border: 1px solid #f1f5f9;
         overflow: hidden;
         position: relative;
     }
 
+    .table-custom thead th {
+        background-color: #f8fafc;
+        color: #475569;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        padding: 1.25rem 1rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .table-custom tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+    }
+
+    .table-custom tbody tr {
+        transition: all 0.2s ease;
+    }
+
+        .table-custom tbody tr:hover {
+            background-color: #f8fafc;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            z-index: 1;
+            position: relative;
+        }
+
     .sortable-col {
         cursor: pointer;
         user-select: none;
-        transition: background 0.2s;
     }
 
         .sortable-col:hover {
-            background-color: #f1f5f9 !important;
+            color: #2563eb !important;
         }
+
+    /* Custom Badge */
+    .badge-soft-success {
+        background-color: #dcfce7;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+    }
+
+    .badge-soft-danger {
+        background-color: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
+
+    .badge-soft-secondary {
+        background-color: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+    }
 
     #loadingOverlay {
         position: absolute;
@@ -54,12 +134,22 @@
         align-items: center;
         justify-content: center;
     }
+
+    /* Popup SweetAlert Styling */
+    .swal2-popup.custom-swal-popup {
+        border-radius: 20px;
+        padding: 0;
+        overflow: hidden;
+    }
 </style>
 
 <div class="container-fluid px-4 mt-3">
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <h3 class="fw-bold text-dark mb-0"><i class="bi bi-clock-history text-primary me-2"></i>Lịch Sử Thu Tiền / Hủy Bill</h3>
-        <a href="@Url.Action("Index", "ThuNgan")" class="btn btn-outline-secondary rounded-pill px-4">
+        <div>
+            <h4 class="page-title mb-1"><i class="bi bi-receipt-cutoff text-primary me-2"></i>Tra Cứu Lịch Sử Thu Tiền</h4>
+            <span class="text-muted fs-6">Quản lý hóa đơn, viện phí và trạng thái thanh toán</span>
+        </div>
+        <a href="@Url.Action("Index", "ThuNgan")" class="btn btn-outline-secondary rounded-pill px-4 fw-bold shadow-sm">
             <i class="bi bi-arrow-left me-1"></i> Về quầy thu ngân
         </a>
     </div>
@@ -72,45 +162,53 @@
             <input type="hidden" id="sortDir" name="sortDir" value="@ViewBag.SortDir">
 
             <div class="col-md-4">
-                <label class="form-label fw-bold text-muted small mb-1">TÌM KIẾM</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-search"></i></span>
-                    <input type="text" id="liveSearchInput" name="tuKhoa" class="form-control bg-light border-start-0" placeholder="Tên, Mã BN, Mã HĐ..." value="@ViewBag.TuKhoa">
+                <label class="form-label fw-bold text-muted small mb-1">TÌM KIẾM BỆNH NHÂN / HÓA ĐƠN</label>
+                <div class="input-group custom-input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" id="liveSearchInput" name="tuKhoa" class="form-control" placeholder="Nhập tên, mã BN, mã HĐ..." value="@ViewBag.TuKhoa">
                 </div>
             </div>
             <div class="col-md-4">
-                <label class="form-label fw-bold text-muted small mb-1">KHOẢNG NGÀY</label>
-                <input type="text" id="dateRangePicker" class="form-control bg-light" placeholder="Chọn ngày...">
+                <label class="form-label fw-bold text-muted small mb-1">KHOẢNG THỜI GIAN</label>
+                <div class="input-group custom-input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar-range"></i></span>
+                    <input type="text" id="dateRangePicker" class="form-control" placeholder="Chọn ngày...">
+                </div>
             </div>
             <div class="col-md-3">
                 <label class="form-label fw-bold text-muted small mb-1">TRẠNG THÁI</label>
-                <select id="statusFilter" name="trangThai" class="form-select bg-light">
-                    <option value="">-- Tất cả --</option>
-                    <option value="Đã thanh toán" @(ViewBag.TrangThai == "Đã thanh toán" ? "selected" : "")>Đã thanh toán</option>
-                    <option value="Đã hủy" @(ViewBag.TrangThai == "Đã hủy" ? "selected" : "")>Đã hủy</option>
-                </select>
+                <div class="input-group custom-input-group">
+                    <span class="input-group-text"><i class="bi bi-funnel"></i></span>
+                    <select id="statusFilter" name="trangThai" class="form-select">
+                        <option value="">-- Tất cả --</option>
+                        <option value="Đã thanh toán" @(ViewBag.TrangThai == "Đã thanh toán" ? "selected" : "")>Đã thanh toán</option>
+                        <option value="Đã hủy" @(ViewBag.TrangThai == "Đã hủy" ? "selected" : "")>Đã hủy</option>
+                    </select>
+                </div>
             </div>
             <div class="col-md-1">
-                <button type="button" class="btn btn-light border w-100" onclick="window.location.href='@Url.Action("LichSu")'"><i class="bi bi-arrow-clockwise"></i></button>
+                <button type="button" class="btn btn-light border w-100 shadow-sm" style="border-radius: 10px; height: 40px;" data-bs-toggle="tooltip" title="Làm mới bộ lọc" onclick="window.location.href='@Url.Action("LichSu")'">
+                    <i class="bi bi-arrow-clockwise fw-bold text-secondary"></i>
+                </button>
             </div>
         </form>
     </div>
 
     <div id="tableUpdateArea">
-        <div class="table-card">
-            <div id="loadingOverlay"><div class="spinner-border text-primary"></div></div>
+        <div class="table-card mb-4">
+            <div id="loadingOverlay"><div class="spinner-border text-primary" style="width: 3rem; height: 3rem;"></div></div>
 
             <div class="table-responsive">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="bg-light">
-                        <tr class="text-muted small text-uppercase">
-                            <th class="ps-4 sortable-col" data-col="MaHD">Mã HĐ @Html.Raw(GetSortIcon("MaHD"))</th>
-                            <th class="sortable-col" data-col="HoTen">Bệnh Nhân @Html.Raw(GetSortIcon("HoTen"))</th>
+                <table class="table table-custom align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-4 sortable-col" data-col="MaHD">Mã Hóa Đơn @Html.Raw(GetSortIcon("MaHD"))</th>
+                            <th class="sortable-col" data-col="HoTen">Thông tin Bệnh Nhân @Html.Raw(GetSortIcon("HoTen"))</th>
                             <th class="sortable-col" data-col="NgayThanhToan">Giờ Giao Dịch @Html.Raw(GetSortIcon("NgayThanhToan"))</th>
                             <th>HT Thanh Toán</th>
-                            <th class="text-end sortable-col" data-col="TongTienBenhNhanTra">Khách Trả @Html.Raw(GetSortIcon("TongTienBenhNhanTra"))</th>
+                            <th class="text-end sortable-col" data-col="TongTienBenhNhanTra">Tổng Thu @Html.Raw(GetSortIcon("TongTienBenhNhanTra"))</th>
                             <th class="text-center sortable-col" data-col="TrangThaiThanhToan">Trạng Thái @Html.Raw(GetSortIcon("TrangThaiThanhToan"))</th>
-                            <th class="text-center pe-4">Thao tác</th>
+                            <th class="text-center pe-4 text-nowrap" style="min-width: 130px;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -119,19 +217,36 @@
                             foreach (System.Data.DataRow row in dtHoaDon.Rows)
                             {
                                 bool isHuy = row["TrangThaiThanhToan"].ToString() == "Đã hủy";
+                                string badgeClass = isHuy ? "badge-soft-danger" : "badge-soft-success";
+                                string iconClass = isHuy ? "bi-x-circle" : "bi-check-circle";
+
                                 <tr>
-                                    <td class="ps-4 fw-bold text-primary">#@row["MaHD"] <br /><small class="text-muted fw-normal">PKB: #@row["MaPhieuKhamBenh"]</small></td>
-                                    <td><span class="fw-bold text-dark">@row["HoTen"]</span><br /><small class="text-muted">@row["MaBN"]</small></td>
-                                    <td>@Convert.ToDateTime(row["NgayThanhToan"]).ToString("HH:mm - dd/MM/yyyy")</td>
-                                    <td>@(row["HinhThucThanhToan"] != DBNull.Value ? row["HinhThucThanhToan"] : "-")</td>
-                                    <td class="text-end fw-bold @(isHuy ? "text-muted text-decoration-line-through" : "text-danger")">@Convert.ToDecimal(row["TongTienBenhNhanTra"]).ToString("N0") ₫</td>
+                                    <td class="ps-4">
+                                        <div class="fw-bolder text-primary fs-5">#@row["MaHD"]</div>
+                                        <small class="text-muted fw-medium"><i class="bi bi-ticket-detailed me-1"></i>PKB: @(row["MaPhieuKhamBenh"] != DBNull.Value ? "#" + row["MaPhieuKhamBenh"] : "N/A")</small>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-dark fs-6">@row["HoTen"]</div>
+                                        <small class="text-muted"><i class="bi bi-person-vcard me-1"></i>@row["MaBN"]</small>
+                                    </td>
+                                    <td class="fw-medium text-secondary">
+                                        <i class="bi bi-clock me-1 opacity-50"></i>@Convert.ToDateTime(row["NgayThanhToan"]).ToString("HH:mm - dd/MM/yyyy")
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-soft-secondary rounded-pill px-3 py-2">@(row["HinhThucThanhToan"] != DBNull.Value ? row["HinhThucThanhToan"] : "-")</span>
+                                    </td>
+                                    <td class="text-end fw-bolder fs-5 @(isHuy ? "text-muted text-decoration-line-through opacity-50" : "text-danger")">
+                                        @Convert.ToDecimal(row["TongTienBenhNhanTra"]).ToString("N0") ₫
+                                    </td>
                                     <td class="text-center">
-                                        <span class="badge @(isHuy ? "bg-danger" : "bg-success") bg-opacity-10 @(isHuy ? "text-danger" : "text-success") border @(isHuy ? "border-danger" : "border-success") rounded-pill px-3">
-                                            @row["TrangThaiThanhToan"]
+                                        <span class="badge @badgeClass rounded-pill px-3 py-2 fw-bold">
+                                            <i class="bi @iconClass me-1"></i>@row["TrangThaiThanhToan"]
                                         </span>
                                     </td>
-                                    <td class="text-center pe-4">
-                                        <button class="btn btn-sm btn-light border shadow-sm rounded-pill fw-bold text-primary" onclick="xemChiTiet(@row["MaHD"], '@row["HoTen"]')">
+                                    <td class="text-center pe-4 text-nowrap">
+                                        <button class="btn btn-sm btn-light border shadow-sm rounded-pill fw-bold text-primary px-3 text-nowrap"
+                                                onclick="xemChiTiet(@row["MaHD"], '@row["HoTen"]', '@row["MaBN"]', '@(row["MaPhieuKhamBenh"] != DBNull.Value ? row["MaPhieuKhamBenh"] : "")')"
+                                                data-bs-toggle="tooltip" title="Xem chi tiết Hóa Đơn">
                                             <i class="bi bi-eye me-1"></i> Chi tiết
                                         </button>
                                     </td>
@@ -140,7 +255,15 @@
                         }
                         else
                         {
-                            <tr><td colspan="7" class="text-center py-5 text-muted">Không tìm thấy dữ liệu.</td></tr>
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="py-4">
+                                        <i class="bi bi-receipt text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+                                        <h5 class="mt-3 text-muted fw-bold">Không tìm thấy hóa đơn nào</h5>
+                                        <p class="text-muted mb-0">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm.</p>
+                                    </div>
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -149,10 +272,16 @@
             @if (ViewBag.TotalPages > 1)
             {
                 <div class="card-footer bg-white py-3 d-flex justify-content-center border-top">
-                    <ul class="pagination pagination-sm mb-0 shadow-sm">
-                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")"><a class="page-link ajax-page" href="@Url.Action("LichSu", new { page = ViewBag.CurrentPage - 1 })">Trước</a></li>
-                        <li class="page-item active"><span class="page-link bg-primary text-white border-primary">Trang @ViewBag.CurrentPage / @ViewBag.TotalPages</span></li>
-                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")"><a class="page-link ajax-page" href="@Url.Action("LichSu", new { page = ViewBag.CurrentPage + 1 })">Sau</a></li>
+                    <ul class="pagination pagination-sm mb-0 shadow-sm" style="border-radius: 8px; overflow: hidden;">
+                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                            <a class="page-link text-secondary fw-bold px-3 ajax-page" href="@Url.Action("LichSu", new { page = ViewBag.CurrentPage - 1 })">Trước</a>
+                        </li>
+                        <li class="page-item active">
+                            <span class="page-link bg-primary text-white border-primary px-4 fw-bold">Trang @ViewBag.CurrentPage / @ViewBag.TotalPages</span>
+                        </li>
+                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                            <a class="page-link text-secondary fw-bold px-3 ajax-page" href="@Url.Action("LichSu", new { page = ViewBag.CurrentPage + 1 })">Sau</a>
+                        </li>
                     </ul>
                 </div>
             }
@@ -167,7 +296,13 @@
 
     <script>
         $(document).ready(function () {
-            // KHỞI TẠO LỊCH
+            // Tooltip Init
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
+            // Lịch
             flatpickr("#dateRangePicker", {
                 mode: "range", dateFormat: "Y-m-d", altInput: true, altFormat: "d/m/Y", locale: "vn",
                 defaultDate: [$("#tuNgay").val(), $("#denNgay").val()],
@@ -180,12 +315,10 @@
                 }
             });
 
-            // LIVE SEARCH
             let timer;
             $('#liveSearchInput').on('input', function () { clearTimeout(timer); timer = setTimeout(() => triggerSearch(1), 500); });
             $('#statusFilter').on('change', () => triggerSearch(1));
 
-            // SẮP XẾP
             $(document).on('click', '.sortable-col', function () {
                 let col = $(this).data('col');
                 $('#sortDir').val($('#sortCol').val() === col ? ($('#sortDir').val() === 'asc' ? 'desc' : 'asc') : 'desc');
@@ -193,7 +326,6 @@
                 triggerSearch(1);
             });
 
-            // PHÂN TRANG AJAX
             $(document).on('click', '.ajax-page', function (e) {
                 e.preventDefault();
                 let url = $(this).attr('href');
@@ -207,52 +339,116 @@
                 $.get(url, function (data) {
                     $('#tableUpdateArea').html($(data).find('#tableUpdateArea').html());
                     window.history.pushState({path: url}, '', url);
+
+                    // Re-init tooltips
+                    $('[data-bs-toggle="tooltip"]').tooltip();
                 });
             }
         });
 
-        // XEM CHI TIẾT ĐÃ ĐƯỢC CHUYỂN SANG DÙNG MaHD
-        function xemChiTiet(maHD, tenBN) {
+        // XEM CHI TIẾT ĐÃ ĐƯỢC PHÂN NHÓM VÀ SHOW FULL THÔNG TIN
+        function xemChiTiet(maHD, tenBN, maBN, maPKB) {
             Swal.fire({
-                title: 'Đang tải chi tiết...',
+                title: 'Đang tải dữ liệu...',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); }
             });
 
             $.post('@Url.Action("GetChiTiet", "ThuNgan")', { maHD: maHD }, function (res) {
                 if (res.success) {
-                    // (Giữ nguyên đoạn tạo HTML ở đây...)
-                    let html = `<table class="table table-bordered text-start align-middle" style="font-size: 0.9rem">
-                                <thead class="table-light"><tr><th>Nội dung</th><th class="text-end">Tiền Khách</th><th>Trạng thái</th></tr></thead><tbody>`;
                     let total = 0;
+                    let nhomKham = []; let nhomCLS = []; let nhomThuoc = [];
 
-                    res.data.forEach(i => {
-                        let isHuy = i.TrangThai === "Hủy";
-                        let rowCls = isHuy ? "text-muted text-decoration-line-through bg-light" : "";
-                        let badge = isHuy ? '<span class="badge bg-danger">Hủy</span>' : '<span class="badge bg-success">Đã đóng</span>';
-                        if(!isHuy) total += i.TienBenhNhan;
+                    // Chia nhóm dữ liệu (Ép 'phí tiện ích' vào nhóm Khám Bệnh)
+                    res.data.forEach(item => {
+                        let tenDV = item.TenDV.toLowerCase();
+                        if (item.LoaiItem === "THUOC") nhomThuoc.push(item);
+                        else if (tenDV.includes("khám") || tenDV.includes("tiện ích") || tenDV.includes("đặt lịch")) nhomKham.push(item);
+                        else nhomCLS.push(item);
 
-                        html += `<tr class="${rowCls}">
-                                    <td class="fw-bold">${i.TenDV}</td>
-                                    <td class="text-end fw-bold text-danger">${isHuy ? 0 : i.TienBenhNhan.toLocaleString('vi-VN')} ₫</td>
-                                    <td class="text-center">${badge}</td>
-                                 </tr>`;
+                        if (item.TrangThai !== "Hủy") total += item.TienBenhNhan;
                     });
 
-                    html += `</tbody></table>
-                             <div class="text-end mt-3 fs-5">
-                                Tổng khách đã trả: <strong class="text-danger fs-3">${total.toLocaleString('vi-VN')} ₫</strong>
+                    // Khung thông tin tổng quan
+                    let infoHtml = `
+                        <div class="d-flex justify-content-between align-items-center mb-3 text-start bg-light p-4 rounded-4 border shadow-sm">
+                            <div>
+                                <h4 class="fw-bolder text-primary mb-1 text-uppercase" style="letter-spacing:-0.5px">${tenBN}</h4>
+                                <div class="text-muted"><i class="bi bi-person-vcard me-2"></i>Mã Bệnh Nhân: <strong class="text-dark">${maBN}</strong></div>
+                            </div>
+                            <div class="text-end">
+                                <div class="text-muted mb-1">Mã Hóa Đơn: <strong class="text-primary fs-5">#${maHD}</strong></div>
+                                <div class="text-muted">Mã Phiếu Khám: <strong class="text-dark">${maPKB ? '#' + maPKB : 'Không có'}</strong></div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Bảng chi tiết
+                    let tableHtml = `<div class="table-responsive rounded-3 border"><table class="table table-borderless text-start align-middle mb-0" style="font-size: 0.95rem">
+                                     <thead class="bg-light border-bottom border-2 text-muted small text-uppercase">
+                                        <tr><th class="ps-4 py-3">Nội dung phát sinh</th><th class="text-end py-3" style="width:150px;">Tiền Khách Trả</th><th class="text-center pe-4 py-3" style="width:120px;">Trạng thái</th></tr>
+                                     </thead><tbody>`;
+
+                    const renderRow = (item) => {
+                        let isHuy = item.TrangThai === "Hủy";
+                        let rowCls = isHuy ? "text-muted text-decoration-line-through bg-light opacity-75 border-bottom" : "border-bottom";
+                        let badge = isHuy ? '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger rounded-pill px-3 py-2 shadow-sm">Khách bỏ</span>' : '<span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-2 shadow-sm">Đã đóng</span>';
+
+                        let textDV = `<span class="fw-bold fs-6 text-dark">${item.TenDV}</span>`;
+
+                        if (item.LoaiItem === 'THUOC') {
+                            let slMua = item.SoLuong || 0;
+                            let slGoc = item.SoLuongGoc || slMua;
+
+                            // FIX LỖI Ở ĐÂY: Chỉ xét vụ "Mua giảm/Mua đủ" khi món đó KHÔNG BỊ HỦY
+                            if (!isHuy) {
+                                if (slMua < slGoc) {
+                                    textDV += `<br><span class="badge bg-warning text-dark mt-2 p-2 shadow-sm"><i class="bi bi-exclamation-triangle me-1"></i>Khách mua giảm: ${slMua} / ${slGoc}</span>`;
+                                } else {
+                                    textDV += `<br><span class="badge bg-success bg-opacity-10 text-success border border-success mt-2 p-2"><i class="bi bi-check-circle me-1"></i>Đã mua đủ: ${slMua}</span>`;
+                                }
+                            } else {
+                                // Nếu đã hủy thì thông báo thêm hoặc bỏ trống (đã có chữ Khách bỏ ở cột Trạng thái)
+                                textDV += `<br><span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary mt-2 p-2"><i class="bi bi-dash-circle me-1"></i>Từ chối mua</span>`;
+                            }
+                        }
+
+                        return `<tr class="${rowCls}">
+                                        <td class="ps-4 py-3">${textDV}</td>
+                                        <td class="text-end fw-bolder text-danger fs-6 py-3">${isHuy ? 0 : item.TienBenhNhan.toLocaleString('vi-VN')} ₫</td>
+                                        <td class="text-center pe-4 py-3">${badge}</td>
+                                    </tr>`;
+                    };
+
+                    if (nhomKham.length > 0) {
+                        tableHtml += `<tr><td colspan="3" class="bg-light fw-bold text-primary px-4 py-2 border-bottom"><i class="bi bi-stethoscope me-2"></i>CÔNG KHÁM BỆNH</td></tr>`;
+                        nhomKham.forEach(item => tableHtml += renderRow(item));
+                    }
+                    if (nhomCLS.length > 0) {
+                        tableHtml += `<tr><td colspan="3" class="bg-light fw-bold px-4 py-2 border-bottom" style="color: #b45309 !important;"><i class="bi bi-activity me-2"></i>XÉT NGHIỆM & CẬN LÂM SÀNG</td></tr>`;
+                        nhomCLS.forEach(item => tableHtml += renderRow(item));
+                    }
+                    if (nhomThuoc.length > 0) {
+                        tableHtml += `<tr><td colspan="3" class="bg-light fw-bold text-success px-4 py-2 border-bottom"><i class="bi bi-capsule me-2"></i>ĐƠN THUỐC NGOẠI TRÚ</td></tr>`;
+                        nhomThuoc.forEach(item => tableHtml += renderRow(item));
+                    }
+
+                    tableHtml += `</tbody></table></div>
+                             <div class="text-end mt-4 p-4 rounded-4 shadow-sm d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border: 1px solid #cbd5e1;">
+                                <span class="text-muted fw-bold fs-6 text-uppercase"><i class="bi bi-wallet2 me-2"></i>Tổng số tiền đã thu:</span>
+                                <strong class="text-danger display-5 fw-bolder mb-0 text-shadow">${total.toLocaleString('vi-VN')} ₫</strong>
                              </div>`;
 
                     Swal.fire({
-                        title: `Chi Tiết Bill - ${tenBN}`,
-                        html: html,
-                        width: '700px',
-                        confirmButtonText: 'Đóng',
-                        confirmButtonColor: '#6c757d'
+                        title: false,
+                        html: infoHtml + tableHtml,
+                        width: '850px',
+                        showCloseButton: true,
+                        showConfirmButton: false,
+                        customClass: { popup: 'custom-swal-popup' }
                     });
                 } else {
-                    Swal.fire('Lỗi', 'Không lấy được chi tiết.', 'error');
+                    Swal.fire('Lỗi', 'Không lấy được chi tiết: ' + res.message, 'error');
                 }
             });
         }
