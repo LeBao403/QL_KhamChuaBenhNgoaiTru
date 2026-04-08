@@ -232,6 +232,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TaiKhoanController.cs" />
     <Compile Include="Controllers\MockLISController.cs" />
+    <Compile Include="Controllers\MobileApiController.cs" />
     <Compile Include="Areas\Staff\Controllers\CLSController.cs" />
     <Compile Include="DBContext\BackupDB.cs" />
     <Compile Include="DBContext\BacSiDB.cs" />

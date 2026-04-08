@@ -518,7 +518,9 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             {
                 conn.Open();
                 string sql = @"
-                    SELECT HD.MaHD, HD.NgayThanhToan, HD.TongTien, HD.TrangThaiThanhToan,
+                    SELECT HD.MaHD, HD.NgayThanhToan,
+                           ISNULL(HD.TongTienBenhNhanTra, ISNULL(HD.TongTienGoc, 0)) AS TongTien,
+                           HD.TrangThaiThanhToan,
                            HD.HinhThucThanhToan, HD.GhiChu,
                            PKB.MaPhieuKhamBenh, PKB.NgayLap AS NgayKham
                     FROM HOADON HD
@@ -554,7 +556,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
                 conn.Open();
-                string sqlHD = "SELECT * FROM HOADON WHERE MaHD = @MaHD";
+                string sqlHD = @"
+                    SELECT MaHD, NgayThanhToan,
+                           ISNULL(TongTienBenhNhanTra, ISNULL(TongTienGoc, 0)) AS TongTien,
+                           TongTienBHYTChiTra, TongTienBenhNhanTra,
+                           TrangThaiThanhToan, HinhThucThanhToan
+                    FROM HOADON
+                    WHERE MaHD = @MaHD";
                 SqlCommand cmdHD = new SqlCommand(sqlHD, conn);
                 cmdHD.Parameters.AddWithValue("@MaHD", maHD);
                 using (SqlDataReader dr = cmdHD.ExecuteReader())
