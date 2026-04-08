@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
@@ -11,6 +11,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Security.Cryptography;
+using System.Linq;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 {
@@ -46,10 +47,23 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 {
                     list.Add(new
                     {
+                        MaCTHD = Convert.ToInt32(row["MaCTHD"]),
+                        LoaiItem = row["LoaiItem"].ToString(),
+                        TrangThai = row["TrangThaiThanhToan"].ToString(),
                         TenDV = row["TenDV"].ToString(),
                         DonGia = Convert.ToDecimal(row["DonGia"]),
                         TienBHYT = Convert.ToDecimal(row["TienBHYTChiTra"]),
-                        TienBenhNhan = Convert.ToDecimal(row["TienBenhNhanTra"])
+                        TienBenhNhan = Convert.ToDecimal(row["TienBenhNhanTra"]),
+
+                        SoLuong = row["SoLuong"] != DBNull.Value ? Convert.ToInt32(row["SoLuong"]) : 1,
+                        SoNgayDung = row["SoNgayDung"] != DBNull.Value ? Convert.ToInt32(row["SoNgayDung"]) : 1,
+                        SoLuongGoc = row.Table.Columns.Contains("SoLuongGoc") && row["SoLuongGoc"] != DBNull.Value ? Convert.ToInt32(row["SoLuongGoc"]) : 1,
+
+                        // ĐỌC THÊM LIỀU LƯỢNG
+                        LiSang = row.Table.Columns.Contains("SoLuongSang") && row["SoLuongSang"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongSang"]) : 0,
+                        LiTrua = row.Table.Columns.Contains("SoLuongTrua") && row["SoLuongTrua"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongTrua"]) : 0,
+                        LiChieu = row.Table.Columns.Contains("SoLuongChieu") && row["SoLuongChieu"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongChieu"]) : 0,
+                        LiToi = row.Table.Columns.Contains("SoLuongToi") && row["SoLuongToi"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongToi"]) : 0
                     });
                 }
                 return Json(new { success = true, data = list });
@@ -61,12 +75,28 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult ThanhToan(int maHD, int maPKB)
+        public JsonResult ThanhToan(int maHD, int maPKB, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, string dsThuocCapNhat)
         {
             if (maHD <= 0 || maPKB <= 0) return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
 
             string errorMsg;
-            bool result = db.XacNhanThuTien(maHD, maPKB, out errorMsg);
+            List<dynamic> listThuoc = new List<dynamic>();
+
+            // Chuyển chuỗi JSON từ View gửi lên thành List object để truyền xuống tầng DB
+            if (!string.IsNullOrEmpty(dsThuocCapNhat))
+            {
+                try
+                {
+                    listThuoc = JsonConvert.DeserializeObject<List<dynamic>>(dsThuocCapNhat);
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = "Dữ liệu cập nhật thuốc không hợp lệ: " + ex.Message });
+                }
+            }
+
+            // Gọi hàm đã nâng cấp ở tầng ThuNganDB
+            bool result = db.XacNhanThuTien(maHD, maPKB, phuongThucTT, dsHuyDV, dsHuyThuoc, listThuoc, out errorMsg);
 
             if (result) return Json(new { success = true });
             return Json(new { success = false, message = errorMsg });
@@ -89,21 +119,14 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> TaoMaQR(int maHD, int maPKB)
+        public async Task<JsonResult> TaoMaQR(int maHD, int maPKB, int tongTien) // <-- THÊM THAM SỐ tongTien
         {
             try
             {
-                // 1. Tính tổng tiền cần thu
-                DataTable dt = db.GetChiTietHoaDon(maHD);
-                int tongTien = 0;
-                foreach (DataRow row in dt.Rows)
-                {
-                    tongTien += Convert.ToInt32(row["TienBenhNhanTra"]);
-                }
-
+                // 1. Kiểm tra tiền trực tiếp từ Giao diện truyền xuống
                 if (tongTien <= 0) return Json(new { success = false, message = "Hóa đơn 0đ, không cần quét QR." });
 
-                // 2. Chuẩn bị dữ liệu gửi đi
+                // 2. Chuẩn bị dữ liệu gửi đi PayOS
                 string clientId = ConfigurationManager.AppSettings["PayOS:ClientId"];
                 string apiKey = ConfigurationManager.AppSettings["PayOS:ApiKey"];
                 string checksumKey = ConfigurationManager.AppSettings["PayOS:ChecksumKey"];
@@ -119,7 +142,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 var requestData = new
                 {
                     orderCode = orderCode,
-                    amount = tongTien,
+                    amount = tongTien, // <-- Truyền đúng số tiền đang nợ
                     description = description,
                     items = new[] { new { name = "Vien phi Kham benh", quantity = 1, price = tongTien } },
                     returnUrl = returnUrl,
@@ -189,6 +212,101 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             {
                 return Json(new { success = true, isPaid = false });
             }
+        }
+
+
+
+
+
+
+
+        // GET: Staff/ThuNgan/LichSu
+        public ActionResult LichSu(string tuNgay, string denNgay, string tuKhoa, string trangThai, string sortCol = "NgayThanhToan", string sortDir = "desc", int page = 1)
+        {
+            DateTime dtTuNgay = DateTime.Now.Date;
+            DateTime dtDenNgay = DateTime.Now.Date;
+
+            if (!string.IsNullOrEmpty(tuNgay)) DateTime.TryParse(tuNgay, out dtTuNgay);
+            if (!string.IsNullOrEmpty(denNgay)) DateTime.TryParse(denNgay, out dtDenNgay);
+
+            ViewBag.TuNgay = dtTuNgay.ToString("yyyy-MM-dd");
+            ViewBag.DenNgay = dtDenNgay.ToString("yyyy-MM-dd");
+            ViewBag.TuKhoa = tuKhoa;
+            ViewBag.TrangThai = trangThai;
+            ViewBag.SortCol = sortCol;
+            ViewBag.SortDir = sortDir;
+
+            DataTable fullDt = db.GetLichSuThuTien(dtTuNgay, dtDenNgay);
+
+            if (fullDt.Rows.Count > 0)
+            {
+                var rows = fullDt.AsEnumerable();
+
+                // 1. TÌM KIẾM
+                if (!string.IsNullOrEmpty(tuKhoa))
+                {
+                    string keyword = tuKhoa.ToLower().Trim();
+                    rows = rows.Where(r =>
+                        r["MaHD"].ToString().Contains(keyword) ||
+                        r["MaPhieuKhamBenh"].ToString().Contains(keyword) ||
+                        r["HoTen"].ToString().ToLower().Contains(keyword) ||
+                        r["SDT"].ToString().Contains(keyword)
+                    );
+                }
+
+                // 2. LỌC TRẠNG THÁI
+                if (!string.IsNullOrEmpty(trangThai))
+                {
+                    rows = rows.Where(r => r["TrangThaiThanhToan"].ToString() == trangThai);
+                }
+
+                // 3. SẮP XẾP CAO -> THẤP
+                if (rows.Any())
+                {
+                    if (sortDir == "asc")
+                    {
+                        switch (sortCol)
+                        {
+                            case "MaHD": rows = rows.OrderBy(r => Convert.ToInt32(r["MaHD"])); break;
+                            case "HoTen": rows = rows.OrderBy(r => r["HoTen"].ToString()); break;
+                            case "TongTienBenhNhanTra": rows = rows.OrderBy(r => Convert.ToDecimal(r["TongTienBenhNhanTra"])); break;
+                            case "TrangThaiThanhToan": rows = rows.OrderBy(r => r["TrangThaiThanhToan"].ToString()); break;
+                            default: rows = rows.OrderBy(r => Convert.ToDateTime(r["NgayThanhToan"])); break;
+                        }
+                    }
+                    else
+                    {
+                        switch (sortCol)
+                        {
+                            case "MaHD": rows = rows.OrderByDescending(r => Convert.ToInt32(r["MaHD"])); break;
+                            case "HoTen": rows = rows.OrderByDescending(r => r["HoTen"].ToString()); break;
+                            case "TongTienBenhNhanTra": rows = rows.OrderByDescending(r => Convert.ToDecimal(r["TongTienBenhNhanTra"])); break;
+                            case "TrangThaiThanhToan": rows = rows.OrderByDescending(r => r["TrangThaiThanhToan"].ToString()); break;
+                            default: rows = rows.OrderByDescending(r => Convert.ToDateTime(r["NgayThanhToan"])); break;
+                        }
+                    }
+                    fullDt = rows.CopyToDataTable();
+                }
+                else { fullDt = fullDt.Clone(); }
+            }
+
+            // 4. PHÂN TRANG
+            int pageSize = 15;
+            int totalRows = fullDt.Rows.Count;
+            int totalPages = (int)Math.Ceiling((double)totalRows / pageSize);
+
+            if (page < 1) page = 1;
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
+            DataTable pagedDt = fullDt.Clone();
+            if (totalRows > 0) { pagedDt = fullDt.AsEnumerable().Skip((page - 1) * pageSize).Take(pageSize).CopyToDataTable(); }
+
+            ViewBag.LichSuHoaDon = pagedDt;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalRows = totalRows;
+
+            return View();
         }
     }
 }

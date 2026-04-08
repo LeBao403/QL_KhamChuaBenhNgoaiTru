@@ -52,13 +52,13 @@
             background-color: #ffffff;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
         }
-    /* Tinh chỉnh riêng cho ô Input Lịch để xóa border trái */
+
     .input-date-flatpickr {
         border-left: none !important;
         border-top-left-radius: 0 !important;
         border-bottom-left-radius: 0 !important;
     }
-    /* --- FIX LỖI FLATPICKR BỊ MẤT NĂM DO XUNG ĐỘT BOOTSTRAP 5 --- */
+
     .flatpickr-current-month {
         display: flex !important;
         align-items: center !important;
@@ -73,19 +73,19 @@
         }
 
         .flatpickr-current-month .numInputWrapper {
-            width: 60px !important; /* Ép độ rộng cho ô chứa Năm */
+            width: 60px !important;
             display: inline-block !important;
         }
 
         .flatpickr-current-month input.cur-year {
             background: transparent !important;
-            color: #ffffff !important; /* Ép màu trắng cho nổi trên nền xanh */
+            color: #ffffff !important;
             font-weight: 700 !important;
             border: none !important;
             box-shadow: none !important;
             padding: 0 !important;
         }
-        /* Ẩn cái mũi tên tăng giảm năm cho nó tinh tế */
+
         .flatpickr-current-month .numInputWrapper span.arrowUp,
         .flatpickr-current-month .numInputWrapper span.arrowDown {
             display: none !important;
@@ -130,6 +130,7 @@
         .btn-submit:hover:not(:disabled) {
             background-color: #334155;
             transform: translateY(-1px);
+            color: #ffffff;
         }
 
     .btn-cancel {
@@ -146,6 +147,53 @@
             background-color: #f1f5f9;
             color: #0f172a;
         }
+
+    /* CSS CHO KHUNG GIỜ */
+    .time-slot-label {
+        padding: 0.75rem 1.25rem;
+        border-radius: 8px;
+        border: 1px solid #cbd5e1;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #f8fafc;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .btn-check:checked + .time-slot-label {
+        background-color: #eff6ff;
+        border-color: #3b82f6;
+        color: #1d4ed8;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .time-slot-label:hover:not(.disabled) {
+        border-color: #94a3b8;
+        background: #ffffff;
+    }
+
+    .time-slot-label.disabled {
+        background-color: #f1f5f9;
+        color: #94a3b8;
+        cursor: not-allowed;
+        border-color: #e2e8f0;
+        opacity: 0.7;
+    }
+
+    /* CSS LỰA CHỌN PHƯƠNG THỨC THANH TOÁN */
+    .payment-method-label {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-check:checked + .payment-method-label {
+        border-color: #3b82f6;
+        background-color: #eff6ff;
+    }
 </style>
 
 <div class="hero-section">
@@ -164,7 +212,7 @@
 
 <div class="container pb-5">
     <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-7 col-xl-6">
+        <div class="col-md-10 col-lg-8">
             <div class="booking-card p-4 p-md-5">
 
                 <h4 class="fw-bold text-dark mb-4 border-bottom pb-3">Thông tin đăng ký</h4>
@@ -180,35 +228,46 @@
                 <div class="info-box mb-4 d-flex gap-3 align-items-start">
                     <i class="bi bi-info-circle-fill fs-5 mt-1"></i>
                     <div>
-                        Mã đặt lịch trực tuyến của bạn <strong>chỉ có hiệu lực trong ngày khám đã chọn</strong>. Vui lòng mang theo mã phiếu và giấy tờ tùy thân đến viện vào đúng ngày để làm thủ tục.
+                        Sau khi chọn lịch, bạn cần thanh toán phí dịch vụ đặt lịch (<strong>100,000 VNĐ</strong>) để hệ thống giữ chỗ. Phí này độc lập với viện phí khi khám.
                     </div>
                 </div>
 
-                @using (Html.BeginForm("DatLichKham", "BenhNhanPortal", FormMethod.Post))
+                @using (Html.BeginForm("DatLichKham", "BenhNhanPortal", FormMethod.Post, new { id = "formDatLich" }))
                 {
                     @Html.AntiForgeryToken()
 
-                    <div class="mb-4">
-                        <label for="ngayKham" class="form-label">Ngày muốn đến khám <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text cal-icon"><i class="bi bi-calendar-check fs-5 text-primary"></i></span>
-                            <input type="text" name="ngayKham" id="ngayKham" class="form-control fw-bold text-primary bg-white" placeholder="Chọn ngày khám..." required />
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="ngayKham" class="form-label">Ngày muốn đến khám <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text cal-icon"><i class="bi bi-calendar-check fs-5 text-primary"></i></span>
+                                <input type="text" name="ngayKham" id="ngayKham" class="form-control fw-bold text-primary bg-white cursor-pointer" placeholder="Chọn ngày khám..." required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label for="maDV" class="form-label">Dịch vụ khám <span class="text-danger">*</span></label>
+                            <select name="maDV" id="maDV" class="form-select fw-medium" required>
+                                <option value="" disabled selected>-- Vui lòng chọn dịch vụ --</option>
+                                @foreach (var dv in listDichVu)
+                                {
+                                    <option value="@dv.Value">@dv.Text</option>
+                                }
+                            </select>
+                            @if (!listDichVu.Any())
+                            {
+                                <div class="form-text text-danger mt-2"><i class="bi bi-x-circle me-1"></i>Hệ thống chưa có dịch vụ nào.</div>
+                            }
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label for="maDV" class="form-label">Dịch vụ khám <span class="text-danger">*</span></label>
-                        <select name="maDV" id="maDV" class="form-select fw-medium" required>
-                            <option value="" disabled selected>-- Vui lòng chọn dịch vụ --</option>
-                            @foreach (var dv in listDichVu)
-                            {
-                                <option value="@dv.Value">@dv.Text</option>
-                            }
-                        </select>
-                        @if (!listDichVu.Any())
-                        {
-                            <div class="form-text text-danger mt-2"><i class="bi bi-x-circle me-1"></i>Hệ thống chưa có dịch vụ nào.</div>
-                        }
+                        <label class="form-label">Khung giờ <span class="text-danger">*</span></label>
+                        <div id="khungGioContainer" class="p-4 rounded-3 border bg-light text-center">
+                            <i class="bi bi-clock-history fs-3 text-muted d-block mb-2"></i>
+                            <span class="text-muted">Vui lòng chọn ngày khám ở trên để xem khung giờ.</span>
+                        </div>
+                        <input type="hidden" id="maKhungGioHidden" name="maKhungGio" required />
                     </div>
 
                     <div class="mb-4">
@@ -216,15 +275,45 @@
                         <textarea name="lyDo" id="lyDo" class="form-control" style="height: 120px" placeholder="Mô tả ngắn gọn tình trạng sức khỏe của bạn..." required></textarea>
                     </div>
 
+                    <div class="mb-4 pt-3 border-top">
+                        <label class="form-label mb-3">Phương thức thanh toán <span class="text-danger">*</span></label>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <input type="radio" class="btn-check" name="phuongThucTT" id="ptQR" value="QR" checked>
+                                <label class="payment-method-label w-100 p-3" for="ptQR">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-qr-code-scan fs-2 text-primary me-3"></i>
+                                        <div>
+                                            <div class="fw-bold text-dark">Ứng dụng Ngân hàng</div>
+                                            <div class="small text-muted">Quét mã VietQR nhanh chóng</div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="radio" class="btn-check" name="phuongThucTT" id="ptCard" value="THE">
+                                <label class="payment-method-label w-100 p-3" for="ptCard">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-credit-card-2-front fs-2 text-primary me-3"></i>
+                                        <div>
+                                            <div class="fw-bold text-dark">Thẻ ATM / Visa</div>
+                                            <div class="small text-muted">Cổng thanh toán điện tử</div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="warning-box mb-5">
                         <i class="bi bi-shield-check text-warning me-1"></i>
-                        Thông tin của bạn được bảo mật. Bạn có thể theo dõi tiến trình tại mục <a href="@Url.Action("LichKham", "BenhNhanPortal")" class="fw-bold text-dark">Lịch khám của tôi</a>.
+                        Thông tin của bạn được bảo mật. Bạn sẽ được chuyển hướng tới cổng thanh toán an toàn ở bước tiếp theo.
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 pt-2">
-                        <a href="@Url.Action("Index", "BenhNhanPortal")" class="btn btn-cancel">Hủy bỏ</a>
-                        <button type="submit" class="btn btn-submit shadow-sm" @(listDichVu.Any() ? "" : "disabled")>
-                            Gửi yêu cầu
+                        <a href="@Url.Action("LichKham", "BenhNhanPortal")" class="btn btn-cancel">Hủy bỏ</a>
+                        <button type="submit" id="btnSubmit" class="btn btn-submit shadow-sm" disabled>
+                            Tiến hành thanh toán <i class="bi bi-arrow-right ms-2"></i>
                         </button>
                     </div>
                 }
@@ -241,71 +330,284 @@
     <script>
         $(document).ready(function () {
 
-            // --- KHỞI TẠO LỊCH CAO CẤP FLATPICKR ---
-            flatpickr("#ngayKham", {
+            // --- 1. KHỞI TẠO LỊCH FLATPICKR ---
+            const datePicker = flatpickr("#ngayKham", {
                 locale: "vn",
                 dateFormat: "Y-m-d",
                 altInput: true,
                 altFormat: "d/m/Y",
                 altInputClass: "form-control input-date-flatpickr fw-bold text-primary bg-white cursor-pointer",
                 minDate: "today",
-                defaultDate: "today",
-                disableMobile: "true"
+                disableMobile: "true",
+                onChange: function(selectedDates, dateStr, instance) {
+                    if(dateStr) {
+                        loadKhungGio(dateStr);
+                    }
+                }
             });
 
-            // --- LẤY DATA TỪ CONTROLLER TRUYỀN SANG ---
-            var successMessage = '@Html.Raw(TempData["Success"])';
-            var maPhieu = '@Html.Raw(TempData["MaPhieu"])';
-            var tenQuay = '@Html.Raw(TempData["TenQuay"])';
+            // --- 2. HÀM LOAD KHUNG GIỜ QUA AJAX (XỬ LÝ CHẶN GIỜ TRONG QUÁ KHỨ) ---
+            function loadKhungGio(dateStr) {
+                const container = $('#khungGioContainer');
+                container.removeClass('bg-light text-center').html(`
+                    <div class="d-flex justify-content-center align-items-center py-3 text-primary">
+                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                        Đang tải dữ liệu...
+                    </div>
+                `);
 
-            if (successMessage && successMessage.trim() !== '') {
+                $('#maKhungGioHidden').val('');
+                checkFormValidity();
 
-                // NẾU CÓ ĐỦ DATA, VẼ "VÉ ĐIỆN TỬ" RA MÀN HÌNH
-                let htmlTicket = '';
-                if(maPhieu) {
-                    htmlTicket = `
-                        <div class="text-start bg-white p-4 rounded-4 border border-2 border-success shadow-sm mt-3 position-relative overflow-hidden">
-                            <div class="position-absolute top-0 start-0 w-100 bg-success" style="height: 6px;"></div>
+                $.ajax({
+                    url: '@Url.Action("LoadKhungGio", "BenhNhanPortal")',
+                    type: 'POST',
+                    data: { ngayKham: dateStr },
+                    success: function (res) {
+                        if (res.success) {
+                            if(res.data.length === 0){
+                                container.addClass('bg-light text-center').html(`
+                                    <i class="bi bi-calendar-x fs-3 text-danger d-block mb-2"></i>
+                                    <span class="text-danger fw-medium">Phòng khám nghỉ hoặc không có khung giờ nào trong ngày này.</span>
+                                `);
+                                return;
+                            }
 
-                            <div class="d-flex justify-content-between align-items-center border-bottom border-dashed pb-3 mb-3">
-                                <span class="text-muted"><i class="bi bi-qr-code me-2"></i>Mã phiếu ĐK:</span>
-                                <strong class="text-dark fs-5">#${maPhieu}</strong>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center border-bottom border-dashed pb-3 mb-3">
-                                <span class="text-muted"><i class="bi bi-globe me-2"></i>Hình thức:</span>
-                                <strong class="text-success fs-5">Đặt trước Online</strong>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center pb-1">
-                                <span class="text-muted"><i class="bi bi-signpost-split me-2"></i>Khu vực trực:</span>
-                                <strong class="text-primary fs-5 text-uppercase text-end">${tenQuay || 'Quầy Tiếp Tân'}</strong>
-                            </div>
-                        </div>
-                        <p class="text-muted mt-3 mb-0 fs-7"><i class="bi bi-info-circle me-1 text-primary"></i> Vui lòng chụp màn hình vé này và đến đúng quầy để làm thủ tục.</p>
-                    `;
-                } else {
-                    htmlTicket = `<p class="fs-5 mt-2">${successMessage}</p>`;
-                }
+                            // Tính toán ngày hiện tại để khóa giờ cũ
+                            let now = new Date();
+                            let parts = dateStr.split('-');
+                            let selectedDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                            let isToday = (now.getFullYear() === selectedDate.getFullYear() &&
+                                           now.getMonth() === selectedDate.getMonth() &&
+                                           now.getDate() === selectedDate.getDate());
 
-                Swal.fire({
-                    title: 'ĐẶT LỊCH THÀNH CÔNG!',
-                    html: htmlTicket,
-                    icon: 'success',
-                    showCancelButton: true, // Mở thêm nút Hủy/Đóng
-                    confirmButtonText: '<i class="bi bi-calendar-check me-2"></i>Xem lịch khám',
-                    cancelButtonText: 'Đóng', // Nút tắt
-                    allowOutsideClick: true,  // Cho phép click ra ngoài viền để tắt
-                    customClass: {
-                        confirmButton: 'btn btn-submit px-4 py-2 mt-2 shadow-sm',
-                        cancelButton: 'btn btn-light border px-4 py-2 mt-2 shadow-sm ms-2 fw-bold text-secondary'
+                            let html = '<div class="row g-2">';
+
+                            res.data.forEach(function(item) {
+                                // Logic tính toán giờ đã trôi qua
+                                let isPast = false;
+                                if (isToday) {
+                                    // item.TenKhungGio có dạng "07:00 - 08:00", cắt chuỗi lấy giờ bắt đầu
+                                    let startTimeStr = item.TenKhungGio.split('-')[0].trim();
+                                    let startHour = parseInt(startTimeStr.split(':')[0]);
+                                    let startMin = parseInt(startTimeStr.split(':')[1]);
+
+                                    if (now.getHours() > startHour || (now.getHours() === startHour && now.getMinutes() >= startMin)) {
+                                        isPast = true;
+                                    }
+                                }
+
+                                let isBlocked = item.IsFull || isPast;
+                                let classDisabled = isBlocked ? 'disabled' : '';
+                                let isDisabled = isBlocked ? 'disabled' : '';
+
+                                // Xóa hiển thị số chỗ, chỉ hiện trạng thái
+                                let badgeHtml = '';
+                                if (isPast) {
+                                    badgeHtml = `<span class="badge bg-secondary mt-1"><i class="bi bi-clock-history me-1"></i>Đã qua giờ</span>`;
+                                } else if (item.IsFull) {
+                                    badgeHtml = `<span class="badge bg-danger mt-1"><i class="bi bi-x-circle me-1"></i>Kín lịch</span>`;
+                                } else {
+                                    badgeHtml = `<span class="badge bg-success bg-opacity-10 text-success mt-1"><i class="bi bi-check-circle me-1"></i>Khả dụng</span>`;
+                                }
+
+                                html += `
+                                    <div class="col-6 col-md-4 col-lg-3">
+                                        <input type="radio" class="btn-check khung-gio-radio" name="radioKhungGio" id="kg_${item.MaKhungGio}" value="${item.MaKhungGio}" ${isDisabled}>
+                                        <label class="time-slot-label w-100 ${classDisabled}" for="kg_${item.MaKhungGio}">
+                                            <span class="fw-bold">${item.TenKhungGio}</span>
+                                            ${badgeHtml}
+                                        </label>
+                                    </div>
+                                `;
+                            });
+
+                            html += '</div>';
+                            container.html(html);
+
+                            $('.khung-gio-radio').on('change', function() {
+                                $('#maKhungGioHidden').val($(this).val());
+                                checkFormValidity();
+                            });
+                        } else {
+                            container.addClass('bg-light text-center').html(`<span class="text-danger">Lỗi: ${res.message}</span>`);
+                        }
                     },
-                    buttonsStyling: false
-                }).then((result) => {
-                    // Chỉ khi nào click vô nút "Xem lịch khám" mới redirect
-                    if (result.isConfirmed) {
-                        window.location.href = '@Url.Action("LichKham", "BenhNhanPortal")';
+                    error: function () {
+                        container.addClass('bg-light text-center').html('<span class="text-danger">Lỗi kết nối máy chủ! Vui lòng thử lại.</span>');
                     }
                 });
             }
+
+            function checkFormValidity() {
+                var dv = $('#maDV').val();
+                var kg = $('#maKhungGioHidden').val();
+                if(dv && kg) {
+                    $('#btnSubmit').prop('disabled', false);
+                } else {
+                    $('#btnSubmit').prop('disabled', true);
+                }
+            }
+            $('#maDV').on('change', checkFormValidity);
+
+            // --- 3. SUBMIT FORM & HIỆN POPUP QR / THẺ ---
+            $('#formDatLich').on('submit', function (e) {
+                e.preventDefault();
+
+                let phuongThucTT = $('input[name="phuongThucTT"]:checked').val();
+                let btn = $('#btnSubmit');
+                let originalText = btn.html();
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...');
+
+                // Gọi C# để Tạo Hóa Đơn & Phiếu Đăng Ký
+                $.ajax({
+                    url: '@Url.Action("DatLichKham", "BenhNhanPortal")',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (resDatLich) {
+                        if (resDatLich.success) {
+
+                            // XỬ LÝ NHÁNH 1: THANH TOÁN THẺ (GIẢ LẬP)
+                            if (phuongThucTT === 'THE') {
+                                Swal.fire({
+                                    title: 'Đang kết nối cổng thẻ...',
+                                    html: 'Vui lòng chờ hệ thống xử lý giao dịch...',
+                                    timer: 2000,
+                                    timerProgressBar: true,
+                                    didOpen: () => { Swal.showLoading(); }
+                                }).then(() => {
+                                    // ĐÃ SỬA: Bắn AJAX xuống C# để cập nhật DB thành Đã thanh toán
+                                    $.ajax({
+                                        url: '@Url.Action("XacNhanThanhToanTheMock", "BenhNhanPortal")',
+                                        type: 'POST',
+                                        data: { maHD: resDatLich.maHD, maPhieuDK: resDatLich.maPhieuDK },
+                                        success: function(resMock) {
+                                            if(resMock.success) {
+                                                Swal.fire({
+                                                    title: 'Thanh toán thành công!',
+                                                    html: `Đã thu <strong>100,000 VNĐ</strong> qua thẻ.<br/>Vui lòng đến <strong class="text-primary text-uppercase">${resDatLich.tenQuay}</strong> để làm thủ tục.`,
+                                                    icon: 'success',
+                                                    confirmButtonText: 'Xem lịch khám'
+                                                }).then(() => {
+                                                    window.location.href = '@Url.Action("LichKham", "BenhNhanPortal")';
+                                                });
+                                            } else {
+                                                Swal.fire('Lỗi', 'Lỗi cập nhật CSDL: ' + resMock.message, 'error');
+                                                btn.prop('disabled', false).html(originalText);
+                                            }
+                                        }
+                                    });
+                                });
+                            }
+                            // XỬ LÝ NHÁNH 2: THANH TOÁN QR PAYOS
+                            else {
+                                $.ajax({
+                                    url: '@Url.Action("TaoMaQROnline", "BenhNhanPortal")',
+                                    type: 'POST',
+                                    data: {
+                                        maHD: resDatLich.maHD,
+                                        maPhieuDK: resDatLich.maPhieuDK
+                                    },
+                                    success: function (resQR) {
+                                        if (resQR.success) {
+                                            let qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(resQR.qrString);
+                                            let checkInterval;
+
+                                            Swal.fire({
+                                                title: 'Thanh Toán Phí Đặt Lịch',
+                                                html: `
+                                                    <div class="mb-3 text-muted">Mở App Ngân hàng quét mã VietQR để thanh toán <strong>100,000 VNĐ</strong></div>
+                                                    <div class="border rounded p-3 bg-light d-inline-block">
+                                                        <img src="${qrImageUrl}" alt="QR Code" style="width: 250px; height: 250px; object-fit: contain;" />
+                                                    </div>
+                                                    <div class="mt-3 text-primary">
+                                                        <div class="spinner-grow spinner-grow-sm me-1" role="status"></div> Hệ thống đang chờ bạn quét mã...
+                                                    </div>
+                                                `,
+                                                showCancelButton: true,
+                                                showConfirmButton: false,
+                                                cancelButtonText: 'Hủy đăng ký',
+                                                cancelButtonColor: '#dc3545',
+                                                allowOutsideClick: false,
+                                                didOpen: () => {
+                                                    checkInterval = setInterval(function () {
+                                                        $.ajax({
+                                                            url: '@Url.Action("KiemTraThanhToanOnline", "BenhNhanPortal")',
+                                                            type: 'POST',
+                                                            data: {
+                                                                orderCode: resQR.orderCode,
+                                                                maPhieuDK: resDatLich.maPhieuDK,
+                                                                maHD: resDatLich.maHD
+                                                            },
+                                                            success: function (resCheck) {
+                                                                if (resCheck.success && resCheck.isPaid) {
+                                                                    clearInterval(checkInterval);
+
+                                                                    // ĐÃ BỔ SUNG: BÁO RÕ TÊN QUẦY TẠI ĐÂY
+                                                                    Swal.fire({
+                                                                        title: 'Tuyệt vời!',
+                                                                        html: `Thanh toán thành công.<br/>Vui lòng đến <strong class="text-primary text-uppercase">${resDatLich.tenQuay}</strong> để làm thủ tục.`,
+                                                                        icon: 'success',
+                                                                        confirmButtonText: 'Xem lịch khám'
+                                                                    }).then(() => {
+                                                                        window.location.href = '@Url.Action("LichKham", "BenhNhanPortal")';
+                                                                    });
+                                                                }
+                                                            }
+                                                        });
+                                                    }, 3000);
+                                                },
+                                                willClose: () => { clearInterval(checkInterval); }
+                                            }).then((result) => {
+                                                // NẾU KHÁCH BẤM HỦY -> GỌI API ĐỔI THÀNH TRẠNG THÁI "HỦY" THẬT SỰ
+                                                if (result.dismiss === Swal.DismissReason.cancel) {
+                                                    Swal.fire({
+                                                        title: 'Đang hủy lịch...',
+                                                        allowOutsideClick: false,
+                                                        didOpen: () => { Swal.showLoading(); }
+                                                    });
+
+                                                    // Lưu ý: Bác phải chắc chắn đã copy cái hàm HuyDatLichOnline vào Controller nhé!
+                                                    $.ajax({
+                                                        url: '@Url.Action("HuyDatLichOnline", "BenhNhanPortal")',
+                                                        type: 'POST',
+                                                        data: { maPhieuDK: resDatLich.maPhieuDK },
+                                                        success: function() {
+                                                            Swal.fire({
+                                                                title: 'Đã hủy!',
+                                                                text: 'Bạn chưa thanh toán, hệ thống đã hủy lịch hẹn để nhường chỗ cho người khác.',
+                                                                icon: 'info',
+                                                                confirmButtonText: 'Đóng'
+                                                            }).then(() => {
+                                                                window.location.reload();
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            });
+
+                                        } else {
+                                            Swal.fire('Lỗi', resQR.message, 'error');
+                                            btn.prop('disabled', false).html(originalText);
+                                        }
+                                    },
+                                    error: function () {
+                                        Swal.fire('Lỗi', 'Lỗi kết nối cổng PayOS!', 'error');
+                                        btn.prop('disabled', false).html(originalText);
+                                    }
+                                });
+                            }
+                        } else {
+                            Swal.fire('Thất bại', resDatLich.message, 'error');
+                            btn.prop('disabled', false).html(originalText);
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Lỗi', 'Lỗi máy chủ khi đặt lịch!', 'error');
+                        btn.prop('disabled', false).html(originalText);
+                    }
+                });
+            });
         });
     </script>
 }

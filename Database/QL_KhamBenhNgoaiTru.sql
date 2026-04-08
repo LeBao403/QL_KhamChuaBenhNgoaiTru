@@ -1,10 +1,67 @@
 CREATE DATABASE QL_KhamBenhNgoaiTru;
 GO
+
 USE QL_KhamBenhNgoaiTru;
 GO
 
 -- ======================================================================================
--- I. QUẢN LÝ CON NGƯỜI & HỆ THỐNG
+-- I. QUẢN LÝ HỆ THỐNG & NHÂN SỰ (CÁC BẢNG NỀN TẢNG)
+-- ======================================================================================
+
+CREATE TABLE TAIKHOAN (
+    MaTK INT IDENTITY(1,1) PRIMARY KEY,
+    Username NVARCHAR(50) UNIQUE NOT NULL,
+    PasswordHash NVARCHAR(200) NOT NULL,
+    IsActive BIT DEFAULT 1,
+    CreatedAt DATETIME2 DEFAULT SYSUTCDATETIME()
+);
+
+CREATE TABLE CHUCVU (
+    MaChucVu INT IDENTITY(1,1) PRIMARY KEY,
+    TenChucVu NVARCHAR(50) UNIQUE
+);
+
+CREATE TABLE KHOA (
+    MaKhoa INT IDENTITY(1,1) PRIMARY KEY,
+    TenKhoa NVARCHAR(100) NOT NULL UNIQUE,
+    MoTa NVARCHAR(MAX),
+    TrangThai BIT DEFAULT 1
+);
+
+CREATE TABLE DANHMUC_LOAIPHONG (
+    MaLoaiPhong INT IDENTITY(1,1) PRIMARY KEY,
+    TenLoaiPhong NVARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE PHONG (
+    MaPhong INT IDENTITY(1,1) PRIMARY KEY,
+    TenPhong NVARCHAR(100) NOT NULL,
+    MaLoaiPhong INT,
+    TrangThai BIT DEFAULT 1, 
+    MaKhoa INT NULL     
+);
+
+CREATE TABLE NHANVIEN (
+    MaNV CHAR(10) PRIMARY KEY,
+    HoTen NVARCHAR(100) NOT NULL,
+    NgaySinh DATE,
+    GioiTinh NVARCHAR(10),
+    SDT NVARCHAR(15) UNIQUE,
+    Email NVARCHAR(100) UNIQUE,
+    DiaChi NVARCHAR(200),
+    MaChucVu INT,
+    TrangThai BIT DEFAULT 1, 
+    MaTK INT NULL,  -- Dùng filtered index để cho phép nhiều NULL
+    MaKhoa INT NULL,    
+    MaPhong INT NULL,
+    HinhAnh NVARCHAR(255) NULL
+);
+-- Cho phép nhiều NULL trong MaTK nhưng không cho phép trùng giá trị cụ thể
+CREATE UNIQUE INDEX IX_NHANVIEN_MaTK ON NHANVIEN(MaTK) WHERE MaTK IS NOT NULL;
+
+
+-- ======================================================================================
+-- II. QUẢN LÝ BỆNH NHÂN & TIỀN SỬ Y TẾ
 -- ======================================================================================
 
 -- 1. Khách hàng / Bệnh nhân
@@ -22,13 +79,13 @@ CREATE TABLE BENHNHAN (
     HanSuDungBHYT DATE,
     TuyenKham NVARCHAR(50) CHECK (TuyenKham IN (N'Đúng tuyến', N'Trái tuyến')),
     MucHuongBHYT INT, -- Lưu phần trăm hưởng (VD: 80, 95, 100)
-	AvatarPath NVARCHAR(500) NULL,
+    AvatarPath NVARCHAR(500) NULL,
     MaTK INT
 );
 
 CREATE TABLE DANHMUC_TIENSU_YTE (
     MaTSYT CHAR(10) PRIMARY KEY,
-    TenTSYT NVARCHAR(MAX),
+    TenTSYT NVARCHAR(MAX)
 );
 
 CREATE TABLE TIENSU_YTE_BENHNHAN (
@@ -37,61 +94,40 @@ CREATE TABLE TIENSU_YTE_BENHNHAN (
     PRIMARY KEY(MaTSYT, MaBN)
 );
 
-CREATE TABLE KHOA (
-    MaKhoa INT IDENTITY(1,1) PRIMARY KEY,
-    TenKhoa NVARCHAR(100) NOT NULL UNIQUE,
-    MoTa NVARCHAR(MAX),
-    TrangThai BIT DEFAULT 1
-);
-
-CREATE TABLE NHANVIEN (
-    MaNV CHAR(10) PRIMARY KEY,
-    HoTen NVARCHAR(100) NOT NULL,
-    NgaySinh DATE,
-    GioiTinh NVARCHAR(10),
-    SDT NVARCHAR(15) UNIQUE,
-    Email NVARCHAR(100) UNIQUE,
-    DiaChi NVARCHAR(200),
-    MaChucVu INT,
-    TrangThai BIT DEFAULT 1, 
-    MaTK INT NULL,  -- Dùng filtered index để cho phép nhiều NULL
-    MaKhoa INT NULL,    
-    MaPhong INT NULL,
-	HinhAnh NVARCHAR(255) NULL
-);
-
--- Cho phép nhiều NULL trong MaTK nhưng không cho phép trùng giá trị cụ thể
-CREATE UNIQUE INDEX IX_NHANVIEN_MaTK ON NHANVIEN(MaTK) WHERE MaTK IS NOT NULL;
-
-CREATE TABLE TAIKHOAN (
-    MaTK INT IDENTITY(1,1) PRIMARY KEY,
-    Username NVARCHAR(50) UNIQUE NOT NULL,
-    PasswordHash NVARCHAR(200) NOT NULL,
-    IsActive BIT DEFAULT 1,
-    CreatedAt DATETIME2 DEFAULT SYSUTCDATETIME()
-);
-
-CREATE TABLE CHUCVU (
-    MaChucVu INT IDENTITY(1,1) PRIMARY KEY,
-    TenChucVu NVARCHAR(50) UNIQUE
-);
-
-CREATE TABLE DANHMUC_LOAIPHONG (
-    MaLoaiPhong INT IDENTITY(1,1) PRIMARY KEY,
-    TenLoaiPhong NVARCHAR(100) NOT NULL UNIQUE
-);
-GO
-
-CREATE TABLE PHONG (
-    MaPhong INT IDENTITY(1,1) PRIMARY KEY,
-    TenPhong NVARCHAR(100) NOT NULL,
-	MaLoaiPhong INT,
-    TrangThai BIT DEFAULT 1, 
-    MaKhoa INT NULL     
-);
 
 -- ======================================================================================
--- II. QUẢN LÝ DƯỢC & KHO (UPDATE: LOGIC ĐƠN VỊ & LÔ GỘP)
+-- III. DANH MỤC DỊCH VỤ & BỆNH LÝ
+-- ======================================================================================
+
+CREATE TABLE DANHMUC_BENH (
+    MaBenh CHAR(10) PRIMARY KEY, 
+    TenBenh NVARCHAR(200) NOT NULL,
+    TrieuChung NVARCHAR(200),
+    MoTa NVARCHAR(MAX),
+    SoGiaiDoan BIT DEFAULT 0 
+);
+
+CREATE TABLE LOAI_DICHVU (
+    MaLoaiDV CHAR(10) PRIMARY KEY,
+    TenLoaiDV NVARCHAR(100) NOT NULL
+);
+
+CREATE TABLE DICHVU (
+    MaDV CHAR(10) PRIMARY KEY,
+    MaKhoa INT,
+    TenDV NVARCHAR(200) NOT NULL,
+    MaLoaiDV CHAR(10) NOT NULL, 
+    GiaDichVu DECIMAL(18,2) NOT NULL,
+    DonViTinh NVARCHAR(20), 
+    
+    CoBHYT BIT DEFAULT 0, -- Dịch vụ này có được BHYT hỗ trợ không
+    TrangThai BIT DEFAULT 1,
+    MoTa NVARCHAR(MAX)
+);
+
+
+-- ======================================================================================
+-- IV. QUẢN LÝ DƯỢC & KHO (ĐƠN VỊ, LÔ, NHẬP KHO, TỒN KHO)
 -- ======================================================================================
 
 -- 1. Danh mục Nhóm/Hoạt chất/NSX
@@ -116,9 +152,17 @@ CREATE TABLE NHASANXUAT (
     QuocGia NVARCHAR(100)
 );
 
+CREATE TABLE KHO (
+    MaKho INT IDENTITY(1,1) PRIMARY KEY,
+    TenKho NVARCHAR(100) NOT NULL,
+    LoaiKho NVARCHAR(50),
+    DiaChi NVARCHAR(200),
+    TrangThai BIT DEFAULT 1
+);
+
 -- 2. BẢNG THUỐC (Thông tin định danh sản phẩm)
 CREATE TABLE THUOC (
-    MaThuoc CHAR(10) PRIMARY KEY,
+    MaThuoc CHAR(20) PRIMARY KEY,
     TenThuoc NVARCHAR(MAX) NOT NULL, 
     
     -- Quy cách đóng gói/Dung tích (VD: Chai 100ml, Tuýp 10g)
@@ -131,36 +175,25 @@ CREATE TABLE THUOC (
     MaLoaiThuoc CHAR(10), 
     DuongDung NVARCHAR(50), 
     GiaBan DECIMAL(18,2), -- Giá bán niêm yết tham khảo
-
     CoBHYT BIT DEFAULT 0, -- Thuốc này có thuộc danh mục BHYT không
     MaNSX INT,
     TrangThai BIT DEFAULT 1
 );
 
--- 3. BẢNG ĐƠN VỊ QUY ĐỔI (Giải quyết Hộp/Vỉ)
-/*
-CREATE TABLE DONVI_QUYDOI (
-    MaQuyDoi INT IDENTITY(1,1) PRIMARY KEY,
-    MaThuoc CHAR(10) NOT NULL,
-    
-    -- Tên đơn vị lớn (VD: Hộp, Vỉ)
-    TenDonVi NVARCHAR(20) NOT NULL,
-    
-    -- Tỷ lệ quy đổi ra Đơn vị cơ bản (VD: 1 Hộp = 100 Viên -> Nhập 100)
-    TyLeQuyDoi INT NOT NULL, 
-    
-    GiaBanQuyDoi DECIMAL(18,2),
-    CapDo INT DEFAULT 1 -- 1=Vỉ, 2=Hộp (Sắp xếp hiển thị)
+CREATE TABLE THANHPHAN_THUOC (
+    MaThanhPhan CHAR(10) PRIMARY KEY,
+    MaThuoc CHAR(20) NOT NULL,
+    MaHoatChat CHAR(10) NOT NULL,
+    HamLuong NVARCHAR(50)
 );
-*/
 
--- 4. BẢNG TỒN KHO (TÍCH HỢP LÔ + HẠN DÙNG + VỊ TRÍ)
+-- 3. BẢNG TỒN KHO (TÍCH HỢP LÔ + HẠN DÙNG + VỊ TRÍ)
 CREATE TABLE TONKHO (
     MaTonKho INT IDENTITY(1,1) PRIMARY KEY,
     MaKho INT,
-    MaThuoc CHAR(10) NOT NULL,
+    MaThuoc CHAR(20) NOT NULL,
     
-    -- [OPTION 2] Lưu thông tin Lô trực tiếp tại đây
+    -- Lưu thông tin Lô trực tiếp tại đây
     MaLo NVARCHAR(50) NOT NULL, -- Mã lô in trên vỏ hộp
     HanSuDung DATE NOT NULL,    -- Ngày hết hạn
     NgaySanXuat DATE,           -- Ngày sản xuất
@@ -175,78 +208,62 @@ CREATE TABLE TONKHO (
     CONSTRAINT UQ_TONKHO_PHONG_THUOC_LO UNIQUE (MaThuoc, MaLo)
 );
 
-CREATE TABLE KHO (
-    MaKho INT IDENTITY(1,1) PRIMARY KEY,
-    TenKho NVARCHAR(100) NOT NULL,
-    LoaiKho NVARCHAR(50),
-    DiaChi NVARCHAR(200),
-    TrangThai BIT DEFAULT 1
+-- 4. Bảng Phiếu Nhập (Đại diện cho 1 đợt giao hàng/1 hóa đơn từ NCC)
+CREATE TABLE PHIEUNHAP (
+    MaPhieuNhap INT IDENTITY(1,1) PRIMARY KEY,
+    MaNV_LapPhieu CHAR(10) NOT NULL,    -- Người tạo phiếu (Thủ kho)
+    MaNSX INT NOT NULL,                 -- Nhập của nhà cung cấp nào
+    MaKho INT,
+    NgayLap DATETIME DEFAULT GETDATE(),
+    
+    TongTienNhap DECIMAL(18,2) DEFAULT 0,
+    
+    -- Trạng thái để quản lý luồng phê duyệt
+    TrangThai NVARCHAR(50) DEFAULT N'Chờ duyệt'
+        CHECK (TrangThai IN (N'Chờ duyệt', N'Đã duyệt', N'Đã hủy')),
+        
+    GhiChu NVARCHAR(200),
+    
+    -- Thông tin người duyệt (Quản lý/Giám đốc)
+    MaNV_Duyet CHAR(10) NULL,
+    NgayDuyet DATETIME NULL
 );
 
-CREATE TABLE THANHPHAN_THUOC (
-    MaThanhPhan CHAR(10) PRIMARY KEY,
-    MaThuoc CHAR(10) NOT NULL,
-    MaHoatChat CHAR(10) NOT NULL,
-    HamLuong NVARCHAR(50), 
+-- 5. Bảng Chi Tiết Phiếu Nhập (Danh sách các lô thuốc nhập về)
+CREATE TABLE CT_PHIEUNHAP (
+    MaCTPN INT IDENTITY(1,1) PRIMARY KEY,
+    MaPhieuNhap INT NOT NULL,
+    MaThuoc CHAR(20) NOT NULL,
+    
+    -- Thông tin vật lý của lô hàng nhập
+    MaLo NVARCHAR(50) NOT NULL,
+    NgaySanXuat DATE,
+    HanSuDung DATE NOT NULL,
+    
+    -- Số lượng nhập tính theo DonViCoBan (VD: Nhập 5 hộp, mỗi hộp 100 viên -> Ghi 500)
+    SoLuongNhap INT NOT NULL CHECK (SoLuongNhap > 0),
+    
+    -- Đơn giá nhập tính theo DonViCoBan (VD: Giá 1 viên)
+    DonGiaNhap DECIMAL(18,2) NOT NULL,
+    ThanhTien DECIMAL(18,2) NOT NULL -- = SoLuongNhap * DonGiaNhap
 );
+
 
 -- ======================================================================================
--- III. QUY TRÌNH KHÁM BỆNH & DANH MỤC BỆNH/CLS
+-- V. QUY TRÌNH KHÁM BỆNH & CẬN LÂM SÀNG
 -- ======================================================================================
-
-CREATE TABLE DANHMUC_BENH (
-    MaBenh CHAR(10) PRIMARY KEY, 
-    TenBenh NVARCHAR(200) NOT NULL,
-    TrieuChung NVARCHAR(200),
-    MoTa NVARCHAR(MAX),
-    SoGiaiDoan BIT DEFAULT 0 
-);
-
-CREATE TABLE LOAI_DICHVU (
-    MaLoaiDV CHAR(10) PRIMARY KEY,
-    TenLoaiDV NVARCHAR(100) NOT NULL
-    
-);
-
-CREATE TABLE DICHVU (
-    MaDV CHAR(10) PRIMARY KEY,
-	MaKhoa INT,
-    TenDV NVARCHAR(200) NOT NULL,
-    MaLoaiDV CHAR(10) NOT NULL, 
-    GiaDichVu DECIMAL(18,2) NOT NULL,
-    DonViTinh NVARCHAR(20), 
-    
-    CoBHYT BIT DEFAULT 0, -- Dịch vụ này có được BHYT hỗ trợ không
-
-    TrangThai BIT DEFAULT 1,
-	MoTa NVARCHAR(MAX)
-);
 
 CREATE TABLE PHIEUDANGKY (
     MaPhieuDK INT IDENTITY(1,1) PRIMARY KEY,
     MaBN CHAR(10),
-    NgayDangKy DATE DEFAULT GETDATE(),
-	STT INT,
+    NgayDangKy DATETIME DEFAULT GETDATE(),
+    STT INT,
     HinhThucDangKy NVARCHAR(20) CHECK (HinhThucDangKy IN (N'Online', N'Offline')),
     TrangThai NVARCHAR(20) CHECK (TrangThai IN (N'Chờ xử lý', N'Đã xác nhận', N'Hủy')),
-	LyDo NVARCHAR(500),
-	MaPhong INT
+    LyDo NVARCHAR(500),
+    MaPhong INT,
+	MaKhungGio INT
 );
-
-/*
-CREATE TABLE PHIEUKHAMSANGLOC (
-    MaPhieuKhamSL INT PRIMARY KEY,
-    ChieuCao DECIMAL(5,2),
-    CanNang DECIMAL(5,2),
-    Mach INT,
-    HuyetAp NVARCHAR(20),
-    NhipTho INT,   
-    KetLuan NVARCHAR(50) CHECK (KetLuan IN (N'Đủ điều kiện', N'Không đủ điều kiện')),
-    GhiChu NVARCHAR(MAX),
-    MaBacSiKham CHAR(10),
-    MaPhong INT
-);
-*/
 
 CREATE TABLE PHIEUKHAMBENH ( 
     MaPhieuKhamBenh INT IDENTITY(1,1) PRIMARY KEY,
@@ -254,14 +271,13 @@ CREATE TABLE PHIEUKHAMBENH (
     MaBN CHAR(10), 
     STT INT NULL,
     LyDoDenKham NVARCHAR(MAX),
-    NgayLap DATE DEFAULT GETDATE(),
+    NgayLap DATETIME DEFAULT GETDATE(),
     TrangThai NVARCHAR(20) CHECK (TrangThai IN (N'Chờ thanh toán', N'Chờ cấp số', N'Chờ khám', N'Đang khám', N'Hoàn thành', N'Đã hủy')) DEFAULT N'Chờ thanh toán',
     TrieuChung NVARCHAR(MAX),
     KetLuan NVARCHAR(200),
     MaBacSiKham CHAR(10),
     MaPhong INT
 );
-
 
 CREATE TABLE CHITIET_CHANDOAN ( 
     MaCTChanDoan INT IDENTITY(1,1) PRIMARY KEY,
@@ -271,10 +287,6 @@ CREATE TABLE CHITIET_CHANDOAN (
     KetLuanChiTiet NVARCHAR(200),
     GiaiDoan BIT NOT NULL DEFAULT 0 
 );
-
--- ======================================================================================
--- IV. CẬN LÂM SÀNG & KÊ ĐƠN
--- ======================================================================================
 
 CREATE TABLE PHIEU_CHIDINH (
     MaPhieuChiDinh INT IDENTITY(1,1) PRIMARY KEY,
@@ -296,21 +308,27 @@ CREATE TABLE CHITIET_CHIDINH (
     FileKetQua NVARCHAR(MAX), 
     ThoiGianCoKetQua TIME,
     TrangThai NVARCHAR(50) DEFAULT N'Chưa thực hiện'
-        CHECK (TrangThai IN (N'Chưa thực hiện', N'Đang thực hiện', N'Đã có kết quả')),
+        CHECK (TrangThai IN (N'Chưa thực hiện', N'Đang thực hiện', N'Đã có kết quả'))
 );
+
+
+-- ======================================================================================
+-- VI. KÊ ĐƠN THUỐC & QUẦY DƯỢC
+-- ======================================================================================
 
 CREATE TABLE DON_THUOC (
     MaDonThuoc INT IDENTITY(1,1) PRIMARY KEY,
     MaPhieuKhamBenh INT NOT NULL UNIQUE, 
     NgayKe DATETIME DEFAULT GETDATE(),
     LoiDanBS NVARCHAR(MAX),
-    TrangThai NVARCHAR(50) CHECK (TrangThai IN (N'Chưa phát', N'Đã phát thuốc', N'Đã hủy')) DEFAULT N'Chưa phát',
+    -- UPDATE: Bổ sung trạng thái Đã phát 1 phần
+    TrangThai NVARCHAR(50) CHECK (TrangThai IN (N'Chưa phát', N'Đã phát thuốc', N'Đã phát 1 phần', N'Đã hủy')) DEFAULT N'Chưa phát'
 );
 
 CREATE TABLE CT_DON_THUOC (
     MaCTDonThuoc INT IDENTITY(1,1) PRIMARY KEY,
     MaDonThuoc INT NOT NULL,
-    MaThuoc CHAR(10) NOT NULL,
+    MaThuoc CHAR(20) NOT NULL,
     
     -- Dùng DECIMAL và cài CHECK để bắt buộc phải là bội số của 0.5 (0.5, 1, 1.5, 2...)
     SoLuongSang DECIMAL(5,2) DEFAULT 0 CHECK ((SoLuongSang * 10) % 5 = 0),
@@ -319,15 +337,43 @@ CREATE TABLE CT_DON_THUOC (
     SoLuongToi DECIMAL(5,2) DEFAULT 0 CHECK ((SoLuongToi * 10) % 5 = 0),
     SoNgayDung INT DEFAULT 1 CHECK (SoNgayDung > 0),
     
-    SoLuong INT NOT NULL, -- Tổng số lượng (Phần mềm tự tính và truyền xuống)
+    SoLuong INT NOT NULL, -- Tổng số lượng BS kê (Phần mềm tự tính)
+    SoLuongDaPhat INT DEFAULT 0, -- SỐ LƯỢNG THỰC TẾ KHÁCH MUA (Quầy Dược chốt)
     
     DonViTinh NVARCHAR(20), 
     DonGia DECIMAL(18,2), 
-    GhiChu NVARCHAR(200), 
+    GhiChu NVARCHAR(200) 
 );
 
+-- =========================================================================
+-- 1. BẢNG PHIẾU PHÁT THUỐC TỔNG (CHỨNG TỪ XUẤT KHO)
+-- =========================================================================
+CREATE TABLE PHIEU_PHAT_THUOC (
+    MaPhieuPhat INT IDENTITY(1,1) PRIMARY KEY,
+    MaDonThuoc INT NOT NULL,           
+    MaNV_Phat CHAR(10) NULL,
+    MaHD INT,                          -- Lấy từ Hóa Đơn Thu Ngân
+    MaPhong INT NULL,                  -- BỔ SUNG: Quầy/Phòng phát thuốc
+    NgayPhat DATETIME DEFAULT GETDATE(),
+    TrangThai NVARCHAR(50) DEFAULT N'Hoàn thành' CHECK (TrangThai IN (N'Hoàn thành', N'Đã hủy')), 
+    GhiChu NVARCHAR(200)               
+);
+
+-- =========================================================================
+-- 2. BẢNG CHI TIẾT PHIẾU PHÁT
+-- =========================================================================
+CREATE TABLE CT_PHIEU_PHAT (
+    MaCTPhieuPhat INT IDENTITY(1,1) PRIMARY KEY,
+    MaPhieuPhat INT NOT NULL,
+    MaThuoc CHAR(20) NOT NULL,
+    SoLuongPhat INT NOT NULL CHECK (SoLuongPhat > 0), 
+    GhiChu NVARCHAR(200),
+	MaLo NVARCHAR(50)
+);
+
+
 -- ======================================================================================
--- V. TÀI CHÍNH
+-- VII. TÀI CHÍNH / THU NGÂN
 -- ======================================================================================
 
 CREATE TABLE HOADON (
@@ -339,11 +385,12 @@ CREATE TABLE HOADON (
     TongTienBHYTChiTra DECIMAL(18,2) DEFAULT 0,
     TongTienBenhNhanTra DECIMAL(18,2) DEFAULT 0,
     TrangThaiThanhToan NVARCHAR(50) NOT NULL 
-        CHECK (TrangThaiThanhToan IN (N'Đã thanh toán', N'Chưa thanh toán'))
+        CHECK (TrangThaiThanhToan IN (N'Đã thanh toán', N'Chưa thanh toán', N'Đã hủy', N'Thanh toán 1 phần'))
         DEFAULT N'Chưa thanh toán',
     HinhThucThanhToan NVARCHAR(50) 
-        CHECK (HinhThucThanhToan IN (N'Tiền mặt', N'Chuyển khoản', N'Thẻ')),
+        CHECK (HinhThucThanhToan IN (N'Tiền mặt', N'Chuyển khoản', N'Thẻ', N'Quẹt thẻ', N'Không thu tiền')),
     GhiChu NVARCHAR(200),
+	MaPhieuDK INT NULL
 );
 
 CREATE TABLE CT_HOADON_DV (
@@ -366,7 +413,7 @@ CREATE TABLE CT_HOADON_THUOC (
     MaCTHD INT IDENTITY(1,1) PRIMARY KEY,
     MaHD INT NOT NULL,
     MaCTDonThuoc INT NOT NULL,
-	SoLuong INT DEFAULT 1,
+    SoLuong INT DEFAULT 1,
 
     TongTienGoc DECIMAL(18,2) NOT NULL,        -- Tổng tiền thuốc ban đầu
     TienBHYTChiTra DECIMAL(18,2) DEFAULT 0,    -- Số tiền quỹ BHYT chịu
@@ -378,8 +425,19 @@ CREATE TABLE CT_HOADON_THUOC (
     MaNV_ThuNgan CHAR(10) NULL -- Tương tự, chỉ update khi đã thu tiền
 );
 
+
+CREATE TABLE DANHMUC_KHUNGGIO (
+    MaKhungGio INT IDENTITY(1,1) PRIMARY KEY,
+    TenKhungGio NVARCHAR(50) NOT NULL UNIQUE, -- VD: '07:00 - 08:00'
+    GioiHanSoNguoi INT NOT NULL DEFAULT 20,   -- Giới hạn mặc định
+    TrangThai BIT DEFAULT 1                   -- 1: Đang áp dụng, 0: Khóa
+);
+GO
+
+GO
 -- ======================================================================================
--- VI. KHÓA NGOẠI (FOREIGN KEYS)
+-- VIII. KHAI BÁO TẤT CẢ KHÓA NGOẠI (FOREIGN KEYS) BÊN DƯỚI CÙNG
+-- (Tránh lỗi tạo khóa ngoại khi bảng chưa tồn tại)
 -- ======================================================================================
 
 -- 1. Nhân viên & Bệnh nhân
@@ -395,16 +453,23 @@ ALTER TABLE PHONG ADD CONSTRAINT FK_PHONG_LOAIPHONG FOREIGN KEY (MaLoaiPhong) RE
 ALTER TABLE NHANVIEN ADD CONSTRAINT FK_NV_KHOA FOREIGN KEY (MaKhoa) REFERENCES KHOA(MaKhoa);
 ALTER TABLE PHONG ADD CONSTRAINT FK_PHONG_KHOA FOREIGN KEY (MaKhoa) REFERENCES KHOA(MaKhoa);
 
--- 2. Dược & Kho
+-- 2. Dược & Nhập Kho
 ALTER TABLE THUOC ADD CONSTRAINT FK_THUOC_NSX FOREIGN KEY (MaNSX) REFERENCES NHASANXUAT(MaNSX);
 ALTER TABLE THUOC ADD CONSTRAINT FK_THUOC_DM FOREIGN KEY (MaLoaiThuoc) REFERENCES DANHMUC_THUOC(MaDanhMuc);
-
--- ALTER TABLE DONVI_QUYDOI ADD CONSTRAINT FK_DVQD_THUOC FOREIGN KEY (MaThuoc) REFERENCES THUOC(MaThuoc);
 
 ALTER TABLE THANHPHAN_THUOC ADD CONSTRAINT FK_TP_THUOC FOREIGN KEY (MaThuoc) REFERENCES THUOC(MaThuoc);
 ALTER TABLE THANHPHAN_THUOC ADD CONSTRAINT FK_TP_HOATCHAT FOREIGN KEY (MaHoatChat) REFERENCES DANHMUC_HOATCHAT(MaHoatChat);
 
 ALTER TABLE TONKHO ADD CONSTRAINT FK_TK_THUOC FOREIGN KEY (MaThuoc) REFERENCES THUOC(MaThuoc);
+ALTER TABLE TONKHO ADD CONSTRAINT FK_TONKHO_KHO FOREIGN KEY (MaKho) REFERENCES KHO(MaKho);
+
+ALTER TABLE PHIEUNHAP ADD CONSTRAINT FK_PN_NVLAP FOREIGN KEY (MaNV_LapPhieu) REFERENCES NHANVIEN(MaNV);
+ALTER TABLE PHIEUNHAP ADD CONSTRAINT FK_PN_NVDUYET FOREIGN KEY (MaNV_Duyet) REFERENCES NHANVIEN(MaNV);
+ALTER TABLE PHIEUNHAP ADD CONSTRAINT FK_PN_NSX FOREIGN KEY (MaNSX) REFERENCES NHASANXUAT(MaNSX);
+ALTER TABLE PHIEUNHAP ADD CONSTRAINT FK_PN_KHO FOREIGN KEY (MaKho) REFERENCES KHO(MaKho);
+
+ALTER TABLE CT_PHIEUNHAP ADD CONSTRAINT FK_CTPN_PN FOREIGN KEY (MaPhieuNhap) REFERENCES PHIEUNHAP(MaPhieuNhap);
+ALTER TABLE CT_PHIEUNHAP ADD CONSTRAINT FK_CTPN_THUOC FOREIGN KEY (MaThuoc) REFERENCES THUOC(MaThuoc);
 
 -- 3. Khám bệnh & CLS
 ALTER TABLE DICHVU ADD CONSTRAINT FK_DV_LOAI FOREIGN KEY (MaLoaiDV) REFERENCES LOAI_DICHVU(MaLoaiDV);
@@ -412,14 +477,11 @@ ALTER TABLE DICHVU ADD CONSTRAINT FK_DichVu_Khoa FOREIGN KEY (MaKhoa) REFERENCES
 
 ALTER TABLE PHIEUDANGKY ADD CONSTRAINT FK_PDK_BNDK FOREIGN KEY (MaBN) REFERENCES BENHNHAN(MaBN);
 ALTER TABLE PHIEUDANGKY ADD CONSTRAINT FK_PDK_PHONG FOREIGN KEY (MaPhong) REFERENCES PHONG(MaPhong);
-
--- ALTER TABLE PHIEUKHAMSANGLOC ADD CONSTRAINT FK_PKSL_BS FOREIGN KEY (MaBacSiKham) REFERENCES NHANVIEN(MaNV);
--- ALTER TABLE PHIEUKHAMSANGLOC ADD CONSTRAINT FK_PKSL_PHONG FOREIGN KEY (MaPhong) REFERENCES PHONG(MaPhong);
+ALTER TABLE PHIEUDANGKY ADD CONSTRAINT FK_PDK_KHUNGGIO FOREIGN KEY (MaKhungGio) REFERENCES DANHMUC_KHUNGGIO(MaKhungGio);
 
 ALTER TABLE PHIEUKHAMBENH ADD CONSTRAINT FK_PKB_PDK FOREIGN KEY (MaPhieuDK) REFERENCES PHIEUDANGKY(MaPhieuDK);
 ALTER TABLE PHIEUKHAMBENH ADD CONSTRAINT FK_PKB_BN FOREIGN KEY (MaBN) REFERENCES BENHNHAN(MaBN);
 ALTER TABLE PHIEUKHAMBENH ADD CONSTRAINT FK_PKB_BS FOREIGN KEY (MaBacSiKham) REFERENCES NHANVIEN(MaNV);
--- ALTER TABLE PHIEUKHAMBENH ADD CONSTRAINT FK_PKB_PKSL FOREIGN KEY (MaPhieuKhamSL) REFERENCES PHIEUKHAMSANGLOC(MaPhieuKhamSL);
 ALTER TABLE PHIEUKHAMBENH ADD CONSTRAINT FK_PKB_PHONG FOREIGN KEY (MaPhong) REFERENCES PHONG(MaPhong);
 
 ALTER TABLE CHITIET_CHANDOAN ADD CONSTRAINT FK_CTCD_PKB FOREIGN KEY (MaPhieuKhamBenh) REFERENCES PHIEUKHAMBENH(MaPhieuKhamBenh);
@@ -433,14 +495,25 @@ ALTER TABLE CHITIET_CHIDINH ADD CONSTRAINT FK_CTCDI_PCD FOREIGN KEY (MaPhieuChiD
 ALTER TABLE CHITIET_CHIDINH ADD CONSTRAINT FK_CTCDI_DV FOREIGN KEY (MaDV) REFERENCES DICHVU(MaDV);
 ALTER TABLE CHITIET_CHIDINH ADD CONSTRAINT FK_CTCDI_BS FOREIGN KEY (MaBacSiThucHien) REFERENCES NHANVIEN(MaNV);
 
+-- 4. Kê đơn & Quầy dược
 ALTER TABLE DON_THUOC ADD CONSTRAINT FK_DT_PKB FOREIGN KEY (MaPhieuKhamBenh) REFERENCES PHIEUKHAMBENH(MaPhieuKhamBenh);
 
 ALTER TABLE CT_DON_THUOC ADD CONSTRAINT FK_CTDT_DT FOREIGN KEY (MaDonThuoc) REFERENCES DON_THUOC(MaDonThuoc);
 ALTER TABLE CT_DON_THUOC ADD CONSTRAINT FK_CTDT_THUOC FOREIGN KEY (MaThuoc) REFERENCES THUOC(MaThuoc);
 
--- 4. Tài chính
+ALTER TABLE PHIEU_PHAT_THUOC ADD CONSTRAINT FK_PhieuPhat_DonThuoc FOREIGN KEY (MaDonThuoc) REFERENCES DON_THUOC(MaDonThuoc);
+ALTER TABLE PHIEU_PHAT_THUOC ADD CONSTRAINT FK_PhieuPhat_NhanVien FOREIGN KEY (MaNV_Phat) REFERENCES NHANVIEN(MaNV);
+ALTER TABLE PHIEU_PHAT_THUOC ADD CONSTRAINT FK_PhieuPhat_Phong FOREIGN KEY (MaPhong) REFERENCES PHONG(MaPhong);
+ALTER TABLE PHIEU_PHAT_THUOC ADD CONSTRAINT FK_PhieuPhat_HoaDon FOREIGN KEY (MaHD) REFERENCES HOADON(MaHD);
+
+ALTER TABLE CT_PHIEU_PHAT ADD CONSTRAINT FK_CTPhieuPhat_PhieuPhat FOREIGN KEY (MaPhieuPhat) REFERENCES PHIEU_PHAT_THUOC(MaPhieuPhat);
+ALTER TABLE CT_PHIEU_PHAT ADD CONSTRAINT FK_CTPhieuPhat_Thuoc FOREIGN KEY (MaThuoc) REFERENCES THUOC(MaThuoc);
+
+-- 5. Tài chính
 ALTER TABLE HOADON ADD CONSTRAINT FK_HD_BN FOREIGN KEY (MaBN) REFERENCES BENHNHAN(MaBN);
 ALTER TABLE HOADON ADD CONSTRAINT FK_HD_PKB FOREIGN KEY (MaPhieuKhamBenh) REFERENCES PHIEUKHAMBENH(MaPhieuKhamBenh);
+ALTER TABLE HOADON ADD CONSTRAINT FK_HD_PDK FOREIGN KEY (MaPhieuDK) REFERENCES PHIEUDANGKY(MaPhieuDK);
+
 ALTER TABLE CT_HOADON_DV ADD CONSTRAINT FK_CTHDDV_NV FOREIGN KEY (MaNV_ThuNgan) REFERENCES NHANVIEN(MaNV);
 ALTER TABLE CT_HOADON_DV ADD CONSTRAINT FK_CTHDDV_HD FOREIGN KEY (MaHD) REFERENCES HOADON(MaHD);
 ALTER TABLE CT_HOADON_DV ADD CONSTRAINT FK_CTHDDV_DV FOREIGN KEY (MaDV) REFERENCES DICHVU(MaDV);
@@ -450,61 +523,140 @@ ALTER TABLE CT_HOADON_THUOC ADD CONSTRAINT FK_CTHDT_HD FOREIGN KEY (MaHD) REFERE
 ALTER TABLE CT_HOADON_THUOC ADD CONSTRAINT FK_CTHDT_CTDT FOREIGN KEY (MaCTDonThuoc) REFERENCES CT_DON_THUOC(MaCTDonThuoc);
 GO
 
-ALTER TABLE TONKHO
-ADD CONSTRAINT FK_TONKHO_KHO FOREIGN KEY (MaKho) REFERENCES KHO(MaKho);
 
--- ======================================================================================
--- VII. QUẢN LÝ NHẬP KHO
--- ======================================================================================
 
--- 1. Bảng Phiếu Nhập (Đại diện cho 1 đợt giao hàng/1 hóa đơn từ nhà cung cấp)
-CREATE TABLE PHIEUNHAP (
-    MaPhieuNhap INT IDENTITY(1,1) PRIMARY KEY,
-    MaNV_LapPhieu CHAR(10) NOT NULL,    -- Người tạo phiếu (Thủ kho)
-    MaNSX INT NOT NULL,                 -- Nhập của nhà cung cấp nào
-	MaKho INT,
-    NgayLap DATETIME DEFAULT GETDATE(),
-    
-    TongTienNhap DECIMAL(18,2) DEFAULT 0,
-    
-    -- Trạng thái để quản lý luồng phê duyệt
-    TrangThai NVARCHAR(50) DEFAULT N'Chờ duyệt'
-        CHECK (TrangThai IN (N'Chờ duyệt', N'Đã duyệt', N'Đã hủy')),
+
+USE QL_KhamBenhNgoaiTru;
+GO
+
+CREATE PROCEDURE SP_XacNhanPhatThuoc
+    @MaDonThuoc INT,
+    @MaHD INT,
+    @MaNV_Phat CHAR(10),
+    @MaPhong INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        -- 1. KIỂM TRA BẢO MẬT: Hóa đơn đã thanh toán chưa?
+        IF NOT EXISTS (SELECT 1 FROM HOADON WHERE MaHD = @MaHD AND TrangThaiThanhToan = N'Đã thanh toán')
+        BEGIN
+            THROW 50001, N'Lỗi: Hóa đơn này chưa được thanh toán hoặc không tồn tại!', 1;
+        END
+
+        -- 2. TẠO PHIẾU PHÁT THUỐC TỔNG
+        DECLARE @MaPhieuPhat INT;
+        INSERT INTO PHIEU_PHAT_THUOC (MaDonThuoc, MaNV_Phat, MaHD, MaPhong, NgayPhat, TrangThai)
+        VALUES (@MaDonThuoc, @MaNV_Phat, @MaHD, @MaPhong, GETDATE(), N'Hoàn thành');
         
-    GhiChu NVARCHAR(200),
-    
-    -- Thông tin người duyệt (Quản lý/Giám đốc)
-    MaNV_Duyet CHAR(10) NULL,
-    NgayDuyet DATETIME NULL
-);
+        SET @MaPhieuPhat = SCOPE_IDENTITY(); -- Lấy ID vừa tạo
 
--- 2. Bảng Chi Tiết Phiếu Nhập (Danh sách các lô thuốc nhập về)
-CREATE TABLE CT_PHIEUNHAP (
-    MaCTPN INT IDENTITY(1,1) PRIMARY KEY,
-    MaPhieuNhap INT NOT NULL,
-    MaThuoc CHAR(10) NOT NULL,
-    
-    -- Thông tin vật lý của lô hàng nhập
-    MaLo NVARCHAR(50) NOT NULL,
-    NgaySanXuat DATE,
-    HanSuDung DATE NOT NULL,
-    
-    -- Số lượng nhập tính theo DonViCoBan (VD: Nhập 5 hộp, mỗi hộp 100 viên -> Ghi 500)
-    SoLuongNhap INT NOT NULL CHECK (SoLuongNhap > 0),
-    
-    -- Đơn giá nhập tính theo DonViCoBan (VD: Giá 1 viên)
-    DonGiaNhap DECIMAL(18,2) NOT NULL,
-    ThanhTien DECIMAL(18,2) NOT NULL -- = SoLuongNhap * DonGiaNhap
-);
+        -- 3. CHUẨN BỊ DUYỆT CÁC MÓN THUỐC KHÁCH "ĐÃ ĐÓNG TIỀN"
+        DECLARE @MaThuoc CHAR(20), @SoLuongCanPhat INT, @MaCTDonThuoc INT;
+        
+        DECLARE cur_Thuoc CURSOR FOR
+        SELECT cdt.MaThuoc, cdt.SoLuong, cdt.MaCTDonThuoc
+        FROM CT_DON_THUOC cdt
+        JOIN CT_HOADON_THUOC cht ON cdt.MaCTDonThuoc = cht.MaCTDonThuoc
+        WHERE cdt.MaDonThuoc = @MaDonThuoc 
+          AND cht.MaHD = @MaHD 
+          AND cht.TrangThaiThanhToan = N'Đã thanh toán'; -- CHỈ LẤY MÓN ĐÃ MUA
 
--- Thêm Khóa ngoại cho 2 bảng mới
-ALTER TABLE PHIEUNHAP ADD CONSTRAINT FK_PN_NVLAP FOREIGN KEY (MaNV_LapPhieu) REFERENCES NHANVIEN(MaNV);
-ALTER TABLE PHIEUNHAP ADD CONSTRAINT FK_PN_NVDUYET FOREIGN KEY (MaNV_Duyet) REFERENCES NHANVIEN(MaNV);
-ALTER TABLE PHIEUNHAP ADD CONSTRAINT FK_PN_NSX FOREIGN KEY (MaNSX) REFERENCES NHASANXUAT(MaNSX);
-ALTER TABLE PHIEUNHAP ADD CONSTRAINT FK_PN_KHO FOREIGN KEY (MaKho) REFERENCES KHO(MaKho);
+        OPEN cur_Thuoc;
+        FETCH NEXT FROM cur_Thuoc INTO @MaThuoc, @SoLuongCanPhat, @MaCTDonThuoc;
 
-ALTER TABLE CT_PHIEUNHAP ADD CONSTRAINT FK_CTPN_PN FOREIGN KEY (MaPhieuNhap) REFERENCES PHIEUNHAP(MaPhieuNhap);
-ALTER TABLE CT_PHIEUNHAP ADD CONSTRAINT FK_CTPN_THUOC FOREIGN KEY (MaThuoc) REFERENCES THUOC(MaThuoc);
+        WHILE @@FETCH_STATUS = 0
+        BEGIN
+            DECLARE @SoLuongDaLay INT = 0;
+            DECLARE @SoLuongConThieu INT = @SoLuongCanPhat;
 
+            -- 4. THUẬT TOÁN TRỪ KHO FIFO (Ưu tiên Lô có Hạn sử dụng gần nhất)
+            DECLARE @MaTonKho INT, @TonLopNay INT;
+            
+            DECLARE cur_Kho CURSOR FOR
+            SELECT MaTonKho, SoLuongTon 
+            FROM TONKHO 
+            WHERE MaThuoc = @MaThuoc AND SoLuongTon > 0 
+            ORDER BY HanSuDung ASC; -- Sắp xếp ngày hết hạn tăng dần
 
+            OPEN cur_Kho;
+            FETCH NEXT FROM cur_Kho INTO @MaTonKho, @TonLopNay;
 
+            WHILE @@FETCH_STATUS = 0 AND @SoLuongConThieu > 0
+            BEGIN
+                IF @TonLopNay >= @SoLuongConThieu
+                BEGIN
+                    -- Lô này đủ hàng: Trừ một nhát là xong
+                    UPDATE TONKHO SET SoLuongTon = SoLuongTon - @SoLuongConThieu WHERE MaTonKho = @MaTonKho;
+                    SET @SoLuongDaLay = @SoLuongDaLay + @SoLuongConThieu;
+                    SET @SoLuongConThieu = 0;
+                END
+                ELSE
+                BEGIN
+                    -- Lô này KHÔNG ĐỦ: Vét sạch lô này (về 0) rồi tìm Lô tiếp theo
+                    UPDATE TONKHO SET SoLuongTon = 0 WHERE MaTonKho = @MaTonKho;
+                    SET @SoLuongDaLay = @SoLuongDaLay + @TonLopNay;
+                    SET @SoLuongConThieu = @SoLuongConThieu - @TonLopNay;
+                END
+                FETCH NEXT FROM cur_Kho INTO @MaTonKho, @TonLopNay;
+            END
+            CLOSE cur_Kho;
+            DEALLOCATE cur_Kho;
+
+            -- Cảnh báo: Nếu quét hết các lô mà vẫn thiếu hàng -> Rollback toàn bộ!
+            IF @SoLuongConThieu > 0
+            BEGIN
+                DECLARE @ErrMsg NVARCHAR(200) = N'Lỗi: Thuốc ' + RTRIM(@MaThuoc) + N' không đủ tồn kho để xuất. Còn thiếu: ' + CAST(@SoLuongConThieu AS NVARCHAR) + N' viên/chai.';
+                THROW 50002, @ErrMsg, 1;
+            END
+
+            -- 5. GHI NHẬN CHI TIẾT PHIẾU PHÁT & CẬP NHẬT ĐƠN THUỐC
+            INSERT INTO CT_PHIEU_PHAT (MaPhieuPhat, MaThuoc, SoLuongPhat)
+            VALUES (@MaPhieuPhat, @MaThuoc, @SoLuongDaLay);
+
+            UPDATE CT_DON_THUOC 
+            SET SoLuongDaPhat = @SoLuongDaLay 
+            WHERE MaCTDonThuoc = @MaCTDonThuoc;
+
+            FETCH NEXT FROM cur_Thuoc INTO @MaThuoc, @SoLuongCanPhat, @MaCTDonThuoc;
+        END
+        CLOSE cur_Thuoc;
+        DEALLOCATE cur_Thuoc;
+
+        -- 6. CHỐT TRẠNG THÁI ĐƠN THUỐC (Đã phát 1 phần / Đã phát thuốc)
+        DECLARE @TongSoMonBSKe INT, @TongSoMonDaPhat INT;
+        
+        -- Đếm số loại thuốc Bác sĩ kê
+        SELECT @TongSoMonBSKe = COUNT(*) FROM CT_DON_THUOC WHERE MaDonThuoc = @MaDonThuoc;
+        
+        -- Đếm số loại thuốc Khách THỰC TẾ đã lấy
+        SELECT @TongSoMonDaPhat = COUNT(*) FROM CT_DON_THUOC WHERE MaDonThuoc = @MaDonThuoc AND SoLuongDaPhat > 0;
+
+        IF @TongSoMonDaPhat < @TongSoMonBSKe
+        BEGIN
+            UPDATE DON_THUOC SET TrangThai = N'Đã phát 1 phần' WHERE MaDonThuoc = @MaDonThuoc;
+        END
+        ELSE
+        BEGIN
+            UPDATE DON_THUOC SET TrangThai = N'Đã phát thuốc' WHERE MaDonThuoc = @MaDonThuoc;
+        END
+
+        -- NẾU MỌI THỨ TRƠN TRU -> LƯU VÀO DATABASE
+        COMMIT TRANSACTION;
+        SELECT 1 AS StatusCode, N'Phát thuốc thành công!' AS Message;
+
+    END TRY
+    BEGIN CATCH
+        -- NẾU CÓ LỖI BẤT KỲ Ở BƯỚC NÀO -> HOÀN TÁC TOÀN BỘ (KHÔNG BỊ MẤT THUỐC OAN)
+        ROLLBACK TRANSACTION;
+        
+        -- Dọn dẹp bộ nhớ nếu Cursor đang mở dở dang
+        IF CURSOR_STATUS('global', 'cur_Kho') >= -1 DEALLOCATE cur_Kho;
+        IF CURSOR_STATUS('global', 'cur_Thuoc') >= -1 DEALLOCATE cur_Thuoc;
+
+        SELECT 0 AS StatusCode, ERROR_MESSAGE() AS Message;
+    END CATCH
+END
+GO

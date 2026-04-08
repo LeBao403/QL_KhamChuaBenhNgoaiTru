@@ -100,6 +100,7 @@
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.IO.4.3.0\lib\net462\System.IO.dll</HintPath>
@@ -201,9 +202,11 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\BackupController.cs" />
     <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\BenhNhanController.cs" />
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\Admin\Controllers\HoaDonController.cs" />
     <Compile Include="Areas\Admin\Controllers\KhoaController.cs" />
     <Compile Include="Areas\Admin\Controllers\KhoController.cs" />
     <Compile Include="Areas\Admin\Controllers\NhanVienController.cs" />
@@ -211,6 +214,7 @@
     <Compile Include="Areas\Admin\Controllers\ThuocController.cs" />
     <Compile Include="Areas\Admin\Controllers\LoaiThuocController.cs" />
     <Compile Include="Areas\Staff\Controllers\KioskController.cs" />
+    <Compile Include="Areas\Staff\Controllers\PhatThuocController.cs" />
     <Compile Include="Areas\Staff\Controllers\ThuNganController.cs" />
     <Compile Include="Controllers\BenhNhanPortalController.cs" />
     <Compile Include="Areas\NhanVienKho\Controllers\BaseNhanVienKhoController.cs" />
@@ -227,26 +231,33 @@
     <Compile Include="Areas\Admin\Controllers\DichVuController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TaiKhoanController.cs" />
+    <Compile Include="Controllers\MockLISController.cs" />
+    <Compile Include="Areas\Staff\Controllers\CLSController.cs" />
+    <Compile Include="DBContext\BackupDB.cs" />
     <Compile Include="DBContext\BacSiDB.cs" />
     <Compile Include="DBContext\BenhNhanDB.cs" />
     <Compile Include="DBContext\BenhNhanPortalDB.cs" />
     <Compile Include="DBContext\DashboardDB.cs" />
     <Compile Include="DBContext\DichVuDB.cs" />
+    <Compile Include="DBContext\HoaDonDB.cs" />
     <Compile Include="DBContext\HomeDB.cs" />
     <Compile Include="DBContext\KhoaDB.cs" />
     <Compile Include="DBContext\KhoDB.cs" />
     <Compile Include="DBContext\KhoNhapDB.cs" />
     <Compile Include="DBContext\NhanVienDB.cs" />
+    <Compile Include="DBContext\PhatThuocDB.cs" />
     <Compile Include="DBContext\PhongDB.cs" />
     <Compile Include="DBContext\TaiKhoanDB.cs" />
     <Compile Include="DBContext\ThuNganDB.cs" />
     <Compile Include="DBContext\ThuocDB.cs" />
     <Compile Include="DBContext\TiepTanDB.cs" />
+    <Compile Include="DBContext\CLSDB.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\RouteValueExtensions.cs" />
     <Compile Include="Models\DanhMucBenh.cs" />
+    <Compile Include="Models\DecimalModelBinder.cs" />
     <Compile Include="Models\DichVu.cs" />
     <Compile Include="Models\DonThuoc.cs" />
     <Compile Include="Models\HoaDon.cs" />
@@ -260,9 +271,13 @@
     <Compile Include="Models\PhieuDangKy.cs" />
     <Compile Include="Models\PhieuKhamBenh.cs" />
     <Compile Include="Models\PhieuKhamSangLoc.cs" />
+    <Compile Include="Models\PhieuPhatThuoc.cs" />
     <Compile Include="Models\TaiKhoan.cs" />
     <Compile Include="Models\Thuoc.cs" />
+    <Compile Include="Models\KetQuaCLS.cs" />
+    <Compile Include="Models\BienLaiThuTien.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\BackupScheduler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="bin\QL_KhamChuaBenhNgoaiTru.dll" />
@@ -348,6 +363,7 @@
     <Content Include="Areas\Staff\Views\TiepTan\Index.cshtml" />
     <Content Include="Areas\Staff\Views\web.config" />
     <Content Include="Areas\Staff\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Staff\Views\CLS\Index.cshtml" />
     <Content Include="Areas\Admin\Views\Dashboard\Index.cshtml" />
     <Content Include="Areas\Admin\Views\DichVu\Index.cshtml" />
     <Content Include="Areas\Admin\Views\DichVu\_DichVuTable.cshtml" />
@@ -384,6 +400,27 @@
     <Content Include="Areas\NhanVienKho\Views\NhaCungCap\Index.cshtml" />
     <Content Include="Areas\NhanVienKho\Views\web.config" />
     <Content Include="Areas\NhanVienKho\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\Staff\Views\PhatThuoc\Index.cshtml" />
+    <Content Include="Areas\Staff\Views\PhatThuoc\LichSu.cshtml" />
+    <Content Include="Scripts\bootstrap.bundle.js" />
+    <Content Include="Scripts\bootstrap.bundle.min.js" />
+    <Content Include="Scripts\bootstrap.esm.js" />
+    <Content Include="Scripts\bootstrap.esm.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Areas\Admin\Views\Backup\Index.cshtml" />
+    <Content Include="Areas\Staff\Views\BacSi\InPhieu.cshtml" />
+    <None Include="Scripts\jquery-3.7.0.intellisense.js" />
+    <Content Include="Scripts\jquery-3.7.0.js" />
+    <Content Include="Scripts\jquery-3.7.0.min.js" />
+    <Content Include="Scripts\jquery-3.7.0.slim.js" />
+    <Content Include="Scripts\jquery-3.7.0.slim.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Views\BenhNhanPortal\ChiTietDonThuoc.cshtml" />
     <Content Include="Views\BenhNhanPortal\ChiTietHoaDon.cshtml" />
     <Content Include="Views\BenhNhanPortal\DatLichKham.cshtml" />
@@ -395,26 +432,13 @@
     <Content Include="Views\BenhNhanPortal\ThongTinCaNhan.cshtml" />
     <Content Include="Views\BenhNhanPortal\TrangThaiKham.cshtml" />
     <Content Include="Areas\Admin\Views\NhanVien\Edit_NV.cshtml" />
-    <Content Include="Scripts\bootstrap.bundle.js" />
-    <Content Include="Scripts\bootstrap.bundle.min.js" />
-    <Content Include="Scripts\bootstrap.esm.js" />
-    <Content Include="Scripts\bootstrap.esm.min.js" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Staff\Views\Kiosk\Lobby.cshtml" />
     <Content Include="Areas\Staff\Views\ThuNgan\Index.cshtml" />
-    <None Include="Scripts\jquery-3.7.0.intellisense.js" />
-    <Content Include="Scripts\jquery-3.7.0.js" />
-    <Content Include="Scripts\jquery-3.7.0.min.js" />
-    <Content Include="Scripts\jquery-3.7.0.slim.js" />
-    <Content Include="Scripts\jquery-3.7.0.slim.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Areas\Staff\Views\TiepTan\LichSuTiepNhan.cshtml" />
+    <Content Include="Areas\Admin\Views\HoaDon\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\HoaDon\Details.cshtml" />
+    <Content Include="Areas\Staff\Views\ThuNgan\LichSu.cshtml" />
     <Content Include="Scripts\live-search.js" />
-    <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Styles\_HomePage.css" />
     <Content Include="Styles\_Layout_client.css" />
     <Content Include="Styles\_Layout_admin.css" />
@@ -505,12 +529,6 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target> -->
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

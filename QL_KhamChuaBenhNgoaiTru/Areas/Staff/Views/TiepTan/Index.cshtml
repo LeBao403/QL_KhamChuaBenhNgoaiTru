@@ -18,14 +18,27 @@
 }
 else
 {
-    <div class="d-flex justify-content-between align-items-end mt-3 mb-3">
-        <h4 class="mb-0 fw-bold text-primary">
-            Khu vực trực: <span class="text-danger text-uppercase">@ViewBag.TenQuayHienTai</span>
-        </h4>
-        <button class="btn btn-outline-primary shadow-sm rounded-pill px-4" onclick="location.reload()">
-            <i class="bi bi-arrow-clockwise me-1"></i> Cập nhật danh sách
+<div class="d-flex flex-wrap justify-content-between align-items-center mt-3 mb-3 gap-3">
+    <h4 class="mb-0 fw-bold text-primary">
+        Khu vực trực: <span class="text-danger text-uppercase">@ViewBag.TenQuayHienTai</span>
+    </h4>
+
+    <form action="@Url.Action("Index", "TiepTan")" method="get" class="d-flex align-items-center gap-2 m-0">
+        <div class="input-group input-group-sm shadow-sm">
+            <span class="input-group-text bg-white border-primary fw-bold text-muted">Từ</span>
+            <input type="date" name="tuNgay" class="form-control border-primary" value="@ViewBag.TuNgay">
+
+            <span class="input-group-text bg-white border-primary fw-bold text-muted border-start-0">Đến</span>
+            <input type="date" name="denNgay" class="form-control border-primary" value="@ViewBag.DenNgay">
+
+            <button type="submit" class="btn btn-primary px-3 fw-bold"><i class="bi bi-filter"></i> Lọc</button>
+        </div>
+
+        <button type="button" class="btn btn-sm btn-outline-secondary shadow-sm text-nowrap" onclick="location.href='@Url.Action("Index", "TiepTan")'">
+            <i class="bi bi-calendar-check me-1"></i> Hôm nay
         </button>
-    </div>
+    </form>
+</div>
 
     <div class="card shadow border-0 rounded-3 mb-4">
         <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">

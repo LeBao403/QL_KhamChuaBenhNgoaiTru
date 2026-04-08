@@ -5907,14 +5907,16 @@ VALUES ('DV00000001', N'Công khám bệnh ban đầu', 150000, 1, 1);
 */
 
 -- =========================================================================
--- BƯỚC 1: TẠO HÓA ĐƠN TỔNG CHO TOÀN BỘ PHIẾU KHÁM
+-- BƯỚC 1: TẠO HÓA ĐƠN TỔNG CHO TOÀN BỘ PHIẾU KHÁM (CÓ GIỜ PHÚT CHUẨN)
 -- =========================================================================
 PRINT N'Đang tạo Hóa Đơn tổng...';
 INSERT INTO HOADON (MaBN, MaPhieuKhamBenh, NgayThanhToan, TrangThaiThanhToan, HinhThucThanhToan, GhiChu)
 SELECT 
     MaBN, 
     MaPhieuKhamBenh, 
-    NgayLap, -- Lấy ngày khám làm ngày thanh toán luôn
+    -- Tuyệt chiêu: Cộng thêm ngẫu nhiên từ 30 đến 120 phút vào thời gian đăng ký khám
+    -- Để tạo ra thời gian xuất hóa đơn hợp lý (Khám xong mới đóng tiền)
+    DATEADD(minute, ABS(CHECKSUM(NEWID())) % 91 + 30, NgayLap) AS NgayThanhToan, 
     N'Đã thanh toán', 
     -- Dùng hàm CHOOSE kết hợp CHECKSUM(NEWID()) để random Hình thức thanh toán
     CHOOSE(ABS(CHECKSUM(NEWID())) % 3 + 1, N'Tiền mặt', N'Chuyển khoản', N'Thẻ'),

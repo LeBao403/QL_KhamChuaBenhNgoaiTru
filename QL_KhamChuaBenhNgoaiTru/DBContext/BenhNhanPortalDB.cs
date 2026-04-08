@@ -120,79 +120,171 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        public int DatLichKham(string maBN, DateTime ngayKham, string maDV, string lyDo, out string tenQuayTiepTan)
+        public List<dynamic> GetKhungGioHopLe(DateTime ngayKham)
         {
-            tenQuayTiepTan = "Quầy Tiếp Tân"; // Giá trị mặc định phòng hờ
+            var list = new List<dynamic>();
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
                 conn.Open();
+                string sql = @"
+                    SELECT kg.MaKhungGio, kg.TenKhungGio, kg.GioiHanSoNguoi,
+                           ISNULL(d.SoLuotOnline, 0) AS DaDangKy
+                    FROM DANHMUC_KHUNGGIO kg
+                    LEFT JOIN (
+                        SELECT MaKhungGio, COUNT(*) AS SoLuotOnline
+                        FROM PHIEUDANGKY
+                        WHERE CAST(NgayDangKy AS DATE) = CAST(@NgayKham AS DATE)
+                          AND HinhThucDangKy = N'Online' 
+                          AND TrangThai != N'Hủy'
+                        GROUP BY MaKhungGio
+                    ) d ON kg.MaKhungGio = d.MaKhungGio
+                    WHERE kg.TrangThai = 1
+                    ORDER BY kg.TenKhungGio";
 
-                // ==========================================================
-                // 0. KIỂM TRA GIỚI HẠN 100 LƯỢT / NGÀY TẠI ĐÂY
-                // ==========================================================
-                string sqlCheckLimit = @"
-            SELECT COUNT(*) 
-            FROM PHIEUDANGKY 
-            WHERE CAST(NgayDangKy AS DATE) = CAST(@NgayKham AS DATE) 
-              AND HinhThucDangKy = N'Online'";
-
-                SqlCommand cmdCheck = new SqlCommand(sqlCheckLimit, conn);
-                cmdCheck.Parameters.AddWithValue("@NgayKham", ngayKham);
-                int soLuotDaDangKy = Convert.ToInt32(cmdCheck.ExecuteScalar());
-
-                if (soLuotDaDangKy >= 100)
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@NgayKham", ngayKham);
+                using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    // Bắn lỗi ra để Controller bắt được
-                    throw new Exception($"Rất tiếc, ngày {ngayKham:dd/MM/yyyy} đã nhận đủ giới hạn 100 lượt đặt trước. Vui lòng chọn một ngày khác!");
-                }
-
-                // ==========================================================
-                // 1. Lấy tên Dịch vụ để ghép vào Lý do 
-                string sqlTenDV = "SELECT TenDV FROM DICHVU WHERE MaDV = @MaDV";
-                SqlCommand cmdDV = new SqlCommand(sqlTenDV, conn);
-                cmdDV.Parameters.AddWithValue("@MaDV", maDV);
-                var tenDV = cmdDV.ExecuteScalar()?.ToString() ?? "Khám bệnh";
-
-                // Ghi rõ Dịch vụ và Triệu chứng
-                string lyDoGop = $"Dịch vụ: {tenDV} | Triệu chứng: {lyDo}";
-
-                // 2. Tìm QUẦY TIẾP TÂN vắng nhất (Lấy CẢ MaPhong VÀ TenPhong)
-                string sqlTimQuay = @"
-        SELECT TOP 1 p.MaPhong, p.TenPhong
-        FROM PHONG p
-        LEFT JOIN PHIEUDANGKY pdk ON p.MaPhong = pdk.MaPhong 
-            AND CAST(pdk.NgayDangKy AS DATE) = CAST(@NgayKham AS DATE)
-            AND pdk.HinhThucDangKy = N'Online' 
-        WHERE p.MaLoaiPhong = 1 AND p.TrangThai = 1
-        GROUP BY p.MaPhong, p.TenPhong
-        ORDER BY COUNT(pdk.MaPhieuDK) ASC, p.TenPhong ASC";
-
-                SqlCommand cmdQuay = new SqlCommand(sqlTimQuay, conn);
-                cmdQuay.Parameters.AddWithValue("@NgayKham", ngayKham);
-
-                int maQuayTiepTan = 1;
-                using (SqlDataReader dr = cmdQuay.ExecuteReader())
-                {
-                    if (dr.Read())
+                    while (dr.Read())
                     {
-                        maQuayTiepTan = Convert.ToInt32(dr["MaPhong"]);
-                        tenQuayTiepTan = dr["TenPhong"].ToString(); // Lấy tên quầy thật từ DB!
+                        int gioiHan = Convert.ToInt32(dr["GioiHanSoNguoi"]);
+                        int daDangKy = Convert.ToInt32(dr["DaDangKy"]);
+
+                        list.Add(new
+                        {
+                            MaKhungGio = Convert.ToInt32(dr["MaKhungGio"]),
+                            TenKhungGio = dr["TenKhungGio"].ToString(),
+                            ConTrong = gioiHan - daDangKy,
+                            IsFull = daDangKy >= gioiHan
+                        });
                     }
                 }
+            }
+            return list;
+        }
 
-                // 3. Tạo PHIEUDANGKY
-                string sqlInsert = @"
-        INSERT INTO PHIEUDANGKY (MaBN, NgayDangKy, STT, HinhThucDangKy, TrangThai, LyDo, MaPhong)
-        OUTPUT INSERTED.MaPhieuDK
-        VALUES (@MaBN, @NgayKham, NULL, N'Online', N'Chờ xử lý', @LyDo, @MaPhong)";
+        // [NÂNG CẤP] Trả về thêm MaHD (out int maHD) để đem đi thanh toán VNPay/QR
+        public int DatLichKham(string maBN, DateTime ngayKham, int maKhungGio, string maDV, string lyDo, out string tenQuayTiepTan, out int maHD)
+        {
+            tenQuayTiepTan = "Quầy Tiếp Tân";
+            maHD = 0;
+            int maPhieuDK = 0;
 
-                SqlCommand cmd = new SqlCommand(sqlInsert, conn);
-                cmd.Parameters.AddWithValue("@MaBN", maBN);
-                cmd.Parameters.AddWithValue("@NgayKham", ngayKham);
-                cmd.Parameters.AddWithValue("@LyDo", lyDoGop);
-                cmd.Parameters.AddWithValue("@MaPhong", maQuayTiepTan);
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                // Bắt đầu Transaction để đảm bảo tính toàn vẹn dữ liệu
+                using (SqlTransaction trans = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // 1. KIỂM TRA GIỚI HẠN KHUNG GIỜ
+                        string sqlCheckLimit = @"
+                            SELECT 
+                                (SELECT GioiHanSoNguoi FROM DANHMUC_KHUNGGIO WHERE MaKhungGio = @MaKhungGio) AS GioiHan,
+                                (SELECT COUNT(*) FROM PHIEUDANGKY WHERE CAST(NgayDangKy AS DATE) = CAST(@NgayKham AS DATE) 
+                                 AND MaKhungGio = @MaKhungGio AND HinhThucDangKy = N'Online' AND TrangThai != N'Hủy') AS DaDangKy";
+                        SqlCommand cmdCheck = new SqlCommand(sqlCheckLimit, conn, trans);
+                        cmdCheck.Parameters.AddWithValue("@NgayKham", ngayKham);
+                        cmdCheck.Parameters.AddWithValue("@MaKhungGio", maKhungGio);
 
-                return Convert.ToInt32(cmd.ExecuteScalar());
+                        using (SqlDataReader dr = cmdCheck.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                int gioiHan = Convert.IsDBNull(dr["GioiHan"]) ? 20 : Convert.ToInt32(dr["GioiHan"]);
+                                int daDangKy = Convert.ToInt32(dr["DaDangKy"]);
+                                if (daDangKy >= gioiHan)
+                                {
+                                    throw new Exception($"Rất tiếc, khung giờ bạn chọn trong ngày {ngayKham:dd/MM/yyyy} đã hết chỗ đăng ký Online. Vui lòng chọn khung giờ/ngày khác!");
+                                }
+                            }
+                        }
+
+                        // 2. LẤY TÊN DỊCH VỤ VÀ TÌM QUẦY VẮNG NHẤT
+                        string sqlTenDV = "SELECT TenDV FROM DICHVU WHERE MaDV = @MaDV";
+                        SqlCommand cmdDV = new SqlCommand(sqlTenDV, conn, trans);
+                        cmdDV.Parameters.AddWithValue("@MaDV", maDV);
+                        var tenDV = cmdDV.ExecuteScalar()?.ToString() ?? "Khám bệnh";
+                        string lyDoGop = $"Dịch vụ: {tenDV} | Triệu chứng: {lyDo}";
+
+                        string sqlTimQuay = @"
+                            SELECT TOP 1 p.MaPhong, p.TenPhong
+                            FROM PHONG p
+                            LEFT JOIN PHIEUDANGKY pdk ON p.MaPhong = pdk.MaPhong 
+                                AND CAST(pdk.NgayDangKy AS DATE) = CAST(@NgayKham AS DATE)
+                                AND pdk.MaKhungGio = @MaKhungGio
+                                AND pdk.HinhThucDangKy = N'Online' 
+                                AND pdk.TrangThai != N'Hủy'
+                            WHERE p.MaLoaiPhong = 1 AND p.TrangThai = 1
+                            GROUP BY p.MaPhong, p.TenPhong
+                            ORDER BY COUNT(pdk.MaPhieuDK) ASC, p.TenPhong ASC";
+                        SqlCommand cmdQuay = new SqlCommand(sqlTimQuay, conn, trans);
+                        cmdQuay.Parameters.AddWithValue("@NgayKham", ngayKham);
+                        cmdQuay.Parameters.AddWithValue("@MaKhungGio", maKhungGio);
+
+                        int maQuayTiepTan = 1;
+                        using (SqlDataReader dr = cmdQuay.ExecuteReader())
+                        {
+                            if (dr.Read())
+                            {
+                                maQuayTiepTan = Convert.ToInt32(dr["MaPhong"]);
+                                tenQuayTiepTan = dr["TenPhong"].ToString();
+                            }
+                        }
+
+                        // 3. TẠO PHIẾU ĐĂNG KÝ (Lưu MaKhungGio, Trạng thái: Chờ thanh toán)
+                        string sqlInsertPDK = @"
+                            INSERT INTO PHIEUDANGKY (MaBN, NgayDangKy, MaKhungGio, STT, HinhThucDangKy, TrangThai, LyDo, MaPhong)
+                            OUTPUT INSERTED.MaPhieuDK
+                            VALUES (@MaBN, @NgayKham, @MaKhungGio, NULL, N'Online', N'Chờ xử lý', @LyDo, @MaPhong)";
+                        SqlCommand cmdInsertPDK = new SqlCommand(sqlInsertPDK, conn, trans);
+                        cmdInsertPDK.Parameters.AddWithValue("@MaBN", maBN);
+                        cmdInsertPDK.Parameters.AddWithValue("@NgayKham", ngayKham);
+                        cmdInsertPDK.Parameters.AddWithValue("@MaKhungGio", maKhungGio);
+                        cmdInsertPDK.Parameters.AddWithValue("@LyDo", lyDoGop);
+                        cmdInsertPDK.Parameters.AddWithValue("@MaPhong", maQuayTiepTan);
+
+                        maPhieuDK = Convert.ToInt32(cmdInsertPDK.ExecuteScalar());
+
+                        // 4. LẤY GIÁ DỊCH VỤ DV999 (Phí tiện ích)
+                        string sqlGiaPhi = "SELECT GiaDichVu FROM DICHVU WHERE MaDV = 'DV999'";
+                        SqlCommand cmdGiaPhi = new SqlCommand(sqlGiaPhi, conn, trans);
+                        decimal giaDV999 = Convert.ToDecimal(cmdGiaPhi.ExecuteScalar() ?? 100000);
+
+                        // 5. TẠO HÓA ĐƠN GỐC CHO PHÍ ĐẶT LỊCH (Liên kết với MaPhieuDK)
+                        string sqlInsertHD = @"
+                            INSERT INTO HOADON (MaBN, MaPhieuDK, NgayThanhToan, TongTienGoc, TongTienBHYTChiTra, TongTienBenhNhanTra, TrangThaiThanhToan, GhiChu)
+                            OUTPUT INSERTED.MaHD
+                            VALUES (@MaBN, @MaPDK, NULL, @Tien, 0, @Tien, N'Chưa thanh toán', N'Phí tiện ích đặt lịch Online')";
+                        SqlCommand cmdInsertHD = new SqlCommand(sqlInsertHD, conn, trans);
+                        cmdInsertHD.Parameters.AddWithValue("@MaBN", maBN);
+                        cmdInsertHD.Parameters.AddWithValue("@MaPDK", maPhieuDK);
+                        cmdInsertHD.Parameters.AddWithValue("@Tien", giaDV999);
+
+                        maHD = Convert.ToInt32(cmdInsertHD.ExecuteScalar());
+
+                        // 6. TẠO CHI TIẾT HÓA ĐƠN CHO DV999
+                        string sqlInsertCTHD = @"
+                            INSERT INTO CT_HOADON_DV (MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
+                            VALUES (@MaHD, 'DV999', @Tien, @Tien, 0, @Tien, N'Chưa thanh toán')";
+                        SqlCommand cmdInsertCTHD = new SqlCommand(sqlInsertCTHD, conn, trans);
+                        cmdInsertCTHD.Parameters.AddWithValue("@MaHD", maHD);
+                        cmdInsertCTHD.Parameters.AddWithValue("@Tien", giaDV999);
+
+                        cmdInsertCTHD.ExecuteNonQuery();
+
+                        // NẾU MỌI THỨ NGON LÀNH THÌ CHỐT SỔ (COMMIT)
+                        trans.Commit();
+                        return maPhieuDK;
+                    }
+                    catch (Exception)
+                    {
+                        // NẾU LỖI THÌ QUAY XE LẠI TỪ ĐẦU (ROLLBACK)
+                        trans.Rollback();
+                        throw;
+                    }
+                }
             }
         }
 

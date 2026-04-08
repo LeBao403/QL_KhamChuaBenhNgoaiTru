@@ -1,0 +1,482 @@
+﻿@using QL_KhamChuaBenhNgoaiTru.Models
+@{
+    ViewBag.Title = "Lịch Sử Cấp Phát Thuốc";
+    Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
+    var danhSach = ViewBag.DanhSach as List<DanhSachPhatThuocVM>;
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+
+<style>
+    :root {
+        --primary-green: #198754;
+        --dark-green: #0a5131;
+        --soft-bg: #f8f9fa;
+    }
+
+    body {
+        background-color: #f4f7f6;
+    }
+
+    /* Fix Sidebar co giãn */
+    .container-fluid {
+        width: 100% !important;
+        transition: all 0.3s ease;
+    }
+
+    /* Header Green Gradient đặc trưng cho Lịch sử */
+    .page-header-card {
+        background: linear-gradient(135deg, var(--primary-green) 0%, var(--dark-green) 100%);
+        border: none;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+
+    .filter-card, .table-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 1.5rem;
+        background: #fff;
+    }
+
+    .table-card {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: var(--soft-bg);
+        color: #495057;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e9ecef;
+        padding: 1.2rem;
+    }
+
+    /* Chống Lag Tuyệt Đối */
+    .table tbody tr {
+        border-bottom: 1px solid #f8f9fa;
+        transition: none;
+    }
+
+        .table tbody tr:hover {
+            background-color: #f1f8f5;
+        }
+
+    .badge-completed {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .badge-service {
+        background-color: #e2e3e5;
+        color: #41464b;
+        border: 1px solid #d3d3d4;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .info-box {
+        background: #fff;
+        border-radius: 10px;
+        padding: 15px;
+        border-left: 5px solid var(--primary-green);
+        height: 100%;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    }
+
+    .info-label {
+        color: #6c757d;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        color: #212529;
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+
+    .btn-view {
+        border-radius: 8px;
+        background-color: #f8f9fa;
+        color: var(--primary-green);
+        border: 1px solid var(--primary-green);
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+        .btn-view:hover {
+            background-color: var(--primary-green);
+            color: #fff;
+        }
+
+    .pagination .page-link {
+        color: var(--primary-green);
+        border-radius: 8px;
+        margin: 0 3px;
+        font-weight: 600;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-green);
+        border-color: var(--primary-green);
+    }
+
+    /* ========================================================= */
+    /* CUSTOM ANIMATION CHO MODAL (Hiệu ứng Zoom mượt mà) */
+    /* ========================================================= */
+    .modal.fade .modal-dialog {
+        transform: scale(0.8); /* Thu nhỏ ban đầu */
+        opacity: 0;
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    }
+
+    .modal.show .modal-dialog {
+        transform: scale(1); /* Phóng to về kích thước thật */
+        opacity: 1;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="card page-header-card shadow-sm">
+        <div class="card-body text-white p-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h3 class="mb-1 fw-bold"><i class="fas fa-history me-2"></i> LỊCH SỬ PHÁT THUỐC</h3>
+                    <p class="mb-0 opacity-75">Tra cứu hồ sơ cấp phát thuốc đã hoàn tất trong hệ thống</p>
+                </div>
+                <a href="@Url.Action("Index", "PhatThuoc")" class="btn btn-light fw-bold text-success shadow-sm px-4 rounded-pill">
+                    <i class="fas fa-arrow-left me-2"></i> Quay lại Chờ phát
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card filter-card shadow-sm">
+        <div class="card-body p-4">
+            <form method="get" action="@Url.Action("LichSu", "PhatThuoc")" id="filterForm">
+                <div class="row g-3">
+                    <div class="col-lg-4 col-md-12">
+                        <label class="form-label fw-bold text-muted small">TÌM KIẾM NHANH (LIVE)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+                            <input type="text" id="txtSearchLive" name="search" class="form-control border-start-0" value="@ViewBag.Search" placeholder="Tên BN, Mã đơn, Mã HD...">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <label class="form-label fw-bold text-muted small">TỪ NGÀY</label>
+                        <input type="date" name="tuNgay" class="form-control" value="@ViewBag.TuNgay">
+                    </div>
+                    <div class="col-lg-2 col-md-4 col-6">
+                        <label class="form-label fw-bold text-muted small">ĐẾN NGÀY</label>
+                        <input type="date" name="denNgay" class="form-control" value="@ViewBag.DenNgay">
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <label class="form-label fw-bold text-muted small">SẮP XẾP THEO</label>
+                        <select name="sortCol" class="form-select" onchange="this.form.submit()">
+                            <option value="NgayThanhToan" @(ViewBag.SortCol == "NgayThanhToan" ? "selected" : "")>Mới nhất</option>
+                            <option value="MaHD" @(ViewBag.SortCol == "MaHD" ? "selected" : "")>Mã Hóa Đơn</option>
+                            <option value="BenhNhan" @(ViewBag.SortCol == "BenhNhan" ? "selected" : "")>Tên bệnh nhân</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-md-12 d-flex align-items-end">
+                        <button type="submit" class="btn btn-success w-100 fw-bold rounded-3">LỌC HỒ SƠ</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card table-card">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0 text-center table-hover" id="tblHistory">
+                <thead>
+                    <tr>
+                        <th style="width: 15%">Thời gian phát</th>
+                        <th style="width: 12%">Mã Hóa Đơn</th>
+                        <th class="text-start" style="width: 25%">Họ Tên Bệnh Nhân</th>
+                        <th style="width: 12%">Đơn Thuốc</th>
+                        <th style="width: 15%">Loại Hồ Sơ</th>
+                        <th style="width: 10%">Trạng Thái</th>
+                        <th style="width: 11%">Chi Tiết</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (danhSach != null && danhSach.Count > 0)
+                    {
+                        foreach (var item in danhSach)
+                        {
+                            <tr>
+                                <td><span class="text-muted small fw-bold">@item.NgayThanhToanStr</span></td>
+                                <td><span class="fw-bold text-secondary">@item.MaHD</span></td>
+                                <td class="text-start">
+                                    <div class="fw-bold text-dark">@item.BenhNhan.Split('(')[0]</div>
+                                    <div class="text-muted small">@item.BenhNhan.Substring(item.BenhNhan.IndexOf('('))</div>
+                                </td>
+                                <td>
+                                    @if (item.MaDonThuoc != null)
+                                    {
+                                        <span class="text-success fw-bold">@item.MaDonThuoc</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không toa</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge @(item.MaDonThuoc != null ? "bg-info-subtle text-info" : "badge-service") px-3 py-2">
+                                        @(item.MaDonThuoc != null ? "Cấp thuốc" : "DV Ngoài")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-completed px-3 py-2">@item.TTPhatThuoc</span>
+                                </td>
+                                <td>
+                                    @if (item.MaDonThuoc != null)
+                                    {
+                                        <button class="btn btn-view btn-sm px-3" onclick="viewDetail(@item.MaDonThuoc, @item.MaHD)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="py-5 text-center">
+                                <i class="fas fa-search fs-1 mb-3 opacity-25"></i><br />
+                                <h5 class="text-muted">Không tìm thấy lịch sử phát thuốc nào!</h5>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (ViewBag.TotalPage > 1)
+        {
+            <style>
+                .pagination .page-link {
+                    width: 45px;
+                    height: 45px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    transition: all 0.2s;
+                }
+
+                    .pagination .page-link i {
+                        font-size: 1.1rem;
+                    }
+
+                .pagination .page-item.active .page-link {
+                    background-color: #0a5131 !important;
+                    border-color: #0a5131 !important;
+                    color: #ffffff !important;
+                    box-shadow: 0 4px 10px rgba(10, 81, 49, 0.3);
+                }
+            </style>
+
+            <div class="card-footer bg-white border-0 py-4">
+                <nav>
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("LichSu", new { page = 1, search = ViewBag.Search, tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, sortCol = ViewBag.SortCol })">
+                                <i class="fas fa-angle-double-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("LichSu", new { page = ViewBag.CurrentPage - 1, search = ViewBag.Search, tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, sortCol = ViewBag.SortCol })">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        @{
+                            int start = Math.Max(1, ViewBag.CurrentPage - 2);
+                            int end = Math.Min(ViewBag.TotalPage, ViewBag.CurrentPage + 2);
+                        }
+
+                        @for (int i = start; i <= end; i++)
+                        {
+                            <li class="page-item @(ViewBag.CurrentPage == i ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("LichSu", new { page = i, search = ViewBag.Search, tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, sortCol = ViewBag.SortCol })">@i</a>
+                            </li>
+                        }
+
+                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPage ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("LichSu", new { page = ViewBag.CurrentPage + 1, search = ViewBag.Search, tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, sortCol = ViewBag.SortCol })">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPage ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("LichSu", new { page = ViewBag.TotalPage, search = ViewBag.Search, tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, sortCol = ViewBag.SortCol })">
+                                <i class="fas fa-angle-double-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="text-center mt-3 text-muted small">
+                    Trang <b>@ViewBag.CurrentPage</b> / @ViewBag.TotalPage <span class="mx-2">|</span> Tổng cộng <b>@(((int)ViewBag.TotalRow).ToString("N0"))</b> hồ sơ
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header bg-success text-white p-4">
+                <h5 class="modal-title fw-bold"><i class="fas fa-clipboard-check me-2"></i>LỊCH SỬ CHI TIẾT CẤP PHÁT THUỐC</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body bg-light p-3" id="modalContent"></div>
+            <div class="modal-footer bg-white border-0">
+                <button type="button" class="btn btn-secondary px-5 fw-bold rounded-pill" data-bs-dismiss="modal">Đóng hồ sơ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // 1. LIVE SEARCH TỨC THÌ TRÊN BẢNG
+        $("#txtSearchLive").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#tblHistory tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+
+        // 2. XEM CHI TIẾT LỊCH SỬ
+function viewDetail(maDT, maHD) {
+    $('#modalContent').html('<div class="text-center p-5"><div class="spinner-border text-success"></div><p class="mt-2">Đang tải hồ sơ lịch sử...</p></div>');
+    new bootstrap.Modal(document.getElementById('detailModal')).show();
+
+    $.get('@Url.Action("GetChiTietDonThuoc", "PhatThuoc", new { area = "Staff" })', { maDonThuoc: maDT, maHD: maHD }, function(res) {
+        if (res.success) {
+            let d = res.data;
+
+            // LAYOUT DÀN 2 CỘT, XẾP CHỒNG THÔNG MINH
+            let html = `
+            <div class="row g-3 mb-3">
+                <div class="col-lg-7 d-flex flex-column gap-3">
+                    <div class="info-box p-3 m-0">
+                        <h6 class="fw-bold text-primary border-bottom pb-2 mb-2"><i class="fas fa-user-injured me-2"></i>HÀNH CHÍNH</h6>
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="info-value text-danger fs-5 me-2">` + d.TenBN + `</span>
+                            <span class="badge bg-secondary">` + d.MaBN + `</span>
+                        </div>
+                        <div class="row g-2 mb-1">
+                            <div class="col-6"><div class="info-label">Giới tính/Tuổi</div><div class="info-value small">` + d.GioiTinh + ` - ` + d.Tuoi + `t</div></div>
+                            <div class="col-6"><div class="info-label">Đối tượng</div><div class="info-value text-success small">` + (d.BHYT || "BHYT") + `</div></div>
+                            <div class="col-6"><div class="info-label">Điện thoại</div><div class="info-value small">` + (d.SDT || "---") + `</div></div>
+                            <div class="col-6"><div class="info-label">CCCD</div><div class="info-value small">` + (d.CCCD || "---") + `</div></div>
+                            <div class="col-12"><div class="info-label">Email</div><div class="info-value small">` + (d.Email || "---") + `</div></div>
+                            <div class="col-12"><div class="info-label">Địa chỉ</div><div class="info-value small">` + (d.DiaChi || "---") + `</div></div>
+                        </div>
+                    </div>
+
+                    <div class="info-box p-3 m-0" style="border-left-color: #198754;">
+                        <h6 class="fw-bold text-success border-bottom pb-2 mb-2"><i class="fas fa-stethoscope me-2"></i>KHÁM BỆNH & CHUẨN ĐOÁN</h6>
+                        <div class="row g-2">
+                            <div class="col-sm-4"><div class="info-label">Phiếu khám</div><div class="info-value small">#` + d.MaPhieuKhamBenh + `</div></div>
+                            <div class="col-sm-8"><div class="info-label">Kết luận</div><div class="info-value text-primary small fw-bold">` + d.KetLuan + `</div></div>
+                            <div class="col-12 mt-1"><div class="info-label">Triệu chứng</div><div class="info-value small">` + (d.TrieuChung || "---") + `</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="info-box h-100 p-3 m-0" style="border-left-color: #ffc107;">
+                        <h6 class="fw-bold text-warning border-bottom pb-2 mb-2"><i class="fas fa-file-invoice me-2"></i>CHỨNG TỪ & ĐƠN THUỐC</h6>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <div><div class="info-label">Hóa Đơn</div><div class="info-value small fw-bold">#` + d.MaHD + `</div></div>
+                            <div class="text-end"><div class="info-label">Đơn Thuốc</div><div class="info-value small fw-bold">#` + d.MaDonThuoc + `</div></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="info-label">Mã Phiếu Phát (Xuất Kho)</div>
+                            <div class="info-value text-primary fw-bold fs-6">#` + (d.MaPhieuPhat ? d.MaPhieuPhat : '<span class="text-muted fw-normal">Chưa phát</span>') + `</div>
+                        </div>
+
+                        <hr class="my-2 border-warning opacity-25">
+
+                        <div class="mb-2"><div class="info-label">Bác sĩ kê</div><div class="info-value small text-primary fw-bold">` + d.BacSiKe + `</div></div>
+                        <div class="mb-2"><div class="info-label">Ngày kê</div><div class="info-value small">` + d.NgayKe + `</div></div>
+
+                        <div class="mt-3 p-2 bg-warning-subtle rounded border border-warning small">
+                            <strong>Lời dặn:</strong> ` + (d.LoiDanBacSi || "Không có") + `
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive rounded-3 shadow-sm border mt-2">
+                <table class="table align-middle text-center mb-0 bg-white">
+                    <thead class="bg-dark text-white">
+                        <tr>
+                            <th class="text-start ps-3">Tên Thuốc & Hàm Lượng</th>
+                            <th>Kê Toa</th>
+                            <th>Trạng Thái</th>
+                            <th>Lô Đã Phát (SL)</th>
+                            <th class="text-success">Thực Phát</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            d.DanhSachThuoc.forEach(t => {
+                let isHuy = t.TrangThai === 'Hủy' || t.TrangThai === 'Chưa thanh toán';
+                let rowStyle = isHuy ? 'background-color: #fcfcfc;' : '';
+                let textStyle = isHuy ? 'text-decoration-line-through text-muted' : 'fw-bold text-dark';
+                let badgeTT = isHuy ?
+                              '<span class="badge bg-danger-subtle text-danger px-2 py-1 small">Khách hủy</span>' :
+                              '<span class="badge bg-success-subtle text-success px-2 py-1 small">Thanh toán</span>';
+
+                let hienThiLo = isHuy ? '<span class="text-muted">---</span>' : '<div class="fw-bold text-primary small">' + t.DanhSachLoDaPhat + '</div>';
+                let hienThiThucPhat = isHuy ? '<span class="text-muted">0</span>' : '<span class="text-success fw-bold fs-5">' + t.ThucPhat + '</span>';
+
+                html += '<tr style="' + rowStyle + '">' +
+                    '<td class="text-start ps-3 ' + textStyle + ' small">' + t.TenThuoc + '</td>' +
+                    '<td>' + t.SoLuongKe + '</td>' +
+                    '<td>' + badgeTT + '</td>' +
+                    '<td>' + hienThiLo + '</td>' +
+                    '<td>' + hienThiThucPhat + '</td>' +
+                '</tr>';
+            });
+
+            $('#modalContent').html(html + '</tbody></table></div>');
+        }
+    });
+}
+
+        // FIX LỖI NHẢY TRANG: Lưu vị trí cuộn khi bấm phân trang
+        $(document).on('click', '.page-link', function () {
+            localStorage.setItem('scrollPosLichSu', window.scrollY);
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var scrollPos = localStorage.getItem('scrollPosLichSu');
+            if (scrollPos) {
+                window.scrollTo(0, scrollPos);
+                localStorage.removeItem('scrollPosLichSu');
+            }
+        });
+    </script>
+}
