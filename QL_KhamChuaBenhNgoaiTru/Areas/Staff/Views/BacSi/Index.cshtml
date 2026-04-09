@@ -170,15 +170,26 @@
         background: #f8fbff;
     }
 
-    /* LỆNH CSS MA THUẬT CHO VIỆC IN PDF */
+    /* LỆNH CSS CHO VIỆC IN PDF */
     @@media print {
-        body { background-color: #fff; }
-        /* Giấu toàn bộ UI trang web để dành không gian in */
-        #sidebar, .top-navbar, .page-header-card, .queue-card, .exam-card, .d-print-none { display: none !important; }
-        #content { margin-left: 0 !important; width: 100% !important; padding: 0 !important; }
-        .main-body { padding: 0 !important; }
+        body {
+            background-color: #fff;
+        }
 
-        /* Chỉ hiển thị khu vực đơn thuốc in ra */
+        #sidebar, .top-navbar, .page-header-card, .queue-card, .exam-card, .d-print-none {
+            display: none !important;
+        }
+
+        #content {
+            margin-left: 0 !important;
+            width: 100% !important;
+            padding: 0 !important;
+        }
+
+        .main-body {
+            padding: 0 !important;
+        }
+
         #printPrescriptionArea {
             display: block !important;
             position: absolute;
@@ -187,6 +198,7 @@
             width: 100%;
             background: #fff;
         }
+
         .table-bordered th, .table-bordered td {
             border: 1px solid #000 !important;
             padding: 8px !important;
@@ -224,55 +236,58 @@
         <div class="col-md-4">
             <div class="card queue-card">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-users me-2"></i>Bệnh Nhân Chờ Khám</span>
-                    @if (ViewBag.ChoKham != null)
-                    {
-                        <span class="badge bg-light text-primary rounded-pill">@(((System.Collections.ICollection)ViewBag.ChoKham).Count)</span>
-                    }
+                    <span><i class="fas fa-users me-2"></i>Chờ Khám</span>
+                    <div class="d-flex align-items-center">
+                        @if (ViewBag.ChoKham != null)
+                        {
+                <span class="badge bg-light text-primary rounded-pill me-2" id="badge-cho-kham">@(((System.Collections.ICollection)ViewBag.ChoKham).Count)</span>}
+                        <button type="button" id="btnReloadChoKham" class="btn btn-sm btn-light text-primary shadow-sm py-0 px-2" title="Làm mới danh sách chờ">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
                 </div>
-                <div class="card-body p-0" style="max-height: 380px; overflow-y: auto;">
+                <div class="card-body p-0">
                     <table class="table queue-table mb-0">
                         <thead>
                             <tr>
-                                <th class="text-center" style="width:50px">#</th>
-                                <th>Tên Bệnh Nhân</th>
-                                <th class="text-center" style="width:100px">Thao tác</th>
+                                <th class="text-center" style="width:40px">#</th>
+                                <th>Bệnh Nhân</th>
+                                <th class="text-center" style="width:90px">Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="body-cho-kham">
                             @if (ViewBag.ChoKham != null)
                             {
                                 foreach (var item in ViewBag.ChoKham)
                                 {
                                     string bgClass = item.TrangThai == "Đã có kết quả CLS" ? "table-warning border-warning" : "";
-                                    <tr id="row-wait-@item.MaPhieuKhamBenh" class="@bgClass">
+                                    <tr id="row-wait-@item.MaPhieuKhamBenh" class="paginate-row @bgClass">
                                         <td><span class="badge bg-danger fs-6">@item.STT</span></td>
                                         <td class="align-middle fw-bold">
                                             @item.TenBN
                                             @if (item.TrangThai == "Đã có kết quả CLS")
                                             {
-                                                <div class="mt-1"><span class="badge bg-warning text-dark"><i class="fas fa-check-circle"></i> Đã có KQ CLS</span></div>
+                                                <div class="mt-1"><span class="badge bg-warning text-dark"><i class="fas fa-check-circle"></i> Có KQ CLS</span></div>
                                             }
                                         </td>
                                         <td class="align-middle text-center">
-                                            <button class="btn btn-sm btn-success shadow-sm" onclick="TiepNhanBN(@item.MaPhieuKhamBenh)">
-                                                Tiếp nhận
-                                            </button>
+                                            <button class="btn btn-sm btn-success shadow-sm" onclick="TiepNhanBN(@item.MaPhieuKhamBenh)">Khám</button>
                                         </td>
                                     </tr>
                                 }
                             }
                         </tbody>
                     </table>
+                    <div id="page-cho-kham" class="d-flex justify-content-center py-2 bg-light"></div>
                 </div>
             </div>
 
             <div class="card queue-card">
                 <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-user-md me-2"></i>Danh sách Đang Khám</span>
+                    <span><i class="fas fa-user-md me-2"></i>Đang Khám</span>
                     <small class="text-dark opacity-75">Click để nạp</small>
                 </div>
-                <div class="card-body p-0" style="max-height: 280px; overflow-y: auto;">
+                <div class="card-body p-0">
                     <table class="table queue-table mb-0" id="table-dangkham">
                         <thead>
                             <tr>
@@ -280,27 +295,77 @@
                                 <th>Lý do</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="body-dang-kham">
                             @if (ViewBag.DangKham != null)
                             {
                                 foreach (var item in ViewBag.DangKham)
                                 {
-                                    <tr style="cursor:pointer;" onclick="LoadDangKham(@item.MaPhieuKhamBenh)" id="row-dang-@item.MaPhieuKhamBenh">
-                                        <td class="text-primary fw-bold">@item.TenBN</td>
+                                    // Đổi màu nền nhẹ nếu đã có kết quả CLS để bác sĩ dễ chú ý
+                                    string bgDangKham = item.TrangThai == "Đã có kết quả CLS" ? "table-warning border-warning" : "";
+
+                                    <tr style="cursor:pointer;" class="paginate-row @bgDangKham" onclick="LoadDangKham(@item.MaPhieuKhamBenh)" id="row-dang-@item.MaPhieuKhamBenh">
+                                        <td class="text-primary fw-bold">
+                                            @item.TenBN
+
+                                            @if (item.TrangThai == "Chờ thanh toán" || item.TrangThai == "Chờ cận lâm sàng")
+                                            {
+                                                <div class="mt-1"><span class="badge bg-secondary"><i class="fas fa-running me-1"></i>Đang đi CLS</span></div>
+                                            }
+                                            else if (item.TrangThai == "Đã có kết quả CLS")
+                                            {
+                                                <div class="mt-1"><span class="badge bg-warning text-dark"><i class="fas fa-check-circle me-1"></i>Đã xong CLS</span></div>
+                                            }
+                                        </td>
+                                        <td class="align-middle">@item.LyDoDenKham</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <div id="page-dang-kham" class="d-flex justify-content-center py-2 bg-light"></div>
+                </div>
+            </div>
+
+            <div class="card queue-card">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-check-double me-2"></i>Đã Khám Xong</span>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table queue-table mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width:40px">#</th>
+                                <th>Tên Bệnh Nhân</th>
+                                <th>Lý do</th>
+                            </tr>
+                        </thead>
+                        <tbody id="body-da-kham">
+                            @if (ViewBag.DaKham != null)
+                            {
+                                int sttDK = 1;
+                                foreach (var item in ViewBag.DaKham)
+                                {
+                                    <tr style="cursor:pointer;" class="paginate-row" onclick="LoadDangKham(@item.MaPhieuKhamBenh)">
+                                        <td class="text-center">@(sttDK++)</td>
+                                        <td class="text-success fw-bold">@item.TenBN</td>
                                         <td>@item.LyDoDenKham</td>
                                     </tr>
                                 }
                             }
                         </tbody>
                     </table>
+                    <div id="page-da-kham" class="d-flex justify-content-center py-2 bg-light"></div>
                 </div>
             </div>
         </div>
 
         <div class="col-md-8">
             <div class="card exam-card">
-                <div class="card-header">
-                    <i class="fas fa-file-medical me-2"></i> Khung Khám Bệnh &amp; Kê Đơn
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-file-medical me-2"></i> Khung Khám Bệnh &amp; Kê Đơn</span>
+                    <button class="btn btn-sm btn-light text-primary shadow-sm fw-bold" onclick="window.location.reload()" type="button" title="Hủy bỏ dữ liệu đang nhập và làm mới trang">
+                        <i class="fas fa-sync-alt me-1"></i> Làm mới
+                    </button>
                 </div>
                 <div class="card-body">
                     @using (Html.BeginForm("LuuKhamBenh", "BacSi", FormMethod.Post, new { id = "frmKhamBenh", @class = "form-horizontal" }))
@@ -310,21 +375,29 @@
 
                         <div class="patient-info-bar">
                             <div class="row g-3">
-                                <div class="col-md-6">
+                                <div class="col-md-5">
                                     <div class="info-label">Họ tên bệnh nhân</div>
                                     <div class="info-value text-danger fs-5" id="lblTenBN">Chưa tiếp nhận</div>
                                 </div>
-                                <div class="col-md-2">
-                                    <div class="info-label">Tuổi</div>
+                                <div class="col-md-3">
+                                    <div class="info-label">Ngày sinh (Tuổi)</div>
                                     <div class="info-value" id="lblTuoi">&mdash;</div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="info-label">Giới tính</div>
                                     <div class="info-value" id="lblGioiTinh">&mdash;</div>
                                 </div>
+                                <div class="col-md-2">
+                                    <div class="info-label">SĐT</div>
+                                    <div class="info-value" id="lblSDT">&mdash;</div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="info-label">Địa chỉ liên hệ</div>
+                                    <div class="info-value" id="lblDiaChi">&mdash;</div>
+                                </div>
                                 <div class="col-md-12">
                                     <div class="info-label">Lý do khám</div>
-                                    <div class="info-value text-primary" id="lblLyDo">&mdash;</div>
+                                    <div class="info-value text-primary fw-bold" id="lblLyDo">&mdash;</div>
                                 </div>
                             </div>
                         </div>
@@ -376,8 +449,7 @@
                                             <th width="60px" class="text-center">Xóa</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
                             </div>
                         </div>
@@ -397,16 +469,17 @@
                                     <option value=""></option>
                                     @if (ViewBag.DanhSachBenh != null)
                                     {
+                                        int sttBenh = 1;
                                         foreach (var b in ViewBag.DanhSachBenh)
                                         {
-                                            <option value="@b.MaBenh">[@b.MaBenh] @b.TenBenh</option>
+                                            <option value="@b.MaBenh">[#@(sttBenh++)] @b.TenBenh</option>
                                         }
                                     }
                                 </select>
                             </div>
 
                             <div class="table-responsive mb-4">
-                                <table class="table table-bordered table-sm align-middle" id="tbBenhDaChọn">
+                                <table class="table table-bordered table-sm align-middle" id="tbBenhDaChon">
                                     <thead class="table-secondary">
                                         <tr>
                                             <th width="150px">Mã Bệnh</th>
@@ -414,8 +487,7 @@
                                             <th width="60px" class="text-center">Xóa</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
                             </div>
 
@@ -429,9 +501,11 @@
                                     <option value=""></option>
                                     @if (ViewBag.DanhSachThuoc != null)
                                     {
+                                        int sttThuoc = 1;
                                         foreach (var t in ViewBag.DanhSachThuoc)
                                         {
-                                            <option value="@t.MaThuoc" data-gia="@t.GiaBan">@t.TenThuoc (ĐVT: @t.DonViCoBan)</option>
+                                            string ttBHYT = t.CoBHYT ? "Hỗ trợ BHYT" : "Không BHYT";
+                                <option value="@t.MaThuoc" data-gia="@t.GiaBan">[#@(sttThuoc++)]|@ttBHYT| @t.TenThuoc | (ĐVT: @t.DonViCoBan)</option>
                                         }
                                     }
                                 </select>
@@ -452,8 +526,7 @@
                                             <th width="50px">Xóa</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                    </tbody>
+                                    <tbody></tbody>
                                 </table>
                             </div>
                         </div>
@@ -483,29 +556,50 @@
                 </div>
             </div>
             <div class="col-5 text-end">
-                <h3 style="font-weight: 800; color: #3b82f6; font-size: 1.6rem; text-transform:uppercase;">HÓA ĐƠN & KẾT QUẢ KHÁM</h3>
+                <h3 style="font-weight: 800; color: #3b82f6; font-size: 1.4rem; text-transform:uppercase;" id="printTitle">PHIẾU KHÁM BỆNH</h3>
                 <p class="mb-0 fw-bold text-dark fs-5">Mã PK: <span class="text-danger" id="printMaPK"></span></p>
             </div>
         </div>
 
-        <hr style="border-top: 2px solid #1e293b; margin-bottom: 2rem;" />
+        <hr style="border-top: 2px solid #1e293b; margin-bottom: 1.5rem;" />
 
         <div class="row mb-4">
             <div class="col-12">
-                <div style="font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Thông tin bệnh nhân</div>
-                <div class="text-primary fs-5 fw-bold" id="printTenBN"></div>
-                <div class="row mt-2">
-                    <div class="col-4">
-                        <div style="font-size: 0.85rem; color: #64748b;">Tuổi / Giới tính</div>
-                        <div class="fw-bold"><span id="printTuoi"></span> - <span id="printGioiTinh"></span></div>
-                    </div>
+                <div style="font-size: 0.9rem; color: #64748b; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px;">THÔNG TIN BỆNH NHÂN</div>
+                <div class="row">
                     <div class="col-8">
-                        <div style="font-size: 0.85rem; color: #64748b;">Lý do khám</div>
-                        <div class="fw-bold" id="printLyDo"></div>
+                        <div class="d-flex align-items-baseline gap-2 mb-1">
+                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Họ và tên:</span>
+                            <span class="text-primary fs-5 fw-bold text-uppercase" id="printTenBN"></span>
+                        </div>
+                        <div class="d-flex align-items-baseline gap-2 mb-1">
+                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Ngày sinh:</span>
+                            <span class="fw-bold" id="printTuoi"></span>
+                        </div>
+                        <div class="d-flex align-items-baseline gap-2 mb-1">
+                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Địa chỉ:</span>
+                            <span class="fw-bold" id="printDiaChi"></span>
+                        </div>
                     </div>
-                    <div class="col-12 mt-2">
-                        <div style="font-size: 0.85rem; color: #64748b;">Kết luận chẩn đoán</div>
-                        <div class="fw-bold text-danger" id="printChanDoan"></div>
+                    <div class="col-4">
+                        <div class="d-flex align-items-baseline gap-2 mb-1">
+                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Giới tính:</span>
+                            <span class="fw-bold" id="printGioiTinh"></span>
+                        </div>
+                        <div class="d-flex align-items-baseline gap-2 mb-1">
+                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Điện thoại:</span>
+                            <span class="fw-bold" id="printSDT"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2 pt-2" style="border-top: 1px dashed #cbd5e1;">
+                    <div class="col-12 mb-1 d-flex align-items-baseline gap-2">
+                        <span style="font-size: 0.85rem; color: #64748b; width: 130px;">Lý do khám:</span>
+                        <span class="fw-bold" id="printLyDo"></span>
+                    </div>
+                    <div class="col-12 d-flex align-items-baseline gap-2">
+                        <span style="font-size: 0.85rem; color: #64748b; width: 130px;">Kết luận chẩn đoán:</span>
+                        <span class="fw-bold text-danger" id="printChanDoan"></span>
                     </div>
                 </div>
             </div>
@@ -521,8 +615,7 @@
                     <th class="text-end" style="width: 120px;">Thành tiền</th>
                 </tr>
             </thead>
-            <tbody id="printTbBody">
-            </tbody>
+            <tbody id="printTbBody"></tbody>
         </table>
 
         <div class="row justify-content-end mt-3">
@@ -543,6 +636,7 @@
             <div class="col-6">
                 <div style="font-weight: 700; color: #334155;">Bác sĩ điều trị</div>
                 <div class="text-muted fst-italic" style="font-size: 0.8rem;">(Ký, ghi rõ họ tên)</div>
+                <div class="mt-4 fw-bold text-dark fs-5" id="printTenBS"></div>
             </div>
         </div>
     </div>
@@ -553,352 +647,198 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
+        // ==========================================
+        // 1. BIẾN VÀ CÁC HÀM TOÀN CỤC (GLOBAL SCOPE)
+        // ==========================================
         var thuocIndex = 0;
         var dvIndex = 0;
+        var isDaThanhToanKham = true;
+        var phiKhamBenh = 0;
+        var currentTrangThai = '';
 
-        $(document).ready(function () {
-            $('.select2').select2({ width: '100%', theme: "classic", allowClear: true });
+        // Hàm thêm Dòng Bệnh
+        function AddBenhRow(maBenh, tenBenh) {
+            var tr = `
+                <tr class="benh-row">
+                    <td><input type="hidden" name="DanhSachMaBenh" value="${maBenh}" /><span class="badge bg-secondary">${maBenh}</span></td>
+                    <td class="fw-bold">${tenBenh}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="XoaBenh(this, '${maBenh}')"><i class="fas fa-times"></i></button>
+                    </td>
+                </tr>`;
+            $('#tbBenhDaChon tbody').append(tr);
+            $('#cboBenh').find(`option[value="${maBenh}"]`).prop('disabled', true);
+        }
 
-            $('#chkCLS').change(function() {
-                if(this.checked) {
-                    $('#vungKetLuan').slideUp();
-                    $('#vungChiDinhCLS').slideDown();
-                    $('#TrieuChung').attr('placeholder', 'Nhập tóm tắt triệu chứng yêu cầu cận lâm sàng...');
-                    $('#btnHoanThanh').html('<i class="fas fa-print me-2"></i> In Cận Lâm Sàng & Lưu')
-                                      .removeClass('btn-success').addClass('btn-danger');
-                } else {
-                    $('#vungKetLuan').slideDown();
-                    $('#vungChiDinhCLS').slideUp();
-                    $('#TrieuChung').attr('placeholder', 'Nhập triệu chứng, dấu hiệu sinh tồn...');
-                    $('#btnHoanThanh').html('<i class="fas fa-print me-2"></i> In Đơn Thuốc & Lưu')
-                                      .removeClass('btn-danger').addClass('btn-success');
+        // Hàm thêm Dòng Thuốc (Cho phép nhập số thập phân step="0.5")
+        function AddThuocRow(t) {
+            var tr = `
+                <tr>
+                    <td class="text-start align-middle">
+                        <input type="hidden" name="DonThuoc.Index" value="${thuocIndex}" />
+                        <input type="hidden" name="DonThuoc[${thuocIndex}].MaThuoc" value="${t.MaThuoc}" />
+                        <strong class="text-success">${t.TenThuoc}</strong>
+                    </td>
+                    <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Sang" value="${t.Sang || 0}" min="0"></td>
+                    <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Trua" value="${t.Trua || 0}" min="0"></td>
+                    <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Chieu" value="${t.Chieu || 0}" min="0"></td>
+                    <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Toi" value="${t.Toi || 0}" min="0"></td>
+                    <td><input type="number" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].SoNgay" value="${t.SoNgay || 1}" min="1"></td>
+                    <td><input type="number" class="form-control form-control-sm text-center bg-warning text-dark fw-bold tong-sl" readonly value="${t.SoLuong || 0}" name="DonThuoc[${thuocIndex}].SoLuong"></td>
+                    <td>
+                        <select class="form-select form-select-sm" name="DonThuoc[${thuocIndex}].GhiChu">
+                            <option value="Uống sau ăn" ${t.GhiChu == 'Uống sau ăn' ? 'selected' : ''}>Uống sau ăn</option>
+                            <option value="Uống trước ăn" ${t.GhiChu == 'Uống trước ăn' ? 'selected' : ''}>Uống trước ăn</option>
+                            <option value="Ngậm" ${t.GhiChu == 'Ngậm' ? 'selected' : ''}>Ngậm</option>
+                            <option value="Bôi ngoài da" ${t.GhiChu == 'Bôi ngoài da' ? 'selected' : ''}>Bôi ngoài da</option>
+                        </select>
+                    </td>
+                    <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="XoaThuoc(this, '${t.MaThuoc}')"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
+            $('#tbDonThuoc tbody').append(tr);
+            thuocIndex++;
+            $('#cboThuoc').find(`option[value="${t.MaThuoc}"]`).prop('disabled', true);
+        }
+
+        // Xóa Bệnh và Thuốc (Mở khóa lại trong Combobox)
+        function XoaBenh(btn, ma) { $(btn).closest('tr').remove(); $('#cboBenh').find(`option[value="${ma}"]`).prop('disabled', false).trigger('change'); }
+        function XoaThuoc(btn, ma) { $(btn).closest('tr').remove(); $('#cboThuoc').find(`option[value="${ma}"]`).prop('disabled', false).trigger('change'); }
+
+        // Logic Phân Trang cho 3 bảng
+        function setupPagination(tbodyId, navId, itemsPerPage) {
+            let rows = $('#' + tbodyId + ' tr.paginate-row');
+            let totalRows = rows.length;
+            let totalPages = Math.ceil(totalRows / itemsPerPage);
+            if (totalPages <= 1) { $('#' + navId).empty(); return; }
+
+            function showPage(page) {
+                if (page < 1) page = 1;
+                if (page > totalPages) page = totalPages;
+
+                rows.hide();
+                rows.slice((page - 1) * itemsPerPage, page * itemsPerPage).show();
+
+                let html = '<nav><ul class="pagination pagination-sm mb-0">';
+                html += `<li class="page-item ${page === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="1">&laquo;&laquo;</a></li>`;
+                html += `<li class="page-item ${page === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${page - 1}">&laquo;</a></li>`;
+                for (let i = 1; i <= totalPages; i++) {
+                    html += `<li class="page-item ${page === i ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
                 }
-            });
+                html += `<li class="page-item ${page === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${page + 1}">&raquo;</a></li>`;
+                html += `<li class="page-item ${page === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${totalPages}">&raquo;&raquo;</a></li>`;
+                html += '</ul></nav>';
 
-            // SỰ KIỆN NÚT HOÀN THÀNH - IN TRƯỚC LƯU SAU
-            $('#btnHoanThanh').on('click', function(e) {
-                // 1. Chuẩn bị dữ liệu hiển thị lên tờ IN
-                $('#printMaPK').text('#' + $('#MaPhieuKhamBenh').val());
-                $('#printTenBN').text($('#lblTenBN').text());
-                $('#printTuoi').text($('#lblTuoi').text());
-                $('#printGioiTinh').text($('#lblGioiTinh').text());
-                $('#printLyDo').text($('#lblLyDo').text());
-
-                var chanDoan = $('#KetLuan').val();
-                $('#tbBenhDaChọn tbody tr').each(function() {
-                    var tenB = $(this).find('td:eq(1)').text();
-                    if(tenB) chanDoan += (chanDoan ? ", " : "") + tenB;
+                $('#' + navId).html(html);
+                $('#' + navId + ' .page-link').off('click').on('click', function (e) {
+                    e.preventDefault();
+                    let targetPage = parseInt($(this).attr('data-page'));
+                    if (!isNaN(targetPage)) showPage(targetPage);
                 });
-                $('#printChanDoan').text(chanDoan || 'Theo dõi / Chưa kết luận');
+            }
+            showPage(1);
+        }
 
-                var tbodyHtml = '';
-                var stt = 1;
-                var tongTien = 0;
-
-                // 2. Nếu là chỉ định Cận Lâm Sàng
-                if ($('#chkCLS').is(':checked')) {
-                    $('#tbDichVu tbody tr').each(function() {
-                        var tenDV = $(this).find('td:eq(0) strong').text();
-                        var maDV = $(this).find('input[name*=".MaDV"]').val();
-                        var option = $('#cboDichVu option[value="'+maDV+'"]');
-                        var gia = option.length ? parseFloat(option.attr('data-gia') || 0) : 0;
-
-                        tbodyHtml += `<tr>
-                            <td class="text-center">${stt++}</td>
-                            <td><strong>${tenDV}</strong></td>
-                            <td class="text-center">1</td>
-                            <td class="text-end">${gia.toLocaleString('vi-VN')} ₫</td>
-                            <td class="text-end fw-bold">${gia.toLocaleString('vi-VN')} ₫</td>
-                        </tr>`;
-                        tongTien += gia;
-                    });
-                } else {
-                    // 3. Nếu là kê Đơn Thuốc
-                    $('#tbDonThuoc tbody tr').each(function() {
-                        var tenThuoc = $(this).find('td:eq(0) strong').text();
-                        var maThuoc = $(this).find('input[name*=".MaThuoc"]').val();
-                        var sl = parseFloat($(this).find('.tong-sl').val()) || 0;
-                        var option = $('#cboThuoc option[value="'+maThuoc+'"]');
-                        var gia = option.length ? parseFloat(option.attr('data-gia') || 0) : 0;
-                        var cachDung = $(this).find('select[name*=".GhiChu"]').val();
-                        var thanhTien = gia * sl;
-
-                        tbodyHtml += `<tr>
-                            <td class="text-center">${stt++}</td>
-                            <td>
-                                <strong>${tenThuoc}</strong><br/>
-                                <small class="text-muted">Cách dùng: ${cachDung}</small>
-                            </td>
-                            <td class="text-center">${sl}</td>
-                            <td class="text-end">${gia.toLocaleString('vi-VN')} ₫</td>
-                            <td class="text-end fw-bold">${thanhTien.toLocaleString('vi-VN')} ₫</td>
-                        </tr>`;
-                        tongTien += thanhTien;
-                    });
-                }
-
-                if (tbodyHtml === '') {
-                    tbodyHtml = '<tr><td colspan="5" class="text-center text-muted">Không có dịch vụ/thuốc nào được xuất.</td></tr>';
-                }
-
-                $('#printTbBody').html(tbodyHtml);
-                $('#printTongTien').text(tongTien.toLocaleString('vi-VN') + ' ₫');
-
-                // 4. Bật hộp thoại máy In (Cửa sổ Print PDF)
-                window.print();
-
-                // 5. Delay 1 chút rồi tự động Submit Form để Code lưu xuống DB chạy tiếp
-                setTimeout(function() {
-                    $('#frmKhamBenh').submit();
-                }, 500);
-            });
-
-            // SỰ KIỆN CHỌN DỊCH VỤ CẬN LÂM SÀNG
-            $('#cboDichVu').on('select2:select', function (e) {
-                var data = e.params.data;
-                var maDV = data.id;
-                var tenDV = data.text;
-
-                if (!maDV) return;
-
-                var exists = false;
-                $('input[name$=".MaDV"]').each(function() {
-                    if($(this).val() == maDV) exists = true;
-                });
-
-                if(exists) {
-                    alert('Dịch vụ này đã được chỉ định!');
-                } else {
-                    $.post('@Url.Action("GetPhongDichVu", "BacSi", new { area = "Staff" })', { maDV: maDV }, function(phongs) {
-                        var options = '';
-                        if (phongs && phongs.length > 0) {
-                            phongs.forEach(function(p, i) {
-                                var isSelected = (i === 0) ? 'selected' : '';
-                                options += `<option value="${p.MaPhong}" ${isSelected}>${p.TenPhong} (Đang chờ: ${p.SoNguoiCho} người)</option>`;
-                            });
-                        } else {
-                            options = '<option value="">-- Không có phòng phù hợp --</option>';
-                        }
-
-                        var tenHienThi = tenDV.split('] ')[1] || tenDV;
-                        var tr = `
-                            <tr>
-                                <td>
-                                    <input type="hidden" name="ChiDinhs.Index" value="${dvIndex}" />
-                                    <input type="hidden" name="ChiDinhs[${dvIndex}].MaDV" value="${maDV}" />
-                                    <strong class="text-primary">${tenHienThi}</strong>
-                                </td>
-                                <td>
-                                    <select name="ChiDinhs[${dvIndex}].MaPhong" class="form-select form-select-sm border-danger text-danger fw-bold bg-light">
-                                        ${options}
-                                    </select>
-                                </td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="$(this).closest('tr').remove()" title="Xóa">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                        `;
-                        $('#tbDichVu tbody').append(tr);
-                        dvIndex++;
-                    });
-                }
-                $(this).val(null).trigger('change');
-            });
-
-            // SỰ KIỆN CHỌN BỆNH TỪ COMBOBOX
-            $('#cboBenh').on('select2:select', function (e) {
-                var data = e.params.data;
-                var maBenh = data.id;
-                var textBenh = data.text;
-
-                if (!maBenh) return;
-
-                var exists = false;
-                $('input[name="DanhSachMaBenh"]').each(function() {
-                    if($(this).val() == maBenh) exists = true;
-                });
-
-                if(exists) {
-                    alert('Bệnh này đã được chẩn đoán!');
-                } else {
-                    var tenBenh = textBenh.split('] ')[1] || textBenh;
-                    var tr = `
-                        <tr>
-                            <td>
-                                <input type="hidden" name="DanhSachMaBenh" value="${maBenh}" />
-                                <span class="badge bg-secondary">${maBenh}</span>
-                            </td>
-                            <td class="fw-bold">${tenBenh}</td>
-                            <td class="text-center">
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="$(this).closest('tr').remove()" title="Xóa">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    $('#tbBenhDaChọn tbody').append(tr);
-                }
-                $(this).val(null).trigger('change');
-            });
-
-            // SỰ KIỆN CHỌN THUỐC TỪ COMBOBOX
-            $('#cboThuoc').on('select2:select', function (e) {
-                var data = e.params.data;
-                var maThuoc = data.id;
-                var tenThuoc = data.text;
-
-                if (!maThuoc) return;
-
-                var exists = false;
-                $('input[name$=".MaThuoc"]').each(function() {
-                    if($(this).val() == maThuoc) exists = true;
-                });
-
-                if(exists) {
-                    alert('Thuốc này đã có trong đơn!');
-                } else {
-                    var tr = `
-                        <tr>
-                            <td class="text-start align-middle">
-                                <input type="hidden" name="DonThuoc.Index" value="${thuocIndex}" />
-                                <input type="hidden" name="DonThuoc[${thuocIndex}].MaThuoc" value="${maThuoc}" />
-                                <strong class="text-success">${tenThuoc}</strong>
-                            </td>
-                            <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Sang" value="0" min="0"></td>
-                            <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Trua" value="0" min="0"></td>
-                            <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Chieu" value="0" min="0"></td>
-                            <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Toi" value="0" min="0"></td>
-                            <td><input type="number" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].SoNgay" value="1" min="1"></td>
-
-                            <td>
-                                <input type="number" class="form-control form-control-sm text-center bg-warning text-dark fw-bold tong-sl border-warning" readonly value="0" name="DonThuoc[${thuocIndex}].SoLuong">
-                            </td>
-
-                            <td>
-                                <select class="form-select form-select-sm" name="DonThuoc[${thuocIndex}].GhiChu">
-                                    <option value="Uống sau khi ăn">Uống sau khi ăn</option>
-                                    <option value="Uống trước khi ăn">Uống trước khi ăn</option>
-                                    <option value="Uống trong bữa ăn">Uống trong bữa ăn</option>
-                                    <option value="Hòa tan với nước">Hòa tan với nước</option>
-                                    <option value="Ngậm dưới lưỡi">Ngậm dưới lưỡi</option>
-                                    <option value="Bôi ngoài da">Bôi ngoài da</option>
-                                    <option value="Nhỏ mắt/mũi/tai">Nhỏ mắt/mũi/tai</option>
-                                    <option value="Sử dụng theo chỉ dẫn">Khác (Theo chỉ dẫn)</option>
-                                </select>
-                            </td>
-
-                            <td>
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="$(this).closest('tr').remove()" title="Xóa">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    $('#tbDonThuoc tbody').append(tr);
-                    thuocIndex++;
-                }
-                $(this).val(null).trigger('change');
-            });
-
-            $(document).on('input change', '.input-calc', function (e) {
-                var row = $(this).closest('tr');
-
-                var sangElem = row.find('input[name*=".Sang"]');
-                var truaElem = row.find('input[name*=".Trua"]');
-                var chieuElem = row.find('input[name*=".Chieu"]');
-                var toiElem = row.find('input[name*=".Toi"]');
-                var songayElem = row.find('input[name*=".SoNgay"]');
-
-                var sang = parseFloat(sangElem.val()) || 0;
-                var trua = parseFloat(truaElem.val()) || 0;
-                var chieu = parseFloat(chieuElem.val()) || 0;
-                var toi = parseFloat(toiElem.val()) || 0;
-                var songay = parseInt(songayElem.val()) || 1; // Số ngày phải là số nguyên
-
-                // CHỈ XỬ LÝ LÀM TRÒN VÀ TỰ ĐỘNG TĂNG NGÀY KHI SỰ KIỆN LÀ 'CHANGE' 
-                // (nghĩa là khi click mũi tên tăng/giảm hoặc sau khi gõ xong và click ra ngoài)
-                if (e.type === 'change') {
-                    // 1. Ép các liều dùng về đúng các số có đuôi .0 hoặc .5 (VD: gõ 0.3 sẽ thành 0.5)
-                    sang = Math.round(sang * 2) / 2; sangElem.val(sang);
-                    trua = Math.round(trua * 2) / 2; truaElem.val(trua);
-                    chieu = Math.round(chieu * 2) / 2; chieuElem.val(chieu);
-                    toi = Math.round(toi * 2) / 2; toiElem.val(toi);
-
-                    var tong1Ngay = sang + trua + chieu + toi;
-
-                    // 2. LOGIC ĐIỀU CHỈNH NGÀY
-                    // Nếu tổng 1 ngày là số lẻ (VD: 0.5, 1.5...) thì Số ngày BẮT BUỘC phải là số chẵn 
-                    // để Tổng số lượng xuất kho = (Tổng 1 ngày * Số ngày) luôn là một số Nguyên.
-                    if (tong1Ngay > 0 && tong1Ngay % 1 !== 0) {
-                        if (songay % 2 !== 0) { // Nếu ngày đang là số lẻ (1, 3, 5...)
-                            songay += 1;        // Tự động cộng thêm 1 ngày
-                            songayElem.val(songay);
-                        }
-                    }
-                }
-
-                // 3. Tính toán lại tổng lần cuối dựa trên các giá trị đã chuẩn hóa
-                var tong1NgayCalc = sang + trua + chieu + toi;
-                var tong = tong1NgayCalc * songay;
-
-                // 4. Cập nhật vào Ô tổng số lượng (Bỏ Math.ceil đi vì số lúc này cam kết là số nguyên)
-                row.find('.tong-sl').val(tong);
-            });
-        });
-
+        // Cập nhật giao diện khi chọn/tiếp nhận bệnh nhân
         function ResetFormAndBindData(resData) {
             $('#MaPhieuKhamBenh').val(resData.MaPhieuKhamBenh);
             $('#lblTenBN').text(resData.TenBN);
-            $('#lblTuoi').text(resData.Tuoi);
+            $('#lblTuoi').text(resData.NgaySinhStr + ' (' + resData.Tuoi + ' tuổi)');
             $('#lblGioiTinh').text(resData.GioiTinh);
+            $('#lblSDT').text(resData.SoDienThoai);
+            $('#lblDiaChi').text(resData.DiaChi);
             $('#lblLyDo').text(resData.LyDoDenKham);
             $('#TrieuChung').val(resData.TrieuChung || '');
-            $('#KetLuan').val('');
-            $('#tbBenhDaChọn tbody').empty();
+            $('#KetLuan').val(resData.KetLuan || '');
+
+            isDaThanhToanKham = resData.DaThanhToanKham !== false; // Nếu undefined coi như đã thanh toán để tránh in sai
+            phiKhamBenh = resData.PhiKham || 0;
+            currentTrangThai = resData.TrangThai; // Cập nhật lại trạng thái hiện tại
+            $('#printTenBS').text(resData.TenBS || '');
+
+            // Làm sạch UI
+            $('#tbBenhDaChon tbody').empty();
             $('#tbDonThuoc tbody').empty();
             $('#tbDichVu tbody').empty();
             $('#noiDungKQCLS').empty();
             $('#vungHienThiKQCLS').slideUp();
-
             thuocIndex = 0;
             dvIndex = 0;
+
+            // Kích hoạt lại option trong combobox
+            $('#cboBenh option, #cboThuoc option').prop('disabled', false);
+
+            
+
+            // Nạp dữ liệu cũ (Nếu bệnh nhân Đã Khám)
+            if(resData.DanhSachBenh) resData.DanhSachBenh.forEach(b => AddBenhRow(b.MaBenh, b.TenBenh));
+            if (resData.DanhSachThuoc) resData.DanhSachThuoc.forEach(t => AddThuocRow(t));
+
+            if (resData.DanhSachDichVu && resData.DanhSachDichVu.length > 0) {
+                $('#chkCLS').prop('checked', true); // Tick tự động
+                resData.DanhSachDichVu.forEach(function (dv) {
+                    var tr = `
+                        <tr>
+                            <td>
+                                <input type="hidden" name="ChiDinhs.Index" value="${dvIndex}" />
+                                <input type="hidden" name="ChiDinhs[${dvIndex}].MaDV" value="${dv.MaDV}" />
+                                <input type="hidden" class="dv-gia" value="${dv.Gia}" /> <strong class="text-primary">${dv.TenDV}</strong>
+                            </td>
+                            <td>
+                                <select name="ChiDinhs[${dvIndex}].MaPhong" class="form-select form-select-sm border-danger text-danger fw-bold bg-light">
+                                    <option value="${dv.MaPhong}">Phòng đang thực hiện / Đã xếp</option>
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="$(this).closest('tr').remove()"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    $('#tbDichVu tbody').append(tr);
+                    dvIndex++;
+                });
+            } else {
+                $('#chkCLS').prop('checked', false);
+            }
+
             $('#chkCLS').prop('checked', false).trigger('change');
-            $('#btnHoanThanh').prop('disabled', false);
+            $('.select2').trigger('change');
+
+            var isDangDiCLS = (currentTrangThai === 'Chờ thanh toán' || currentTrangThai === 'Chờ cận lâm sàng');
+            var isHoanThanh = (currentTrangThai === 'Hoàn thành');
+
+            if (isDangDiCLS) {
+                $('#btnHoanThanh').prop('disabled', true).html('<i class="fas fa-user-clock me-2"></i> Bệnh nhân đang đi CLS').removeClass('btn-success btn-danger').addClass('btn-secondary');
+            } else if (isHoanThanh) {
+                $('#btnHoanThanh').prop('disabled', true).html('<i class="fas fa-check-double me-2"></i> Đã Khám Xong').removeClass('btn-success btn-danger').addClass('btn-secondary');
+            }
+
             $('html, body').animate({ scrollTop: $('#frmKhamBenh').offset().top - 100 }, 500);
         }
 
         function TiepNhanBN(maPhieu) {
             $.post('@Url.Action("TiepNhan", "BacSi", new { area = "Staff" })', { maPhieu: maPhieu }, function (res) {
                 if (res.success) {
-                    $('#row-wait-' + maPhieu).fadeOut(300, function() { $(this).remove(); });
-
-                    var rowDangKham = `<tr style="cursor:pointer;" onclick="LoadDangKham(${res.Data.MaPhieuKhamBenh})" id="row-dang-${res.Data.MaPhieuKhamBenh}">
-                                            <td class="text-primary fw-bold">${res.Data.TenBN}</td>
-                                            <td>${res.Data.LyDoDenKham}</td>
+                    $('#row-wait-' + maPhieu).fadeOut(300, function() { $(this).remove(); setupPagination('body-cho-kham', 'page-cho-kham', 5); });
+                    var rowDangKham = `<tr style="cursor:pointer;" class="paginate-row" onclick="LoadDangKham(${res.Data.MaPhieuKhamBenh})" id="row-dang-${res.Data.MaPhieuKhamBenh}">
+                                            <td class="text-primary fw-bold">${res.Data.TenBN}</td><td>${res.Data.LyDoDenKham}</td>
                                        </tr>`;
                     $('#table-dangkham tbody').append(rowDangKham);
+                    setupPagination('body-dang-kham', 'page-dang-kham', 5);
 
                     ResetFormAndBindData(res.Data);
                     LoadKetQuaCLS(res.Data.MaPhieuKhamBenh);
-                } else {
-                    alert('Có lỗi xảy ra khi tiếp nhận bệnh nhân!');
-                }
+                } else { alert('Có lỗi xảy ra khi tiếp nhận bệnh nhân!'); }
             });
         }
 
         function LoadDangKham(maPhieu) {
             $.post('@Url.Action("ChiTietDangKham", "BacSi", new { area = "Staff" })', { maPhieu: maPhieu }, function (res) {
                 if (res.success) {
-                    $('#table-dangkham tr').removeClass('table-active');
+                    $('.queue-table tr').removeClass('table-active');
                     $('#row-dang-' + maPhieu).addClass('table-active');
-
                     ResetFormAndBindData(res.Data);
                     LoadKetQuaCLS(maPhieu);
-                } else {
-                    alert('Không lấy được thông tin bệnh nhân này!');
-                }
+                } else { alert('Không lấy được thông tin bệnh nhân này!'); }
             });
         }
 
@@ -922,21 +862,11 @@
                         } else {
                             htmlNoiDung = '<div style="white-space:pre-wrap;">' + htmlNoiDung + '</div>';
                         }
-
                         var ngayTra = item.NgayThucHien || '';
-                        if (ngayTra && ngayTra.indexOf('/Date(') >= 0) {
-                            var date = new Date(parseInt(ngayTra.substr(6)));
-                            ngayTra = date.toLocaleString('vi-VN');
-                        }
-
                         content += `
                         <div class="cls-result-card mb-3">
-                            <div class="card-header">
-                                <i class="fas fa-flask me-1"></i> Dịch vụ: ${item.TenDichVu || item.TenDV} <span class="float-end">Ngày trả: ${ngayTra}</span>
-                            </div>
-                            <div class="card-body py-2">
-                                ${htmlNoiDung}
-                            </div>
+                            <div class="card-header"><i class="fas fa-flask me-1"></i> Dịch vụ: ${item.TenDichVu || item.TenDV} <span class="float-end">Ngày trả: ${ngayTra}</span></div>
+                            <div class="card-body py-2">${htmlNoiDung}</div>
                         </div>`;
                     });
                     $('#noiDungKQCLS').html(content);
@@ -945,5 +875,298 @@
                 }
             });
         }
+
+
+        // ==========================================
+        // 2. SỰ KIỆN GIAO DIỆN (DOCUMENT READY)
+        // ==========================================
+        $(document).ready(function () {
+
+            
+            function LoadDanhSachChoKham() {
+                $.get(window.location.href, function (data) {
+                    var $html = $(data);
+
+                    // 1. Cập nhật bảng Chờ khám
+                    $('#body-cho-kham').html($html.find('#body-cho-kham').html());
+                    if ($('#badge-cho-kham').length) {
+                        $('#badge-cho-kham').text($html.find('#badge-cho-kham').text());
+                    }
+                    setupPagination('body-cho-kham', 'page-cho-kham', 5);
+
+                    // --- THÊM 2 DÒNG NÀY ĐỂ CẬP NHẬT LUÔN BẢNG ĐANG KHÁM ---
+                    $('#body-dang-kham').html($html.find('#body-dang-kham').html());
+                    setupPagination('body-dang-kham', 'page-dang-kham', 5);
+                });
+            }
+
+            // Gắn sự kiện cho nút Refresh thủ công
+            $('#btnReloadChoKham').on('click', function () {
+                var $icon = $(this).find('i');
+                $icon.addClass('fa-spin'); // Thêm hiệu ứng xoay icon cho mượt
+
+                LoadDanhSachChoKham();
+
+                setTimeout(() => $icon.removeClass('fa-spin'), 600); // Tắt hiệu ứng
+            });
+
+            // Tự động Auto refresh danh sách chờ mỗi 2 giây (2000 milliseconds)
+            setInterval(function () {
+                LoadDanhSachChoKham();
+            }, 2000);
+            // --- KẾT THÚC CẬP NHẬT ---
+            // Khởi tạo Select2
+            $('.select2').select2({ width: '100%', theme: "classic", allowClear: true });
+
+            // Khởi tạo Phân trang
+            setupPagination('body-cho-kham', 'page-cho-kham', 5);
+            setupPagination('body-dang-kham', 'page-dang-kham', 5);
+            setupPagination('body-da-kham', 'page-da-kham', 5);
+
+            // Bật / Tắt Yêu cầu CLS
+            $('#chkCLS').change(function () {
+                var isDangDiCLS = (currentTrangThai === 'Chờ thanh toán' || currentTrangThai === 'Chờ cận lâm sàng');
+                var isHoanThanh = (currentTrangThai === 'Hoàn thành');
+
+                if (this.checked) {
+                    $('#vungKetLuan').slideUp(); $('#vungChiDinhCLS').slideDown();
+                    $('#TrieuChung').attr('placeholder', 'Nhập tóm tắt triệu chứng yêu cầu cận lâm sàng...');
+
+                    if (!isDangDiCLS && !isHoanThanh) {
+                        $('#btnHoanThanh').html('<i class="fas fa-print me-2"></i> In Cận Lâm Sàng & Lưu').removeClass('btn-success btn-secondary').addClass('btn-danger').prop('disabled', false);
+                    }
+                } else {
+                    $('#vungKetLuan').slideDown(); $('#vungChiDinhCLS').slideUp();
+                    $('#TrieuChung').attr('placeholder', 'Nhập triệu chứng, dấu hiệu sinh tồn...');
+
+                    if (!isDangDiCLS && !isHoanThanh) {
+                        $('#btnHoanThanh').html('<i class="fas fa-print me-2"></i> In Đơn Thuốc & Lưu').removeClass('btn-danger btn-secondary').addClass('btn-success').prop('disabled', false);
+                    }
+                }
+            });
+
+            // SỰ KIỆN COMBOBOX CHỌN BỆNH
+            $('#cboBenh').on('select2:select', function (e) {
+                var id = e.params.data.id;
+                var text = e.params.data.text;
+                var ten = text.substring(text.indexOf(']') + 2);
+                AddBenhRow(id, ten);
+                $(this).val(null).trigger('change');
+            });
+
+            // SỰ KIỆN COMBOBOX CHỌN THUỐC
+            $('#cboThuoc').on('select2:select', function (e) {
+                var id = e.params.data.id;
+                var text = e.params.data.text;
+                var ten = text.split('|')[0].substring(text.indexOf(']') + 2).trim();
+                AddThuocRow({ MaThuoc: id, TenThuoc: ten });
+                $(this).val(null).trigger('change');
+            });
+
+            // SỰ KIỆN TÍNH TOÁN SỐ LƯỢNG THUỐC TỰ ĐỘNG
+            $(document).on('input change', '.input-calc', function (e) {
+                var row = $(this).closest('tr');
+                var sangElem = row.find('input[name*=".Sang"]');
+                var truaElem = row.find('input[name*=".Trua"]');
+                var chieuElem = row.find('input[name*=".Chieu"]');
+                var toiElem = row.find('input[name*=".Toi"]');
+                var songayElem = row.find('input[name*=".SoNgay"]');
+
+                var sang = parseFloat(sangElem.val()) || 0;
+                var trua = parseFloat(truaElem.val()) || 0;
+                var chieu = parseFloat(chieuElem.val()) || 0;
+                var toi = parseFloat(toiElem.val()) || 0;
+                var songay = parseInt(songayElem.val()) || 1;
+
+                if (e.type === 'change') {
+                    // Ép làm tròn 0.5
+                    sang = Math.round(sang * 2) / 2; sangElem.val(sang);
+                    trua = Math.round(trua * 2) / 2; truaElem.val(trua);
+                    chieu = Math.round(chieu * 2) / 2; chieuElem.val(chieu);
+                    toi = Math.round(toi * 2) / 2; toiElem.val(toi);
+
+                    var tong1Ngay = sang + trua + chieu + toi;
+                    if (tong1Ngay > 0 && tong1Ngay % 1 !== 0) {
+                        if (songay % 2 !== 0) { songay += 1; songayElem.val(songay); }
+                    }
+                }
+
+                var tong1NgayCalc = sang + trua + chieu + toi;
+                row.find('.tong-sl').val(tong1NgayCalc * songay);
+            });
+
+            // SỰ KIỆN CHỌN DỊCH VỤ CẬN LÂM SÀNG
+            $('#cboDichVu').on('select2:select', function (e) {
+                var data = e.params.data;
+                var maDV = data.id; var tenDV = data.text;
+                if (!maDV) return;
+
+                // --- SỬA Ở ĐÂY: Lấy giá ngay lập tức từ option vừa click, xóa sạch dấu phẩy ---
+                var optionElement = $(data.element);
+                var rawGia = optionElement.attr('data-gia') || "0";
+                // Chuyển "120,000.00" thành "120000.00" để hàm parseFloat hiểu được chính xác
+                var giaDV = parseFloat(rawGia.replace(/,/g, ''));
+
+                var exists = false;
+                $('input[name$=".MaDV"]').each(function() { if($(this).val() == maDV) exists = true; });
+
+                if(exists) {
+                    alert('Dịch vụ này đã được chỉ định!');
+                } else {
+                    $.post('@Url.Action("GetPhongDichVu", "BacSi", new { area = "Staff" })', { maDV: maDV }, function(phongs) {
+                        var options = '';
+                        if (phongs && phongs.length > 0) {
+                            phongs.forEach(function(p, i) {
+                                var isSelected = (i === 0) ? 'selected' : '';
+                                options += `<option value="${p.MaPhong}" ${isSelected}>${p.TenPhong} (Đang chờ: ${p.SoNguoiCho} người)</option>`;
+                            });
+                        } else {
+                            options = '<option value="">-- Không có phòng phù hợp --</option>';
+                        }
+
+                        var tenHienThi = tenDV.split('] ')[1] || tenDV;
+                        var rawGia = $('#cboDichVu option:selected').attr('data-gia') || "0";
+                        var giaDV = parseFloat(rawGia.replace(',', '.')); // Thay dấu phẩy thành chấm đề phòng format C# tiếng Việt
+
+                        var tr = `
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="ChiDinhs.Index" value="${dvIndex}" />
+                                    <input type="hidden" name="ChiDinhs[${dvIndex}].MaDV" value="${maDV}" />
+                                    <input type="hidden" class="dv-gia" value="${giaDV}" /> 
+                                    
+                                    <strong class="text-primary">${tenHienThi}</strong>
+                                </td>
+                                <td>
+                                    <select name="ChiDinhs[${dvIndex}].MaPhong" class="form-select form-select-sm border-danger text-danger fw-bold bg-light">
+                                        ${options}
+                                    </select>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="$(this).closest('tr').remove()"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                        $('#tbDichVu tbody').append(tr);
+                        dvIndex++;
+                    });
+                }
+                $(this).val(null).trigger('change');
+            });
+
+            // SỰ KIỆN NÚT HOÀN THÀNH - IN & LƯU
+            $('#btnHoanThanh').on('click', function (e) {
+                // --- THÊM MỚI BƯỚC 2: KIỂM TRA SỐ LƯỢNG THUỐC ---
+                // Chỉ kiểm tra khi đang ở chế độ kê đơn (không chọn Cận lâm sàng)
+                if (!$('#chkCLS').is(':checked')) {
+                    var soLoaiThuoc = $('#tbDonThuoc tbody tr').length;
+
+                    // Nếu bảng thuốc có dữ liệu (bác sĩ có kê thuốc) thì mới kiểm tra số lượng
+                    if (soLoaiThuoc > 0) {
+                        var isInvalid = false;
+                        $('#tbDonThuoc tbody tr').each(function () {
+                            var sl = parseFloat($(this).find('.tong-sl').val()) || 0;
+                            if (sl <= 0) {
+                                isInvalid = true;
+                            }
+                        });
+
+                        if (isInvalid) {
+                            alert("Cảnh báo: Có thuốc trong đơn đang có số lượng bằng 0. Vui lòng kiểm tra lại đơn thuốc trước khi lưu!");
+                            return false; // Dừng ngay lập tức, không thực hiện in hay submit form
+                        }
+                    }
+                    // Nếu soLoaiThuoc === 0 (không kê thuốc nào), bỏ qua if này và tiếp tục lưu bình thường
+                }
+
+                if ($('#chkCLS').is(':checked')) {
+                    $('#printTitle').text('PHIẾU CHỈ ĐỊNH CẬN LÂM SÀNG');
+                } else {
+                    $('#printTitle').text('KẾT QUẢ KHÁM BỆNH & ĐƠN THUỐC');
+                }   
+                // --- KẾT THÚC KIỂM TRA BƯỚC 2 ---
+                $('#printMaPK').text('#' + $('#MaPhieuKhamBenh').val());
+                $('#printTenBN').text($('#lblTenBN').text());
+                $('#printTuoi').text($('#lblTuoi').text());
+                $('#printGioiTinh').text($('#lblGioiTinh').text());
+                $('#printLyDo').text($('#lblLyDo').text());
+                $('#printDiaChi').text($('#lblDiaChi').text());
+                $('#printSDT').text($('#lblSDT').text());
+
+                var chanDoan = $('#KetLuan').val();
+                $('#tbBenhDaChon tbody tr').each(function() {
+                    var tenB = $(this).find('td:eq(1)').text();
+                    if(tenB) chanDoan += (chanDoan ? ", " : "") + tenB;
+                });
+                $('#printChanDoan').text(chanDoan || 'Theo dõi / Chưa kết luận');
+
+                var tbodyHtml = ''; var stt = 1; var tongTien = 0;
+
+                // --- BẮT ĐẦU THÊM MỚI ---
+                // Kiểm tra nếu chưa thanh toán tiền khám thì in lên dòng đầu tiên
+                if (!isDaThanhToanKham && phiKhamBenh > 0) {
+                    tbodyHtml += `<tr>
+                        <td class="text-center">${stt++}</td>
+                        <td><strong class="text-danger">Khám bệnh lâm sàng (Chưa thanh toán)</strong></td>
+                        <td class="text-center">1</td>
+                        <td class="text-end">${phiKhamBenh.toLocaleString('vi-VN')} ₫</td>
+                        <td class="text-end fw-bold text-danger">${phiKhamBenh.toLocaleString('vi-VN')} ₫</td>
+                    </tr>`;
+                    tongTien += phiKhamBenh;
+                }
+                // --- KẾT THÚC THÊM MỚI ---
+
+                if ($('#chkCLS').is(':checked')) {
+                    $('#tbDichVu tbody tr').each(function() {
+                        var tenDV = $(this).find('td:eq(0) strong').text();
+                        var maDV = $(this).find('input[name*=".MaDV"]').val();
+                        var gia = 0;
+
+                        // 1. Đọc từ thẻ ẩn (ưu tiên)
+                        var valAn = $(this).find('.dv-gia').val();
+                        if (valAn) { gia = parseFloat(valAn); }
+
+                        // 2. Dự phòng 100%: Móc lại từ Dropdown
+                        if (isNaN(gia) || gia === 0) {
+                            var option = $('#cboDichVu option').filter(function () {
+                                return $(this).val().trim() === maDV.trim();
+                            });
+
+                            if (option.length > 0) {
+                                var rawGia = option.attr('data-gia') || "0";
+                                // Loại bỏ dấu phẩy như ở trên
+                                gia = parseFloat(rawGia.replace(/,/g, ''));
+                            }
+                        }
+
+                        // 3. Nếu vẫn NaN, ép về 0 để không hỏng giao diện
+                        if (isNaN(gia)) gia = 0;
+                        tbodyHtml += `<tr><td class="text-center">${stt++}</td><td><strong>${tenDV}</strong></td><td class="text-center">1</td><td class="text-end">${gia.toLocaleString('vi-VN')} ₫</td><td class="text-end fw-bold">${gia.toLocaleString('vi-VN')} ₫</td></tr>`;
+                        tongTien += gia;
+                    });
+                } else {
+                    $('#tbDonThuoc tbody tr').each(function() {
+                        var tenThuoc = $(this).find('td:eq(0) strong').text();
+                        var maThuoc = $(this).find('input[name*=".MaThuoc"]').val();
+                        var sl = parseFloat($(this).find('.tong-sl').val()) || 0;
+                        var option = $('#cboThuoc option[value="'+maThuoc+'"]');
+                        var gia = option.length ? parseFloat(option.attr('data-gia') || 0) : 0;
+                        var cachDung = $(this).find('select[name*=".GhiChu"]').val();
+                        var thanhTien = gia * sl;
+
+                        tbodyHtml += `<tr><td class="text-center">${stt++}</td><td><strong>${tenThuoc}</strong><br/><small class="text-muted">Cách dùng: ${cachDung}</small></td><td class="text-center">${sl}</td><td class="text-end">${gia.toLocaleString('vi-VN')} ₫</td><td class="text-end fw-bold">${thanhTien.toLocaleString('vi-VN')} ₫</td></tr>`;
+                        tongTien += thanhTien;
+                    });
+                }
+
+                if (tbodyHtml === '') { tbodyHtml = '<tr><td colspan="5" class="text-center text-muted">Không có dịch vụ/thuốc nào được xuất.</td></tr>'; }
+
+                $('#printTbBody').html(tbodyHtml);
+                $('#printTongTien').text(tongTien.toLocaleString('vi-VN') + ' ₫');
+
+                window.print();
+                setTimeout(function() { $('#frmKhamBenh').submit(); }, 500);
+            });
+        });
     </script>
 }

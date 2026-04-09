@@ -14,6 +14,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 
             ViewBag.ChoKham = db.GetDanhSachPhieuKham(maBS, "Chờ khám");
             ViewBag.DangKham = db.GetDanhSachPhieuKham(maBS, "Đang khám");
+            ViewBag.DaKham = db.GetDanhSachPhieuKham(maBS, "Hoàn thành");
             ViewBag.DanhSachBenh = db.GetDanhSachBenh();
             ViewBag.DanhSachThuoc = db.GetDanhSachThuoc();
             ViewBag.DanhSachDichVu = db.GetDanhSachDichVuCLS(); // Load List CLS
@@ -27,9 +28,11 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             // Lấy mã bác sĩ đang đăng nhập
             string maBS = Session["MaNV"]?.ToString() ?? "NV001";
 
-            // Truyền thêm maBS vào DBContext
-            var info = db.TiepNhan(maPhieu, maBS);
+            // Gọi hàm TiepNhan cũ để update CSDL
+            db.TiepNhan(maPhieu, maBS);
 
+            // Lấy data xịn có đầy đủ địa chỉ, SĐT trả về View
+            var info = db.GetThongTinChiTiet(maPhieu);
             if (info != null) return Json(new { success = true, Data = info });
             return Json(new { success = false });
         }
@@ -38,7 +41,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         [HttpPost]
         public JsonResult ChiTietDangKham(int maPhieu)
         {
-            var info = db.GetThongTinPhieuKham(maPhieu);
+            // Sử dụng hàm GetThongTinChiTiet thay cho hàm cũ
+            var info = db.GetThongTinChiTiet(maPhieu);
             if (info != null) return Json(new { success = true, Data = info });
             return Json(new { success = false });
         }

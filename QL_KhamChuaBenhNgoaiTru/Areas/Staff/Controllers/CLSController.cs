@@ -12,7 +12,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         {
             try
             {
+                // Danh sách chờ thực hiện (Code cũ của bạn)
                 var danhSachCho = db.GetDanhSachChoThucHien();
+
+                // LẤY THÊM DANH SÁCH ĐÃ XONG ĐỂ HIỂN THỊ BẢNG SỐ 2
+                ViewBag.DanhSachDaXong = db.GetDanhSachDaThucHien();
+
                 return View(danhSachCho);
             }
             catch (Exception ex)
@@ -56,6 +61,16 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             bool res = db.CapNhatKetQuaTuLIS(maKetQua, noiDung, maPhieuKhamBenh, maBS, fileKetQua, mauXN, chatLuong);
             if (res) return Json(new { success = true, fileKetQua = fileKetQua, maBacSi = maBS });
             return Json(new { success = false, message = "Lỗi khi lưu kết quả." });
+        }
+
+        // ==========================================
+        // ACTION MỚI: DÙNG ĐỂ GỌI MÀN HÌNH IN
+        // ==========================================
+        public ActionResult InKetQua(int id)
+        {
+            var data = db.GetThongTinIn(id);
+            if (data == null) return HttpNotFound("Không tìm thấy kết quả để in.");
+            return View(data);
         }
     }
 }

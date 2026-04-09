@@ -343,5 +343,128 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
             return list;
         }
+        // ==========================================
+        // 1. CÁC CLASS HỖ TRỢ DỮ LIỆU (PUBLIC DTO)
+        // ==========================================
+        public class KetQuaDaXongDTO
+        {
+            public int MaKetQua { get; set; }
+            public string TenDV { get; set; }
+            public string TenBN { get; set; }
+            public string GioiTinh { get; set; }
+            public int Tuoi { get; set; }
+        }
+
+        public class ThongTinInDTO
+        {
+            public string MaKetQua { get; set; }
+            public string MaBN { get; set; }
+            public string TenBN { get; set; }
+            public string NamSinh { get; set; }
+            public string GioiTinh { get; set; }
+            public string DiaChi { get; set; }
+            public string SoTheBHYT { get; set; }
+            public string TenDV { get; set; }
+            public string KetQua { get; set; }
+            public string DonVi { get; set; }
+            public string TenBacSiChiDinh { get; set; }
+            public string TenNguoiThucHien { get; set; }
+            public string ChanDoan { get; set; }
+        }
+
+        // ==========================================
+        // 2. HAI HÀM LẤY DỮ LIỆU (ĐÃ SỬA LỖI DYNAMIC)
+        // ==========================================
+        public List<KetQuaDaXongDTO> GetDanhSachDaThucHien()
+        {
+            var list = new List<KetQuaDaXongDTO>();
+            using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectStr))
+            {
+                string sql = @"
+            SELECT ct.MaCTChiDinh AS MaKetQua, dv.TenDV, bn.HoTen, bn.GioiTinh, bn.NgaySinh
+            FROM CHITIET_CHIDINH ct
+            JOIN PHIEU_CHIDINH pc ON ct.MaPhieuChiDinh = pc.MaPhieuChiDinh
+            JOIN PHIEUKHAMBENH pkb ON pc.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
+            JOIN BENHNHAN bn ON pkb.MaBN = bn.MaBN
+            JOIN DICHVU dv ON ct.MaDV = dv.MaDV
+            WHERE ct.TrangThai = N'Đã có kết quả'
+              AND CAST(pc.NgayChiDinh AS DATE) = CAST(GETDATE() AS DATE)";
+
+                using (System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    using (System.Data.SqlClient.SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            int tuoi = dr["NgaySinh"] != DBNull.Value ? DateTime.Now.Year - Convert.ToDateTime(dr["NgaySinh"]).Year : 0;
+
+                            // Sử dụng class cụ thể thay vì đối tượng vô danh
+                            list.Add(new KetQuaDaXongDTO
+                            {
+                                MaKetQua = Convert.ToInt32(dr["MaKetQua"]),
+                                TenDV = dr["TenDV"].ToString(),
+                                TenBN = dr["HoTen"].ToString(),
+                                GioiTinh = dr["GioiTinh"].ToString(),
+                                Tuoi = tuoi
+                            });
+                        }
+                    }
+                }
+            }
+            return list;
+        }
+
+        public ThongTinInDTO GetThongTinIn(int maKetQua)
+        {
+            using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectStr))
+            {
+                string sql = @"
+            SELECT 
+                ct.MaCTChiDinh, bn.MaBN, bn.HoTen AS TenBN, bn.NgaySinh, bn.GioiTinh, bn.DiaChi, bn.SoTheBHYT,
+                dv.TenDV, ct.KetQua, dv.DonViTinh,
+                bs.HoTen AS TenBacSiChiDinh, ktv.HoTen AS TenNguoiThucHien,
+                pkb.TrieuChung AS ChanDoan
+            FROM CHITIET_CHIDINH ct
+            JOIN PHIEU_CHIDINH pc ON ct.MaPhieuChiDinh = pc.MaPhieuChiDinh
+            JOIN PHIEUKHAMBENH pkb ON pc.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
+            JOIN BENHNHAN bn ON pkb.MaBN = bn.MaBN
+            JOIN DICHVU dv ON ct.MaDV = dv.MaDV
+            LEFT JOIN NHANVIEN bs ON pc.MaBacSiChiDinh = bs.MaNV
+            LEFT JOIN NHANVIEN ktv ON ct.MaBacSiThucHien = ktv.MaNV
+            WHERE ct.MaCTChiDinh = @MaKetQua";
+
+                using (System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@MaKetQua", maKetQua);
+                    conn.Open();
+                    using (System.Data.SqlClient.SqlDataReader dr = cmd.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            // Sử dụng class cụ thể để View InKetQua đọc được
+                            return new ThongTinInDTO
+                            {
+                                MaKetQua = dr["MaCTChiDinh"].ToString(),
+                                MaBN = dr["MaBN"].ToString(),
+                                TenBN = dr["TenBN"].ToString(),
+                                NamSinh = dr["NgaySinh"] != DBNull.Value ? Convert.ToDateTime(dr["NgaySinh"]).Year.ToString() : "",
+                                GioiTinh = dr["GioiTinh"].ToString(),
+                                DiaChi = dr["DiaChi"].ToString(),
+                                SoTheBHYT = dr["SoTheBHYT"].ToString(),
+                                TenDV = dr["TenDV"].ToString(),
+                                KetQua = dr["KetQua"].ToString(),
+                                DonVi = dr["DonViTinh"].ToString(),
+                                TenBacSiChiDinh = dr["TenBacSiChiDinh"].ToString(),
+                                TenNguoiThucHien = dr["TenNguoiThucHien"].ToString(),
+                                ChanDoan = dr["ChanDoan"].ToString()
+                            };
+                        }
+                    }
+                }
+            }
+            return null;
+        }
     }
+
 }
