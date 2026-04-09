@@ -258,6 +258,7 @@
     </Compile>
     <Compile Include="Helpers\RouteValueExtensions.cs" />
     <Compile Include="Models\DanhMucBenh.cs" />
+    <Compile Include="Models\DecimalModelBinder.cs" />
     <Compile Include="Models\DichVu.cs" />
     <Compile Include="Models\DonThuoc.cs" />
     <Compile Include="Models\HoaDon.cs" />
@@ -409,6 +410,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Admin\Views\Backup\Index.cshtml" />
+    <Content Include="Areas\Staff\Views\BacSi\InPhieu.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
