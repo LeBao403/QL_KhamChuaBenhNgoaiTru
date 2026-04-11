@@ -4,9 +4,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
 {
     public class KetQuaCLS
     {
-        public int MaKetQua { get; set; }
-        public int MaPhieuChiDinh { get; set; }
-        public int MaPhieuKhamBenh { get; set; }
+        public string MaKetQua { get; set; }
+        public string MaPhieuChiDinh { get; set; }
+        public string MaPhieuKhamBenh { get; set; }
         public string MaDV { get; set; }
         public string TrangThai { get; set; }
         public string NoiDungKetQua { get; set; }

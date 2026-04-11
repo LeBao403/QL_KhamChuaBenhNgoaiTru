@@ -78,13 +78,14 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult XacNhanDichVu(int maPhieuDK, string maDV, int maPhong, string lyDo)
+        public JsonResult XacNhanDichVu(string maPhieuDK, string maDV, int maPhong, string lyDo)
         {
-            if (maPhieuDK <= 0 || string.IsNullOrEmpty(maDV) || maPhong <= 0)
+            // Đổi điều kiện check rỗng
+            if (string.IsNullOrEmpty(maPhieuDK) || string.IsNullOrEmpty(maDV) || maPhong <= 0)
                 return Json(new { success = false, message = "Vui lòng chọn đầy đủ Dịch vụ và Phòng khám!" });
 
             string tenPhong, tenKhoa;
-            bool requirePayment; // Bổ sung biến hứng trạng thái thu tiền
+            bool requirePayment;
 
             // Gọi hàm DB đã update
             PhieuDangKyResult result = db.XacNhanDichVuKham(maPhieuDK, maDV, maPhong, lyDo, out tenPhong, out tenKhoa, out requirePayment);
@@ -97,24 +98,11 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                     stt = result.STT,
                     phong = tenPhong,
                     khoa = tenKhoa,
-                    requirePayment = requirePayment // Quăng cờ này ra View để JavaScript xử lý UI
+                    requirePayment = requirePayment
                 });
             }
             return Json(new { success = false, message = result.ErrorMessage });
         }
-
-        //[HttpPost]
-        //public JsonResult ChotCapSo(int maPhieuKhamBenh)
-        //{
-        //    string tenPhong, tenKhoa;
-        //    var result = db.ChotCapSoKham(maPhieuKhamBenh, out tenPhong, out tenKhoa);
-
-        //    if (result.Success)
-        //    {
-        //        return Json(new { success = true, stt = result.STT, phong = tenPhong, khoa = tenKhoa });
-        //    }
-        //    return Json(new { success = false, message = result.ErrorMessage });
-        //}
 
         [HttpPost]
         public JsonResult GetDanhSachPhong(string maDV)
@@ -201,34 +189,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public JsonResult XacNhanDichVu(int maPhieuDK, string maDV, int maPhong, string lyDo)
-        //{
-        //    if (maPhieuDK <= 0 || string.IsNullOrEmpty(maDV) || maPhong <= 0)
-        //        return Json(new { success = false, message = "Vui lòng chọn đầy đủ Dịch vụ và Phòng khám!" });
-
-        //    string tenPhong, tenKhoa;
-        //    bool requirePayment; // Bổ sung biến hứng trạng thái thu tiền
-
-        //    // Gọi hàm DB đã update
-        //    PhieuDangKyResult result = db.XacNhanDichVuKham(maPhieuDK, maDV, maPhong, lyDo, out tenPhong, out tenKhoa, out requirePayment);
-
-        //    if (result.Success)
-        //    {
-        //        return Json(new
-        //        {
-        //            success = true,
-        //            stt = result.STT,
-        //            phong = tenPhong,
-        //            khoa = tenKhoa,
-        //            requirePayment = requirePayment // Quăng cờ này ra View để JavaScript xử lý UI
-        //        });
-        //    }
-        //    return Json(new { success = false, message = result.ErrorMessage });
-        //}
-
         [HttpPost]
-        public JsonResult ChotCapSo(int maPhieuKhamBenh)
+        public JsonResult ChotCapSo(string maPhieuKhamBenh)
         {
             string tenPhong, tenKhoa;
             var result = db.ChotCapSoKham(maPhieuKhamBenh, out tenPhong, out tenKhoa);
@@ -239,20 +201,5 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             }
             return Json(new { success = false, message = result.ErrorMessage });
         }
-
-        //[HttpPost]
-        //public JsonResult GetDanhSachPhong(string maDV)
-        //{
-        //    var dtPhong = db.GetPhongTheoDichVu(maDV);
-        //    var list = new List<object>();
-
-        //    foreach (System.Data.DataRow row in dtPhong.Rows)
-        //    {
-        //        string valueStr = row["MaPhong"].ToString();
-        //        string textStr = $"{row["TenPhong"]} (Đang chờ: {row["SoNguoiCho"]})";
-        //        list.Add(new { Value = valueStr, Text = textStr });
-        //    }
-        //    return Json(list);
-        //}
     }
 }

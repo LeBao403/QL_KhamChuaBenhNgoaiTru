@@ -1,7 +1,10 @@
+using QL_KhamChuaBenhNgoaiTru.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
+using QL_KhamChuaBenhNgoaiTru.Helpers;
 
 namespace QL_KhamChuaBenhNgoaiTru.DBContext
 {
@@ -163,27 +166,25 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        // [NÂNG CẤP] Trả về thêm MaHD (out int maHD) để đem đi thanh toán VNPay/QR
-        public int DatLichKham(string maBN, DateTime ngayKham, int maKhungGio, string maDV, string lyDo, out string tenQuayTiepTan, out int maHD)
+        public string DatLichKham(string maBN, DateTime ngayKham, int maKhungGio, string maDV, string lyDo, out string tenQuayTiepTan, out string maHD)
         {
             tenQuayTiepTan = "Quầy Tiếp Tân";
-            maHD = 0;
-            int maPhieuDK = 0;
+            maHD = "";
+            string maPhieuDK = "";
 
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
                 conn.Open();
-                // Bắt đầu Transaction để đảm bảo tính toàn vẹn dữ liệu
                 using (SqlTransaction trans = conn.BeginTransaction())
                 {
                     try
                     {
                         // 1. KIỂM TRA GIỚI HẠN KHUNG GIỜ
                         string sqlCheckLimit = @"
-                            SELECT 
-                                (SELECT GioiHanSoNguoi FROM DANHMUC_KHUNGGIO WHERE MaKhungGio = @MaKhungGio) AS GioiHan,
-                                (SELECT COUNT(*) FROM PHIEUDANGKY WHERE CAST(NgayDangKy AS DATE) = CAST(@NgayKham AS DATE) 
-                                 AND MaKhungGio = @MaKhungGio AND HinhThucDangKy = N'Online' AND TrangThai != N'Hủy') AS DaDangKy";
+                    SELECT 
+                        (SELECT GioiHanSoNguoi FROM DANHMUC_KHUNGGIO WHERE MaKhungGio = @MaKhungGio) AS GioiHan,
+                        (SELECT COUNT(*) FROM PHIEUDANGKY WHERE CAST(NgayDangKy AS DATE) = CAST(@NgayKham AS DATE) 
+                         AND MaKhungGio = @MaKhungGio AND HinhThucDangKy = N'Online' AND TrangThai != N'Hủy') AS DaDangKy";
                         SqlCommand cmdCheck = new SqlCommand(sqlCheckLimit, conn, trans);
                         cmdCheck.Parameters.AddWithValue("@NgayKham", ngayKham);
                         cmdCheck.Parameters.AddWithValue("@MaKhungGio", maKhungGio);
@@ -209,16 +210,16 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         string lyDoGop = $"Dịch vụ: {tenDV} | Triệu chứng: {lyDo}";
 
                         string sqlTimQuay = @"
-                            SELECT TOP 1 p.MaPhong, p.TenPhong
-                            FROM PHONG p
-                            LEFT JOIN PHIEUDANGKY pdk ON p.MaPhong = pdk.MaPhong 
-                                AND CAST(pdk.NgayDangKy AS DATE) = CAST(@NgayKham AS DATE)
-                                AND pdk.MaKhungGio = @MaKhungGio
-                                AND pdk.HinhThucDangKy = N'Online' 
-                                AND pdk.TrangThai != N'Hủy'
-                            WHERE p.MaLoaiPhong = 1 AND p.TrangThai = 1
-                            GROUP BY p.MaPhong, p.TenPhong
-                            ORDER BY COUNT(pdk.MaPhieuDK) ASC, p.TenPhong ASC";
+                    SELECT TOP 1 p.MaPhong, p.TenPhong
+                    FROM PHONG p
+                    LEFT JOIN PHIEUDANGKY pdk ON p.MaPhong = pdk.MaPhong 
+                        AND CAST(pdk.NgayDangKy AS DATE) = CAST(@NgayKham AS DATE)
+                        AND pdk.MaKhungGio = @MaKhungGio
+                        AND pdk.HinhThucDangKy = N'Online' 
+                        AND pdk.TrangThai != N'Hủy'
+                    WHERE p.MaLoaiPhong = 1 AND p.TrangThai = 1
+                    GROUP BY p.MaPhong, p.TenPhong
+                    ORDER BY COUNT(pdk.MaPhieuDK) ASC, p.TenPhong ASC";
                         SqlCommand cmdQuay = new SqlCommand(sqlTimQuay, conn, trans);
                         cmdQuay.Parameters.AddWithValue("@NgayKham", ngayKham);
                         cmdQuay.Parameters.AddWithValue("@MaKhungGio", maKhungGio);
@@ -233,60 +234,63 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             }
                         }
 
-                        // 3. TẠO PHIẾU ĐĂNG KÝ (Lưu MaKhungGio, Trạng thái: Chờ thanh toán)
+                        // 3. TẠO PHIẾU ĐĂNG KÝ
+                        maPhieuDK = Utilities.Generate(conn, trans, "DK", "PHIEUDANGKY", "MaPhieuDK", 4);
+
                         string sqlInsertPDK = @"
-                            INSERT INTO PHIEUDANGKY (MaBN, NgayDangKy, MaKhungGio, STT, HinhThucDangKy, TrangThai, LyDo, MaPhong)
-                            OUTPUT INSERTED.MaPhieuDK
-                            VALUES (@MaBN, @NgayKham, @MaKhungGio, NULL, N'Online', N'Chờ xử lý', @LyDo, @MaPhong)";
+                    INSERT INTO PHIEUDANGKY (MaPhieuDK, MaBN, NgayDangKy, MaKhungGio, STT, HinhThucDangKy, TrangThai, LyDo, MaPhong)
+                    VALUES (@MaPhieuDK, @MaBN, @NgayKham, @MaKhungGio, NULL, N'Online', N'Chờ xử lý', @LyDo, @MaPhong)";
                         SqlCommand cmdInsertPDK = new SqlCommand(sqlInsertPDK, conn, trans);
+                        cmdInsertPDK.Parameters.AddWithValue("@MaPhieuDK", maPhieuDK);
                         cmdInsertPDK.Parameters.AddWithValue("@MaBN", maBN);
                         cmdInsertPDK.Parameters.AddWithValue("@NgayKham", ngayKham);
                         cmdInsertPDK.Parameters.AddWithValue("@MaKhungGio", maKhungGio);
                         cmdInsertPDK.Parameters.AddWithValue("@LyDo", lyDoGop);
                         cmdInsertPDK.Parameters.AddWithValue("@MaPhong", maQuayTiepTan);
+                        cmdInsertPDK.ExecuteNonQuery();
 
-                        maPhieuDK = Convert.ToInt32(cmdInsertPDK.ExecuteScalar());
-
-                        // 4. LẤY GIÁ DỊCH VỤ DV999 (Phí tiện ích)
+                        // 4. LẤY GIÁ DỊCH VỤ DV999
                         string sqlGiaPhi = "SELECT GiaDichVu FROM DICHVU WHERE MaDV = 'DV999'";
                         SqlCommand cmdGiaPhi = new SqlCommand(sqlGiaPhi, conn, trans);
                         decimal giaDV999 = Convert.ToDecimal(cmdGiaPhi.ExecuteScalar() ?? 100000);
 
-                        // 5. TẠO HÓA ĐƠN GỐC CHO PHÍ ĐẶT LỊCH (Liên kết với MaPhieuDK)
+                        // 5. TẠO HÓA ĐƠN GỐC
+                        maHD = Utilities.Generate(conn, trans, "HD", "HOADON", "MaHD", 6);
+
                         string sqlInsertHD = @"
-                            INSERT INTO HOADON (MaBN, MaPhieuDK, NgayThanhToan, TongTienGoc, TongTienBHYTChiTra, TongTienBenhNhanTra, TrangThaiThanhToan, GhiChu)
-                            OUTPUT INSERTED.MaHD
-                            VALUES (@MaBN, @MaPDK, NULL, @Tien, 0, @Tien, N'Chưa thanh toán', N'Phí tiện ích đặt lịch Online')";
+                    INSERT INTO HOADON (MaHD, MaBN, MaPhieuDK, NgayThanhToan, TongTienGoc, TongTienBHYTChiTra, TongTienBenhNhanTra, TrangThaiThanhToan, GhiChu)
+                    VALUES (@MaHD, @MaBN, @MaPDK, NULL, @Tien, 0, @Tien, N'Chưa thanh toán', N'Phí tiện ích đặt lịch Online')";
                         SqlCommand cmdInsertHD = new SqlCommand(sqlInsertHD, conn, trans);
+                        cmdInsertHD.Parameters.AddWithValue("@MaHD", maHD);
                         cmdInsertHD.Parameters.AddWithValue("@MaBN", maBN);
                         cmdInsertHD.Parameters.AddWithValue("@MaPDK", maPhieuDK);
                         cmdInsertHD.Parameters.AddWithValue("@Tien", giaDV999);
+                        cmdInsertHD.ExecuteNonQuery();
 
-                        maHD = Convert.ToInt32(cmdInsertHD.ExecuteScalar());
+                        // 6. TẠO CHI TIẾT HÓA ĐƠN
+                        string maCTHD = Utilities.Generate(conn, trans, "CHDV", "CT_HOADON_DV", "MaCTHD", 6);
 
-                        // 6. TẠO CHI TIẾT HÓA ĐƠN CHO DV999
                         string sqlInsertCTHD = @"
-                            INSERT INTO CT_HOADON_DV (MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
-                            VALUES (@MaHD, 'DV999', @Tien, @Tien, 0, @Tien, N'Chưa thanh toán')";
+                    INSERT INTO CT_HOADON_DV (MaCTHD, MaHD, MaDV, DonGia, TongTienGoc, TienBHYTChiTra, TienBenhNhanTra, TrangThaiThanhToan)
+                    VALUES (@MaCTHD, @MaHD, 'DV999', @Tien, @Tien, 0, @Tien, N'Chưa thanh toán')";
                         SqlCommand cmdInsertCTHD = new SqlCommand(sqlInsertCTHD, conn, trans);
+                        cmdInsertCTHD.Parameters.AddWithValue("@MaCTHD", maCTHD);
                         cmdInsertCTHD.Parameters.AddWithValue("@MaHD", maHD);
                         cmdInsertCTHD.Parameters.AddWithValue("@Tien", giaDV999);
-
                         cmdInsertCTHD.ExecuteNonQuery();
 
-                        // NẾU MỌI THỨ NGON LÀNH THÌ CHỐT SỔ (COMMIT)
                         trans.Commit();
                         return maPhieuDK;
                     }
                     catch (Exception)
                     {
-                        // NẾU LỖI THÌ QUAY XE LẠI TỪ ĐẦU (ROLLBACK)
                         trans.Rollback();
                         throw;
                     }
                 }
             }
         }
+
 
         // ==================== 3. XEM / HỦY LỊCH KHÁM ====================
         public List<LichKhamItem> GetLichKhamByMaBN(string maBN)
@@ -316,11 +320,11 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         list.Add(new LichKhamItem
                         {
-                            MaPhieuDK = Convert.ToInt32(dr["MaPhieuDK"]),
+                            MaPhieuDK = dr["MaPhieuDK"].ToString(), // [ĐÃ SỬA]
                             NgayDangKy = Convert.IsDBNull(dr["NgayDangKy"]) ? (DateTime?)null : Convert.ToDateTime(dr["NgayDangKy"]),
                             HinhThucDangKy = Convert.IsDBNull(dr["HinhThucDangKy"]) ? "" : dr["HinhThucDangKy"].ToString(),
                             TrangThai = Convert.IsDBNull(dr["TrangThai"]) ? "" : dr["TrangThai"].ToString(),
-                            MaPhieuKhamBenh = Convert.IsDBNull(dr["MaPhieuKhamBenh"]) ? (int?)null : Convert.ToInt32(dr["MaPhieuKhamBenh"]),
+                            MaPhieuKhamBenh = dr["MaPhieuKhamBenh"].ToString(), // [ĐÃ SỬA]
                             STT = Convert.IsDBNull(dr["STT"]) ? (int?)null : Convert.ToInt32(dr["STT"]),
                             TrangThaiKham = Convert.IsDBNull(dr["TrangThaiKham"]) ? "" : dr["TrangThaiKham"].ToString(),
                             NgayKham = Convert.IsDBNull(dr["NgayKham"]) ? (DateTime?)null : Convert.ToDateTime(dr["NgayKham"]),
@@ -335,7 +339,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        public bool HuyLichKham(int maPhieuDK, string maBN)
+        public bool HuyLichKham(string maPhieuDK, string maBN)
         {
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
@@ -374,7 +378,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         list.Add(new TrangThaiKhamItem
                         {
-                            MaPhieuKhamBenh = Convert.ToInt32(dr["MaPhieuKhamBenh"]),
+                            MaPhieuKhamBenh = dr["MaPhieuKhamBenh"].ToString(), // [ĐÃ SỬA]
                             NgayLap = Convert.ToDateTime(dr["NgayLap"]),
                             LyDoDenKham = Convert.IsDBNull(dr["LyDoDenKham"]) ? "" : dr["LyDoDenKham"].ToString(),
                             TrangThai = dr["TrangThai"].ToString(),
@@ -416,7 +420,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         list.Add(new LichSuKhamItem
                         {
-                            MaPhieuKhamBenh = Convert.ToInt32(dr["MaPhieuKhamBenh"]),
+                            MaPhieuKhamBenh = dr["MaPhieuKhamBenh"].ToString(), // [ĐÃ SỬA]
                             NgayKham = Convert.ToDateTime(dr["NgayLap"]),
                             LyDoDenKham = Convert.IsDBNull(dr["LyDoDenKham"]) ? "" : dr["LyDoDenKham"].ToString(),
                             TrieuChung = Convert.IsDBNull(dr["TrieuChung"]) ? "" : dr["TrieuChung"].ToString(),
@@ -456,12 +460,12 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         list.Add(new DonThuocItem
                         {
-                            MaDonThuoc = Convert.ToInt32(dr["MaDonThuoc"]),
+                            MaDonThuoc = dr["MaDonThuoc"].ToString(), // [ĐÃ SỬA]
                             NgayKe = Convert.ToDateTime(dr["NgayKe"]),
                             LoiDanBS = Convert.IsDBNull(dr["LoiDanBS"]) ? "" : dr["LoiDanBS"].ToString(),
                             TrangThai = Convert.IsDBNull(dr["TrangThai"]) ? "" : dr["TrangThai"].ToString(),
                             NgayKham = Convert.ToDateTime(dr["NgayKham"]),
-                            MaPhieuKhamBenh = Convert.ToInt32(dr["MaPhieuKhamBenh"]),
+                            MaPhieuKhamBenh = dr["MaPhieuKhamBenh"].ToString(), // [ĐÃ SỬA]
                             TenBacSi = Convert.IsDBNull(dr["TenBacSi"]) ? "" : dr["TenBacSi"].ToString()
                         });
                     }
@@ -470,7 +474,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        public DonThuocChiTiet GetChiTietDonThuoc(int maDonThuoc)
+        public DonThuocChiTiet GetChiTietDonThuoc(string maDonThuoc)
         {
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
@@ -490,7 +494,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         chiTietList.Add(new ChiTietThuocItem
                         {
-                            MaCTDonThuoc = Convert.ToInt32(dr["MaCTDonThuoc"]),
+                            MaCTDonThuoc = dr["MaCTDonThuoc"].ToString(), // [ĐÃ SỬA]
                             MaThuoc = dr["MaThuoc"].ToString(),
                             TenThuoc = dr["TenThuoc"].ToString(),
                             SoLuongSang = Convert.IsDBNull(dr["SoLuongSang"]) ? 0 : Convert.ToDecimal(dr["SoLuongSang"]),
@@ -535,13 +539,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     {
                         list.Add(new HoaDonItem
                         {
-                            MaHD = Convert.ToInt32(dr["MaHD"]),
+                            MaHD = dr["MaHD"].ToString(), // [ĐÃ SỬA]
                             NgayThanhToan = Convert.IsDBNull(dr["NgayThanhToan"]) ? (DateTime?)null : Convert.ToDateTime(dr["NgayThanhToan"]),
                             TongTien = Convert.IsDBNull(dr["TongTien"]) ? 0 : Convert.ToDecimal(dr["TongTien"]),
                             TrangThaiThanhToan = Convert.IsDBNull(dr["TrangThaiThanhToan"]) ? "" : dr["TrangThaiThanhToan"].ToString(),
                             HinhThucThanhToan = Convert.IsDBNull(dr["HinhThucThanhToan"]) ? "" : dr["HinhThucThanhToan"].ToString(),
                             GhiChu = Convert.IsDBNull(dr["GhiChu"]) ? "" : dr["GhiChu"].ToString(),
-                            MaPhieuKhamBenh = Convert.IsDBNull(dr["MaPhieuKhamBenh"]) ? (int?)null : Convert.ToInt32(dr["MaPhieuKhamBenh"]),
+                            MaPhieuKhamBenh = dr["MaPhieuKhamBenh"].ToString(), // [ĐÃ SỬA]
                             NgayKham = Convert.IsDBNull(dr["NgayKham"]) ? (DateTime?)null : Convert.ToDateTime(dr["NgayKham"])
                         });
                     }
@@ -550,7 +554,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        public HoaDonChiTiet GetChiTietHoaDon(int maHD)
+        public HoaDonChiTiet GetChiTietHoaDon(string maHD)
         {
             var ketQua = new HoaDonChiTiet();
             using (SqlConnection conn = new SqlConnection(connectStr))
@@ -569,7 +573,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 {
                     if (dr.Read())
                     {
-                        ketQua.MaHD = Convert.ToInt32(dr["MaHD"]);
+                        ketQua.MaHD = dr["MaHD"].ToString(); // [ĐÃ SỬA]
                         ketQua.NgayThanhToan = Convert.IsDBNull(dr["NgayThanhToan"]) ? (DateTime?)null : Convert.ToDateTime(dr["NgayThanhToan"]);
                         ketQua.TongTien = Convert.IsDBNull(dr["TongTien"]) ? 0 : Convert.ToDecimal(dr["TongTien"]);
                         ketQua.TienBHYTChiTra = Convert.IsDBNull(dr["TienBHYTChiTra"]) ? 0 : Convert.ToDecimal(dr["TienBHYTChiTra"]);
@@ -645,13 +649,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
         public class LichKhamItem
         {
-            public int MaPhieuDK { get; set; }
+            public string MaPhieuDK { get; set; } // [ĐÃ SỬA]
             public DateTime? NgayDangKy { get; set; }
             public string HinhThucDangKy { get; set; }
             public string TrangThai { get; set; }
-            public string LyDo { get; set; }     
+            public string LyDo { get; set; }
             public string TenDV { get; set; }
-            public int? MaPhieuKhamBenh { get; set; }
+            public string MaPhieuKhamBenh { get; set; } // [ĐÃ SỬA]
             public int? STT { get; set; }
             public string TrangThaiKham { get; set; }
             public DateTime? NgayKham { get; set; }
@@ -663,7 +667,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
         public class TrangThaiKhamItem
         {
-            public int MaPhieuKhamBenh { get; set; }
+            public string MaPhieuKhamBenh { get; set; } // [ĐÃ SỬA]
             public DateTime NgayLap { get; set; }
             public string LyDoDenKham { get; set; }
             public string TrangThai { get; set; }
@@ -675,7 +679,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
         public class LichSuKhamItem
         {
-            public int MaPhieuKhamBenh { get; set; }
+            public string MaPhieuKhamBenh { get; set; } // [ĐÃ SỬA]
             public DateTime NgayKham { get; set; }
             public string LyDoDenKham { get; set; }
             public string TrieuChung { get; set; }
@@ -688,18 +692,18 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
         public class DonThuocItem
         {
-            public int MaDonThuoc { get; set; }
+            public string MaDonThuoc { get; set; } // [ĐÃ SỬA]
             public DateTime NgayKe { get; set; }
             public string LoiDanBS { get; set; }
             public string TrangThai { get; set; }
             public DateTime NgayKham { get; set; }
-            public int MaPhieuKhamBenh { get; set; }
+            public string MaPhieuKhamBenh { get; set; } // [ĐÃ SỬA]
             public string TenBacSi { get; set; }
         }
 
         public class ChiTietThuocItem
         {
-            public int MaCTDonThuoc { get; set; }
+            public string MaCTDonThuoc { get; set; } // [ĐÃ SỬA]
             public string MaThuoc { get; set; }
             public string TenThuoc { get; set; }
             public decimal SoLuongSang { get; set; }
@@ -721,19 +725,19 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
         public class HoaDonItem
         {
-            public int MaHD { get; set; }
+            public string MaHD { get; set; } // [ĐÃ SỬA]
             public DateTime? NgayThanhToan { get; set; }
             public decimal TongTien { get; set; }
             public string TrangThaiThanhToan { get; set; }
             public string HinhThucThanhToan { get; set; }
             public string GhiChu { get; set; }
-            public int? MaPhieuKhamBenh { get; set; }
+            public string MaPhieuKhamBenh { get; set; } // [ĐÃ SỬA]
             public DateTime? NgayKham { get; set; }
         }
 
         public class HoaDonChiTiet
         {
-            public int MaHD { get; set; }
+            public string MaHD { get; set; } // [ĐÃ SỬA]
             public DateTime? NgayThanhToan { get; set; }
             public decimal TongTien { get; set; }
             public decimal TienBHYTChiTra { get; set; }

@@ -1,11 +1,12 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace QL_KhamChuaBenhNgoaiTru.Models
 {
     public class KhamBenhViewModel
     {
-        public int MaPhieuKhamBenh { get; set; }
+        // [ĐÃ SỬA] Đổi int thành string
+        public string MaPhieuKhamBenh { get; set; }
         public string TrieuChung { get; set; }
         public string KetLuan { get; set; }
 
@@ -31,10 +32,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string GhiChu { get; set; }
         public int SoLuong { get; set; }
     }
+
     // Thêm class này vào trong file KhamBenhViewModel.cs hoặc tạo file mới trong Models
     public class PhieuKhamBenhInfo
     {
-        public int MaPhieuKhamBenh { get; set; }
+        // [ĐÃ SỬA] Đổi int thành string
+        public string MaPhieuKhamBenh { get; set; }
         public string MaBN { get; set; }
         public string TenBN { get; set; }
         public int STT { get; set; }
@@ -44,6 +47,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string GioiTinh { get; set; }
         public int Tuoi { get; set; }
     }
+
     public class ChiDinhCLSViewModel
     {
         public string MaDV { get; set; }

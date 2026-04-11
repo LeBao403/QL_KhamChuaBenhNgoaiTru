@@ -37,7 +37,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string MaBN { get; set; }
         public string TenBN { get; set; }
         public int STT { get; set; }
-        public int MaPhieuDK { get; set; }
+        public string MaPhieuDK { get; set; }
         public string TenPhong { get; set; }
         public string TenKhungGio { get; set; }
     }

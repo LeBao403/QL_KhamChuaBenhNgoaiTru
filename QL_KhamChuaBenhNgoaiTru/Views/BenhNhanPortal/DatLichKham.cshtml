@@ -466,6 +466,8 @@
                     data: $(this).serialize(),
                     success: function (resDatLich) {
                         if (resDatLich.success) {
+                            let hdId = String(resDatLich.maHD);
+                            let pdkId = String(resDatLich.maPhieuDK);
 
                             // XỬ LÝ NHÁNH 1: THANH TOÁN THẺ (GIẢ LẬP)
                             if (phuongThucTT === 'THE') {

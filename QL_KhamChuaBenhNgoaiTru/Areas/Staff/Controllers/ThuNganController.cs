@@ -19,7 +19,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
     {
         ThuNganDB db = new ThuNganDB();
 
-        // CHẶN QUYỀN
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             base.OnActionExecuting(filterContext);
@@ -37,7 +36,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetChiTiet(int maHD)
+        // [ĐÃ SỬA] int -> string
+        public JsonResult GetChiTiet(string maHD)
         {
             try
             {
@@ -47,7 +47,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 {
                     list.Add(new
                     {
-                        MaCTHD = Convert.ToInt32(row["MaCTHD"]),
+                        // [ĐÃ SỬA] Đổi sang string cho MaCTHD
+                        MaCTHD = row["MaCTHD"].ToString(),
                         LoaiItem = row["LoaiItem"].ToString(),
                         TrangThai = row["TrangThaiThanhToan"].ToString(),
                         TenDV = row["TenDV"].ToString(),
@@ -59,7 +60,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                         SoNgayDung = row["SoNgayDung"] != DBNull.Value ? Convert.ToInt32(row["SoNgayDung"]) : 1,
                         SoLuongGoc = row.Table.Columns.Contains("SoLuongGoc") && row["SoLuongGoc"] != DBNull.Value ? Convert.ToInt32(row["SoLuongGoc"]) : 1,
 
-                        // ĐỌC THÊM LIỀU LƯỢNG
                         LiSang = row.Table.Columns.Contains("SoLuongSang") && row["SoLuongSang"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongSang"]) : 0,
                         LiTrua = row.Table.Columns.Contains("SoLuongTrua") && row["SoLuongTrua"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongTrua"]) : 0,
                         LiChieu = row.Table.Columns.Contains("SoLuongChieu") && row["SoLuongChieu"] != DBNull.Value ? Convert.ToDecimal(row["SoLuongChieu"]) : 0,
@@ -75,14 +75,14 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult ThanhToan(int maHD, int maPKB, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, string dsThuocCapNhat)
+        // [ĐÃ SỬA] int -> string
+        public JsonResult ThanhToan(string maHD, string maPKB, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, string dsThuocCapNhat)
         {
-            if (maHD <= 0 || maPKB <= 0) return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
+            if (string.IsNullOrEmpty(maHD) || string.IsNullOrEmpty(maPKB)) return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
 
             string errorMsg;
             List<dynamic> listThuoc = new List<dynamic>();
 
-            // Chuyển chuỗi JSON từ View gửi lên thành List object để truyền xuống tầng DB
             if (!string.IsNullOrEmpty(dsThuocCapNhat))
             {
                 try
@@ -95,7 +95,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 }
             }
 
-            // Gọi hàm đã nâng cấp ở tầng ThuNganDB
             bool result = db.XacNhanThuTien(maHD, maPKB, phuongThucTT, dsHuyDV, dsHuyThuoc, listThuoc, out errorMsg);
 
             if (result) return Json(new { success = true });
@@ -103,13 +102,10 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         // ======================================================================
-        // CÁC HÀM TÍCH HỢP PAYOS "GỌI CHAY" (KHÔNG CẦN NUGET)
+        // CÁC HÀM TÍCH HỢP PAYOS
         // ======================================================================
-
-        // Hàm hỗ trợ băm chữ ký bảo mật (Signature) chuẩn thuật toán PayOS
         private string CreateSignature(long amount, string cancelUrl, string description, long orderCode, string returnUrl, string checksumKey)
         {
-            // Các tham số phải được sắp xếp theo thứ tự alphabet A-Z
             string data = $"amount={amount}&cancelUrl={cancelUrl}&description={description}&orderCode={orderCode}&returnUrl={returnUrl}";
             using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(checksumKey)))
             {
@@ -119,30 +115,31 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> TaoMaQR(int maHD, int maPKB, int tongTien) // <-- THÊM THAM SỐ tongTien
+        // [ĐÃ SỬA] int -> string
+        public async Task<JsonResult> TaoMaQR(string maHD, string maPKB, int tongTien)
         {
             try
             {
-                // 1. Kiểm tra tiền trực tiếp từ Giao diện truyền xuống
                 if (tongTien <= 0) return Json(new { success = false, message = "Hóa đơn 0đ, không cần quét QR." });
 
-                // 2. Chuẩn bị dữ liệu gửi đi PayOS
                 string clientId = ConfigurationManager.AppSettings["PayOS:ClientId"];
                 string apiKey = ConfigurationManager.AppSettings["PayOS:ApiKey"];
                 string checksumKey = ConfigurationManager.AppSettings["PayOS:ChecksumKey"];
 
-                long orderCode = long.Parse(maHD.ToString() + DateTime.Now.ToString("HHmmss"));
+                // [BÍ KÍP TRÁNH CRASH PAYOS] Cắt chữ "HD" ra, chỉ lấy dãy số + giờ để ép sang long
+                string cleanMaHD = maHD.Replace("HD", "");
+                long orderCode = long.Parse(cleanMaHD + DateTime.Now.ToString("HHmmss"));
+
                 string returnUrl = ConfigurationManager.AppSettings["PayOS:ReturnUrl"] ?? "https://localhost:44326/Staff/ThuNgan";
                 string cancelUrl = returnUrl;
                 string description = "Thanh toan vien phi";
 
-                // Băm mã Signature
                 string signature = CreateSignature(tongTien, cancelUrl, description, orderCode, returnUrl, checksumKey);
 
                 var requestData = new
                 {
                     orderCode = orderCode,
-                    amount = tongTien, // <-- Truyền đúng số tiền đang nợ
+                    amount = tongTien,
                     description = description,
                     items = new[] { new { name = "Vien phi Kham benh", quantity = 1, price = tongTien } },
                     returnUrl = returnUrl,
@@ -150,7 +147,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                     signature = signature
                 };
 
-                // 3. GỌI API TRỰC TIẾP LÊN PAYOS
                 using (HttpClient client = new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("x-client-id", clientId);
@@ -162,7 +158,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                     HttpResponseMessage response = await client.PostAsync("https://api-merchant.payos.vn/v2/payment-requests", content);
                     string responseString = await response.Content.ReadAsStringAsync();
 
-                    // 4. Đọc dữ liệu trả về
                     JObject resJson = JObject.Parse(responseString);
 
                     if (resJson["code"]?.ToString() == "00")
@@ -214,13 +209,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             }
         }
 
-
-
-
-
-
-
-        // GET: Staff/ThuNgan/LichSu
         public ActionResult LichSu(string tuNgay, string denNgay, string tuKhoa, string trangThai, string sortCol = "NgayThanhToan", string sortDir = "desc", int page = 1)
         {
             DateTime dtTuNgay = DateTime.Now.Date;
@@ -247,8 +235,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 {
                     string keyword = tuKhoa.ToLower().Trim();
                     rows = rows.Where(r =>
-                        r["MaHD"].ToString().Contains(keyword) ||
-                        r["MaPhieuKhamBenh"].ToString().Contains(keyword) ||
+                        r["MaHD"].ToString().ToLower().Contains(keyword) ||
+                        r["MaPhieuKhamBenh"].ToString().ToLower().Contains(keyword) ||
                         r["HoTen"].ToString().ToLower().Contains(keyword) ||
                         r["SDT"].ToString().Contains(keyword)
                     );
@@ -260,14 +248,14 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                     rows = rows.Where(r => r["TrangThaiThanhToan"].ToString() == trangThai);
                 }
 
-                // 3. SẮP XẾP CAO -> THẤP
+                // 3. [ĐÃ SỬA] SẮP XẾP CAO -> THẤP (Ép kiểu chuỗi cho mã)
                 if (rows.Any())
                 {
                     if (sortDir == "asc")
                     {
                         switch (sortCol)
                         {
-                            case "MaHD": rows = rows.OrderBy(r => Convert.ToInt32(r["MaHD"])); break;
+                            case "MaHD": rows = rows.OrderBy(r => r["MaHD"].ToString()); break; // Đổi thành so sánh chuỗi
                             case "HoTen": rows = rows.OrderBy(r => r["HoTen"].ToString()); break;
                             case "TongTienBenhNhanTra": rows = rows.OrderBy(r => Convert.ToDecimal(r["TongTienBenhNhanTra"])); break;
                             case "TrangThaiThanhToan": rows = rows.OrderBy(r => r["TrangThaiThanhToan"].ToString()); break;
@@ -278,7 +266,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                     {
                         switch (sortCol)
                         {
-                            case "MaHD": rows = rows.OrderByDescending(r => Convert.ToInt32(r["MaHD"])); break;
+                            case "MaHD": rows = rows.OrderByDescending(r => r["MaHD"].ToString()); break; // Đổi thành so sánh chuỗi
                             case "HoTen": rows = rows.OrderByDescending(r => r["HoTen"].ToString()); break;
                             case "TongTienBenhNhanTra": rows = rows.OrderByDescending(r => Convert.ToDecimal(r["TongTienBenhNhanTra"])); break;
                             case "TrangThaiThanhToan": rows = rows.OrderByDescending(r => r["TrangThaiThanhToan"].ToString()); break;

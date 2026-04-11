@@ -9,7 +9,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         private CLSDB db = new CLSDB();
 
         [HttpPost]
-        public ActionResult NhanKetQuaTuMay(int maKetQua)
+        public ActionResult NhanKetQuaTuMay(string maKetQua)
         {
             try
             {

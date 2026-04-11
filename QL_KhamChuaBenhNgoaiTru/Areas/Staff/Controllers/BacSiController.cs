@@ -23,7 +23,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult TiepNhan(int maPhieu)
+        // [ĐÃ SỬA] Đổi int maPhieu -> string maPhieu
+        public JsonResult TiepNhan(string maPhieu)
         {
             // Lấy mã bác sĩ đang đăng nhập
             string maBS = Session["MaNV"]?.ToString() ?? "NV001";
@@ -39,7 +40,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 
         // MỚI: API Lấy thông tin bệnh nhân đang khám
         [HttpPost]
-        public JsonResult ChiTietDangKham(int maPhieu)
+        // [ĐÃ SỬA] Đổi int maPhieu -> string maPhieu
+        public JsonResult ChiTietDangKham(string maPhieu)
         {
             // Sử dụng hàm GetThongTinChiTiet thay cho hàm cũ
             var info = db.GetThongTinChiTiet(maPhieu);
@@ -57,7 +59,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 
         // MỚI: API Lấy kết quả CLS của Phiếu Khám
         [HttpPost]
-        public JsonResult GetKetQuaCLS(int maPhieu)
+        // [ĐÃ SỬA] Đổi int maPhieu -> string maPhieu
+        public JsonResult GetKetQuaCLS(string maPhieu)
         {
             var list = db.GetKetQuaCLS(maPhieu);
             return Json(list);
@@ -67,7 +70,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         public ActionResult LuuKhamBenh(KhamBenhViewModel model)
         {
             string maBS = Session["MaNV"]?.ToString() ?? "NV001";
-            if (model.MaPhieuKhamBenh == 0) return RedirectToAction("Index");
+
+            // [ĐÃ SỬA] Check NullOrEmpty cho chuỗi thay vì check = 0
+            if (string.IsNullOrEmpty(model.MaPhieuKhamBenh)) return RedirectToAction("Index");
 
             string errorMsg = "";
             bool result = db.LuuKhamBenh(model, maBS, out errorMsg); // Truyền thêm maBS

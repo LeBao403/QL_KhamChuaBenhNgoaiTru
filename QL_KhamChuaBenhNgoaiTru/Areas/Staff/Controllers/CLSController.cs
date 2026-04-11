@@ -42,7 +42,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult GetChiTiet(int maKetQua)
+        // Đổi int thành string
+        public JsonResult GetChiTiet(string maKetQua)
         {
             var data = db.GetThongTinChiTietCLS(maKetQua);
             if (data != null) return Json(new { success = true, Data = data });
@@ -50,7 +51,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         }
 
         [HttpPost]
-        public JsonResult XacNhanKetQua(int maKetQua, string noiDung, int maPhieuKhamBenh, string mauXN, string chatLuong)
+        // Đổi int thành string
+        public JsonResult XacNhanKetQua(string maKetQua, string noiDung, string maPhieuKhamBenh, string mauXN, string chatLuong)
         {
             if (string.IsNullOrWhiteSpace(noiDung))
                 return Json(new { success = false, message = "Vui lòng nhập kết quả." });
@@ -66,7 +68,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         // ==========================================
         // ACTION MỚI: DÙNG ĐỂ GỌI MÀN HÌNH IN
         // ==========================================
-        public ActionResult InKetQua(int id)
+        // Đổi int thành string
+        public ActionResult InKetQua(string id)
         {
             var data = db.GetThongTinIn(id);
             if (data == null) return HttpNotFound("Không tìm thấy kết quả để in.");

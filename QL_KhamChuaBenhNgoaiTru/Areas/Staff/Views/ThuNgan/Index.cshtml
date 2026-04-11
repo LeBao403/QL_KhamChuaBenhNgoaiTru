@@ -407,8 +407,8 @@
                             </div>
                         </div>
 
-                        <input type="hidden" id="hdnMaHD" value="0" />
-                        <input type="hidden" id="hdnMaPKB" value="0" />
+                        <input type="hidden" id="hdnMaHD" value="" />
+                        <input type="hidden" id="hdnMaPKB" value="" />
 
                         <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-lg fs-5" id="btnThanhToan" onclick="xuLyThanhToan()" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border: none;">
                             <i class="bi bi-check2-circle me-2 fs-4 align-middle"></i> XÁC NHẬN THU TIỀN
@@ -605,16 +605,16 @@
                                     soLuongHtml = `
                                         <div class="d-flex flex-column gap-2 align-items-end pe-2">
                                             <div class="qty-control shadow-sm">
-                                                <button type="button" onclick="changeQty(${item.MaCTHD}, -1, ${item.SoLuongGoc}, ${donGiaKhach})"><i class="bi bi-dash"></i></button>
-                                                <input type="number" id="qty_${item.MaCTHD}" value="${item.SoLuong}" data-max="${item.SoLuongGoc}" data-macthd="${item.MaCTHD}" data-dongia="${donGiaKhach}" data-dailydose="${dailyDose}" onchange="manualChangeQty(${item.MaCTHD})">
-                                                <button type="button" onclick="changeQty(${item.MaCTHD}, 1, ${item.SoLuongGoc}, ${donGiaKhach})"><i class="bi bi-plus"></i></button>
+                                                <button type="button" onclick="changeQty('${item.MaCTHD}', -1, ${item.SoLuongGoc}, ${donGiaKhach})"><i class="bi bi-dash"></i></button>
+                                                <input type="number" id="qty_${item.MaCTHD}" value="${item.SoLuong}" data-max="${item.SoLuongGoc}" data-macthd="${item.MaCTHD}" data-dongia="${donGiaKhach}" data-dailydose="${dailyDose}" onchange="manualChangeQty('${item.MaCTHD}')">
+                                                <button type="button" onclick="changeQty('${item.MaCTHD}', 1, ${item.SoLuongGoc}, ${donGiaKhach})"><i class="bi bi-plus"></i></button>
                                             </div>
                                             <div class="d-flex gap-1 align-items-center">
                                                 <div class="day-control">
                                                     <span class="lbl">Ngày</span>
-                                                    <input type="number" id="day_${item.MaCTHD}" value="${item.SoNgayDung}" step="1" min="1" max="${item.SoNgayDung}" onchange="applyDaysToItem(${item.MaCTHD})">
+                                                    <input type="number" id="day_${item.MaCTHD}" value="${item.SoNgayDung}" step="1" min="1" max="${item.SoNgayDung}" onchange="applyDaysToItem('${item.MaCTHD}')">
                                                 </div>
-                                                <button class="btn-reset-mini shadow-sm" type="button" onclick="resetItemQty(${item.MaCTHD}, ${item.SoLuongGoc}, ${item.SoNgayDung}, ${donGiaKhach})" title="Khôi phục đơn gốc"><i class="bi bi-arrow-counterclockwise"></i></button>
+                                                <button class="btn-reset-mini shadow-sm" type="button" onclick="resetItemQty('${item.MaCTHD}', ${item.SoLuongGoc}, ${item.SoNgayDung}, ${donGiaKhach})" title="Khôi phục đơn gốc"><i class="bi bi-arrow-counterclockwise"></i></button>
                                             </div>
                                         </div>
                                     `;
@@ -692,7 +692,10 @@
             let phuongThuc = $('input[name="phuongThucTT"]:checked').val();
             let phuongThucText = $('label[for="' + $('input[name="phuongThucTT"]:checked').attr('id') + '"]').text().trim();
 
-            if (maHD == 0) { Swal.fire('Chú ý', 'Chưa chọn hồ sơ cần thanh toán!', 'warning'); return; }
+            if (!maHD || maHD === "" || maHD === "0") {
+                Swal.fire('Chú ý', 'Chưa chọn hồ sơ cần thanh toán!', 'warning');
+                return;
+            }
 
             let arrHuyDV = [];
             let arrHuyThuoc = [];
@@ -788,7 +791,7 @@
             btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...');
 
             $.post('@Url.Action("ThanhToan", "ThuNgan")', {
-                maHD: maHD, maPKB: maPKB, phuongThucTT: phuongThuc, dsHuyDV: dsHuyDV, dsHuyThuoc: dsHuyThuoc, dsThuocCapNhat: dsThuocCapNhatJson
+                maHD: String(maHD), maPKB: String(maPKB), phuongThucTT: phuongThuc, dsHuyDV: dsHuyDV, dsHuyThuoc: dsHuyThuoc, dsThuocCapNhat: dsThuocCapNhatJson
             }, function (res) {
                 if (res.success) {
                     Swal.fire({

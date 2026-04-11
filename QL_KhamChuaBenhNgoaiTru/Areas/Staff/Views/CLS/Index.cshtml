@@ -229,7 +229,7 @@
                                         <tr id="row-@item.MaKetQua" data-id="@item.MaKetQua" class="cls-row">
                                             <td class="text-center fw-bold">@(stt++)</td>
                                             <td>
-                                                <button type="button" class="patient-link cls-select-case" data-id="@item.MaKetQua">@item.TenBenhNhan</button>
+                                                <button type="button" class="patient-link cls-select-case" data-id="@item.MaKetQua" onclick="loadCase('@item.MaKetQua', false)">@item.TenBenhNhan</button>
                                                 <div class="small text-muted">PKB: @item.MaPhieuKhamBenh</div>
                                             </td>
                                             <td>
@@ -272,7 +272,7 @@
                                         <tr class="cls-row bg-light" id="row-done-@item.MaKetQua" data-id="@item.MaKetQua">
                                             <td class="text-center fw-bold text-success">@(sttDone++)</td>
                                             <td>
-                                                <button type="button" class="patient-link cls-history-view" data-id="@item.MaKetQua">@item.TenBN <i class="fas fa-check-circle text-success ms-1"></i></button>
+                                                <button type="button" class="patient-link cls-history-view" data-id="@item.MaKetQua" onclick="loadCase('@item.MaKetQua', true)">@item.TenBN <i class="fas fa-check-circle text-success ms-1"></i></button>
                                                 <div class="small text-muted">@item.Tuoi tuổi | @item.GioiTinh</div>
                                             </td>
                                             <td>
@@ -464,10 +464,9 @@
                 $('#prt-gt').text(data.GioiTinh || '');
                 $('#prt-chandoan').text(data.LyDoDenKham || data.ChanDoan || '');
                 $('#prt-tenxn').text(data.TenDV || '');
-                $('#prt-mauxn').text(mauXN || 'Máu toàn phần');
+                $('#prt-mauxn').text(mauXN || 'Huyết thanh');
                 $('#prt-chatluong').text(chatLuong || 'Đạt');
 
-                // Các trường mới thêm cho in
                 $('#prt-diachi').text(data.DiaChi || 'Chưa cập nhật');
                 $('#prt-bhyt').text(data.SoTheBHYT || 'Không có');
                 $('#prt-bschidinh').text(data.TenBacSiChiDinh || '');
@@ -505,7 +504,7 @@
             function renderLISUi(lisData) {
                 var html = '';
                 if (!lisData || lisData.length === 0) {
-                    html = '<tr><td colspan="4" class="text-center text-muted">Chưa có kết quả</td></tr>';
+                    html = '<tr><td colspan="4" class="text-center text-muted py-3">Chưa có kết quả (Nhấn Chạy máy LIS)</td></tr>';
                 } else {
                     lisData.forEach(function (item) {
                         var isWarning = item.Warning ? 'text-danger fw-bold' : 'fw-bold';
@@ -520,53 +519,52 @@
                 $('#tbl-ket-qua-lis tbody').html(html);
             }
 
-            function loadCase(maKetQua, fromHistory) {
+            // Gắn vào window để gọi từ thuộc tính onclick của HTML
+            window.loadCase = function(maKetQua, fromHistory) {
+                maKetQua = String(maKetQua);
                 $('.cls-row').removeClass('active');
-                $('#row-' + maKetQua).addClass('active');
-                $('#row-done-' + maKetQua).addClass('active'); // Dành cho bảng Đã xong
 
-                $.post('/Staff/CLS/GetChiTiet', { maKetQua: maKetQua }, function (res) {
+                // Active dòng đang chọn
+                if(fromHistory) {
+                    $('#row-done-' + maKetQua).addClass('active');
+                } else {
+                    $('#row-' + maKetQua).addClass('active');
+                }
+
+                $.post('@Url.Action("GetChiTiet", "CLS")', { maKetQua: maKetQua }, function (res) {
                     if (!res.success) {
                         Swal.fire('Lỗi', res.message, 'error');
                         return;
                     }
 
                     var d = res.Data;
-                    // Bind data UI
                     $('#hdnMaKetQua').val(d.MaKetQua);
                     $('#hdnMaPhieuKham').val(d.MaPhieuKhamBenh);
                     $('#lblTenBN').text(d.TenBenhNhan || d.TenBN || '');
                     $('#lblTuoiGT').text((d.Tuoi || '') + ' tuổi / ' + (d.GioiTinh || ''));
-
-                    // Fields mới bổ sung
                     $('#lblDiaChi').text(d.DiaChi || 'Chưa cập nhật');
                     $('#lblBHYT').text(d.SoTheBHYT || 'Không có');
                     $('#lblMaPhieuKhamText').text(d.MaPhieuKhamBenh || '');
                     $('#lblBSChiDinh').text(d.TenBacSiChiDinh || '--');
-
-                    $('#lblLyDo').text(d.ChanDoan || d.LyDoDenKham || d.LyDoKham || '');
+                    $('#lblLyDo').text(d.ChanDoan || d.LyDoDenKham || '');
                     $('#lblBS').text(d.TenNguoiThucHien || d.MaBacSiThucHien || 'Chưa cập nhật');
                     $('#ui-ten-xn').text(d.TenDV || '');
 
                     var ketQua = d.NoiDungKetQua || '';
                     var lisData = [];
                     if (ketQua.startsWith('[')) {
-                        try {
-                            lisData = JSON.parse(ketQua);
-                        } catch (e) { }
+                        try { lisData = JSON.parse(ketQua); } catch (e) { }
                     }
 
                     $('#ui-mau-xn').val(d.MauXetNghiem || 'Huyết thanh');
                     $('#ui-chat-luong').val(d.ChatLuongMau || 'Đạt');
-
-                    // Cache data cho hàm Print nếu in mà không gửi kết quả
                     $('#btn-in-phieu').data('pdata', d);
                     $('#btn-in-phieu').data('plis', lisData);
 
                     renderLISUi(lisData);
                     renderPrint(d, lisData, $('#ui-mau-xn').val(), $('#ui-chat-luong').val());
 
-                    var daCoKetQua = d.TrangThai === 'Đã có kết quả' || fromHistory === true;
+                    var daCoKetQua = (d.TrangThai === 'Đã có kết quả' || fromHistory === true);
                     $('#btn-xac-nhan').toggle(!daCoKetQua);
                     $('#btn-ket-noi-lis').prop('disabled', daCoKetQua);
                     setReadonly(daCoKetQua);
@@ -576,31 +574,19 @@
                 });
             }
 
-            $('#btn-in-phieu').off('click').on('click', function () {
+            $('#btn-in-phieu').on('click', function () {
                 var text = $('#tbl-ket-qua-lis tbody').text();
-                if (text.indexOf('Chưa có kết quả') >= 0 || $('#tbl-ket-qua-lis tbody tr').length === 0) {
+                if (text.indexOf('Chưa có kết quả') >= 0 || $('#tbl-ket-qua-lis tbody tr').length <= 1) {
                     Swal.fire('Chú ý', 'Chưa có kết quả chuyên môn để in!', 'warning');
                     return;
                 }
-
-                // Cập nhật lại Print form trước khi in cho chắc chắn (dùng cache pdata)
                 var d = $(this).data('pdata');
                 var lis = $(this).data('plis');
                 if (d) renderPrint(d, lis, $('#ui-mau-xn').val(), $('#ui-chat-luong').val());
-
                 window.print();
             });
 
-            $(document).on('click', '.cls-select-case', function () {
-                loadCase($(this).data('id'), false);
-            });
-
-            $(document).on('click', '.cls-history-view', function () {
-                loadCase($(this).data('id'), true);
-            });
-
             $('#btn-ket-noi-lis').click(function () {
-                // Máy LIS giả lập trả về mảng kết quả
                 var lisData = [
                     { Ten: 'Glucose', GiaTri: (Math.random() * 3 + 4).toFixed(2), DonVi: 'mmol/L', ThamChieu: '3.9 - 6.4', Warning: false },
                     { Ten: 'Ure', GiaTri: (Math.random() * 4 + 3).toFixed(2), DonVi: 'mmol/L', ThamChieu: '2.5 - 7.5', Warning: false },
@@ -612,19 +598,16 @@
                     lisData[0].GiaTri = (parseFloat(lisData[0].GiaTri) + 3).toFixed(2);
                     lisData[0].Warning = true;
                 }
-                // Store it globally or within DOM
                 $(this).data('lis', lisData);
-                // Cập nhật luôn cho nút in
                 $('#btn-in-phieu').data('plis', lisData);
-
                 renderLISUi(lisData);
                 $(this).prop('disabled', true);
                 Swal.fire({ icon: 'success', title: 'Máy LIS đã trả kết quả', timer: 1200, showConfirmButton: false });
             });
 
             $('#btn-xac-nhan').click(function () {
-                var maKetQua = $('#hdnMaKetQua').val();
-                var maPhieu = $('#hdnMaPhieuKham').val();
+                var maKetQua = String($('#hdnMaKetQua').val());
+                var maPhieu = String($('#hdnMaPhieuKham').val());
                 var mauXN = $('#ui-mau-xn').val();
                 var chatLuong = $('#ui-chat-luong').val();
                 var lisData = $('#btn-ket-noi-lis').data('lis');
@@ -641,17 +624,14 @@
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonText: 'Gửi kết quả',
-                    cancelButtonText: 'Hủy',
-                    preConfirm: function () {
-                        return { printAfterSend: $('#chkPrintAfterSend').is(':checked') };
-                    }
+                    cancelButtonText: 'Hủy'
                 }).then(function (result) {
                     if (!result.isConfirmed) return;
 
-                    $.post('/Staff/CLS/XacNhanKetQua', {
-                        maKetQua: maKetQua,
+                    $.post('@Url.Action("XacNhanKetQua", "CLS")', {
+                        maKetQua: maKetQua, // C# nhận string
                         noiDung: noiDung,
-                        maPhieuKhamBenh: maPhieu,
+                        maPhieuKhamBenh: maPhieu, // C# nhận string
                         mauXN: mauXN,
                         chatLuong: chatLuong
                     }, function (res) {
@@ -661,30 +641,17 @@
                         }
 
                         $('#lblBS').text(res.maBacSi || '');
-
                         var d = $('#btn-in-phieu').data('pdata');
                         if (d) {
-                            d.TenBacSiThucHien = res.maBacSi; // Update tên bác sĩ lên cache
+                            d.TenBacSiThucHien = res.maBacSi;
                             renderPrint(d, lisData, mauXN, chatLuong);
                         }
 
-                        $('#row-' + maKetQua).remove();
-                        if ($('#table-cls tbody tr').length === 0) {
-                            $('#table-cls tbody').append('<tr id="empty-row"><td colspan="3" class="text-center text-muted py-4">Không có bệnh nhân đang chờ xét nghiệm.</td></tr>');
-                        }
-                        var remain = $('#table-cls tbody tr.cls-row').length;
-                        $('#lblQueueCount').text(remain);
-                        $('#lblSoCho').text(remain);
-
-                        setReadonly(true);
-                        $('#btn-xac-nhan').hide();
-                        $('#btn-ket-noi-lis').prop('disabled', true);
-
                         Swal.fire({ icon: 'success', title: 'Đã gửi kết quả', timer: 1200, showConfirmButton: false }).then(function () {
-                            if (result.value && result.value.printAfterSend) {
+                            if (result.value && $('#chkPrintAfterSend').is(':checked')) {
                                 window.print();
                             }
-                            location.reload(); // Reload lại trang để update danh sách "Đã Hoàn Thành"
+                            location.reload();
                         });
                     });
                 });

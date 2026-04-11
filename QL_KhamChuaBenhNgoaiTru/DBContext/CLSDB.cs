@@ -53,9 +53,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         {
                             list.Add(new KetQuaCLS
                             {
-                                MaKetQua = Convert.ToInt32(rd["MaKetQua"]),
-                                MaPhieuChiDinh = Convert.ToInt32(rd["MaPhieuChiDinh"]),
-                                MaPhieuKhamBenh = Convert.ToInt32(rd["MaPhieuKhamBenh"]),
+                                // Đã đổi sang ToString()
+                                MaKetQua = rd["MaKetQua"].ToString(),
+                                MaPhieuChiDinh = rd["MaPhieuChiDinh"].ToString(),
+                                MaPhieuKhamBenh = rd["MaPhieuKhamBenh"].ToString(),
                                 MaDV = rd["MaDV"].ToString(),
                                 TrangThai = rd["TrangThai"].ToString(),
                                 NgayThucHien = rd["NgayChiDinh"] != DBNull.Value ? (DateTime?)Convert.ToDateTime(rd["NgayChiDinh"]) : null,
@@ -69,7 +70,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        public dynamic GetThongTinChiTietCLS(int maKetQua)
+        // Đổi int maKetQua thành string
+        public dynamic GetThongTinChiTietCLS(string maKetQua)
         {
             using (SqlConnection con = new SqlConnection(connectStr))
             {
@@ -138,7 +140,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return null;
         }
 
-        public KetQuaCLS GetKetQuaById(int maKetQua)
+        // Đổi int maKetQua thành string
+        public KetQuaCLS GetKetQuaById(string maKetQua)
         {
             using (SqlConnection con = new SqlConnection(connectStr))
             {
@@ -170,9 +173,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         {
                             return new KetQuaCLS
                             {
-                                MaKetQua = Convert.ToInt32(rd["MaKetQua"]),
-                                MaPhieuChiDinh = Convert.ToInt32(rd["MaPhieuChiDinh"]),
-                                MaPhieuKhamBenh = Convert.ToInt32(rd["MaPhieuKhamBenh"]),
+                                // Đã đổi sang ToString()
+                                MaKetQua = rd["MaKetQua"].ToString(),
+                                MaPhieuChiDinh = rd["MaPhieuChiDinh"].ToString(),
+                                MaPhieuKhamBenh = rd["MaPhieuKhamBenh"].ToString(),
                                 MaDV = rd["MaDV"].ToString(),
                                 TrangThai = rd["TrangThai"].ToString(),
                                 NoiDungKetQua = rd["KetQua"] != DBNull.Value ? rd["KetQua"].ToString() : "",
@@ -189,12 +193,14 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return null;
         }
 
-        public bool CapNhatKetQuaTuLIS(int maKetQua, string noiDungKetQua, int maPhieuKhamBenh)
+        // Đổi int thành string cho mã
+        public bool CapNhatKetQuaTuLIS(string maKetQua, string noiDungKetQua, string maPhieuKhamBenh)
         {
             return CapNhatKetQuaTuLIS(maKetQua, noiDungKetQua, maPhieuKhamBenh, null, null, null, null);
         }
 
-        public bool CapNhatKetQuaTuLIS(int maKetQua, string noiDungKetQua, int maPhieuKhamBenh, string maBacSiThucHien, string fileKetQua, string mauXN, string chatLuong)
+        // Đổi int thành string cho mã
+        public bool CapNhatKetQuaTuLIS(string maKetQua, string noiDungKetQua, string maPhieuKhamBenh, string maBacSiThucHien, string fileKetQua, string mauXN, string chatLuong)
         {
             using (SqlConnection con = new SqlConnection(connectStr))
             {
@@ -207,10 +213,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             UPDATE CHITIET_CHIDINH
                             SET KetQua = @NoiDung,
                                 TrangThai = N'Đã có kết quả',
-                                ThoiGianCoKetQua = CONVERT(TIME, GETDATE()),
+                                ThoiGianCoKetQua = CAST(GETDATE() AS TIME),
                                 MaBacSiThucHien = @MaBacSi,
                                 FileKetQua = @FileKetQua,
-                                MauXetNghiem = @MauXN,
+                                MauXN = @MauXN,
                                 ChatLuongMau = @ChatLuong
                             WHERE MaCTChiDinh = @MaKetQua";
 
@@ -226,11 +232,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             if (affected == 0) throw new Exception("Khong tim thay chi dinh CLS can cap nhat.");
                         }
 
-                        int maPhieuChiDinh;
+                        // Đổi kiểu int thành string
+                        string maPhieuChiDinh;
                         using (SqlCommand cmdGet = new SqlCommand("SELECT MaPhieuChiDinh FROM CHITIET_CHIDINH WHERE MaCTChiDinh = @MaKetQua", con, trans))
                         {
                             cmdGet.Parameters.AddWithValue("@MaKetQua", maKetQua);
-                            maPhieuChiDinh = Convert.ToInt32(cmdGet.ExecuteScalar());
+                            // Dùng ToString()
+                            maPhieuChiDinh = cmdGet.ExecuteScalar()?.ToString();
                         }
 
                         int pendingInPhieu;
@@ -324,9 +332,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         {
                             list.Add(new KetQuaCLS
                             {
-                                MaKetQua = Convert.ToInt32(rd["MaKetQua"]),
-                                MaPhieuChiDinh = Convert.ToInt32(rd["MaPhieuChiDinh"]),
-                                MaPhieuKhamBenh = Convert.ToInt32(rd["MaPhieuKhamBenh"]),
+                                // Đã đổi sang ToString()
+                                MaKetQua = rd["MaKetQua"].ToString(),
+                                MaPhieuChiDinh = rd["MaPhieuChiDinh"].ToString(),
+                                MaPhieuKhamBenh = rd["MaPhieuKhamBenh"].ToString(),
                                 MaDV = rd["MaDV"].ToString(),
                                 TrangThai = rd["TrangThai"].ToString(),
                                 NoiDungKetQua = rd["KetQua"] != DBNull.Value ? rd["KetQua"].ToString() : "",
@@ -348,7 +357,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         // ==========================================
         public class KetQuaDaXongDTO
         {
-            public int MaKetQua { get; set; }
+            public string MaKetQua { get; set; } // Đổi sang string
             public string TenDV { get; set; }
             public string TenBN { get; set; }
             public string GioiTinh { get; set; }
@@ -402,7 +411,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             // Sử dụng class cụ thể thay vì đối tượng vô danh
                             list.Add(new KetQuaDaXongDTO
                             {
-                                MaKetQua = Convert.ToInt32(dr["MaKetQua"]),
+                                MaKetQua = dr["MaKetQua"].ToString(), // Dùng ToString()
                                 TenDV = dr["TenDV"].ToString(),
                                 TenBN = dr["HoTen"].ToString(),
                                 GioiTinh = dr["GioiTinh"].ToString(),
@@ -415,7 +424,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
-        public ThongTinInDTO GetThongTinIn(int maKetQua)
+        // Đổi int thành string
+        public ThongTinInDTO GetThongTinIn(string maKetQua)
         {
             using (System.Data.SqlClient.SqlConnection conn = new System.Data.SqlClient.SqlConnection(connectStr))
             {

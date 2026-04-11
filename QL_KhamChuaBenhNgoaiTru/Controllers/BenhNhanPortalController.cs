@@ -122,12 +122,11 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             }
         }
 
-        // Đã đổi thành JsonResult để xài Popup AJAX
         [HttpPost]
         [ValidateAntiForgeryToken]
         public JsonResult DatLichKham(DateTime ngayKham, int maKhungGio, string maDV, string lyDo)
         {
-            var bn = Session["BenhNhan"] as BenhNhanModel;
+            var bn = Session["BenhNhan"] as BenhNhanModel; // Tùy class model của bác
             if (bn == null) return Json(new { success = false, message = "Vui lòng đăng nhập lại!" });
 
             if (ngayKham < DateTime.Today)
@@ -138,12 +137,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             try
             {
                 string tenQuay;
-                int maHD;
+                string maHD;
 
-                // Gọi DB để chèn dữ liệu và lấy ra Mã Phiếu DK + Mã Hóa Đơn
-                int maPhieuDK = db.DatLichKham(bn.MaBN, ngayKham, maKhungGio, maDV, lyDo, out tenQuay, out maHD);
+                // Gọi DB để chèn dữ liệu và lấy ra Mã Phiếu DK + Mã Hóa Đơn (đều là string)
+                string maPhieuDK = db.DatLichKham(bn.MaBN, ngayKham, maKhungGio, maDV, lyDo, out tenQuay, out maHD);
 
-                // Ném dữ liệu trực tiếp về cho Javascript mở Popup QR
+                // Ném dữ liệu trực tiếp về cho Javascript mở Popup QR / VNPay
                 return Json(new
                 {
                     success = true,
@@ -194,7 +193,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // POST: Gọi API PayOS tạo mã QR
         [HttpPost]
-        public async Task<JsonResult> TaoMaQROnline(int maHD, int maPhieuDK)
+        public async Task<JsonResult> TaoMaQROnline(string maHD, string maPhieuDK)
         {
             try
             {
@@ -205,6 +204,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                 string apiKey = ConfigurationManager.AppSettings["PayOS:ApiKey"];
                 string checksumKey = ConfigurationManager.AppSettings["PayOS:ChecksumKey"];
 
+                string cleanMaHD = maHD.Replace("HD", "");
                 long orderCode = long.Parse(maHD.ToString() + DateTime.Now.ToString("HHmmss"));
                 string returnUrl = ConfigurationManager.AppSettings["PayOS:ReturnUrl"] ?? "https://localhost:44326/BenhNhanPortal/LichKham";
                 string cancelUrl = returnUrl;
@@ -255,7 +255,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // POST: Kiểm tra trạng thái thanh toán từ PayOS
         [HttpPost]
-        public async Task<JsonResult> KiemTraThanhToanOnline(long orderCode, int maPhieuDK, int maHD)
+        public async Task<JsonResult> KiemTraThanhToanOnline(long orderCode, string maPhieuDK, string maHD)
         {
             try
             {
@@ -302,142 +302,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             }
         }
 
-
-
-        //// ==================== 3. XEM / HỦY LỊCH KHÁM ====================
-        //public ActionResult LichKham(string trangThai = "")
-        //{
-        //    var bn = Session["BenhNhan"] as BenhNhanModel;
-        //    if (bn == null) return RedirectToAction("Login", "TaiKhoan");
-
-        //    var lichKham = db.GetLichKhamByMaBN(bn.MaBN);
-
-        //    if (!string.IsNullOrEmpty(trangThai))
-        //    {
-        //        if (trangThai == "cho")
-        //            lichKham = lichKham.FindAll(x => x.TrangThai == "Chờ xử lý");
-        //        else if (trangThai == "xacnhan")
-        //            lichKham = lichKham.FindAll(x => x.TrangThai == "Đã xác nhận");
-        //        else if (trangThai == "huy")
-        //            lichKham = lichKham.FindAll(x => x.TrangThai == "Hủy");
-        //        else if (trangThai == "chothanhtoan")
-        //            lichKham = lichKham.FindAll(x => x.TrangThai == "Chờ thanh toán"); // Thêm trạng thái này để lỡ thoát ngang chưa quẹt mã thì vô lại xem
-        //    }
-
-        //    return View(lichKham);
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult HuyLich(int id)
-        //{
-        //    var bn = Session["BenhNhan"] as BenhNhanModel;
-        //    if (bn == null) return RedirectToAction("Login", "TaiKhoan");
-
-        //    try
-        //    {
-        //        bool ok = db.HuyLichKham(id, bn.MaBN);
-        //        if (ok)
-        //            TempData["Success"] = "Hủy lịch khám thành công!";
-        //        else
-        //            TempData["Error"] = "Không thể hủy lịch. Chỉ lịch ở trạng thái 'Chờ xử lý' mới được hủy.";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TempData["Error"] = "Lỗi: " + ex.Message;
-        //    }
-
-        //    return RedirectToAction("LichKham");
-        //}
-
-        //// ==================== 4. TRẠNG THÁI KHÁM ====================
-        //public ActionResult TrangThaiKham()
-        //{
-        //    var bn = Session["BenhNhan"] as BenhNhanModel;
-        //    if (bn == null) return RedirectToAction("Login", "TaiKhoan");
-
-        //    var list = db.GetTrangThaiKhamByMaBN(bn.MaBN);
-        //    return View(list);
-        //}
-
-        //// ==================== 5. LỊCH SỬ KHÁM ====================
-        //public ActionResult LichSuKham()
-        //{
-        //    var bn = Session["BenhNhan"] as BenhNhanModel;
-        //    if (bn == null) return RedirectToAction("Login", "TaiKhoan");
-
-        //    var list = db.GetLichSuKhamByMaBN(bn.MaBN);
-        //    return View(list);
-        //}
-
-        //// ==================== 6. ĐƠN THUỐC ====================
-        //public ActionResult DonThuoc()
-        //{
-        //    var bn = Session["BenhNhan"] as BenhNhanModel;
-        //    if (bn == null) return RedirectToAction("Login", "TaiKhoan");
-
-        //    var list = db.GetDonThuocByMaBN(bn.MaBN);
-        //    return View(list);
-        //}
-
-        //public ActionResult ChiTietDonThuoc(int id)
-        //{
-        //    var bn = Session["BenhNhan"] as BenhNhanModel;
-        //    if (bn == null) return RedirectToAction("Login", "TaiKhoan");
-
-        //    var detail = db.GetChiTietDonThuoc(id);
-        //    if (detail == null || detail.ChiTiet.Count == 0)
-        //        return HttpNotFound("Không tìm thấy đơn thuốc!");
-
-        //    return View(detail);
-        //}
-
-        //// ==================== 7. HÓA ĐƠN ====================
-        //public ActionResult HoaDon()
-        //{
-        //    var bn = Session["BenhNhan"] as BenhNhanModel;
-        //    if (bn == null) return RedirectToAction("Login", "TaiKhoan");
-
-        //    var list = db.GetHoaDonByMaBN(bn.MaBN);
-        //    return View(list);
-        //}
-
-        //public ActionResult ChiTietHoaDon(int id)
-        //{
-        //    var bn = Session["BenhNhan"] as BenhNhanModel;
-        //    if (bn == null) return RedirectToAction("Login", "TaiKhoan");
-
-        //    var detail = db.GetChiTietHoaDon(id);
-        //    if (detail == null)
-        //        return HttpNotFound("Không tìm thấy hóa đơn!");
-
-        //    return View(detail);
-        //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // ==================== 3. XEM / HỦY LỊCH KHÁM ====================
         public ActionResult LichKham(string trangThai = "")
         {
@@ -461,7 +325,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult HuyLich(int id)
+        public ActionResult HuyLich(string id)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
             if (bn == null) return RedirectToAction("Login", "TaiKhoan");
@@ -512,7 +376,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             return View(list);
         }
 
-        public ActionResult ChiTietDonThuoc(int id)
+        public ActionResult ChiTietDonThuoc(string id)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
             if (bn == null) return RedirectToAction("Login", "TaiKhoan");
@@ -534,7 +398,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             return View(list);
         }
 
-        public ActionResult ChiTietHoaDon(int id)
+        public ActionResult ChiTietHoaDon(string id)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
             if (bn == null) return RedirectToAction("Login", "TaiKhoan");
@@ -551,7 +415,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // ==================== HÀM PHỤ TRỢ: GIẢ LẬP THANH TOÁN THẺ THÀNH CÔNG ====================
         [HttpPost]
-        public JsonResult XacNhanThanhToanTheMock(int maHD, int maPhieuDK)
+        public JsonResult XacNhanThanhToanTheMock(string maHD, string maPhieuDK)
         {
             try
             {
@@ -589,7 +453,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // ==================== HÀM PHỤ TRỢ: HỦY LỊCH KHI KHÁCH KHÔNG THANH TOÁN ====================
         [HttpPost]
-        public JsonResult HuyDatLichOnline(int maPhieuDK)
+        public JsonResult HuyDatLichOnline(string maPhieuDK)
         {
             // Check bảo mật: Tránh gọi API ẩn danh
             var bn = Session["BenhNhan"] as BenhNhanModel;

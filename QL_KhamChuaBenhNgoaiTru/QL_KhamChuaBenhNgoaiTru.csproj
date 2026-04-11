@@ -257,6 +257,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\RouteValueExtensions.cs" />
+    <Compile Include="Helpers\Utilities.cs" />
     <Compile Include="Models\DanhMucBenh.cs" />
     <Compile Include="Models\DecimalModelBinder.cs" />
     <Compile Include="Models\DichVu.cs" />
