@@ -12,11 +12,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         {
             try
             {
+                string maNV = Session["MaNV"]?.ToString() ?? "NV001";
                 // Danh sách chờ thực hiện (Code cũ của bạn)
-                var danhSachCho = db.GetDanhSachChoThucHien();
+                var danhSachCho = db.GetDanhSachChoThucHien(maNV);
 
                 // LẤY THÊM DANH SÁCH ĐÃ XONG ĐỂ HIỂN THỊ BẢNG SỐ 2
-                ViewBag.DanhSachDaXong = db.GetDanhSachDaThucHien();
+                ViewBag.DanhSachDaXong = db.GetDanhSachDaThucHien(maNV);
 
                 return View(danhSachCho);
             }

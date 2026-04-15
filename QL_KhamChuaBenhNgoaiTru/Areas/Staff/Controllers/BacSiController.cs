@@ -1,6 +1,7 @@
 using QL_KhamChuaBenhNgoaiTru.Models;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
 using System.Web.Mvc;
+using System;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 {
@@ -83,6 +84,34 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 TempData["ErrorMsg"] = "Lỗi khi lưu dữ liệu. Chi tiết: " + errorMsg;
 
             return RedirectToAction("Index");
+        }
+        // --- TÍNH NĂNG TRA CỨU HỒ SƠ ---
+        [HttpGet]
+        public JsonResult LayDanhSachBenhNhan()
+        {
+            try
+            {
+                var data = db.GetAllBenhNhan();
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public JsonResult LayLichSuKham(string maBN)
+        {
+            try
+            {
+                var data = db.GetLichSuKhamToanDien(maBN);
+                return Json(data, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }
