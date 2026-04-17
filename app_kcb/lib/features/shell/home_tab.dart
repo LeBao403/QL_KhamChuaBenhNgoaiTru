@@ -5,6 +5,7 @@ import '../../core/models/discovery_models.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/services/discovery_service.dart';
 import '../../core/theme/app_theme.dart';
+import '../../shared/widgets/common_widgets.dart';
 import '../booking/booking_screen.dart';
 import '../doctors/doctors_screen.dart';
 import '../guide/guide_screen.dart';
@@ -159,24 +160,34 @@ class _HomeTabState extends State<HomeTab> {
               pinned: true,
               backgroundColor: AppTheme.bgLight,
               titleSpacing: 16,
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              title: Row(
                 children: [
-                  const Text(
-                    'MedicHub',
-                    style: TextStyle(
-                      color: AppTheme.primary,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                    ),
+                  const ClinicBrandLogo(
+                    size: 42,
+                    imagePadding: 5,
+                    borderRadius: 999,
                   ),
-                  Text(
-                    'Xin chào, $userName',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppTheme.textMuted,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'DigiMed Clinic',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppTheme.textDark,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Text(
+                        'Xin chao, $userName',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textMuted,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

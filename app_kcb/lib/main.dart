@@ -35,7 +35,7 @@ class MedicHubApp extends StatelessWidget {
     final isLoggedIn = AuthService().isLoggedIn;
 
     return MaterialApp(
-      title: 'MedicHub',
+      title: 'DigiMed Clinic',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
       routes: {

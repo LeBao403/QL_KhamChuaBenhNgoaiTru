@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -6,19 +7,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// HTTP service với cookie-based session (giống browser).
 /// Backend ASP.NET MVC dùng Session qua cookie "ASP.NET_SessionId".
 class ApiService {
+  static const Duration defaultTimeout = Duration(seconds: 30);
+
   // ── Cấu hình base URL ──────────────────────────────────────────────────────
   // Thay đổi IP/port cho phù hợp với môi trường của bạn:
   //  - Android Emulator → http://10.0.2.2:<port>   (10.0.2.2 = host machine)
   //  - iOS Simulator    → http://localhost:<port>
   //  - Thiết bị thật   → http://<IP_LAN_máy_tính>:<port>
   //
-  // Port của IIS Express khi chạy qua Visual Studio: 57595 (HTTP)
-  // Port khi chạy IIS Express thủ công với port 8080: 8080
+  // IIS Express HTTP port: 8080 (dùng HTTP để tránh SSL cert tự ký trong dev)
   static String get baseUrl {
     if (Platform.isAndroid) {
-      return 'https://10.0.2.2:44326';
+      return 'http://10.0.2.2:8080';
     }
-    return 'https://localhost:44326';
+    return 'http://localhost:8080';
   }
 
   // IIS Express chỉ chấp nhận Host: localhost → ép header này vào mọi request
@@ -95,47 +97,80 @@ class ApiService {
     return h;
   }
 
-  // Backend dùng HTTPS với cert tự ký (localhost dev) → cần bypass SSL verify
+  // Dùng http.Client bình thường (HTTP không cần SSL bypass)
   http.Client _buildClient() {
-    // Trong môi trường production, bỏ phần override HttpClient này
-    final ioClient = HttpClient()
-      ..badCertificateCallback = (_, __, ___) => true;
-    return _IOClient(ioClient);
+    return http.Client();
   }
 
   // ── HTTP methods ───────────────────────────────────────────────────────────
-  Future<http.Response> get(String path,
-      {Map<String, String>? queryParams}) async {
+  Future<http.Response> get(
+    String path, {
+    Map<String, String>? queryParams,
+    Duration timeout = defaultTimeout,
+    int retries = 0,
+  }) async {
     await loadCookies();
     Uri uri = Uri.parse('$baseUrl$path');
     if (queryParams != null && queryParams.isNotEmpty) {
       uri = uri.replace(queryParameters: queryParams);
     }
-    final client = _buildClient();
-    try {
-      final response = await client
-          .get(uri, headers: _headers())
-          .timeout(const Duration(seconds: 30));
-      _updateCookies(response);
-      return response;
-    } finally {
-      client.close();
+
+    Object? lastError;
+    for (var attempt = 0; attempt <= retries; attempt++) {
+      final client = _buildClient();
+      try {
+        final response =
+            await client.get(uri, headers: _headers()).timeout(timeout);
+        _updateCookies(response);
+        return response;
+      } on SocketException catch (e) {
+        lastError = e;
+        if (attempt >= retries) rethrow;
+      } on TimeoutException catch (e) {
+        lastError = e;
+        if (attempt >= retries) rethrow;
+      } finally {
+        client.close();
+      }
+
+      await Future<void>.delayed(Duration(milliseconds: 400 * (attempt + 1)));
     }
+
+    throw lastError ?? Exception('Request failed');
   }
 
-  Future<http.Response> post(String path, Map<String, String> body) async {
+  Future<http.Response> post(
+    String path,
+    Map<String, String> body, {
+    Duration timeout = defaultTimeout,
+    int retries = 0,
+  }) async {
     await loadCookies();
     final uri = Uri.parse('$baseUrl$path');
-    final client = _buildClient();
-    try {
-      final response = await client
-          .post(uri, headers: _headers(), body: body)
-          .timeout(const Duration(seconds: 30));
-      _updateCookies(response);
-      return response;
-    } finally {
-      client.close();
+
+    Object? lastError;
+    for (var attempt = 0; attempt <= retries; attempt++) {
+      final client = _buildClient();
+      try {
+        final response = await client
+            .post(uri, headers: _headers(), body: body)
+            .timeout(timeout);
+        _updateCookies(response);
+        return response;
+      } on SocketException catch (e) {
+        lastError = e;
+        if (attempt >= retries) rethrow;
+      } on TimeoutException catch (e) {
+        lastError = e;
+        if (attempt >= retries) rethrow;
+      } finally {
+        client.close();
+      }
+
+      await Future<void>.delayed(Duration(milliseconds: 400 * (attempt + 1)));
     }
+
+    throw lastError ?? Exception('Request failed');
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────

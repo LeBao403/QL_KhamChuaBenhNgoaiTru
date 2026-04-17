@@ -1,6 +1,62 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 
+class ClinicBrandLogo extends StatelessWidget {
+  static const String assetPath = 'assets/images/clinic_logo.png';
+
+  final double size;
+  final double imagePadding;
+  final double borderRadius;
+  final Color? backgroundColor;
+  final Color borderColor;
+  final List<BoxShadow>? boxShadow;
+
+  const ClinicBrandLogo({
+    super.key,
+    this.size = 72,
+    this.imagePadding = 8,
+    this.borderRadius = 999,
+    this.backgroundColor,
+    this.borderColor = AppTheme.primary,
+    this.boxShadow,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      padding: EdgeInsets.all(imagePadding),
+      decoration: BoxDecoration(
+        color: backgroundColor ?? Colors.white,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(color: borderColor, width: 2),
+        boxShadow: boxShadow ??
+            [
+              BoxShadow(
+                color: AppTheme.primary.withOpacity(0.18),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(borderRadius),
+        child: Image.asset(
+          assetPath,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return const Icon(
+              Icons.local_hospital_rounded,
+              color: AppTheme.primary,
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
 class AppGradientBackground extends StatelessWidget {
   final Gradient gradient;
   final Widget child;

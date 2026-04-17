@@ -338,6 +338,8 @@
     <Content Include="Images\insurance\daiichi.png" />
     <Content Include="Images\insurance\manulife.png" />
     <Content Include="Images\insurance\prudential.png" />
+    <Content Include="Images\Logo\app_logo.png" />
+    <Content Include="Images\Logo\DigiMed_Clinic.png" />
     <Content Include="Images\news-1.jpg" />
     <Content Include="Images\news-2.jpg" />
     <Content Include="Images\news-3.jpg" />
@@ -412,6 +414,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Admin\Views\Backup\Index.cshtml" />
     <Content Include="Areas\Staff\Views\BacSi\InPhieu.cshtml" />
+    <Content Include="backup\QL_KhamBenhNgoaiTru_Full_20260411_173835.bak" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />

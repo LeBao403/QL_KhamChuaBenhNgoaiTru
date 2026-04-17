@@ -216,7 +216,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: const Text('Đăng xuất',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
         content: const Text(
-            'Bạn có chắc muốn đăng xuất khỏi ứng dụng MedicHub?'),
+            'Bạn có chắc muốn đăng xuất khỏi ứng dụng DigiMed Clinic?'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context),

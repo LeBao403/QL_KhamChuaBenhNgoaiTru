@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/theme/app_theme.dart';
+import '../../shared/widgets/common_widgets.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -139,7 +140,11 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
             child: const Row(
               children: [
-                Icon(Icons.person_add_rounded, color: Colors.white, size: 36),
+                ClinicBrandLogo(
+                  size: 56,
+                  imagePadding: 6,
+                  borderRadius: 999,
+                ),
                 SizedBox(width: 16),
                 Expanded(
                   child: Column(

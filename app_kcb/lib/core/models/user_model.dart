@@ -228,11 +228,11 @@ class ServiceModel {
 }
 
 class LichKhamModel {
-  final int maPhieuDK;
+  final String maPhieuDK;
   final DateTime? ngayDangKy;
   final String hinhThucDangKy;
   final String trangThai;
-  final int? maPhieuKhamBenh;
+  final String? maPhieuKhamBenh;
   final int? stt;
   final String trangThaiKham;
   final DateTime? ngayKham;
@@ -257,13 +257,13 @@ class LichKhamModel {
   });
 
   factory LichKhamModel.fromJson(Map<String, dynamic> json) => LichKhamModel(
-        maPhieuDK: json['MaPhieuDK'] ?? 0,
+        maPhieuDK: json['MaPhieuDK']?.toString() ?? '',
         ngayDangKy: json['NgayDangKy'] != null
             ? DateTime.tryParse(json['NgayDangKy'])
             : null,
         hinhThucDangKy: json['HinhThucDangKy'] ?? '',
         trangThai: json['TrangThai'] ?? '',
-        maPhieuKhamBenh: json['MaPhieuKhamBenh'],
+        maPhieuKhamBenh: json['MaPhieuKhamBenh']?.toString(),
         stt: json['STT'],
         trangThaiKham: json['TrangThaiKham'] ?? '',
         ngayKham: json['NgayKham'] != null
@@ -293,7 +293,7 @@ class LichKhamModel {
 
 // ─── Lịch sử khám ────────────────────────────────────────────────────────────
 class LichSuKhamModel {
-  final int maPhieuKhamBenh;
+  final String maPhieuKhamBenh;
   final DateTime ngayKham;
   final String lyDoDenKham;
   final String trieuChung;
@@ -317,7 +317,7 @@ class LichSuKhamModel {
 
   factory LichSuKhamModel.fromJson(Map<String, dynamic> json) =>
       LichSuKhamModel(
-        maPhieuKhamBenh: json['MaPhieuKhamBenh'] ?? 0,
+        maPhieuKhamBenh: json['MaPhieuKhamBenh']?.toString() ?? '',
         ngayKham: json['NgayKham'] != null
             ? DateTime.parse(json['NgayKham'])
             : DateTime.now(),
@@ -333,12 +333,12 @@ class LichSuKhamModel {
 
 // ─── Đơn thuốc ───────────────────────────────────────────────────────────────
 class DonThuocModel {
-  final int maDonThuoc;
+  final String maDonThuoc;
   final DateTime ngayKe;
   final String loiDanBS;
   final String trangThai;
   final DateTime ngayKham;
-  final int maPhieuKhamBenh;
+  final String maPhieuKhamBenh;
   final String tenBacSi;
 
   const DonThuocModel({
@@ -352,7 +352,7 @@ class DonThuocModel {
   });
 
   factory DonThuocModel.fromJson(Map<String, dynamic> json) => DonThuocModel(
-        maDonThuoc: json['MaDonThuoc'] ?? 0,
+        maDonThuoc: json['MaDonThuoc']?.toString() ?? '',
         ngayKe: json['NgayKe'] != null
             ? DateTime.parse(json['NgayKe'])
             : DateTime.now(),
@@ -361,7 +361,7 @@ class DonThuocModel {
         ngayKham: json['NgayKham'] != null
             ? DateTime.parse(json['NgayKham'])
             : DateTime.now(),
-        maPhieuKhamBenh: json['MaPhieuKhamBenh'] ?? 0,
+        maPhieuKhamBenh: json['MaPhieuKhamBenh']?.toString() ?? '',
         tenBacSi: json['TenBacSi'] ?? '',
       );
 
@@ -382,7 +382,7 @@ class DonThuocModel {
 }
 
 class ChiTietThuocModel {
-  final int maCTDonThuoc;
+  final String maCTDonThuoc;
   final String maThuoc;
   final String tenThuoc;
   final double soLuongSang;
@@ -414,7 +414,7 @@ class ChiTietThuocModel {
 
   factory ChiTietThuocModel.fromJson(Map<String, dynamic> json) =>
       ChiTietThuocModel(
-        maCTDonThuoc: json['MaCTDonThuoc'] ?? 0,
+        maCTDonThuoc: json['MaCTDonThuoc']?.toString() ?? '',
         maThuoc: json['MaThuoc'] ?? '',
         tenThuoc: json['TenThuoc'] ?? '',
         soLuongSang: (json['SoLuongSang'] ?? 0).toDouble(),
@@ -444,13 +444,13 @@ class ChiTietThuocModel {
 
 // ─── Hóa đơn ─────────────────────────────────────────────────────────────────
 class HoaDonModel {
-  final int maHD;
+  final String maHD;
   final DateTime? ngayThanhToan;
   final double tongTien;
   final String trangThaiThanhToan;
   final String hinhThucThanhToan;
   final String ghiChu;
-  final int? maPhieuKhamBenh;
+  final String? maPhieuKhamBenh;
   final DateTime? ngayKham;
 
   const HoaDonModel({
@@ -465,7 +465,7 @@ class HoaDonModel {
   });
 
   factory HoaDonModel.fromJson(Map<String, dynamic> json) => HoaDonModel(
-        maHD: json['MaHD'] ?? 0,
+        maHD: json['MaHD']?.toString() ?? '',
         ngayThanhToan: json['NgayThanhToan'] != null
             ? DateTime.tryParse(json['NgayThanhToan'])
             : null,
@@ -473,7 +473,7 @@ class HoaDonModel {
         trangThaiThanhToan: json['TrangThaiThanhToan'] ?? '',
         hinhThucThanhToan: json['HinhThucThanhToan'] ?? '',
         ghiChu: json['GhiChu'] ?? '',
-        maPhieuKhamBenh: json['MaPhieuKhamBenh'],
+        maPhieuKhamBenh: json['MaPhieuKhamBenh']?.toString(),
         ngayKham: json['NgayKham'] != null
             ? DateTime.tryParse(json['NgayKham'])
             : null,

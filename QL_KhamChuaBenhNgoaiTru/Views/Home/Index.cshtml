@@ -24,7 +24,7 @@
                             <h1 class="display-4 fw-bold mb-4 text-white" style="line-height: 1.2;">Kiến tạo sức khỏe<br />Nâng tầm cuộc sống</h1>
                             <p class="lead mb-4 text-white-50">Hệ thống đặt lịch thông minh, giảm thiểu thời gian chờ đợi. Kết nối chuyên gia y tế hàng đầu với bạn một cách nhanh chóng.</p>
                             <div class="d-flex gap-3 mt-4">
-                                <a href="@Url.Action("DatLich", "Home")" class="btn btn-warning btn-lg fw-bold rounded-pill px-4 shadow-lg hover-up text-dark">
+                                <a href="@Url.Action("DatLichKham", "BenhNhanPortal")" class="btn btn-warning btn-lg fw-bold rounded-pill px-4 shadow-lg hover-up text-dark">
                                     <i class="bi bi-calendar-plus me-2"></i>Đặt lịch khám ngay
                                 </a>
                             </div>
@@ -98,7 +98,7 @@
             <a href="@Url.Action("DatLich", "Home")" class="text-decoration-none">
                 <div class="card h-100 border-0 shadow-sm rounded-4 text-center py-4 hover-up">
                     <div class="mb-2 text-primary display-5"><i class="bi bi-calendar2-check"></i></div>
-                    <h6 class="fw-bold text-dark mb-0">Đặt lịch khám</h6>
+                    <h6 href="@Url.Action("DatLichKham", "BenhNhanPortal") class="fw-bold text-dark mb-0">Đặt lịch khám</h6>
                 </div>
             </a>
         </div>
@@ -322,7 +322,7 @@
                         <div class="d-flex align-items-center text-muted small mb-3">
                             <i class="bi bi-calendar3 me-2 text-primary"></i> 16/03/2026
                         </div>
-                        <h5 class="fw-bold text-dark mb-3 line-clamp-2"><a href="#" class="text-dark text-decoration-none">MedicHub triển khai hệ thống đặt lịch thông minh</a></h5>
+                        <h5 class="fw-bold text-dark mb-3 line-clamp-2"><a href="@Url.Action("DatLichKham", "BenhNhanPortal") class="text-dark text-decoration-none">MedicHub triển khai hệ thống đặt lịch thông minh</a></h5>
                         <p class="text-muted small line-clamp-2">Bệnh viện chính thức áp dụng công nghệ số vào quy trình đăng ký khám, giúp người bệnh tiết kiệm thời gian.</p>
                     </div>
                 </div>

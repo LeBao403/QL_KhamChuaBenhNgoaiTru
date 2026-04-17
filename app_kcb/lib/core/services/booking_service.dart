@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../models/user_model.dart';
 import 'api_service.dart';
 
@@ -23,7 +25,7 @@ class BookingService {
 
     final resp = await _api.get(_bookingPagePath);
     if (resp.statusCode != 200) {
-      throw Exception('Không tải được trang đặt lịch.');
+      throw Exception('Khong tai duoc trang dat lich.');
     }
 
     final body = resp.body;
@@ -50,12 +52,13 @@ class BookingService {
   }
 
   Future<ApiResult<List<ServiceModel>>> getDanhSachDichVu() async {
-    try {
-      await _loadBookingForm();
-      if (_cachedServices != null && _cachedServices!.isNotEmpty) {
-        return ApiResult.ok(_cachedServices!);
-      }
+    // 1. Dùng cache nếu có
+    if (_cachedServices != null && _cachedServices!.isNotEmpty) {
+      return ApiResult.ok(_cachedServices!);
+    }
 
+    // 2. Gọi MobileApi/GetDichVu trước (không cần parse HTML)
+    try {
       final resp = await _api.get('/MobileApi/GetDichVu');
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
@@ -69,11 +72,21 @@ class BookingService {
           }
         }
       }
-
-      return ApiResult.fail('Không tải được danh sách dịch vụ!');
-    } catch (e) {
-      return ApiResult.fail('Lỗi tải dịch vụ: $e');
+    } catch (_) {
+      // MobileApi thất bại -> thử fallback HTML
     }
+
+    // 3. Fallback: parse HTML từ web portal
+    try {
+      await _loadBookingForm();
+      if (_cachedServices != null && _cachedServices!.isNotEmpty) {
+        return ApiResult.ok(_cachedServices!);
+      }
+    } catch (_) {
+      // HTML parse cũng thất bại
+    }
+
+    return ApiResult.fail('Không tải được danh sách dịch vụ!');
   }
 
   Future<ApiResult<List<TimeSlotModel>>> getKhungGio(DateTime ngayKham) async {
@@ -97,7 +110,7 @@ class BookingService {
         fallbackMessage: webResult.message,
       );
     } catch (e) {
-      return ApiResult.fail('Lỗi kết nối: $e');
+      return ApiResult.fail('Loi ket noi: $e');
     }
   }
 
@@ -137,18 +150,18 @@ class BookingService {
 
       return _parseBookingResponse(mobileResp);
     } catch (e) {
-      return ApiResult.fail('Lỗi kết nối: $e');
+      return ApiResult.fail('Loi ket noi: $e');
     }
   }
 
   Future<ApiResult<Map<String, dynamic>>> taoMaQR(
-    int maHD,
-    int maPhieuDK,
+    String maHD,
+    String maPhieuDK,
   ) async {
     try {
       final resp = await _api.post('/BenhNhanPortal/TaoMaQROnline', {
-        'maHD': maHD.toString(),
-        'maPhieuDK': maPhieuDK.toString(),
+        'maHD': maHD,
+        'maPhieuDK': maPhieuDK,
       });
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
@@ -159,21 +172,21 @@ class BookingService {
               'orderCode': json['orderCode'],
             });
           }
-          return ApiResult.fail(json['message'] ?? 'Tạo QR thất bại!');
+          return ApiResult.fail(json['message'] ?? 'Tao QR that bai!');
         }
       }
-      return ApiResult.fail('Lỗi tạo mã QR!');
+      return ApiResult.fail('Loi tao ma QR!');
     } catch (e) {
-      return ApiResult.fail('Lỗi kết nối: $e');
+      return ApiResult.fail('Loi ket noi: $e');
     }
   }
 
-  Future<bool> kiemTraThanhToan(int orderCode, int maPhieuDK, int maHD) async {
+  Future<bool> kiemTraThanhToan(int orderCode, String maPhieuDK, String maHD) async {
     try {
       final resp = await _api.post('/BenhNhanPortal/KiemTraThanhToanOnline', {
         'orderCode': orderCode.toString(),
-        'maPhieuDK': maPhieuDK.toString(),
-        'maHD': maHD.toString(),
+        'maPhieuDK': maPhieuDK,
+        'maHD': maHD,
       });
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
@@ -185,11 +198,11 @@ class BookingService {
     return false;
   }
 
-  Future<ApiResult<void>> xacNhanThanhToanThe(int maHD, int maPhieuDK) async {
+  Future<ApiResult<void>> xacNhanThanhToanThe(String maHD, String maPhieuDK) async {
     try {
       final resp = await _api.post('/BenhNhanPortal/XacNhanThanhToanTheMock', {
-        'maHD': maHD.toString(),
-        'maPhieuDK': maPhieuDK.toString(),
+        'maHD': maHD,
+        'maPhieuDK': maPhieuDK,
       });
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
@@ -197,36 +210,40 @@ class BookingService {
           return const ApiResult(success: true);
         }
         return ApiResult.fail(
-          json?['message']?.toString() ?? 'Xác nhận thanh toán thất bại!',
+          json?['message']?.toString() ?? 'Xac nhan thanh toan that bai!',
         );
       }
-      return ApiResult.fail('Xác nhận thanh toán thất bại!');
+      return ApiResult.fail('Xac nhan thanh toan that bai!');
     } catch (e) {
-      return ApiResult.fail('Lỗi kết nối: $e');
+      return ApiResult.fail('Loi ket noi: $e');
     }
   }
 
-  Future<ApiResult<void>> huyDatLichKhiKhongThanhToan(int maPhieuDK) async {
+  Future<ApiResult<void>> huyDatLichKhiKhongThanhToan(String maPhieuDK) async {
     try {
       final resp = await _api.post('/BenhNhanPortal/HuyDatLichOnline', {
-        'maPhieuDK': maPhieuDK.toString(),
+        'maPhieuDK': maPhieuDK,
       });
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
           return const ApiResult(success: true);
         }
-        return ApiResult.fail(json?['message']?.toString() ?? 'Hủy thất bại!');
+        return ApiResult.fail(json?['message']?.toString() ?? 'Huy that bai!');
       }
-      return ApiResult.fail('Hủy thất bại!');
+      return ApiResult.fail('Huy that bai!');
     } catch (e) {
-      return ApiResult.fail('Lỗi kết nối: $e');
+      return ApiResult.fail('Loi ket noi: $e');
     }
   }
 
   Future<ApiResult<List<LichKhamModel>>> getLichKham() async {
     try {
-      final resp = await _api.get('/MobileApi/GetLichKham');
+      final resp = await _api.get(
+        '/MobileApi/GetLichKham',
+        timeout: const Duration(seconds: 60),
+        retries: 1,
+      );
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
@@ -236,16 +253,20 @@ class BookingService {
           return ApiResult.ok(list);
         }
       }
-      return ApiResult.fail('Không tải được lịch khám!');
+      return ApiResult.fail('Khong tai duoc lich kham!');
+    } on TimeoutException {
+      return ApiResult.fail(
+        'Tai lich dat kham qua lau. Vui long thu lai sau it phut.',
+      );
     } catch (e) {
-      return ApiResult.fail('Lỗi kết nối: $e');
+      return ApiResult.fail('Loi ket noi: $e');
     }
   }
 
-  Future<ApiResult<void>> huyLich(int maPhieuDK) async {
+  Future<ApiResult<void>> huyLich(String maPhieuDK) async {
     try {
       final resp = await _api.post('/MobileApi/HuyLich', {
-        'maPhieuDK': maPhieuDK.toString(),
+        'maPhieuDK': maPhieuDK,
       });
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
@@ -253,12 +274,12 @@ class BookingService {
           return const ApiResult(success: true);
         }
         return ApiResult.fail(
-          json?['message']?.toString() ?? 'Hủy lịch thất bại!',
+          json?['message']?.toString() ?? 'Huy lich that bai!',
         );
       }
-      return ApiResult.fail('Hủy lịch thất bại!');
+      return ApiResult.fail('Huy lich that bai!');
     } catch (e) {
-      return ApiResult.fail('Lỗi kết nối: $e');
+      return ApiResult.fail('Loi ket noi: $e');
     }
   }
 
@@ -278,12 +299,12 @@ class BookingService {
       return ApiResult.fail(
         json?['message']?.toString() ??
             fallbackMessage ??
-            'Không tải được khung giờ!',
+            'Khong tai duoc khung gio!',
       );
     }
 
     return ApiResult.fail(
-      fallbackMessage ?? 'Lỗi server khi tải khung giờ! (${resp.statusCode})',
+      fallbackMessage ?? 'Loi server khi tai khung gio! (${resp.statusCode})',
     );
   }
 
@@ -295,16 +316,16 @@ class BookingService {
           return ApiResult.ok({
             'maPhieuDK': json['maPhieuDK'],
             'maHD': json['maHD'],
-            'tenQuay': json['tenQuay'] ?? 'Quầy Tiếp Tân',
+            'tenQuay': json['tenQuay'] ?? 'Quay Tiep Tan',
           });
         }
 
         return ApiResult.fail(
-          json['message']?.toString() ?? 'Đặt lịch thất bại!',
+          json['message']?.toString() ?? 'Dat lich that bai!',
         );
       }
     }
 
-    return ApiResult.fail('Lỗi máy chủ! Vui lòng thử lại.');
+    return ApiResult.fail('Loi may chu! Vui long thu lai.');
   }
 }

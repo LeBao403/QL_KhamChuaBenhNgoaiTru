@@ -44,8 +44,8 @@ class _BookingScreenState extends State<BookingScreen>
   String? _apptError;
 
   // Booking result (set after successful datLichKham)
-  int? _maPhieuDK;
-  int? _maHD;
+  String? _maPhieuDK;
+  String? _maHD;
   String _tenQuay = 'Quầy Tiếp Tân';
   Timer? _pollTimer;
 
@@ -1286,7 +1286,7 @@ class _BookingScreenState extends State<BookingScreen>
     );
   }
 
-  void _showCancelDialog(int maPhieuDK) {
+  void _showCancelDialog(String maPhieuDK) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -1328,8 +1328,8 @@ class _BookingScreenState extends State<BookingScreen>
 
 // ─── QR Payment Dialog ────────────────────────────────────────────────────────
 class _QRPaymentDialog extends StatefulWidget {
-  final int maHD;
-  final int maPhieuDK;
+  final String maHD;
+  final String maPhieuDK;
   final String tenQuay;
   final BookingService bookingService;
   final VoidCallback onPaid;
