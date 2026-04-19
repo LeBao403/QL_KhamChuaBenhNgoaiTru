@@ -115,7 +115,8 @@ class SettingsScreen extends StatelessWidget {
               _tile(
                 icon: Icons.info_outline_rounded,
                 title: 'Về ứng dụng',
-                subtitle: 'DigiMed Clinic dành cho đặt lịch và theo dõi hồ sơ khám',
+                subtitle:
+                    'DigiMed Clinic dành cho đặt lịch và theo dõi hồ sơ khám',
               ),
             ],
           ),

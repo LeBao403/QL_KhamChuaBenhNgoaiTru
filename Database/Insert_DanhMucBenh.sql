@@ -1,0 +1,9 @@
+USE QL_KhamBenhNgoaiTru;
+GO
+INSERT INTO DANHMUC_BENH (MaBenh, TenBenh, TrieuChung, MoTa, SoGiaiDoan) VALUES
+('B001', N'Viêm h?ng c?p', N'?au h?ng, ho, s?t nh?', N'Viêm niêm m?c h?ng do virus ho?c vi khu?n', 0),
+('B002', N'T?ng huy?t áp vô c?n', N'?au ??u, chóng m?t', N'Huy?t áp tâm thu >= 140 ho?c tâm tr??ng >= 90', 0),
+('B003', N'Viêm loét d? dày tá tràng', N'?au th??ng v?, ? h?i, bu?n nôn', N'T?n th??ng niêm m?c d? dày', 0),
+('B004', N'?ái tháo ???ng Type 2', N'Khát n??c, ti?u nhi?u, m?t m?i', N'R?i lo?n chuy?n hóa ???ng', 0),
+('B005', N'Viêm ph? qu?n c?p', N'Ho có ??m, t?c ng?c, khó th? nh?', N'Viêm ???ng hô h?p d??i', 0);
+GO

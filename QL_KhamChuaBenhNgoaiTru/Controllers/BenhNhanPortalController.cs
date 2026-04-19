@@ -200,13 +200,13 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                 // Phí đặt lịch cố định 100k theo yêu cầu
                 int tongTien = 100000;
 
-                string clientId = ConfigurationManager.AppSettings["PayOS:ClientId"];
-                string apiKey = ConfigurationManager.AppSettings["PayOS:ApiKey"];
-                string checksumKey = ConfigurationManager.AppSettings["PayOS:ChecksumKey"];
+                string clientId = (ConfigurationManager.AppSettings["PayOS:ClientId"] ?? "").Trim();
+                string apiKey = (ConfigurationManager.AppSettings["PayOS:ApiKey"] ?? "").Trim();
+                string checksumKey = (ConfigurationManager.AppSettings["PayOS:ChecksumKey"] ?? "").Trim();
 
-                string cleanMaHD = maHD.Replace("HD", "");
-                long orderCode = long.Parse(maHD.ToString() + DateTime.Now.ToString("HHmmss"));
-                string returnUrl = ConfigurationManager.AppSettings["PayOS:ReturnUrl"] ?? "https://localhost:44326/BenhNhanPortal/LichKham";
+                string cleanMaHD = (maHD ?? "").Replace("HD", "").Trim();
+                long orderCode = long.Parse(cleanMaHD + DateTime.Now.ToString("HHmmss"));
+                string returnUrl = (ConfigurationManager.AppSettings["PayOS:ReturnUrl"] ?? "https://localhost:44326/BenhNhanPortal/LichKham").Trim();
                 string cancelUrl = returnUrl;
                 string description = "Phi dat lich Online";
 

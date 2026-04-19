@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import '../../core/services/api_service.dart';
 import '../../core/theme/app_theme.dart';
 
 class ClinicBrandLogo extends StatelessWidget {
@@ -51,6 +54,78 @@ class ClinicBrandLogo extends StatelessWidget {
               color: AppTheme.primary,
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class DoctorAvatar extends StatelessWidget {
+  final String name;
+  final String? imagePath;
+  final double radius;
+  final Color backgroundColor;
+  final Color foregroundColor;
+
+  const DoctorAvatar({
+    super.key,
+    required this.name,
+    this.imagePath,
+    this.radius = 28,
+    this.backgroundColor = const Color(0xFFE0ECFF),
+    this.foregroundColor = AppTheme.primary,
+  });
+
+  String get _initials {
+    final parts = name.trim().split(RegExp(r'\s+')).where((e) => e.isNotEmpty);
+    final value = parts.take(2).map((e) => e[0].toUpperCase()).join();
+    return value.isEmpty ? 'BS' : value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final resolvedImage = imagePath == null || imagePath!.trim().isEmpty
+        ? ''
+        : ApiService.resolveUrl(imagePath!);
+
+    return Container(
+      width: radius * 2,
+      height: radius * 2,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipOval(
+        child: resolvedImage.isEmpty
+            ? _buildFallback()
+            : CachedNetworkImage(
+                imageUrl: resolvedImage,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => _buildFallback(),
+                errorWidget: (context, url, error) => _buildFallback(),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildFallback() {
+    return Container(
+      color: backgroundColor,
+      alignment: Alignment.center,
+      child: Text(
+        _initials,
+        style: TextStyle(
+          color: foregroundColor,
+          fontWeight: FontWeight.w800,
+          fontSize: radius * 0.42,
         ),
       ),
     );

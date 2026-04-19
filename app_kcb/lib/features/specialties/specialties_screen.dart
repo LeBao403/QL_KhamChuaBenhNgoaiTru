@@ -102,7 +102,8 @@ class _SpecialtiesScreenState extends State<SpecialtiesScreen> {
               controller: _searchController,
               onChanged: (_) => setState(() {}),
               decoration: const InputDecoration(
-                hintText: 'Tìm chuyên khoa, ví dụ: Nội, Nhi, Răng Hàm Mặt...',
+                hintText:
+                    'Tìm chuyên khoa, ví dụ: Nội, Nhi, Răng Hàm Mặt...',
                 prefixIcon: Icon(Icons.search_rounded),
               ),
             ),
@@ -164,8 +165,11 @@ class _SpecialtiesScreenState extends State<SpecialtiesScreen> {
       ),
       child: Column(
         children: [
-          const Icon(Icons.error_outline_rounded,
-              color: AppTheme.danger, size: 42),
+          const Icon(
+            Icons.error_outline_rounded,
+            color: AppTheme.danger,
+            size: 42,
+          ),
           const SizedBox(height: 12),
           Text(_error ?? 'Không tải được danh sách chuyên khoa.'),
           const SizedBox(height: 12),
@@ -191,8 +195,11 @@ class _SpecialtiesScreenState extends State<SpecialtiesScreen> {
           ),
           child: const Column(
             children: [
-              Icon(Icons.medical_services_outlined,
-                  size: 44, color: AppTheme.textMuted),
+              Icon(
+                Icons.medical_services_outlined,
+                size: 44,
+                color: AppTheme.textMuted,
+              ),
               SizedBox(height: 12),
               Text(
                 'Không tìm thấy chuyên khoa phù hợp.',

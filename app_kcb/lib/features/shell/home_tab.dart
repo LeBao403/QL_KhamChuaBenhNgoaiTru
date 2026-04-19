@@ -163,18 +163,19 @@ class _HomeTabState extends State<HomeTab> {
               title: Row(
                 children: [
                   const ClinicBrandLogo(
-                    size: 42,
-                    imagePadding: 5,
-                    borderRadius: 999,
+                    size: 52,
+                    imagePadding: 4,
+                    borderRadius: 18,
+                    borderColor: Color(0xFFBFDBFE),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
                         'DigiMed Clinic',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 17,
                           color: AppTheme.textDark,
                           fontWeight: FontWeight.w800,
                         ),
@@ -698,16 +699,10 @@ class _HomeTabState extends State<HomeTab> {
           ),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: AppTheme.primary.withOpacity(0.12),
-                child: Text(
-                  doctor.initials,
-                  style: const TextStyle(
-                    color: AppTheme.primary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
+              DoctorAvatar(
+                name: doctor.hoTen,
+                imagePath: doctor.hinhAnh,
+                radius: 30,
               ),
               const SizedBox(width: 14),
               Expanded(

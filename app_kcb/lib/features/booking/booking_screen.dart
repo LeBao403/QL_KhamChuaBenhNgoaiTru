@@ -1499,7 +1499,7 @@ class _QRPaymentDialogState extends State<_QRPaymentDialog> {
               ),
               const SizedBox(height: 12),
               const Text(
-                'Mo app ngan hang va quet ma VietQR de thanh toan phi dat lich.',
+                'Mở app ngân hàng và quét mã VietQR để thanh toán phí đặt lịch.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: AppTheme.textMuted,

@@ -27,16 +27,16 @@ class MedicalService {
           return ApiResult.ok(list);
         }
         return ApiResult.fail(
-          json?['message'] ?? 'Khong tai duoc lich su kham!',
+          json?['message'] ?? 'Không tải được lịch sử khám!',
         );
       }
       return ApiResult.fail('Loi server!');
     } on TimeoutException {
       return ApiResult.fail(
-        'Tai lich su kham qua lau. Vui long thu lai sau it phut.',
+        'Tải lịch sử khám quá lâu. Vui lòng thử lại sau ít phút.',
       );
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: ${e.toString()}');
+      return ApiResult.fail('Lỗi kết nối: ${e.toString()}');
     }
   }
 
@@ -56,16 +56,16 @@ class MedicalService {
           return ApiResult.ok(list);
         }
         return ApiResult.fail(
-          json?['message'] ?? 'Khong tai duoc don thuoc!',
+          json?['message'] ?? 'Không tải được đơn thuốc!',
         );
       }
       return ApiResult.fail('Loi server!');
     } on TimeoutException {
       return ApiResult.fail(
-        'Tai don thuoc qua lau. Vui long thu lai sau it phut.',
+        'Tải đơn thuốc quá lâu. Vui lòng thử lại sau ít phút.',
       );
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: ${e.toString()}');
+      return ApiResult.fail('Lỗi kết nối: ${e.toString()}');
     }
   }
 
@@ -90,16 +90,16 @@ class MedicalService {
           return ApiResult.ok(list);
         }
         return ApiResult.fail(
-          json?['message'] ?? 'Khong tai duoc chi tiet!',
+          json?['message'] ?? 'Không tải được chi tiết!',
         );
       }
       return ApiResult.fail('Loi server!');
     } on TimeoutException {
       return ApiResult.fail(
-        'Tai chi tiet don thuoc qua lau. Vui long thu lai sau it phut.',
+        'Tải chi tiết đơn thuốc quá lâu. Vui lòng thử lại sau ít phút.',
       );
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: ${e.toString()}');
+      return ApiResult.fail('Lỗi kết nối: ${e.toString()}');
     }
   }
 
@@ -119,16 +119,16 @@ class MedicalService {
           return ApiResult.ok(list);
         }
         return ApiResult.fail(
-          json?['message'] ?? 'Khong tai duoc hoa don!',
+          json?['message'] ?? 'Không tải được hóa đơn!',
         );
       }
       return ApiResult.fail('Loi server!');
     } on TimeoutException {
       return ApiResult.fail(
-        'Tai hoa don qua lau. Vui long thu lai sau it phut.',
+        'Tải hóa đơn quá lâu. Vui lòng thử lại sau ít phút.',
       );
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: ${e.toString()}');
+      return ApiResult.fail('Lỗi kết nối: ${e.toString()}');
     }
   }
 }

@@ -15,25 +15,30 @@ class _GuideScreenState extends State<GuideScreen> {
 
   final List<_GuideStep> _steps = const [
     _GuideStep(
-        '1. Đặt lịch',
-        'Đặt lịch trước qua ứng dụng để chủ động chọn ngày và khung giờ.',
-        Icons.calendar_month_rounded),
+      '1. Đặt lịch',
+      'Đặt lịch trước qua ứng dụng để chủ động chọn ngày và khung giờ.',
+      Icons.calendar_month_rounded,
+    ),
     _GuideStep(
-        '2. Tiếp nhận',
-        'Mang CCCD hoặc BHYT để xác nhận thông tin tại quầy tiếp đón.',
-        Icons.badge_rounded),
+      '2. Tiếp nhận',
+      'Mang CCCD hoặc BHYT để xác nhận thông tin tại quầy tiếp đón.',
+      Icons.badge_rounded,
+    ),
     _GuideStep(
-        '3. Khám lâm sàng',
-        'Bác sĩ chuyên khoa thăm khám, đánh giá triệu chứng và chỉ định cần thiết.',
-        Icons.health_and_safety_rounded),
+      '3. Khám lâm sàng',
+      'Bác sĩ chuyên khoa thăm khám, đánh giá triệu chứng và chỉ định cần thiết.',
+      Icons.health_and_safety_rounded,
+    ),
     _GuideStep(
-        '4. Cận lâm sàng',
-        'Thực hiện xét nghiệm, siêu âm hoặc chẩn đoán hình ảnh nếu có chỉ định.',
-        Icons.monitor_heart_rounded),
+      '4. Cận lâm sàng',
+      'Thực hiện xét nghiệm, siêu âm hoặc chẩn đoán hình ảnh nếu có chỉ định.',
+      Icons.monitor_heart_rounded,
+    ),
     _GuideStep(
-        '5. Nhận kết quả',
-        'Thanh toán, nhận thuốc và lời dặn của bác sĩ trước khi ra về.',
-        Icons.medication_rounded),
+      '5. Nhận kết quả',
+      'Thanh toán, nhận thuốc và lời dặn của bác sĩ trước khi ra về.',
+      Icons.medication_rounded,
+    ),
   ];
 
   final List<_GuidePrep> _preps = const [
@@ -58,16 +63,26 @@ class _GuideScreenState extends State<GuideScreen> {
   ];
 
   final List<_FaqItem> _faqs = const [
-    _FaqItem('Tôi có cần đặt lịch trước khi đến khám không?',
-        'Bạn nên đặt lịch trước để chọn được khung giờ phù hợp và giảm thời gian chờ tại bệnh viện.'),
-    _FaqItem('Đi khám cần mang theo giấy tờ gì?',
-        'Bạn nên mang CCCD, BHYT còn hiệu lực, các kết quả khám cũ và toa thuốc đang sử dụng nếu có.'),
-    _FaqItem('BHYT có áp dụng khi đặt lịch trên app không?',
-        'Có. Phí đặt lịch giữ chỗ là khoản riêng, còn quyền lợi BHYT vẫn được áp dụng trong quá trình khám theo quy định.'),
-    _FaqItem('Tôi có thể hủy lịch đã đặt không?',
-        'Bạn có thể hủy lịch khi lịch vẫn ở trạng thái chờ xử lý hoặc chưa hoàn tất quy trình tiếp nhận.'),
-    _FaqItem('Nếu không biết nên khám chuyên khoa nào thì sao?',
-        'Bạn có thể xem mục Chuyên khoa, gọi tổng đài tư vấn hoặc chọn khám tổng quát để được định hướng phù hợp.'),
+    _FaqItem(
+      'Tôi có cần đặt lịch trước khi đến khám không?',
+      'Bạn nên đặt lịch trước để chọn được khung giờ phù hợp và giảm thời gian chờ tại bệnh viện.',
+    ),
+    _FaqItem(
+      'Đi khám cần mang theo giấy tờ gì?',
+      'Bạn nên mang CCCD, BHYT còn hiệu lực, các kết quả khám cũ và toa thuốc đang sử dụng nếu có.',
+    ),
+    _FaqItem(
+      'BHYT có áp dụng khi đặt lịch trên app không?',
+      'Có. Phí đặt lịch giữ chỗ là khoản riêng, còn quyền lợi BHYT vẫn được áp dụng trong quá trình khám theo quy định.',
+    ),
+    _FaqItem(
+      'Tôi có thể hủy lịch đã đặt không?',
+      'Bạn có thể hủy lịch khi lịch vẫn ở trạng thái chờ xử lý hoặc chưa hoàn tất quy trình tiếp nhận.',
+    ),
+    _FaqItem(
+      'Nếu không biết nên khám chuyên khoa nào thì sao?',
+      'Bạn có thể xem mục Chuyên khoa, gọi tổng đài tư vấn hoặc chọn khám tổng quát để được định hướng phù hợp.',
+    ),
   ];
 
   final List<_GuideArticle> _articles = const [
@@ -115,17 +130,23 @@ class _GuideScreenState extends State<GuideScreen> {
           _buildHero(),
           const SizedBox(height: 20),
           _buildSectionTitle(
-              'Quy trình khám bệnh', 'Các bước trên app và tại bệnh viện'),
+            'Quy trình khám bệnh',
+            'Các bước trên app và tại bệnh viện',
+          ),
           const SizedBox(height: 12),
           ..._steps.map(_buildStepCard),
           const SizedBox(height: 24),
           _buildSectionTitle(
-              'Lưu ý trước khi khám', 'Chuẩn bị đúng để kết quả chính xác hơn'),
+            'Lưu ý trước khi khám',
+            'Chuẩn bị đúng để kết quả chính xác hơn',
+          ),
           const SizedBox(height: 12),
           ..._preps.map(_buildPrepCard),
           const SizedBox(height: 24),
           _buildSectionTitle(
-              'Câu hỏi thường gặp', 'Tra cứu nhanh những thắc mắc phổ biến'),
+            'Câu hỏi thường gặp',
+            'Tra cứu nhanh những thắc mắc phổ biến',
+          ),
           const SizedBox(height: 12),
           TextField(
             controller: _searchController,
@@ -139,7 +160,9 @@ class _GuideScreenState extends State<GuideScreen> {
           ..._filteredFaqs.map(_buildFaqItem),
           const SizedBox(height: 24),
           _buildSectionTitle(
-              'Cẩm nang sức khỏe', 'Thông tin nên đọc trước và sau khi khám'),
+            'Cẩm nang sức khỏe',
+            'Thông tin nên đọc trước và sau khi khám',
+          ),
           const SizedBox(height: 12),
           ..._articles.map(_buildArticleCard),
           const SizedBox(height: 24),

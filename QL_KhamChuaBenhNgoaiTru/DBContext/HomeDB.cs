@@ -303,7 +303,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             {
                 conn.Open();
                 string sql = @"
-            SELECT L.MaLoaiDV, L.TenLoaiDV, D.TenDV, D.GiaDichVu, D.GiaBHYT, D.DonViTinh, D.MoTa
+            SELECT L.MaLoaiDV, L.TenLoaiDV, D.TenDV, D.GiaDichVu, D.CoBHYT, D.DonViTinh, D.MoTa
             FROM LOAI_DICHVU L
             INNER JOIN DICHVU D ON L.MaLoaiDV = D.MaLoaiDV
             WHERE D.TrangThai = 1 ";
@@ -331,12 +331,11 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 listGroup.Add(group);
                             }
 
-                            decimal? giaBHYT = dr["GiaBHYT"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBHYT"]) : (decimal?)null;
-
                             group.DanhSachDichVu.Add(new DichVuItem
                             {
                                 TenDV = dr["TenDV"].ToString(),
                                 GiaDichVu = Convert.ToDecimal(dr["GiaDichVu"]),
+                                CoBHYT = dr["CoBHYT"] != DBNull.Value && Convert.ToBoolean(dr["CoBHYT"]),
                                 DonViTinh = dr["DonViTinh"]?.ToString(),
                                 MoTa = dr["MoTa"]?.ToString()
                             });
