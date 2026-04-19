@@ -314,20 +314,6 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      setState(() {
-                        _selectedSpecialty = doctor.chuyenKhoa;
-                      });
-                      _loadDoctors();
-                    },
-                    icon: const Icon(Icons.local_hospital_outlined, size: 18),
-                    label: const Text('Xem chuyên khoa'),
-                  ),
-                ),
               ],
             ),
           ),

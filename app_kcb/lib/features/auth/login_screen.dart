@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen>
                 ),
                 child: const ClinicBrandLogo(
                   size: 74,
-                  imagePadding: 8,
+                  imagePadding: 0,
                   borderRadius: 999,
                 ),
               ),

@@ -47,7 +47,7 @@ class ClinicBrandLogo extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         child: Image.asset(
           assetPath,
-          fit: BoxFit.contain,
+          fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return const Icon(
               Icons.local_hospital_rounded,
@@ -109,6 +109,7 @@ class DoctorAvatar extends StatelessWidget {
             : CachedNetworkImage(
                 imageUrl: resolvedImage,
                 fit: BoxFit.cover,
+                httpHeaders: const {'Host': 'localhost'},
                 placeholder: (context, url) => _buildFallback(),
                 errorWidget: (context, url, error) => _buildFallback(),
               ),

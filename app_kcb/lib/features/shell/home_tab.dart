@@ -163,8 +163,8 @@ class _HomeTabState extends State<HomeTab> {
               title: Row(
                 children: [
                   const ClinicBrandLogo(
-                    size: 52,
-                    imagePadding: 4,
+                    size: 56,
+                    imagePadding: 0,
                     borderRadius: 18,
                     borderColor: Color(0xFFBFDBFE),
                   ),

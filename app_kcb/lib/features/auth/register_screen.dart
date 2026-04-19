@@ -155,7 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               children: [
                 ClinicBrandLogo(
                   size: 56,
-                  imagePadding: 6,
+                  imagePadding: 0,
                   borderRadius: 999,
                 ),
                 SizedBox(width: 16),

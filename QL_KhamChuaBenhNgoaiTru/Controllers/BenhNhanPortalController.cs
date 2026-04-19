@@ -204,7 +204,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                 string apiKey = (ConfigurationManager.AppSettings["PayOS:ApiKey"] ?? "").Trim();
                 string checksumKey = (ConfigurationManager.AppSettings["PayOS:ChecksumKey"] ?? "").Trim();
 
+                // Fix PayOS Max Safe Integer Bug in Node.js
                 string cleanMaHD = (maHD ?? "").Replace("HD", "").Trim();
+                if (cleanMaHD.Length > 6) cleanMaHD = cleanMaHD.Substring(cleanMaHD.Length - 6);
                 long orderCode = long.Parse(cleanMaHD + DateTime.Now.ToString("HHmmss"));
                 string returnUrl = (ConfigurationManager.AppSettings["PayOS:ReturnUrl"] ?? "https://localhost:44326/BenhNhanPortal/LichKham").Trim();
                 string cancelUrl = returnUrl;
