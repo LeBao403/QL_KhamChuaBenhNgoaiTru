@@ -1,0 +1,2989 @@
+src,dst,relation
+disease::BENH001,text::Cảm cúm,has_name
+disease::BENH001,symptom::sốt,has_symptom
+disease::BENH001,symptom::ho,has_symptom
+disease::BENH001,symptom::sổ mũi,has_symptom
+disease::BENH001,symptom::đau đầu,has_symptom
+disease::BENH002,text::Viêm họng cấp,has_name
+disease::BENH002,symptom::đau họng,has_symptom
+disease::BENH002,symptom::sốt nhẹ,has_symptom
+disease::BENH002,symptom::nuốt đau,has_symptom
+disease::BENH002,symptom::ho khan,has_symptom
+disease::BENH003,text::Viêm amidan,has_name
+disease::BENH003,symptom::đau họng,has_symptom
+disease::BENH003,symptom::sốt,has_symptom
+disease::BENH003,symptom::khó nuốt,has_symptom
+disease::BENH003,symptom::hôi miệng,has_symptom
+disease::BENH004,text::Viêm phế quản cấp,has_name
+disease::BENH004,symptom::ho đờm,has_symptom
+disease::BENH004,symptom::khó thở nhẹ,has_symptom
+disease::BENH004,symptom::sốt,has_symptom
+disease::BENH004,symptom::đau ngực,has_symptom
+disease::BENH005,text::Viêm mũi xoang,has_name
+disease::BENH005,symptom::nghẹt mũi,has_symptom
+disease::BENH005,symptom::chảy mũi,has_symptom
+disease::BENH005,symptom::đau đầu,has_symptom
+disease::BENH005,symptom::sốt,has_symptom
+disease::BENH006,text::Viêm mũi dị ứng,has_name
+disease::BENH006,symptom::hắt hơi,has_symptom
+disease::BENH006,symptom::ngứa mũi,has_symptom
+disease::BENH006,symptom::chảy mũi,has_symptom
+disease::BENH006,symptom::nghẹt mũi,has_symptom
+disease::BENH007,text::Hen phế quản,has_name
+disease::BENH007,symptom::khò khè,has_symptom
+disease::BENH007,symptom::khó thở,has_symptom
+disease::BENH007,symptom::tức ngực,has_symptom
+disease::BENH007,symptom::ho,has_symptom
+disease::BENH008,text::Sốt siêu vi,has_name
+disease::BENH008,symptom::sốt,has_symptom
+disease::BENH008,symptom::mệt,has_symptom
+disease::BENH008,symptom::đau đầu,has_symptom
+disease::BENH008,symptom::đau nhức người,has_symptom
+disease::BENH009,text::COVID-19,has_name
+disease::BENH009,symptom::sốt,has_symptom
+disease::BENH009,symptom::ho,has_symptom
+disease::BENH009,symptom::đau họng,has_symptom
+disease::BENH009,symptom::mất mùi vị,has_symptom
+disease::BENH010,text::Ho kéo dài,has_name
+disease::BENH010,symptom::ho khan,has_symptom
+disease::BENH010,symptom::ho đờm,has_symptom
+disease::BENH010,symptom::mệt,has_symptom
+disease::BENH010,symptom::đau ngực,has_symptom
+disease::BENH011,text::Viêm thanh quản,has_name
+disease::BENH011,symptom::khàn tiếng,has_symptom
+disease::BENH011,symptom::ho,has_symptom
+disease::BENH011,symptom::đau họng,has_symptom
+disease::BENH012,text::Viêm mũi cấp,has_name
+disease::BENH012,symptom::nghẹt mũi,has_symptom
+disease::BENH012,symptom::chảy mũi,has_symptom
+disease::BENH012,symptom::hắt hơi,has_symptom
+disease::BENH013,text::Viêm thanh khí phế quản,has_name
+disease::BENH013,symptom::ho ông ổng,has_symptom
+disease::BENH013,symptom::khàn tiếng,has_symptom
+disease::BENH013,symptom::khó thở,has_symptom
+disease::BENH014,text::Co thắt phế quản,has_name
+disease::BENH014,symptom::khò khè,has_symptom
+disease::BENH014,symptom::tức ngực,has_symptom
+disease::BENH014,symptom::khó thở,has_symptom
+disease::BENH015,text::Viêm phổi cộng đồng,has_name
+disease::BENH015,symptom::sốt,has_symptom
+disease::BENH015,symptom::ho,has_symptom
+disease::BENH015,symptom::khó thở,has_symptom
+disease::BENH015,symptom::đau ngực,has_symptom
+disease::BENH016,text::Viêm dạ dày,has_name
+disease::BENH016,symptom::đau thượng vị,has_symptom
+disease::BENH016,symptom::buồn nôn,has_symptom
+disease::BENH016,symptom::ợ nóng,has_symptom
+disease::BENH016,symptom::đầy bụng,has_symptom
+disease::BENH017,text::Trào ngược dạ dày thực quản,has_name
+disease::BENH017,symptom::ợ nóng,has_symptom
+disease::BENH017,symptom::ợ chua,has_symptom
+disease::BENH017,symptom::đau ngực,has_symptom
+disease::BENH017,symptom::khó chịu,has_symptom
+disease::BENH018,text::Rối loạn tiêu hóa,has_name
+disease::BENH018,symptom::đau bụng,has_symptom
+disease::BENH018,symptom::đầy hơi,has_symptom
+disease::BENH018,symptom::tiêu chảy,has_symptom
+disease::BENH018,symptom::buồn nôn,has_symptom
+disease::BENH019,text::Tiêu chảy cấp,has_name
+disease::BENH019,symptom::tiêu chảy,has_symptom
+disease::BENH019,symptom::đau bụng,has_symptom
+disease::BENH019,symptom::mất nước,has_symptom
+disease::BENH019,symptom::mệt,has_symptom
+disease::BENH020,text::Táo bón,has_name
+disease::BENH020,symptom::đi ngoài khó,has_symptom
+disease::BENH020,symptom::đau bụng,has_symptom
+disease::BENH020,symptom::bụng chướng,has_symptom
+disease::BENH021,text::Bệnh trĩ,has_name
+disease::BENH021,symptom::đau rát hậu môn,has_symptom
+disease::BENH021,symptom::chảy máu khi đi ngoài,has_symptom
+disease::BENH022,text::Đau bụng,has_name
+disease::BENH022,symptom::đau bụng,has_symptom
+disease::BENH022,symptom::buồn nôn,has_symptom
+disease::BENH022,symptom::chướng bụng,has_symptom
+disease::BENH023,text::Viêm gan,has_name
+disease::BENH023,symptom::mệt,has_symptom
+disease::BENH023,symptom::vàng da,has_symptom
+disease::BENH023,symptom::chán ăn,has_symptom
+disease::BENH023,symptom::đau hạ sườn phải,has_symptom
+disease::BENH024,text::Gan nhiễm mỡ,has_name
+disease::BENH024,symptom::mệt,has_symptom
+disease::BENH024,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH025,text::Đầy hơi,has_name
+disease::BENH025,symptom::bụng chướng,has_symptom
+disease::BENH025,symptom::ợ hơi,has_symptom
+disease::BENH025,symptom::khó chịu,has_symptom
+disease::BENH025,symptom::chán ăn,has_symptom
+disease::BENH026,text::Viêm đại tràng,has_name
+disease::BENH026,symptom::đau bụng,has_symptom
+disease::BENH026,symptom::tiêu chảy,has_symptom
+disease::BENH026,symptom::đầy hơi,has_symptom
+disease::BENH026,symptom::mót rặn,has_symptom
+disease::BENH027,text::Hội chứng ruột kích thích,has_name
+disease::BENH027,symptom::đau bụng,has_symptom
+disease::BENH027,symptom::tiêu chảy,has_symptom
+disease::BENH027,symptom::táo bón,has_symptom
+disease::BENH027,symptom::đầy hơi,has_symptom
+disease::BENH028,text::Viêm loét dạ dày tá tràng,has_name
+disease::BENH028,symptom::đau thượng vị,has_symptom
+disease::BENH028,symptom::ợ nóng,has_symptom
+disease::BENH028,symptom::buồn nôn,has_symptom
+disease::BENH029,text::Nôn ói,has_name
+disease::BENH029,symptom::buồn nôn,has_symptom
+disease::BENH029,symptom::nôn,has_symptom
+disease::BENH029,symptom::mệt,has_symptom
+disease::BENH029,symptom::chóng mặt,has_symptom
+disease::BENH030,text::Chán ăn,has_name
+disease::BENH030,symptom::ăn kém,has_symptom
+disease::BENH030,symptom::sụt cân,has_symptom
+disease::BENH030,symptom::mệt,has_symptom
+disease::BENH030,symptom::đầy bụng,has_symptom
+disease::BENH031,text::Tăng huyết áp,has_name
+disease::BENH031,symptom::đau đầu,has_symptom
+disease::BENH031,symptom::hoa mắt,has_symptom
+disease::BENH031,symptom::chóng mặt,has_symptom
+disease::BENH031,symptom::mệt,has_symptom
+disease::BENH032,text::Rối loạn lipid máu,has_name
+disease::BENH032,symptom::mỡ máu cao,has_symptom
+disease::BENH032,symptom::thừa cân,has_symptom
+disease::BENH032,symptom::ít triệu chứng,has_symptom
+disease::BENH033,text::Đái tháo đường type 2,has_name
+disease::BENH033,symptom::khát nước,has_symptom
+disease::BENH033,symptom::tiểu nhiều,has_symptom
+disease::BENH033,symptom::mệt,has_symptom
+disease::BENH033,symptom::sút cân,has_symptom
+disease::BENH034,text::Tiền đái tháo đường,has_name
+disease::BENH034,symptom::hơi khát nước,has_symptom
+disease::BENH034,symptom::mệt,has_symptom
+disease::BENH034,symptom::đường huyết tăng nhẹ,has_symptom
+disease::BENH035,text::Tăng acid uric máu,has_name
+disease::BENH035,symptom::đau khớp,has_symptom
+disease::BENH035,symptom::sưng khớp,has_symptom
+disease::BENH035,symptom::đau ngón chân cái,has_symptom
+disease::BENH036,text::Béo phì,has_name
+disease::BENH036,symptom::tăng cân,has_symptom
+disease::BENH036,symptom::thừa mỡ,has_symptom
+disease::BENH036,symptom::khó thở khi vận động,has_symptom
+disease::BENH037,text::Thừa cân,has_name
+disease::BENH037,symptom::tăng cân,has_symptom
+disease::BENH037,symptom::BMI cao,has_symptom
+disease::BENH037,symptom::mệt khi vận động,has_symptom
+disease::BENH038,text::Thiếu máu,has_name
+disease::BENH038,symptom::mệt,has_symptom
+disease::BENH038,symptom::hoa mắt,has_symptom
+disease::BENH038,symptom::chóng mặt,has_symptom
+disease::BENH038,symptom::da xanh,has_symptom
+disease::BENH039,text::Rối loạn chuyển hóa,has_name
+disease::BENH039,symptom::mệt,has_symptom
+disease::BENH039,symptom::tăng cân,has_symptom
+disease::BENH039,symptom::đường huyết bất thường,has_symptom
+disease::BENH040,text::Hạ đường huyết,has_name
+disease::BENH040,symptom::run tay,has_symptom
+disease::BENH040,symptom::vã mồ hôi,has_symptom
+disease::BENH040,symptom::đói,has_symptom
+disease::BENH040,symptom::mệt,has_symptom
+disease::BENH041,text::Rối loạn điện giải,has_name
+disease::BENH041,symptom::mệt,has_symptom
+disease::BENH041,symptom::co cơ,has_symptom
+disease::BENH041,symptom::khát nước,has_symptom
+disease::BENH041,symptom::chóng mặt,has_symptom
+disease::BENH042,text::Tăng đường huyết,has_name
+disease::BENH042,symptom::khát nước,has_symptom
+disease::BENH042,symptom::tiểu nhiều,has_symptom
+disease::BENH042,symptom::mệt,has_symptom
+disease::BENH043,text::Rối loạn tuyến giáp,has_name
+disease::BENH043,symptom::mệt,has_symptom
+disease::BENH043,symptom::sụt cân,has_symptom
+disease::BENH043,symptom::hồi hộp,has_symptom
+disease::BENH043,symptom::run tay,has_symptom
+disease::BENH044,text::Rối loạn mỡ máu,has_name
+disease::BENH044,symptom::ít triệu chứng,has_symptom
+disease::BENH044,symptom::mỡ máu cao,has_symptom
+disease::BENH045,text::Rối loạn chuyển hóa acid uric,has_name
+disease::BENH045,symptom::đau khớp,has_symptom
+disease::BENH045,symptom::sưng khớp,has_symptom
+disease::BENH045,symptom::mệt,has_symptom
+disease::BENH046,text::Đau cơ xương khớp,has_name
+disease::BENH046,symptom::đau cơ,has_symptom
+disease::BENH046,symptom::đau khớp,has_symptom
+disease::BENH046,symptom::cứng khớp,has_symptom
+disease::BENH046,symptom::đau khi vận động,has_symptom
+disease::BENH047,text::Đau lưng dưới,has_name
+disease::BENH047,symptom::đau thắt lưng,has_symptom
+disease::BENH047,symptom::đau lan mông,has_symptom
+disease::BENH047,symptom::cứng lưng,has_symptom
+disease::BENH048,text::Viêm khớp,has_name
+disease::BENH048,symptom::đau khớp,has_symptom
+disease::BENH048,symptom::sưng khớp,has_symptom
+disease::BENH048,symptom::cứng khớp,has_symptom
+disease::BENH048,symptom::hạn chế vận động,has_symptom
+disease::BENH049,text::Thoái hóa khớp gối,has_name
+disease::BENH049,symptom::đau gối,has_symptom
+disease::BENH049,symptom::cứng khớp,has_symptom
+disease::BENH049,symptom::khó đi lại,has_symptom
+disease::BENH050,text::Chấn thương phần mềm,has_name
+disease::BENH050,symptom::sưng đau,has_symptom
+disease::BENH050,symptom::bầm tím,has_symptom
+disease::BENH050,symptom::đau khi vận động,has_symptom
+disease::BENH051,text::Trật khớp,has_name
+disease::BENH051,symptom::đau dữ dội,has_symptom
+disease::BENH051,symptom::biến dạng khớp,has_symptom
+disease::BENH051,symptom::hạn chế vận động,has_symptom
+disease::BENH052,text::Đau vai gáy,has_name
+disease::BENH052,symptom::đau cổ vai gáy,has_symptom
+disease::BENH052,symptom::cứng cổ,has_symptom
+disease::BENH052,symptom::tê tay,has_symptom
+disease::BENH053,text::Đau cổ,has_name
+disease::BENH053,symptom::đau cổ,has_symptom
+disease::BENH053,symptom::cứng cổ,has_symptom
+disease::BENH053,symptom::hạn chế xoay cổ,has_symptom
+disease::BENH054,text::Viêm gân,has_name
+disease::BENH054,symptom::đau tại gân,has_symptom
+disease::BENH054,symptom::sưng nhẹ,has_symptom
+disease::BENH054,symptom::đau khi vận động,has_symptom
+disease::BENH055,text::Loãng xương,has_name
+disease::BENH055,symptom::đau lưng,has_symptom
+disease::BENH055,symptom::giảm chiều cao,has_symptom
+disease::BENH055,symptom::dễ gãy xương,has_symptom
+disease::BENH056,text::Bong gân,has_name
+disease::BENH056,symptom::sưng đau,has_symptom
+disease::BENH056,symptom::hạn chế vận động,has_symptom
+disease::BENH056,symptom::bầm tím,has_symptom
+disease::BENH057,text::Đau khớp gối,has_name
+disease::BENH057,symptom::đau gối,has_symptom
+disease::BENH057,symptom::cứng khớp,has_symptom
+disease::BENH057,symptom::đi lại khó,has_symptom
+disease::BENH058,text::Đau vai,has_name
+disease::BENH058,symptom::đau vai,has_symptom
+disease::BENH058,symptom::hạn chế nâng tay,has_symptom
+disease::BENH058,symptom::cứng khớp,has_symptom
+disease::BENH059,text::Đau lưng trên,has_name
+disease::BENH059,symptom::đau lưng,has_symptom
+disease::BENH059,symptom::căng cơ,has_symptom
+disease::BENH059,symptom::mỏi vai,has_symptom
+disease::BENH060,text::Viêm bao hoạt dịch,has_name
+disease::BENH060,symptom::đau khớp,has_symptom
+disease::BENH060,symptom::sưng nóng,has_symptom
+disease::BENH060,symptom::hạn chế vận động,has_symptom
+disease::BENH061,text::Dị ứng,has_name
+disease::BENH061,symptom::ngứa,has_symptom
+disease::BENH061,symptom::nổi mề đay,has_symptom
+disease::BENH061,symptom::hắt hơi,has_symptom
+disease::BENH061,symptom::chảy nước mắt,has_symptom
+disease::BENH062,text::Viêm da dị ứng,has_name
+disease::BENH062,symptom::ngứa da,has_symptom
+disease::BENH062,symptom::mẩn đỏ,has_symptom
+disease::BENH062,symptom::khô da,has_symptom
+disease::BENH062,symptom::rát da,has_symptom
+disease::BENH063,text::Chàm da,has_name
+disease::BENH063,symptom::ngứa,has_symptom
+disease::BENH063,symptom::da khô,has_symptom
+disease::BENH063,symptom::mẩn đỏ,has_symptom
+disease::BENH063,symptom::bong vảy,has_symptom
+disease::BENH064,text::Nhiễm trùng da,has_name
+disease::BENH064,symptom::đỏ da,has_symptom
+disease::BENH064,symptom::sưng,has_symptom
+disease::BENH064,symptom::đau,has_symptom
+disease::BENH064,symptom::mủ,has_symptom
+disease::BENH064,symptom::sốt,has_symptom
+disease::BENH065,text::Mẩn ngứa,has_name
+disease::BENH065,symptom::ngứa,has_symptom
+disease::BENH065,symptom::nổi ban,has_symptom
+disease::BENH065,symptom::đỏ da,has_symptom
+disease::BENH066,text::Mề đay,has_name
+disease::BENH066,symptom::nổi mảng phù,has_symptom
+disease::BENH066,symptom::ngứa,has_symptom
+disease::BENH066,symptom::đỏ da,has_symptom
+disease::BENH067,text::Nấm da,has_name
+disease::BENH067,symptom::ngứa,has_symptom
+disease::BENH067,symptom::bong vảy,has_symptom
+disease::BENH067,symptom::tổn thương vòng,has_symptom
+disease::BENH068,text::Nấm kẽ,has_name
+disease::BENH068,symptom::ngứa,has_symptom
+disease::BENH068,symptom::hăm kẽ,has_symptom
+disease::BENH068,symptom::đỏ da,has_symptom
+disease::BENH069,text::Viêm da tiếp xúc,has_name
+disease::BENH069,symptom::đỏ da,has_symptom
+disease::BENH069,symptom::rát,has_symptom
+disease::BENH069,symptom::ngứa,has_symptom
+disease::BENH069,symptom::phồng rộp,has_symptom
+disease::BENH070,text::Rôm sảy,has_name
+disease::BENH070,symptom::ngứa,has_symptom
+disease::BENH070,symptom::nổi mẩn nhỏ,has_symptom
+disease::BENH070,symptom::rát da,has_symptom
+disease::BENH071,text::Mụn trứng cá,has_name
+disease::BENH071,symptom::mụn viêm,has_symptom
+disease::BENH071,symptom::mụn đầu đen,has_symptom
+disease::BENH071,symptom::da dầu,has_symptom
+disease::BENH072,text::Khô da,has_name
+disease::BENH072,symptom::da khô,has_symptom
+disease::BENH072,symptom::nứt nẻ,has_symptom
+disease::BENH072,symptom::ngứa,has_symptom
+disease::BENH073,text::Nấm móng,has_name
+disease::BENH073,symptom::móng dày,has_symptom
+disease::BENH073,symptom::đổi màu,has_symptom
+disease::BENH073,symptom::giòn móng,has_symptom
+disease::BENH074,text::Viêm nang lông,has_name
+disease::BENH074,symptom::mụn mủ nhỏ,has_symptom
+disease::BENH074,symptom::ngứa,has_symptom
+disease::BENH074,symptom::đỏ da,has_symptom
+disease::BENH075,text::Vảy nến,has_name
+disease::BENH075,symptom::mảng đỏ,has_symptom
+disease::BENH075,symptom::vảy trắng,has_symptom
+disease::BENH075,symptom::ngứa,has_symptom
+disease::BENH076,text::Nhiễm khuẩn tiết niệu,has_name
+disease::BENH076,symptom::tiểu buốt,has_symptom
+disease::BENH076,symptom::tiểu rắt,has_symptom
+disease::BENH076,symptom::đau bụng dưới,has_symptom
+disease::BENH076,symptom::sốt,has_symptom
+disease::BENH077,text::Viêm bàng quang,has_name
+disease::BENH077,symptom::tiểu buốt,has_symptom
+disease::BENH077,symptom::tiểu rắt,has_symptom
+disease::BENH077,symptom::đau hạ vị,has_symptom
+disease::BENH077,symptom::sốt nhẹ,has_symptom
+disease::BENH078,text::Viêm thận - bể thận,has_name
+disease::BENH078,symptom::sốt cao,has_symptom
+disease::BENH078,symptom::đau hông lưng,has_symptom
+disease::BENH078,symptom::tiểu buốt,has_symptom
+disease::BENH079,text::Tiểu buốt,has_name
+disease::BENH079,symptom::tiểu đau,has_symptom
+disease::BENH079,symptom::tiểu rắt,has_symptom
+disease::BENH079,symptom::khó chịu khi đi tiểu,has_symptom
+disease::BENH080,text::Tiểu rắt,has_name
+disease::BENH080,symptom::đi tiểu nhiều lần,has_symptom
+disease::BENH080,symptom::lượng ít,has_symptom
+disease::BENH080,symptom::khó chịu,has_symptom
+disease::BENH081,text::Tiểu đêm,has_name
+disease::BENH081,symptom::đi tiểu nhiều về đêm,has_symptom
+disease::BENH081,symptom::mất ngủ,has_symptom
+disease::BENH081,symptom::mệt,has_symptom
+disease::BENH082,text::Sỏi tiết niệu,has_name
+disease::BENH082,symptom::đau quặn thận,has_symptom
+disease::BENH082,symptom::tiểu buốt,has_symptom
+disease::BENH082,symptom::tiểu máu,has_symptom
+disease::BENH083,text::Suy thận mạn,has_name
+disease::BENH083,symptom::mệt,has_symptom
+disease::BENH083,symptom::phù,has_symptom
+disease::BENH083,symptom::tiểu ít,has_symptom
+disease::BENH083,symptom::chán ăn,has_symptom
+disease::BENH084,text::Đái máu,has_name
+disease::BENH084,symptom::nước tiểu đỏ,has_symptom
+disease::BENH084,symptom::đau bụng dưới,has_symptom
+disease::BENH084,symptom::tiểu buốt,has_symptom
+disease::BENH085,text::Phù,has_name
+disease::BENH085,symptom::sưng chân,has_symptom
+disease::BENH085,symptom::mặt,has_symptom
+disease::BENH085,symptom::tăng cân nhanh,has_symptom
+disease::BENH086,text::Tiểu khó,has_name
+disease::BENH086,symptom::tiểu khó,has_symptom
+disease::BENH086,symptom::dòng tiểu yếu,has_symptom
+disease::BENH086,symptom::đau rát,has_symptom
+disease::BENH087,text::Viêm niệu đạo,has_name
+disease::BENH087,symptom::tiểu buốt,has_symptom
+disease::BENH087,symptom::tiểu rắt,has_symptom
+disease::BENH087,symptom::ngứa niệu đạo,has_symptom
+disease::BENH088,text::Tăng tiểu đêm,has_name
+disease::BENH088,symptom::đi tiểu đêm nhiều lần,has_symptom
+disease::BENH088,symptom::mệt,has_symptom
+disease::BENH089,text::Suy thận cấp,has_name
+disease::BENH089,symptom::tiểu ít,has_symptom
+disease::BENH089,symptom::phù,has_symptom
+disease::BENH089,symptom::mệt,has_symptom
+disease::BENH089,symptom::buồn nôn,has_symptom
+disease::BENH090,text::Đau hông lưng,has_name
+disease::BENH090,symptom::đau hông lưng,has_symptom
+disease::BENH090,symptom::sốt,has_symptom
+disease::BENH090,symptom::tiểu buốt,has_symptom
+disease::BENH091,text::Viêm kết mạc,has_name
+disease::BENH091,symptom::đỏ mắt,has_symptom
+disease::BENH091,symptom::ngứa mắt,has_symptom
+disease::BENH091,symptom::chảy ghèn,has_symptom
+disease::BENH092,text::Viêm tai giữa,has_name
+disease::BENH092,symptom::đau tai,has_symptom
+disease::BENH092,symptom::sốt,has_symptom
+disease::BENH092,symptom::ù tai,has_symptom
+disease::BENH092,symptom::nghe kém,has_symptom
+disease::BENH093,text::Viêm lợi,has_name
+disease::BENH093,symptom::đỏ lợi,has_symptom
+disease::BENH093,symptom::sưng lợi,has_symptom
+disease::BENH093,symptom::chảy máu lợi,has_symptom
+disease::BENH094,text::Đau răng,has_name
+disease::BENH094,symptom::đau răng,has_symptom
+disease::BENH094,symptom::ê buốt,has_symptom
+disease::BENH094,symptom::sưng nướu,has_symptom
+disease::BENH095,text::Sâu răng,has_name
+disease::BENH095,symptom::đau răng,has_symptom
+disease::BENH095,symptom::ê buốt,has_symptom
+disease::BENH095,symptom::lỗ sâu răng,has_symptom
+disease::BENH096,text::Áp xe răng,has_name
+disease::BENH096,symptom::đau răng,has_symptom
+disease::BENH096,symptom::sưng nướu,has_symptom
+disease::BENH096,symptom::mủ,has_symptom
+disease::BENH096,symptom::sốt,has_symptom
+disease::BENH097,text::Ù tai,has_name
+disease::BENH097,symptom::ù tai,has_symptom
+disease::BENH097,symptom::nghe kém,has_symptom
+disease::BENH097,symptom::chóng mặt,has_symptom
+disease::BENH098,text::Khàn tiếng,has_name
+disease::BENH098,symptom::nói khó,has_symptom
+disease::BENH098,symptom::giọng khàn,has_symptom
+disease::BENH098,symptom::đau họng,has_symptom
+disease::BENH099,text::Chảy máu chân răng,has_name
+disease::BENH099,symptom::chảy máu lợi,has_symptom
+disease::BENH099,symptom::đau nướu,has_symptom
+disease::BENH100,text::Viêm xoang mạn,has_name
+disease::BENH100,symptom::nghẹt mũi,has_symptom
+disease::BENH100,symptom::đau đầu,has_symptom
+disease::BENH100,symptom::chảy mũi,has_symptom
+disease::BENH101,text::Viêm mũi họng,has_name
+disease::BENH101,symptom::sổ mũi,has_symptom
+disease::BENH101,symptom::đau họng,has_symptom
+disease::BENH101,symptom::ho,has_symptom
+disease::BENH102,text::Viêm thanh quản cấp,has_name
+disease::BENH102,symptom::khàn tiếng,has_symptom
+disease::BENH102,symptom::ho,has_symptom
+disease::BENH102,symptom::đau họng,has_symptom
+disease::BENH103,text::Viêm tai ngoài,has_name
+disease::BENH103,symptom::đau tai,has_symptom
+disease::BENH103,symptom::ngứa tai,has_symptom
+disease::BENH103,symptom::chảy dịch,has_symptom
+disease::BENH104,text::Viêm nha chu,has_name
+disease::BENH104,symptom::chảy máu lợi,has_symptom
+disease::BENH104,symptom::hôi miệng,has_symptom
+disease::BENH104,symptom::lung lay răng,has_symptom
+disease::BENH105,text::Khô mắt,has_name
+disease::BENH105,symptom::cộm mắt,has_symptom
+disease::BENH105,symptom::khô mắt,has_symptom
+disease::BENH105,symptom::mỏi mắt,has_symptom
+disease::BENH106,text::Đau đầu căng thẳng,has_name
+disease::BENH106,symptom::đau đầu,has_symptom
+disease::BENH106,symptom::căng cổ,has_symptom
+disease::BENH106,symptom::mệt,has_symptom
+disease::BENH106,symptom::khó tập trung,has_symptom
+disease::BENH107,text::Đau nửa đầu,has_name
+disease::BENH107,symptom::đau đầu một bên,has_symptom
+disease::BENH107,symptom::buồn nôn,has_symptom
+disease::BENH107,symptom::sợ ánh sáng,has_symptom
+disease::BENH108,text::Rối loạn lo âu,has_name
+disease::BENH108,symptom::lo lắng,has_symptom
+disease::BENH108,symptom::hồi hộp,has_symptom
+disease::BENH108,symptom::mất ngủ,has_symptom
+disease::BENH108,symptom::căng thẳng,has_symptom
+disease::BENH109,text::Trầm cảm nhẹ,has_name
+disease::BENH109,symptom::buồn bã,has_symptom
+disease::BENH109,symptom::mệt mỏi,has_symptom
+disease::BENH109,symptom::mất hứng thú,has_symptom
+disease::BENH110,text::Rối loạn giấc ngủ,has_name
+disease::BENH110,symptom::khó ngủ,has_symptom
+disease::BENH110,symptom::ngủ không sâu,has_symptom
+disease::BENH110,symptom::thức giấc sớm,has_symptom
+disease::BENH111,text::Căng thẳng,has_name
+disease::BENH111,symptom::mệt,has_symptom
+disease::BENH111,symptom::lo âu,has_symptom
+disease::BENH111,symptom::mất ngủ,has_symptom
+disease::BENH111,symptom::đau đầu,has_symptom
+disease::BENH112,text::Chóng mặt,has_name
+disease::BENH112,symptom::choáng váng,has_symptom
+disease::BENH112,symptom::buồn nôn,has_symptom
+disease::BENH112,symptom::mất thăng bằng,has_symptom
+disease::BENH113,text::Run tay,has_name
+disease::BENH113,symptom::run tay,has_symptom
+disease::BENH113,symptom::hồi hộp,has_symptom
+disease::BENH113,symptom::vã mồ hôi,has_symptom
+disease::BENH114,text::Rối loạn tập trung,has_name
+disease::BENH114,symptom::khó tập trung,has_symptom
+disease::BENH114,symptom::hay quên,has_symptom
+disease::BENH114,symptom::mệt,has_symptom
+disease::BENH115,text::Mệt mỏi,has_name
+disease::BENH115,symptom::mệt,has_symptom
+disease::BENH115,symptom::uể oải,has_symptom
+disease::BENH115,symptom::giảm tập trung,has_symptom
+disease::BENH116,text::Mất ngủ mạn,has_name
+disease::BENH116,symptom::khó ngủ kéo dài,has_symptom
+disease::BENH116,symptom::thức giấc sớm,has_symptom
+disease::BENH117,text::Stress,has_name
+disease::BENH117,symptom::căng thẳng,has_symptom
+disease::BENH117,symptom::mệt,has_symptom
+disease::BENH117,symptom::lo âu,has_symptom
+disease::BENH118,text::Rối loạn cảm xúc,has_name
+disease::BENH118,symptom::buồn bã,has_symptom
+disease::BENH118,symptom::lo lắng,has_symptom
+disease::BENH118,symptom::mất ngủ,has_symptom
+disease::BENH119,text::Đau đầu migraine,has_name
+disease::BENH119,symptom::đau đầu một bên,has_symptom
+disease::BENH119,symptom::buồn nôn,has_symptom
+disease::BENH119,symptom::sợ ánh sáng,has_symptom
+disease::BENH120,text::Hội chứng mệt mỏi,has_name
+disease::BENH120,symptom::mệt kéo dài,has_symptom
+disease::BENH120,symptom::giảm tập trung,has_symptom
+disease::BENH121,text::Sỏi tiết niệu mạn,has_name
+disease::BENH121,symptom::đau quặn thận,has_symptom
+disease::BENH121,symptom::tiểu buốt,has_symptom
+disease::BENH121,symptom::tiểu máu,has_symptom
+disease::BENH122,text::Viêm phế quản cấp vừa,has_name
+disease::BENH122,symptom::ho đờm,has_symptom
+disease::BENH122,symptom::khó thở nhẹ,has_symptom
+disease::BENH122,symptom::sốt,has_symptom
+disease::BENH122,symptom::đau ngực,has_symptom
+disease::BENH123,text::Rối loạn lipid máu nhẹ,has_name
+disease::BENH123,symptom::mỡ máu cao,has_symptom
+disease::BENH123,symptom::thừa cân,has_symptom
+disease::BENH123,symptom::ít triệu chứng,has_symptom
+disease::BENH124,text::Rối loạn tiêu hóa mạn,has_name
+disease::BENH124,symptom::đau bụng,has_symptom
+disease::BENH124,symptom::đầy hơi,has_symptom
+disease::BENH124,symptom::tiêu chảy,has_symptom
+disease::BENH124,symptom::buồn nôn,has_symptom
+disease::BENH125,text::Viêm niệu đạo mạn,has_name
+disease::BENH125,symptom::tiểu buốt,has_symptom
+disease::BENH125,symptom::tiểu rắt,has_symptom
+disease::BENH125,symptom::ngứa niệu đạo,has_symptom
+disease::BENH126,text::Nhiễm khuẩn tiết niệu không đặc hiệu,has_name
+disease::BENH126,symptom::tiểu buốt,has_symptom
+disease::BENH126,symptom::tiểu rắt,has_symptom
+disease::BENH126,symptom::đau bụng dưới,has_symptom
+disease::BENH126,symptom::sốt,has_symptom
+disease::BENH127,text::Viêm mũi xoang cấp,has_name
+disease::BENH127,symptom::nghẹt mũi,has_symptom
+disease::BENH127,symptom::chảy mũi,has_symptom
+disease::BENH127,symptom::đau đầu,has_symptom
+disease::BENH127,symptom::sốt,has_symptom
+disease::BENH128,text::Viêm mũi cấp nhẹ,has_name
+disease::BENH128,symptom::nghẹt mũi,has_symptom
+disease::BENH128,symptom::chảy mũi,has_symptom
+disease::BENH128,symptom::hắt hơi,has_symptom
+disease::BENH129,text::Viêm bao hoạt dịch cấp,has_name
+disease::BENH129,symptom::đau khớp,has_symptom
+disease::BENH129,symptom::sưng nóng,has_symptom
+disease::BENH129,symptom::hạn chế vận động,has_symptom
+disease::BENH130,text::Trật khớp không đặc hiệu,has_name
+disease::BENH130,symptom::đau dữ dội,has_symptom
+disease::BENH130,symptom::biến dạng khớp,has_symptom
+disease::BENH130,symptom::hạn chế vận động,has_symptom
+disease::BENH131,text::Đau khớp gối chưa rõ nguyên nhân,has_name
+disease::BENH131,symptom::đau gối,has_symptom
+disease::BENH131,symptom::cứng khớp,has_symptom
+disease::BENH131,symptom::đi lại khó,has_symptom
+disease::BENH132,text::Khô da cấp,has_name
+disease::BENH132,symptom::da khô,has_symptom
+disease::BENH132,symptom::nứt nẻ,has_symptom
+disease::BENH132,symptom::ngứa,has_symptom
+disease::BENH133,text::Rối loạn điện giải không đặc hiệu,has_name
+disease::BENH133,symptom::mệt,has_symptom
+disease::BENH133,symptom::co cơ,has_symptom
+disease::BENH133,symptom::khát nước,has_symptom
+disease::BENH133,symptom::chóng mặt,has_symptom
+disease::BENH134,text::Tăng tiểu đêm vừa,has_name
+disease::BENH134,symptom::đi tiểu đêm nhiều lần,has_symptom
+disease::BENH134,symptom::mệt,has_symptom
+disease::BENH135,text::Hạ đường huyết nhẹ,has_name
+disease::BENH135,symptom::run tay,has_symptom
+disease::BENH135,symptom::vã mồ hôi,has_symptom
+disease::BENH135,symptom::đói,has_symptom
+disease::BENH135,symptom::mệt,has_symptom
+disease::BENH136,text::Gan nhiễm mỡ không đặc hiệu,has_name
+disease::BENH136,symptom::mệt,has_symptom
+disease::BENH136,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH137,text::Đầy hơi nặng,has_name
+disease::BENH137,symptom::bụng chướng,has_symptom
+disease::BENH137,symptom::ợ hơi,has_symptom
+disease::BENH137,symptom::khó chịu,has_symptom
+disease::BENH137,symptom::chán ăn,has_symptom
+disease::BENH138,text::Suy thận cấp vừa,has_name
+disease::BENH138,symptom::tiểu ít,has_symptom
+disease::BENH138,symptom::phù,has_symptom
+disease::BENH138,symptom::mệt,has_symptom
+disease::BENH138,symptom::buồn nôn,has_symptom
+disease::BENH139,text::Viêm mũi cấp chưa rõ nguyên nhân,has_name
+disease::BENH139,symptom::nghẹt mũi,has_symptom
+disease::BENH139,symptom::chảy mũi,has_symptom
+disease::BENH139,symptom::hắt hơi,has_symptom
+disease::BENH140,text::Suy thận cấp vừa mạn,has_name
+disease::BENH140,symptom::tiểu ít,has_symptom
+disease::BENH140,symptom::phù,has_symptom
+disease::BENH140,symptom::mệt,has_symptom
+disease::BENH140,symptom::buồn nôn,has_symptom
+disease::BENH141,text::Ù tai mạn,has_name
+disease::BENH141,symptom::ù tai,has_symptom
+disease::BENH141,symptom::nghe kém,has_symptom
+disease::BENH141,symptom::chóng mặt,has_symptom
+disease::BENH142,text::Nhiễm khuẩn tiết niệu nặng,has_name
+disease::BENH142,symptom::tiểu buốt,has_symptom
+disease::BENH142,symptom::tiểu rắt,has_symptom
+disease::BENH142,symptom::đau bụng dưới,has_symptom
+disease::BENH142,symptom::sốt,has_symptom
+disease::BENH143,text::Chấn thương phần mềm mạn,has_name
+disease::BENH143,symptom::sưng đau,has_symptom
+disease::BENH143,symptom::bầm tím,has_symptom
+disease::BENH143,symptom::đau khi vận động,has_symptom
+disease::BENH144,text::Vảy nến mạn,has_name
+disease::BENH144,symptom::mảng đỏ,has_symptom
+disease::BENH144,symptom::vảy trắng,has_symptom
+disease::BENH144,symptom::ngứa,has_symptom
+disease::BENH145,text::Viêm bao hoạt dịch mạn,has_name
+disease::BENH145,symptom::đau khớp,has_symptom
+disease::BENH145,symptom::sưng nóng,has_symptom
+disease::BENH145,symptom::hạn chế vận động,has_symptom
+disease::BENH146,text::Khàn tiếng vừa,has_name
+disease::BENH146,symptom::nói khó,has_symptom
+disease::BENH146,symptom::giọng khàn,has_symptom
+disease::BENH146,symptom::đau họng,has_symptom
+disease::BENH147,text::Stress nặng,has_name
+disease::BENH147,symptom::căng thẳng,has_symptom
+disease::BENH147,symptom::mệt,has_symptom
+disease::BENH147,symptom::lo âu,has_symptom
+disease::BENH148,text::Tăng đường huyết nặng,has_name
+disease::BENH148,symptom::khát nước,has_symptom
+disease::BENH148,symptom::tiểu nhiều,has_symptom
+disease::BENH148,symptom::mệt,has_symptom
+disease::BENH149,text::Viêm kết mạc nhẹ,has_name
+disease::BENH149,symptom::đỏ mắt,has_symptom
+disease::BENH149,symptom::ngứa mắt,has_symptom
+disease::BENH149,symptom::chảy ghèn,has_symptom
+disease::BENH150,text::Viêm da tiếp xúc mạn,has_name
+disease::BENH150,symptom::đỏ da,has_symptom
+disease::BENH150,symptom::rát,has_symptom
+disease::BENH150,symptom::ngứa,has_symptom
+disease::BENH150,symptom::phồng rộp,has_symptom
+disease::BENH151,text::Rối loạn mỡ máu nhẹ,has_name
+disease::BENH151,symptom::ít triệu chứng,has_symptom
+disease::BENH151,symptom::mỡ máu cao,has_symptom
+disease::BENH152,text::Tăng đường huyết chưa rõ nguyên nhân,has_name
+disease::BENH152,symptom::khát nước,has_symptom
+disease::BENH152,symptom::tiểu nhiều,has_symptom
+disease::BENH152,symptom::mệt,has_symptom
+disease::BENH153,text::Chấn thương phần mềm mạn nhẹ,has_name
+disease::BENH153,symptom::sưng đau,has_symptom
+disease::BENH153,symptom::bầm tím,has_symptom
+disease::BENH153,symptom::đau khi vận động,has_symptom
+disease::BENH154,text::Đái máu cấp,has_name
+disease::BENH154,symptom::nước tiểu đỏ,has_symptom
+disease::BENH154,symptom::đau bụng dưới,has_symptom
+disease::BENH154,symptom::tiểu buốt,has_symptom
+disease::BENH155,text::Đau lưng trên cấp,has_name
+disease::BENH155,symptom::đau lưng,has_symptom
+disease::BENH155,symptom::căng cơ,has_symptom
+disease::BENH155,symptom::mỏi vai,has_symptom
+disease::BENH156,text::Tiểu đêm không đặc hiệu,has_name
+disease::BENH156,symptom::đi tiểu nhiều về đêm,has_symptom
+disease::BENH156,symptom::mất ngủ,has_symptom
+disease::BENH156,symptom::mệt,has_symptom
+disease::BENH157,text::Loãng xương nặng,has_name
+disease::BENH157,symptom::đau lưng,has_symptom
+disease::BENH157,symptom::giảm chiều cao,has_symptom
+disease::BENH157,symptom::dễ gãy xương,has_symptom
+disease::BENH158,text::Loãng xương chưa rõ nguyên nhân,has_name
+disease::BENH158,symptom::đau lưng,has_symptom
+disease::BENH158,symptom::giảm chiều cao,has_symptom
+disease::BENH158,symptom::dễ gãy xương,has_symptom
+disease::BENH159,text::Viêm thanh quản cấp chưa rõ nguyên nhân,has_name
+disease::BENH159,symptom::khàn tiếng,has_symptom
+disease::BENH159,symptom::ho,has_symptom
+disease::BENH159,symptom::đau họng,has_symptom
+disease::BENH160,text::Thừa cân vừa,has_name
+disease::BENH160,symptom::tăng cân,has_symptom
+disease::BENH160,symptom::BMI cao,has_symptom
+disease::BENH160,symptom::mệt khi vận động,has_symptom
+disease::BENH161,text::Béo phì nhẹ,has_name
+disease::BENH161,symptom::tăng cân,has_symptom
+disease::BENH161,symptom::thừa mỡ,has_symptom
+disease::BENH161,symptom::khó thở khi vận động,has_symptom
+disease::BENH162,text::Vảy nến mạn vừa,has_name
+disease::BENH162,symptom::mảng đỏ,has_symptom
+disease::BENH162,symptom::vảy trắng,has_symptom
+disease::BENH162,symptom::ngứa,has_symptom
+disease::BENH163,text::Viêm da tiếp xúc mạn không đặc hiệu,has_name
+disease::BENH163,symptom::đỏ da,has_symptom
+disease::BENH163,symptom::rát,has_symptom
+disease::BENH163,symptom::ngứa,has_symptom
+disease::BENH163,symptom::phồng rộp,has_symptom
+disease::BENH164,text::Viêm lợi nhẹ,has_name
+disease::BENH164,symptom::đỏ lợi,has_symptom
+disease::BENH164,symptom::sưng lợi,has_symptom
+disease::BENH164,symptom::chảy máu lợi,has_symptom
+disease::BENH165,text::Béo phì chưa rõ nguyên nhân,has_name
+disease::BENH165,symptom::tăng cân,has_symptom
+disease::BENH165,symptom::thừa mỡ,has_symptom
+disease::BENH165,symptom::khó thở khi vận động,has_symptom
+disease::BENH166,text::Gan nhiễm mỡ cấp,has_name
+disease::BENH166,symptom::mệt,has_symptom
+disease::BENH166,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH167,text::Nôn ói tái phát,has_name
+disease::BENH167,symptom::buồn nôn,has_symptom
+disease::BENH167,symptom::nôn,has_symptom
+disease::BENH167,symptom::mệt,has_symptom
+disease::BENH167,symptom::chóng mặt,has_symptom
+disease::BENH168,text::Béo phì nhẹ tái phát,has_name
+disease::BENH168,symptom::tăng cân,has_symptom
+disease::BENH168,symptom::thừa mỡ,has_symptom
+disease::BENH168,symptom::khó thở khi vận động,has_symptom
+disease::BENH169,text::Trầm cảm nhẹ mạn,has_name
+disease::BENH169,symptom::buồn bã,has_symptom
+disease::BENH169,symptom::mệt mỏi,has_symptom
+disease::BENH169,symptom::mất hứng thú,has_symptom
+disease::BENH170,text::Chảy máu chân răng không đặc hiệu,has_name
+disease::BENH170,symptom::chảy máu lợi,has_symptom
+disease::BENH170,symptom::đau nướu,has_symptom
+disease::BENH171,text::Chấn thương phần mềm mạn nhẹ chưa rõ nguyên nhân,has_name
+disease::BENH171,symptom::sưng đau,has_symptom
+disease::BENH171,symptom::bầm tím,has_symptom
+disease::BENH171,symptom::đau khi vận động,has_symptom
+disease::BENH172,text::Gan nhiễm mỡ không đặc hiệu vừa,has_name
+disease::BENH172,symptom::mệt,has_symptom
+disease::BENH172,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH173,text::Nhiễm khuẩn tiết niệu nặng cấp,has_name
+disease::BENH173,symptom::tiểu buốt,has_symptom
+disease::BENH173,symptom::tiểu rắt,has_symptom
+disease::BENH173,symptom::đau bụng dưới,has_symptom
+disease::BENH173,symptom::sốt,has_symptom
+disease::BENH174,text::Chán ăn vừa,has_name
+disease::BENH174,symptom::ăn kém,has_symptom
+disease::BENH174,symptom::sụt cân,has_symptom
+disease::BENH174,symptom::mệt,has_symptom
+disease::BENH174,symptom::đầy bụng,has_symptom
+disease::BENH175,text::Béo phì chưa rõ nguyên nhân nặng,has_name
+disease::BENH175,symptom::tăng cân,has_symptom
+disease::BENH175,symptom::thừa mỡ,has_symptom
+disease::BENH175,symptom::khó thở khi vận động,has_symptom
+disease::BENH176,text::Nôn ói vừa,has_name
+disease::BENH176,symptom::buồn nôn,has_symptom
+disease::BENH176,symptom::nôn,has_symptom
+disease::BENH176,symptom::mệt,has_symptom
+disease::BENH176,symptom::chóng mặt,has_symptom
+disease::BENH177,text::Chóng mặt tái phát,has_name
+disease::BENH177,symptom::choáng váng,has_symptom
+disease::BENH177,symptom::buồn nôn,has_symptom
+disease::BENH177,symptom::mất thăng bằng,has_symptom
+disease::BENH178,text::Stress cấp,has_name
+disease::BENH178,symptom::căng thẳng,has_symptom
+disease::BENH178,symptom::mệt,has_symptom
+disease::BENH178,symptom::lo âu,has_symptom
+disease::BENH179,text::Nấm kẽ tái phát,has_name
+disease::BENH179,symptom::ngứa,has_symptom
+disease::BENH179,symptom::hăm kẽ,has_symptom
+disease::BENH179,symptom::đỏ da,has_symptom
+disease::BENH180,text::Trật khớp không đặc hiệu mạn,has_name
+disease::BENH180,symptom::đau dữ dội,has_symptom
+disease::BENH180,symptom::biến dạng khớp,has_symptom
+disease::BENH180,symptom::hạn chế vận động,has_symptom
+disease::BENH181,text::Béo phì nhẹ vừa,has_name
+disease::BENH181,symptom::tăng cân,has_symptom
+disease::BENH181,symptom::thừa mỡ,has_symptom
+disease::BENH181,symptom::khó thở khi vận động,has_symptom
+disease::BENH182,text::Viêm lợi nhẹ nhẹ,has_name
+disease::BENH182,symptom::đỏ lợi,has_symptom
+disease::BENH182,symptom::sưng lợi,has_symptom
+disease::BENH182,symptom::chảy máu lợi,has_symptom
+disease::BENH183,text::Hạ đường huyết nặng,has_name
+disease::BENH183,symptom::run tay,has_symptom
+disease::BENH183,symptom::vã mồ hôi,has_symptom
+disease::BENH183,symptom::đói,has_symptom
+disease::BENH183,symptom::mệt,has_symptom
+disease::BENH184,text::Tăng đường huyết cấp,has_name
+disease::BENH184,symptom::khát nước,has_symptom
+disease::BENH184,symptom::tiểu nhiều,has_symptom
+disease::BENH184,symptom::mệt,has_symptom
+disease::BENH185,text::Đái máu cấp nặng,has_name
+disease::BENH185,symptom::nước tiểu đỏ,has_symptom
+disease::BENH185,symptom::đau bụng dưới,has_symptom
+disease::BENH185,symptom::tiểu buốt,has_symptom
+disease::BENH186,text::Nhiễm khuẩn tiết niệu không đặc hiệu cấp,has_name
+disease::BENH186,symptom::tiểu buốt,has_symptom
+disease::BENH186,symptom::tiểu rắt,has_symptom
+disease::BENH186,symptom::đau bụng dưới,has_symptom
+disease::BENH186,symptom::sốt,has_symptom
+disease::BENH187,text::Nôn ói nặng,has_name
+disease::BENH187,symptom::buồn nôn,has_symptom
+disease::BENH187,symptom::nôn,has_symptom
+disease::BENH187,symptom::mệt,has_symptom
+disease::BENH187,symptom::chóng mặt,has_symptom
+disease::BENH188,text::Tiểu buốt nhẹ,has_name
+disease::BENH188,symptom::tiểu đau,has_symptom
+disease::BENH188,symptom::tiểu rắt,has_symptom
+disease::BENH188,symptom::khó chịu khi đi tiểu,has_symptom
+disease::BENH189,text::Viêm phổi cộng đồng nhẹ,has_name
+disease::BENH189,symptom::sốt,has_symptom
+disease::BENH189,symptom::ho,has_symptom
+disease::BENH189,symptom::khó thở,has_symptom
+disease::BENH189,symptom::đau ngực,has_symptom
+disease::BENH190,text::Khàn tiếng vừa mạn,has_name
+disease::BENH190,symptom::nói khó,has_symptom
+disease::BENH190,symptom::giọng khàn,has_symptom
+disease::BENH190,symptom::đau họng,has_symptom
+disease::BENH191,text::Đau bụng chưa rõ nguyên nhân,has_name
+disease::BENH191,symptom::đau bụng,has_symptom
+disease::BENH191,symptom::buồn nôn,has_symptom
+disease::BENH191,symptom::chướng bụng,has_symptom
+disease::BENH192,text::Rối loạn tiêu hóa tái phát,has_name
+disease::BENH192,symptom::đau bụng,has_symptom
+disease::BENH192,symptom::đầy hơi,has_symptom
+disease::BENH192,symptom::tiêu chảy,has_symptom
+disease::BENH192,symptom::buồn nôn,has_symptom
+disease::BENH193,text::Đái tháo đường type 2 chưa rõ nguyên nhân,has_name
+disease::BENH193,symptom::khát nước,has_symptom
+disease::BENH193,symptom::tiểu nhiều,has_symptom
+disease::BENH193,symptom::mệt,has_symptom
+disease::BENH193,symptom::sút cân,has_symptom
+disease::BENH194,text::Ù tai mạn tái phát,has_name
+disease::BENH194,symptom::ù tai,has_symptom
+disease::BENH194,symptom::nghe kém,has_symptom
+disease::BENH194,symptom::chóng mặt,has_symptom
+disease::BENH195,text::Nấm kẽ không đặc hiệu,has_name
+disease::BENH195,symptom::ngứa,has_symptom
+disease::BENH195,symptom::hăm kẽ,has_symptom
+disease::BENH195,symptom::đỏ da,has_symptom
+disease::BENH196,text::Loãng xương nhẹ,has_name
+disease::BENH196,symptom::đau lưng,has_symptom
+disease::BENH196,symptom::giảm chiều cao,has_symptom
+disease::BENH196,symptom::dễ gãy xương,has_symptom
+disease::BENH197,text::Hạ đường huyết nặng vừa,has_name
+disease::BENH197,symptom::run tay,has_symptom
+disease::BENH197,symptom::vã mồ hôi,has_symptom
+disease::BENH197,symptom::đói,has_symptom
+disease::BENH197,symptom::mệt,has_symptom
+disease::BENH198,text::Viêm tai ngoài nặng,has_name
+disease::BENH198,symptom::đau tai,has_symptom
+disease::BENH198,symptom::ngứa tai,has_symptom
+disease::BENH198,symptom::chảy dịch,has_symptom
+disease::BENH199,text::Run tay chưa rõ nguyên nhân,has_name
+disease::BENH199,symptom::run tay,has_symptom
+disease::BENH199,symptom::hồi hộp,has_symptom
+disease::BENH199,symptom::vã mồ hôi,has_symptom
+disease::BENH200,text::Tăng huyết áp nhẹ,has_name
+disease::BENH200,symptom::đau đầu,has_symptom
+disease::BENH200,symptom::hoa mắt,has_symptom
+disease::BENH200,symptom::chóng mặt,has_symptom
+disease::BENH200,symptom::mệt,has_symptom
+disease::BENH201,text::Đau vai mạn,has_name
+disease::BENH201,symptom::đau vai,has_symptom
+disease::BENH201,symptom::hạn chế nâng tay,has_symptom
+disease::BENH201,symptom::cứng khớp,has_symptom
+disease::BENH202,text::Viêm niệu đạo cấp,has_name
+disease::BENH202,symptom::tiểu buốt,has_symptom
+disease::BENH202,symptom::tiểu rắt,has_symptom
+disease::BENH202,symptom::ngứa niệu đạo,has_symptom
+disease::BENH203,text::Rối loạn mỡ máu nhẹ nhẹ,has_name
+disease::BENH203,symptom::ít triệu chứng,has_symptom
+disease::BENH203,symptom::mỡ máu cao,has_symptom
+disease::BENH204,text::Viêm họng cấp mạn,has_name
+disease::BENH204,symptom::đau họng,has_symptom
+disease::BENH204,symptom::sốt nhẹ,has_symptom
+disease::BENH204,symptom::nuốt đau,has_symptom
+disease::BENH204,symptom::ho khan,has_symptom
+disease::BENH205,text::Viêm lợi nhẹ nhẹ cấp,has_name
+disease::BENH205,symptom::đỏ lợi,has_symptom
+disease::BENH205,symptom::sưng lợi,has_symptom
+disease::BENH205,symptom::chảy máu lợi,has_symptom
+disease::BENH206,text::Đau lưng trên mạn,has_name
+disease::BENH206,symptom::đau lưng,has_symptom
+disease::BENH206,symptom::căng cơ,has_symptom
+disease::BENH206,symptom::mỏi vai,has_symptom
+disease::BENH207,text::COVID-19 nặng,has_name
+disease::BENH207,symptom::sốt,has_symptom
+disease::BENH207,symptom::ho,has_symptom
+disease::BENH207,symptom::đau họng,has_symptom
+disease::BENH207,symptom::mất mùi vị,has_symptom
+disease::BENH208,text::Tiêu chảy cấp nhẹ,has_name
+disease::BENH208,symptom::tiêu chảy,has_symptom
+disease::BENH208,symptom::đau bụng,has_symptom
+disease::BENH208,symptom::mất nước,has_symptom
+disease::BENH208,symptom::mệt,has_symptom
+disease::BENH209,text::Khô da chưa rõ nguyên nhân,has_name
+disease::BENH209,symptom::da khô,has_symptom
+disease::BENH209,symptom::nứt nẻ,has_symptom
+disease::BENH209,symptom::ngứa,has_symptom
+disease::BENH210,text::Loãng xương tái phát,has_name
+disease::BENH210,symptom::đau lưng,has_symptom
+disease::BENH210,symptom::giảm chiều cao,has_symptom
+disease::BENH210,symptom::dễ gãy xương,has_symptom
+disease::BENH211,text::Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân,has_name
+disease::BENH211,symptom::tiểu buốt,has_symptom
+disease::BENH211,symptom::tiểu rắt,has_symptom
+disease::BENH211,symptom::đau bụng dưới,has_symptom
+disease::BENH211,symptom::sốt,has_symptom
+disease::BENH212,text::Chàm da chưa rõ nguyên nhân,has_name
+disease::BENH212,symptom::ngứa,has_symptom
+disease::BENH212,symptom::da khô,has_symptom
+disease::BENH212,symptom::mẩn đỏ,has_symptom
+disease::BENH212,symptom::bong vảy,has_symptom
+disease::BENH213,text::COVID-19 nặng không đặc hiệu,has_name
+disease::BENH213,symptom::sốt,has_symptom
+disease::BENH213,symptom::ho,has_symptom
+disease::BENH213,symptom::đau họng,has_symptom
+disease::BENH213,symptom::mất mùi vị,has_symptom
+disease::BENH214,text::Thoái hóa khớp gối mạn,has_name
+disease::BENH214,symptom::đau gối,has_symptom
+disease::BENH214,symptom::cứng khớp,has_symptom
+disease::BENH214,symptom::khó đi lại,has_symptom
+disease::BENH215,text::Đầy hơi không đặc hiệu,has_name
+disease::BENH215,symptom::bụng chướng,has_symptom
+disease::BENH215,symptom::ợ hơi,has_symptom
+disease::BENH215,symptom::khó chịu,has_symptom
+disease::BENH215,symptom::chán ăn,has_symptom
+disease::BENH216,text::Viêm kết mạc không đặc hiệu,has_name
+disease::BENH216,symptom::đỏ mắt,has_symptom
+disease::BENH216,symptom::ngứa mắt,has_symptom
+disease::BENH216,symptom::chảy ghèn,has_symptom
+disease::BENH217,text::Đau đầu căng thẳng chưa rõ nguyên nhân,has_name
+disease::BENH217,symptom::đau đầu,has_symptom
+disease::BENH217,symptom::căng cổ,has_symptom
+disease::BENH217,symptom::mệt,has_symptom
+disease::BENH217,symptom::khó tập trung,has_symptom
+disease::BENH218,text::Nôn ói nặng cấp,has_name
+disease::BENH218,symptom::buồn nôn,has_symptom
+disease::BENH218,symptom::nôn,has_symptom
+disease::BENH218,symptom::mệt,has_symptom
+disease::BENH218,symptom::chóng mặt,has_symptom
+disease::BENH219,text::Nhiễm khuẩn tiết niệu nặng cấp mạn,has_name
+disease::BENH219,symptom::tiểu buốt,has_symptom
+disease::BENH219,symptom::tiểu rắt,has_symptom
+disease::BENH219,symptom::đau bụng dưới,has_symptom
+disease::BENH219,symptom::sốt,has_symptom
+disease::BENH220,text::Viêm dạ dày không đặc hiệu,has_name
+disease::BENH220,symptom::đau thượng vị,has_symptom
+disease::BENH220,symptom::buồn nôn,has_symptom
+disease::BENH220,symptom::ợ nóng,has_symptom
+disease::BENH220,symptom::đầy bụng,has_symptom
+disease::BENH221,text::Nôn ói nặng nặng,has_name
+disease::BENH221,symptom::buồn nôn,has_symptom
+disease::BENH221,symptom::nôn,has_symptom
+disease::BENH221,symptom::mệt,has_symptom
+disease::BENH221,symptom::chóng mặt,has_symptom
+disease::BENH222,text::Viêm lợi nhẹ nhẹ cấp mạn,has_name
+disease::BENH222,symptom::đỏ lợi,has_symptom
+disease::BENH222,symptom::sưng lợi,has_symptom
+disease::BENH222,symptom::chảy máu lợi,has_symptom
+disease::BENH223,text::Nhiễm trùng da nhẹ,has_name
+disease::BENH223,symptom::đỏ da,has_symptom
+disease::BENH223,symptom::sưng,has_symptom
+disease::BENH223,symptom::đau,has_symptom
+disease::BENH223,symptom::mủ,has_symptom
+disease::BENH223,symptom::sốt,has_symptom
+disease::BENH224,text::Thoái hóa khớp gối chưa rõ nguyên nhân,has_name
+disease::BENH224,symptom::đau gối,has_symptom
+disease::BENH224,symptom::cứng khớp,has_symptom
+disease::BENH224,symptom::khó đi lại,has_symptom
+disease::BENH225,text::Béo phì không đặc hiệu,has_name
+disease::BENH225,symptom::tăng cân,has_symptom
+disease::BENH225,symptom::thừa mỡ,has_symptom
+disease::BENH225,symptom::khó thở khi vận động,has_symptom
+disease::BENH226,text::Đau lưng dưới vừa,has_name
+disease::BENH226,symptom::đau thắt lưng,has_symptom
+disease::BENH226,symptom::đau lan mông,has_symptom
+disease::BENH226,symptom::cứng lưng,has_symptom
+disease::BENH227,text::Đau đầu migraine nhẹ,has_name
+disease::BENH227,symptom::đau đầu một bên,has_symptom
+disease::BENH227,symptom::buồn nôn,has_symptom
+disease::BENH227,symptom::sợ ánh sáng,has_symptom
+disease::BENH228,text::Thoái hóa khớp gối chưa rõ nguyên nhân mạn,has_name
+disease::BENH228,symptom::đau gối,has_symptom
+disease::BENH228,symptom::cứng khớp,has_symptom
+disease::BENH228,symptom::khó đi lại,has_symptom
+disease::BENH229,text::Rối loạn tập trung mạn,has_name
+disease::BENH229,symptom::khó tập trung,has_symptom
+disease::BENH229,symptom::hay quên,has_symptom
+disease::BENH229,symptom::mệt,has_symptom
+disease::BENH230,text::Viêm thanh khí phế quản cấp,has_name
+disease::BENH230,symptom::ho ông ổng,has_symptom
+disease::BENH230,symptom::khàn tiếng,has_symptom
+disease::BENH230,symptom::khó thở,has_symptom
+disease::BENH231,text::Gan nhiễm mỡ nhẹ,has_name
+disease::BENH231,symptom::mệt,has_symptom
+disease::BENH231,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH232,text::Rối loạn tuyến giáp không đặc hiệu,has_name
+disease::BENH232,symptom::mệt,has_symptom
+disease::BENH232,symptom::sụt cân,has_symptom
+disease::BENH232,symptom::hồi hộp,has_symptom
+disease::BENH232,symptom::run tay,has_symptom
+disease::BENH233,text::Viêm niệu đạo mạn chưa rõ nguyên nhân,has_name
+disease::BENH233,symptom::tiểu buốt,has_symptom
+disease::BENH233,symptom::tiểu rắt,has_symptom
+disease::BENH233,symptom::ngứa niệu đạo,has_symptom
+disease::BENH234,text::Loãng xương không đặc hiệu,has_name
+disease::BENH234,symptom::đau lưng,has_symptom
+disease::BENH234,symptom::giảm chiều cao,has_symptom
+disease::BENH234,symptom::dễ gãy xương,has_symptom
+disease::BENH235,text::Rối loạn tuyến giáp không đặc hiệu cấp,has_name
+disease::BENH235,symptom::mệt,has_symptom
+disease::BENH235,symptom::sụt cân,has_symptom
+disease::BENH235,symptom::hồi hộp,has_symptom
+disease::BENH235,symptom::run tay,has_symptom
+disease::BENH236,text::Cảm cúm không đặc hiệu,has_name
+disease::BENH236,symptom::sốt,has_symptom
+disease::BENH236,symptom::ho,has_symptom
+disease::BENH236,symptom::sổ mũi,has_symptom
+disease::BENH236,symptom::đau đầu,has_symptom
+disease::BENH237,text::Nấm kẽ chưa rõ nguyên nhân,has_name
+disease::BENH237,symptom::ngứa,has_symptom
+disease::BENH237,symptom::hăm kẽ,has_symptom
+disease::BENH237,symptom::đỏ da,has_symptom
+disease::BENH238,text::Viêm nang lông không đặc hiệu,has_name
+disease::BENH238,symptom::mụn mủ nhỏ,has_symptom
+disease::BENH238,symptom::ngứa,has_symptom
+disease::BENH238,symptom::đỏ da,has_symptom
+disease::BENH239,text::Nấm kẽ tái phát chưa rõ nguyên nhân,has_name
+disease::BENH239,symptom::ngứa,has_symptom
+disease::BENH239,symptom::hăm kẽ,has_symptom
+disease::BENH239,symptom::đỏ da,has_symptom
+disease::BENH240,text::Nhiễm khuẩn tiết niệu nhẹ,has_name
+disease::BENH240,symptom::tiểu buốt,has_symptom
+disease::BENH240,symptom::tiểu rắt,has_symptom
+disease::BENH240,symptom::đau bụng dưới,has_symptom
+disease::BENH240,symptom::sốt,has_symptom
+disease::BENH241,text::Viêm phổi cộng đồng cấp,has_name
+disease::BENH241,symptom::sốt,has_symptom
+disease::BENH241,symptom::ho,has_symptom
+disease::BENH241,symptom::khó thở,has_symptom
+disease::BENH241,symptom::đau ngực,has_symptom
+disease::BENH242,text::Rối loạn tiêu hóa tái phát nặng,has_name
+disease::BENH242,symptom::đau bụng,has_symptom
+disease::BENH242,symptom::đầy hơi,has_symptom
+disease::BENH242,symptom::tiêu chảy,has_symptom
+disease::BENH242,symptom::buồn nôn,has_symptom
+disease::BENH243,text::Viêm da tiếp xúc mạn chưa rõ nguyên nhân,has_name
+disease::BENH243,symptom::đỏ da,has_symptom
+disease::BENH243,symptom::rát,has_symptom
+disease::BENH243,symptom::ngứa,has_symptom
+disease::BENH243,symptom::phồng rộp,has_symptom
+disease::BENH244,text::Viêm bao hoạt dịch cấp tái phát,has_name
+disease::BENH244,symptom::đau khớp,has_symptom
+disease::BENH244,symptom::sưng nóng,has_symptom
+disease::BENH244,symptom::hạn chế vận động,has_symptom
+disease::BENH245,text::Viêm phổi cộng đồng mạn,has_name
+disease::BENH245,symptom::sốt,has_symptom
+disease::BENH245,symptom::ho,has_symptom
+disease::BENH245,symptom::khó thở,has_symptom
+disease::BENH245,symptom::đau ngực,has_symptom
+disease::BENH246,text::Nôn ói nặng cấp tái phát,has_name
+disease::BENH246,symptom::buồn nôn,has_symptom
+disease::BENH246,symptom::nôn,has_symptom
+disease::BENH246,symptom::mệt,has_symptom
+disease::BENH246,symptom::chóng mặt,has_symptom
+disease::BENH247,text::Nhiễm khuẩn tiết niệu nặng cấp nhẹ,has_name
+disease::BENH247,symptom::tiểu buốt,has_symptom
+disease::BENH247,symptom::tiểu rắt,has_symptom
+disease::BENH247,symptom::đau bụng dưới,has_symptom
+disease::BENH247,symptom::sốt,has_symptom
+disease::BENH248,text::Viêm nha chu mạn,has_name
+disease::BENH248,symptom::chảy máu lợi,has_symptom
+disease::BENH248,symptom::hôi miệng,has_symptom
+disease::BENH248,symptom::lung lay răng,has_symptom
+disease::BENH249,text::Rối loạn tiêu hóa tái phát nặng nhẹ,has_name
+disease::BENH249,symptom::đau bụng,has_symptom
+disease::BENH249,symptom::đầy hơi,has_symptom
+disease::BENH249,symptom::tiêu chảy,has_symptom
+disease::BENH249,symptom::buồn nôn,has_symptom
+disease::BENH250,text::Viêm kết mạc nhẹ cấp,has_name
+disease::BENH250,symptom::đỏ mắt,has_symptom
+disease::BENH250,symptom::ngứa mắt,has_symptom
+disease::BENH250,symptom::chảy ghèn,has_symptom
+disease::BENH251,text::Viêm thanh quản cấp chưa rõ nguyên nhân mạn,has_name
+disease::BENH251,symptom::khàn tiếng,has_symptom
+disease::BENH251,symptom::ho,has_symptom
+disease::BENH251,symptom::đau họng,has_symptom
+disease::BENH252,text::Rối loạn lo âu nặng,has_name
+disease::BENH252,symptom::lo lắng,has_symptom
+disease::BENH252,symptom::hồi hộp,has_symptom
+disease::BENH252,symptom::mất ngủ,has_symptom
+disease::BENH252,symptom::căng thẳng,has_symptom
+disease::BENH253,text::Nhiễm khuẩn tiết niệu nhẹ vừa,has_name
+disease::BENH253,symptom::tiểu buốt,has_symptom
+disease::BENH253,symptom::tiểu rắt,has_symptom
+disease::BENH253,symptom::đau bụng dưới,has_symptom
+disease::BENH253,symptom::sốt,has_symptom
+disease::BENH254,text::Đau cổ nặng,has_name
+disease::BENH254,symptom::đau cổ,has_symptom
+disease::BENH254,symptom::cứng cổ,has_symptom
+disease::BENH254,symptom::hạn chế xoay cổ,has_symptom
+disease::BENH255,text::Viêm da dị ứng vừa,has_name
+disease::BENH255,symptom::ngứa da,has_symptom
+disease::BENH255,symptom::mẩn đỏ,has_symptom
+disease::BENH255,symptom::khô da,has_symptom
+disease::BENH255,symptom::rát da,has_symptom
+disease::BENH256,text::Viêm thanh quản cấp tái phát,has_name
+disease::BENH256,symptom::khàn tiếng,has_symptom
+disease::BENH256,symptom::ho,has_symptom
+disease::BENH256,symptom::đau họng,has_symptom
+disease::BENH257,text::Đái máu cấp chưa rõ nguyên nhân,has_name
+disease::BENH257,symptom::nước tiểu đỏ,has_symptom
+disease::BENH257,symptom::đau bụng dưới,has_symptom
+disease::BENH257,symptom::tiểu buốt,has_symptom
+disease::BENH258,text::Vảy nến mạn vừa mạn,has_name
+disease::BENH258,symptom::mảng đỏ,has_symptom
+disease::BENH258,symptom::vảy trắng,has_symptom
+disease::BENH258,symptom::ngứa,has_symptom
+disease::BENH259,text::Viêm mũi xoang chưa rõ nguyên nhân,has_name
+disease::BENH259,symptom::nghẹt mũi,has_symptom
+disease::BENH259,symptom::chảy mũi,has_symptom
+disease::BENH259,symptom::đau đầu,has_symptom
+disease::BENH259,symptom::sốt,has_symptom
+disease::BENH260,text::Đau vai gáy mạn,has_name
+disease::BENH260,symptom::đau cổ vai gáy,has_symptom
+disease::BENH260,symptom::cứng cổ,has_symptom
+disease::BENH260,symptom::tê tay,has_symptom
+disease::BENH261,text::Rối loạn giấc ngủ vừa,has_name
+disease::BENH261,symptom::khó ngủ,has_symptom
+disease::BENH261,symptom::ngủ không sâu,has_symptom
+disease::BENH261,symptom::thức giấc sớm,has_symptom
+disease::BENH262,text::Nấm kẽ nặng,has_name
+disease::BENH262,symptom::ngứa,has_symptom
+disease::BENH262,symptom::hăm kẽ,has_symptom
+disease::BENH262,symptom::đỏ da,has_symptom
+disease::BENH263,text::Khàn tiếng vừa mạn vừa,has_name
+disease::BENH263,symptom::nói khó,has_symptom
+disease::BENH263,symptom::giọng khàn,has_symptom
+disease::BENH263,symptom::đau họng,has_symptom
+disease::BENH264,text::Tiểu đêm chưa rõ nguyên nhân,has_name
+disease::BENH264,symptom::đi tiểu nhiều về đêm,has_symptom
+disease::BENH264,symptom::mất ngủ,has_symptom
+disease::BENH264,symptom::mệt,has_symptom
+disease::BENH265,text::Đau lưng trên cấp cấp,has_name
+disease::BENH265,symptom::đau lưng,has_symptom
+disease::BENH265,symptom::căng cơ,has_symptom
+disease::BENH265,symptom::mỏi vai,has_symptom
+disease::BENH266,text::Đái máu cấp mạn,has_name
+disease::BENH266,symptom::nước tiểu đỏ,has_symptom
+disease::BENH266,symptom::đau bụng dưới,has_symptom
+disease::BENH266,symptom::tiểu buốt,has_symptom
+disease::BENH267,text::Viêm da tiếp xúc vừa,has_name
+disease::BENH267,symptom::đỏ da,has_symptom
+disease::BENH267,symptom::rát,has_symptom
+disease::BENH267,symptom::ngứa,has_symptom
+disease::BENH267,symptom::phồng rộp,has_symptom
+disease::BENH268,text::Tiểu rắt vừa,has_name
+disease::BENH268,symptom::đi tiểu nhiều lần,has_symptom
+disease::BENH268,symptom::lượng ít,has_symptom
+disease::BENH268,symptom::khó chịu,has_symptom
+disease::BENH269,text::Viêm bao hoạt dịch mạn nhẹ,has_name
+disease::BENH269,symptom::đau khớp,has_symptom
+disease::BENH269,symptom::sưng nóng,has_symptom
+disease::BENH269,symptom::hạn chế vận động,has_symptom
+disease::BENH270,text::Nôn ói vừa nhẹ,has_name
+disease::BENH270,symptom::buồn nôn,has_symptom
+disease::BENH270,symptom::nôn,has_symptom
+disease::BENH270,symptom::mệt,has_symptom
+disease::BENH270,symptom::chóng mặt,has_symptom
+disease::BENH271,text::Gan nhiễm mỡ không đặc hiệu chưa rõ nguyên nhân,has_name
+disease::BENH271,symptom::mệt,has_symptom
+disease::BENH271,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH272,text::Viêm bao hoạt dịch cấp cấp,has_name
+disease::BENH272,symptom::đau khớp,has_symptom
+disease::BENH272,symptom::sưng nóng,has_symptom
+disease::BENH272,symptom::hạn chế vận động,has_symptom
+disease::BENH273,text::Viêm khớp không đặc hiệu,has_name
+disease::BENH273,symptom::đau khớp,has_symptom
+disease::BENH273,symptom::sưng khớp,has_symptom
+disease::BENH273,symptom::cứng khớp,has_symptom
+disease::BENH273,symptom::hạn chế vận động,has_symptom
+disease::BENH274,text::Viêm họng cấp nặng,has_name
+disease::BENH274,symptom::đau họng,has_symptom
+disease::BENH274,symptom::sốt nhẹ,has_symptom
+disease::BENH274,symptom::nuốt đau,has_symptom
+disease::BENH274,symptom::ho khan,has_symptom
+disease::BENH275,text::Nấm da vừa,has_name
+disease::BENH275,symptom::ngứa,has_symptom
+disease::BENH275,symptom::bong vảy,has_symptom
+disease::BENH275,symptom::tổn thương vòng,has_symptom
+disease::BENH276,text::Suy thận mạn chưa rõ nguyên nhân,has_name
+disease::BENH276,symptom::mệt,has_symptom
+disease::BENH276,symptom::phù,has_symptom
+disease::BENH276,symptom::tiểu ít,has_symptom
+disease::BENH276,symptom::chán ăn,has_symptom
+disease::BENH277,text::Nhiễm khuẩn tiết niệu nặng cấp mạn cấp,has_name
+disease::BENH277,symptom::tiểu buốt,has_symptom
+disease::BENH277,symptom::tiểu rắt,has_symptom
+disease::BENH277,symptom::đau bụng dưới,has_symptom
+disease::BENH277,symptom::sốt,has_symptom
+disease::BENH278,text::Viêm bàng quang cấp,has_name
+disease::BENH278,symptom::tiểu buốt,has_symptom
+disease::BENH278,symptom::tiểu rắt,has_symptom
+disease::BENH278,symptom::đau hạ vị,has_symptom
+disease::BENH278,symptom::sốt nhẹ,has_symptom
+disease::BENH279,text::Khàn tiếng vừa mạn tái phát,has_name
+disease::BENH279,symptom::nói khó,has_symptom
+disease::BENH279,symptom::giọng khàn,has_symptom
+disease::BENH279,symptom::đau họng,has_symptom
+disease::BENH280,text::Nôn ói nặng nặng tái phát,has_name
+disease::BENH280,symptom::buồn nôn,has_symptom
+disease::BENH280,symptom::nôn,has_symptom
+disease::BENH280,symptom::mệt,has_symptom
+disease::BENH280,symptom::chóng mặt,has_symptom
+disease::BENH281,text::Đau bụng vừa,has_name
+disease::BENH281,symptom::đau bụng,has_symptom
+disease::BENH281,symptom::buồn nôn,has_symptom
+disease::BENH281,symptom::chướng bụng,has_symptom
+disease::BENH282,text::Tăng đường huyết cấp nhẹ,has_name
+disease::BENH282,symptom::khát nước,has_symptom
+disease::BENH282,symptom::tiểu nhiều,has_symptom
+disease::BENH282,symptom::mệt,has_symptom
+disease::BENH283,text::Viêm mũi cấp nhẹ mạn,has_name
+disease::BENH283,symptom::nghẹt mũi,has_symptom
+disease::BENH283,symptom::chảy mũi,has_symptom
+disease::BENH283,symptom::hắt hơi,has_symptom
+disease::BENH284,text::Viêm lợi nhẹ nhẹ không đặc hiệu,has_name
+disease::BENH284,symptom::đỏ lợi,has_symptom
+disease::BENH284,symptom::sưng lợi,has_symptom
+disease::BENH284,symptom::chảy máu lợi,has_symptom
+disease::BENH285,text::Tiểu rắt nhẹ,has_name
+disease::BENH285,symptom::đi tiểu nhiều lần,has_symptom
+disease::BENH285,symptom::lượng ít,has_symptom
+disease::BENH285,symptom::khó chịu,has_symptom
+disease::BENH286,text::Đái máu tái phát,has_name
+disease::BENH286,symptom::nước tiểu đỏ,has_symptom
+disease::BENH286,symptom::đau bụng dưới,has_symptom
+disease::BENH286,symptom::tiểu buốt,has_symptom
+disease::BENH287,text::Chàm da chưa rõ nguyên nhân cấp,has_name
+disease::BENH287,symptom::ngứa,has_symptom
+disease::BENH287,symptom::da khô,has_symptom
+disease::BENH287,symptom::mẩn đỏ,has_symptom
+disease::BENH287,symptom::bong vảy,has_symptom
+disease::BENH288,text::Viêm tai giữa nặng,has_name
+disease::BENH288,symptom::đau tai,has_symptom
+disease::BENH288,symptom::sốt,has_symptom
+disease::BENH288,symptom::ù tai,has_symptom
+disease::BENH288,symptom::nghe kém,has_symptom
+disease::BENH289,text::Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ,has_name
+disease::BENH289,symptom::tiểu buốt,has_symptom
+disease::BENH289,symptom::tiểu rắt,has_symptom
+disease::BENH289,symptom::đau bụng dưới,has_symptom
+disease::BENH289,symptom::sốt,has_symptom
+disease::BENH290,text::Đầy hơi nặng tái phát,has_name
+disease::BENH290,symptom::bụng chướng,has_symptom
+disease::BENH290,symptom::ợ hơi,has_symptom
+disease::BENH290,symptom::khó chịu,has_symptom
+disease::BENH290,symptom::chán ăn,has_symptom
+disease::BENH291,text::Bong gân không đặc hiệu,has_name
+disease::BENH291,symptom::sưng đau,has_symptom
+disease::BENH291,symptom::hạn chế vận động,has_symptom
+disease::BENH291,symptom::bầm tím,has_symptom
+disease::BENH292,text::Táo bón chưa rõ nguyên nhân,has_name
+disease::BENH292,symptom::đi ngoài khó,has_symptom
+disease::BENH292,symptom::đau bụng,has_symptom
+disease::BENH292,symptom::bụng chướng,has_symptom
+disease::BENH293,text::Rối loạn tập trung nhẹ,has_name
+disease::BENH293,symptom::khó tập trung,has_symptom
+disease::BENH293,symptom::hay quên,has_symptom
+disease::BENH293,symptom::mệt,has_symptom
+disease::BENH294,text::Cảm cúm không đặc hiệu nặng,has_name
+disease::BENH294,symptom::sốt,has_symptom
+disease::BENH294,symptom::ho,has_symptom
+disease::BENH294,symptom::sổ mũi,has_symptom
+disease::BENH294,symptom::đau đầu,has_symptom
+disease::BENH295,text::Loãng xương nặng nhẹ,has_name
+disease::BENH295,symptom::đau lưng,has_symptom
+disease::BENH295,symptom::giảm chiều cao,has_symptom
+disease::BENH295,symptom::dễ gãy xương,has_symptom
+disease::BENH296,text::Mệt mỏi cấp,has_name
+disease::BENH296,symptom::mệt,has_symptom
+disease::BENH296,symptom::uể oải,has_symptom
+disease::BENH296,symptom::giảm tập trung,has_symptom
+disease::BENH297,text::Trầm cảm nhẹ mạn vừa,has_name
+disease::BENH297,symptom::buồn bã,has_symptom
+disease::BENH297,symptom::mệt mỏi,has_symptom
+disease::BENH297,symptom::mất hứng thú,has_symptom
+disease::BENH298,text::Béo phì vừa,has_name
+disease::BENH298,symptom::tăng cân,has_symptom
+disease::BENH298,symptom::thừa mỡ,has_symptom
+disease::BENH298,symptom::khó thở khi vận động,has_symptom
+disease::BENH299,text::Trật khớp không đặc hiệu mạn không đặc hiệu,has_name
+disease::BENH299,symptom::đau dữ dội,has_symptom
+disease::BENH299,symptom::biến dạng khớp,has_symptom
+disease::BENH299,symptom::hạn chế vận động,has_symptom
+disease::BENH300,text::Nấm da vừa nặng,has_name
+disease::BENH300,symptom::ngứa,has_symptom
+disease::BENH300,symptom::bong vảy,has_symptom
+disease::BENH300,symptom::tổn thương vòng,has_symptom
+disease::BENH301,text::Tăng tiểu đêm vừa tái phát,has_name
+disease::BENH301,symptom::đi tiểu đêm nhiều lần,has_symptom
+disease::BENH301,symptom::mệt,has_symptom
+disease::BENH302,text::Béo phì vừa vừa,has_name
+disease::BENH302,symptom::tăng cân,has_symptom
+disease::BENH302,symptom::thừa mỡ,has_symptom
+disease::BENH302,symptom::khó thở khi vận động,has_symptom
+disease::BENH303,text::Táo bón mạn,has_name
+disease::BENH303,symptom::đi ngoài khó,has_symptom
+disease::BENH303,symptom::đau bụng,has_symptom
+disease::BENH303,symptom::bụng chướng,has_symptom
+disease::BENH304,text::Nhiễm trùng da nhẹ nặng,has_name
+disease::BENH304,symptom::đỏ da,has_symptom
+disease::BENH304,symptom::sưng,has_symptom
+disease::BENH304,symptom::đau,has_symptom
+disease::BENH304,symptom::mủ,has_symptom
+disease::BENH304,symptom::sốt,has_symptom
+disease::BENH305,text::Béo phì nhẹ không đặc hiệu,has_name
+disease::BENH305,symptom::tăng cân,has_symptom
+disease::BENH305,symptom::thừa mỡ,has_symptom
+disease::BENH305,symptom::khó thở khi vận động,has_symptom
+disease::BENH306,text::Nấm kẽ nặng mạn,has_name
+disease::BENH306,symptom::ngứa,has_symptom
+disease::BENH306,symptom::hăm kẽ,has_symptom
+disease::BENH306,symptom::đỏ da,has_symptom
+disease::BENH307,text::Viêm tai ngoài nặng nhẹ,has_name
+disease::BENH307,symptom::đau tai,has_symptom
+disease::BENH307,symptom::ngứa tai,has_symptom
+disease::BENH307,symptom::chảy dịch,has_symptom
+disease::BENH308,text::Đau khớp gối chưa rõ nguyên nhân cấp,has_name
+disease::BENH308,symptom::đau gối,has_symptom
+disease::BENH308,symptom::cứng khớp,has_symptom
+disease::BENH308,symptom::đi lại khó,has_symptom
+disease::BENH309,text::Thoái hóa khớp gối chưa rõ nguyên nhân cấp,has_name
+disease::BENH309,symptom::đau gối,has_symptom
+disease::BENH309,symptom::cứng khớp,has_symptom
+disease::BENH309,symptom::khó đi lại,has_symptom
+disease::BENH310,text::Viêm da tiếp xúc vừa nhẹ,has_name
+disease::BENH310,symptom::đỏ da,has_symptom
+disease::BENH310,symptom::rát,has_symptom
+disease::BENH310,symptom::ngứa,has_symptom
+disease::BENH310,symptom::phồng rộp,has_symptom
+disease::BENH311,text::Nôn ói nặng không đặc hiệu,has_name
+disease::BENH311,symptom::buồn nôn,has_symptom
+disease::BENH311,symptom::nôn,has_symptom
+disease::BENH311,symptom::mệt,has_symptom
+disease::BENH311,symptom::chóng mặt,has_symptom
+disease::BENH312,text::Béo phì nặng,has_name
+disease::BENH312,symptom::tăng cân,has_symptom
+disease::BENH312,symptom::thừa mỡ,has_symptom
+disease::BENH312,symptom::khó thở khi vận động,has_symptom
+disease::BENH313,text::Béo phì nhẹ mạn,has_name
+disease::BENH313,symptom::tăng cân,has_symptom
+disease::BENH313,symptom::thừa mỡ,has_symptom
+disease::BENH313,symptom::khó thở khi vận động,has_symptom
+disease::BENH314,text::Đái máu cấp vừa,has_name
+disease::BENH314,symptom::nước tiểu đỏ,has_symptom
+disease::BENH314,symptom::đau bụng dưới,has_symptom
+disease::BENH314,symptom::tiểu buốt,has_symptom
+disease::BENH315,text::Loãng xương tái phát nặng,has_name
+disease::BENH315,symptom::đau lưng,has_symptom
+disease::BENH315,symptom::giảm chiều cao,has_symptom
+disease::BENH315,symptom::dễ gãy xương,has_symptom
+disease::BENH316,text::COVID-19 nặng vừa,has_name
+disease::BENH316,symptom::sốt,has_symptom
+disease::BENH316,symptom::ho,has_symptom
+disease::BENH316,symptom::đau họng,has_symptom
+disease::BENH316,symptom::mất mùi vị,has_symptom
+disease::BENH317,text::Viêm lợi nhẹ nhẹ không đặc hiệu tái phát,has_name
+disease::BENH317,symptom::đỏ lợi,has_symptom
+disease::BENH317,symptom::sưng lợi,has_symptom
+disease::BENH317,symptom::chảy máu lợi,has_symptom
+disease::BENH318,text::Nấm kẽ không đặc hiệu tái phát,has_name
+disease::BENH318,symptom::ngứa,has_symptom
+disease::BENH318,symptom::hăm kẽ,has_symptom
+disease::BENH318,symptom::đỏ da,has_symptom
+disease::BENH319,text::COVID-19 nặng vừa vừa,has_name
+disease::BENH319,symptom::sốt,has_symptom
+disease::BENH319,symptom::ho,has_symptom
+disease::BENH319,symptom::đau họng,has_symptom
+disease::BENH319,symptom::mất mùi vị,has_symptom
+disease::BENH320,text::Tiêu chảy cấp nhẹ cấp,has_name
+disease::BENH320,symptom::tiêu chảy,has_symptom
+disease::BENH320,symptom::đau bụng,has_symptom
+disease::BENH320,symptom::mất nước,has_symptom
+disease::BENH320,symptom::mệt,has_symptom
+disease::BENH321,text::Tiểu đêm không đặc hiệu vừa,has_name
+disease::BENH321,symptom::đi tiểu nhiều về đêm,has_symptom
+disease::BENH321,symptom::mất ngủ,has_symptom
+disease::BENH321,symptom::mệt,has_symptom
+disease::BENH322,text::Rối loạn lo âu không đặc hiệu,has_name
+disease::BENH322,symptom::lo lắng,has_symptom
+disease::BENH322,symptom::hồi hộp,has_symptom
+disease::BENH322,symptom::mất ngủ,has_symptom
+disease::BENH322,symptom::căng thẳng,has_symptom
+disease::BENH323,text::Trầm cảm nhẹ mạn vừa nặng,has_name
+disease::BENH323,symptom::buồn bã,has_symptom
+disease::BENH323,symptom::mệt mỏi,has_symptom
+disease::BENH323,symptom::mất hứng thú,has_symptom
+disease::BENH324,text::Nấm kẽ tái phát chưa rõ nguyên nhân chưa rõ nguyên nhân,has_name
+disease::BENH324,symptom::ngứa,has_symptom
+disease::BENH324,symptom::hăm kẽ,has_symptom
+disease::BENH324,symptom::đỏ da,has_symptom
+disease::BENH325,text::Đau đầu migraine nhẹ nhẹ,has_name
+disease::BENH325,symptom::đau đầu một bên,has_symptom
+disease::BENH325,symptom::buồn nôn,has_symptom
+disease::BENH325,symptom::sợ ánh sáng,has_symptom
+disease::BENH326,text::Nấm kẽ nặng chưa rõ nguyên nhân,has_name
+disease::BENH326,symptom::ngứa,has_symptom
+disease::BENH326,symptom::hăm kẽ,has_symptom
+disease::BENH326,symptom::đỏ da,has_symptom
+disease::BENH327,text::Khàn tiếng vừa nặng,has_name
+disease::BENH327,symptom::nói khó,has_symptom
+disease::BENH327,symptom::giọng khàn,has_symptom
+disease::BENH327,symptom::đau họng,has_symptom
+disease::BENH328,text::Viêm khớp nhẹ,has_name
+disease::BENH328,symptom::đau khớp,has_symptom
+disease::BENH328,symptom::sưng khớp,has_symptom
+disease::BENH328,symptom::cứng khớp,has_symptom
+disease::BENH328,symptom::hạn chế vận động,has_symptom
+disease::BENH329,text::Viêm thanh quản cấp chưa rõ nguyên nhân nhẹ,has_name
+disease::BENH329,symptom::khàn tiếng,has_symptom
+disease::BENH329,symptom::ho,has_symptom
+disease::BENH329,symptom::đau họng,has_symptom
+disease::BENH330,text::Nhiễm khuẩn tiết niệu không đặc hiệu chưa rõ nguyên nhân,has_name
+disease::BENH330,symptom::tiểu buốt,has_symptom
+disease::BENH330,symptom::tiểu rắt,has_symptom
+disease::BENH330,symptom::đau bụng dưới,has_symptom
+disease::BENH330,symptom::sốt,has_symptom
+disease::BENH331,text::Béo phì nhẹ mạn mạn,has_name
+disease::BENH331,symptom::tăng cân,has_symptom
+disease::BENH331,symptom::thừa mỡ,has_symptom
+disease::BENH331,symptom::khó thở khi vận động,has_symptom
+disease::BENH332,text::Loãng xương không đặc hiệu không đặc hiệu,has_name
+disease::BENH332,symptom::đau lưng,has_symptom
+disease::BENH332,symptom::giảm chiều cao,has_symptom
+disease::BENH332,symptom::dễ gãy xương,has_symptom
+disease::BENH333,text::Trầm cảm nhẹ mạn vừa nặng nhẹ,has_name
+disease::BENH333,symptom::buồn bã,has_symptom
+disease::BENH333,symptom::mệt mỏi,has_symptom
+disease::BENH333,symptom::mất hứng thú,has_symptom
+disease::BENH334,text::Hạ đường huyết nặng vừa chưa rõ nguyên nhân,has_name
+disease::BENH334,symptom::run tay,has_symptom
+disease::BENH334,symptom::vã mồ hôi,has_symptom
+disease::BENH334,symptom::đói,has_symptom
+disease::BENH334,symptom::mệt,has_symptom
+disease::BENH335,text::Viêm lợi nhẹ nhẹ cấp nhẹ,has_name
+disease::BENH335,symptom::đỏ lợi,has_symptom
+disease::BENH335,symptom::sưng lợi,has_symptom
+disease::BENH335,symptom::chảy máu lợi,has_symptom
+disease::BENH336,text::Nhiễm khuẩn tiết niệu cấp,has_name
+disease::BENH336,symptom::tiểu buốt,has_symptom
+disease::BENH336,symptom::tiểu rắt,has_symptom
+disease::BENH336,symptom::đau bụng dưới,has_symptom
+disease::BENH336,symptom::sốt,has_symptom
+disease::BENH337,text::Run tay tái phát,has_name
+disease::BENH337,symptom::run tay,has_symptom
+disease::BENH337,symptom::hồi hộp,has_symptom
+disease::BENH337,symptom::vã mồ hôi,has_symptom
+disease::BENH338,text::Đái máu cấp mạn chưa rõ nguyên nhân,has_name
+disease::BENH338,symptom::nước tiểu đỏ,has_symptom
+disease::BENH338,symptom::đau bụng dưới,has_symptom
+disease::BENH338,symptom::tiểu buốt,has_symptom
+disease::BENH339,text::Viêm đại tràng nhẹ,has_name
+disease::BENH339,symptom::đau bụng,has_symptom
+disease::BENH339,symptom::tiêu chảy,has_symptom
+disease::BENH339,symptom::đầy hơi,has_symptom
+disease::BENH339,symptom::mót rặn,has_symptom
+disease::BENH340,text::Viêm da tiếp xúc chưa rõ nguyên nhân,has_name
+disease::BENH340,symptom::đỏ da,has_symptom
+disease::BENH340,symptom::rát,has_symptom
+disease::BENH340,symptom::ngứa,has_symptom
+disease::BENH340,symptom::phồng rộp,has_symptom
+disease::BENH341,text::Viêm bao hoạt dịch cấp cấp nặng,has_name
+disease::BENH341,symptom::đau khớp,has_symptom
+disease::BENH341,symptom::sưng nóng,has_symptom
+disease::BENH341,symptom::hạn chế vận động,has_symptom
+disease::BENH342,text::Đau đầu migraine nhẹ không đặc hiệu,has_name
+disease::BENH342,symptom::đau đầu một bên,has_symptom
+disease::BENH342,symptom::buồn nôn,has_symptom
+disease::BENH342,symptom::sợ ánh sáng,has_symptom
+disease::BENH343,text::Đau bụng vừa chưa rõ nguyên nhân,has_name
+disease::BENH343,symptom::đau bụng,has_symptom
+disease::BENH343,symptom::buồn nôn,has_symptom
+disease::BENH343,symptom::chướng bụng,has_symptom
+disease::BENH344,text::Sỏi tiết niệu chưa rõ nguyên nhân,has_name
+disease::BENH344,symptom::đau quặn thận,has_symptom
+disease::BENH344,symptom::tiểu buốt,has_symptom
+disease::BENH344,symptom::tiểu máu,has_symptom
+disease::BENH345,text::Gan nhiễm mỡ nhẹ vừa,has_name
+disease::BENH345,symptom::mệt,has_symptom
+disease::BENH345,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH346,text::Viêm mũi xoang cấp vừa,has_name
+disease::BENH346,symptom::nghẹt mũi,has_symptom
+disease::BENH346,symptom::chảy mũi,has_symptom
+disease::BENH346,symptom::đau đầu,has_symptom
+disease::BENH346,symptom::sốt,has_symptom
+disease::BENH347,text::Viêm da tiếp xúc vừa chưa rõ nguyên nhân,has_name
+disease::BENH347,symptom::đỏ da,has_symptom
+disease::BENH347,symptom::rát,has_symptom
+disease::BENH347,symptom::ngứa,has_symptom
+disease::BENH347,symptom::phồng rộp,has_symptom
+disease::BENH348,text::Tiểu đêm không đặc hiệu vừa nhẹ,has_name
+disease::BENH348,symptom::đi tiểu nhiều về đêm,has_symptom
+disease::BENH348,symptom::mất ngủ,has_symptom
+disease::BENH348,symptom::mệt,has_symptom
+disease::BENH349,text::Ù tai mạn chưa rõ nguyên nhân,has_name
+disease::BENH349,symptom::ù tai,has_symptom
+disease::BENH349,symptom::nghe kém,has_symptom
+disease::BENH349,symptom::chóng mặt,has_symptom
+disease::BENH350,text::Hạ đường huyết vừa,has_name
+disease::BENH350,symptom::run tay,has_symptom
+disease::BENH350,symptom::vã mồ hôi,has_symptom
+disease::BENH350,symptom::đói,has_symptom
+disease::BENH350,symptom::mệt,has_symptom
+disease::BENH351,text::Sỏi tiết niệu mạn vừa,has_name
+disease::BENH351,symptom::đau quặn thận,has_symptom
+disease::BENH351,symptom::tiểu buốt,has_symptom
+disease::BENH351,symptom::tiểu máu,has_symptom
+disease::BENH352,text::Gan nhiễm mỡ không đặc hiệu vừa nặng,has_name
+disease::BENH352,symptom::mệt,has_symptom
+disease::BENH352,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH353,text::Nhiễm khuẩn tiết niệu nặng cấp mạn cấp mạn,has_name
+disease::BENH353,symptom::tiểu buốt,has_symptom
+disease::BENH353,symptom::tiểu rắt,has_symptom
+disease::BENH353,symptom::đau bụng dưới,has_symptom
+disease::BENH353,symptom::sốt,has_symptom
+disease::BENH354,text::Mụn trứng cá tái phát,has_name
+disease::BENH354,symptom::mụn viêm,has_symptom
+disease::BENH354,symptom::mụn đầu đen,has_symptom
+disease::BENH354,symptom::da dầu,has_symptom
+disease::BENH355,text::Đau đầu migraine không đặc hiệu,has_name
+disease::BENH355,symptom::đau đầu một bên,has_symptom
+disease::BENH355,symptom::buồn nôn,has_symptom
+disease::BENH355,symptom::sợ ánh sáng,has_symptom
+disease::BENH356,text::Đái tháo đường type 2 không đặc hiệu,has_name
+disease::BENH356,symptom::khát nước,has_symptom
+disease::BENH356,symptom::tiểu nhiều,has_symptom
+disease::BENH356,symptom::mệt,has_symptom
+disease::BENH356,symptom::sút cân,has_symptom
+disease::BENH357,text::Khô da chưa rõ nguyên nhân nặng,has_name
+disease::BENH357,symptom::da khô,has_symptom
+disease::BENH357,symptom::nứt nẻ,has_symptom
+disease::BENH357,symptom::ngứa,has_symptom
+disease::BENH358,text::Viêm bàng quang cấp chưa rõ nguyên nhân,has_name
+disease::BENH358,symptom::tiểu buốt,has_symptom
+disease::BENH358,symptom::tiểu rắt,has_symptom
+disease::BENH358,symptom::đau hạ vị,has_symptom
+disease::BENH358,symptom::sốt nhẹ,has_symptom
+disease::BENH359,text::COVID-19 nặng không đặc hiệu cấp,has_name
+disease::BENH359,symptom::sốt,has_symptom
+disease::BENH359,symptom::ho,has_symptom
+disease::BENH359,symptom::đau họng,has_symptom
+disease::BENH359,symptom::mất mùi vị,has_symptom
+disease::BENH360,text::Đau đầu căng thẳng không đặc hiệu,has_name
+disease::BENH360,symptom::đau đầu,has_symptom
+disease::BENH360,symptom::căng cổ,has_symptom
+disease::BENH360,symptom::mệt,has_symptom
+disease::BENH360,symptom::khó tập trung,has_symptom
+disease::BENH361,text::Tăng huyết áp nhẹ cấp,has_name
+disease::BENH361,symptom::đau đầu,has_symptom
+disease::BENH361,symptom::hoa mắt,has_symptom
+disease::BENH361,symptom::chóng mặt,has_symptom
+disease::BENH361,symptom::mệt,has_symptom
+disease::BENH362,text::Loãng xương nặng nhẹ không đặc hiệu,has_name
+disease::BENH362,symptom::đau lưng,has_symptom
+disease::BENH362,symptom::giảm chiều cao,has_symptom
+disease::BENH362,symptom::dễ gãy xương,has_symptom
+disease::BENH363,text::Viêm phổi cộng đồng mạn cấp,has_name
+disease::BENH363,symptom::sốt,has_symptom
+disease::BENH363,symptom::ho,has_symptom
+disease::BENH363,symptom::khó thở,has_symptom
+disease::BENH363,symptom::đau ngực,has_symptom
+disease::BENH364,text::Béo phì nhẹ vừa vừa,has_name
+disease::BENH364,symptom::tăng cân,has_symptom
+disease::BENH364,symptom::thừa mỡ,has_symptom
+disease::BENH364,symptom::khó thở khi vận động,has_symptom
+disease::BENH365,text::Tăng huyết áp nhẹ không đặc hiệu,has_name
+disease::BENH365,symptom::đau đầu,has_symptom
+disease::BENH365,symptom::hoa mắt,has_symptom
+disease::BENH365,symptom::chóng mặt,has_symptom
+disease::BENH365,symptom::mệt,has_symptom
+disease::BENH366,text::Suy thận mạn chưa rõ nguyên nhân nhẹ,has_name
+disease::BENH366,symptom::mệt,has_symptom
+disease::BENH366,symptom::phù,has_symptom
+disease::BENH366,symptom::tiểu ít,has_symptom
+disease::BENH366,symptom::chán ăn,has_symptom
+disease::BENH367,text::Viêm kết mạc nhẹ cấp nhẹ,has_name
+disease::BENH367,symptom::đỏ mắt,has_symptom
+disease::BENH367,symptom::ngứa mắt,has_symptom
+disease::BENH367,symptom::chảy ghèn,has_symptom
+disease::BENH368,text::Suy thận cấp vừa mạn không đặc hiệu,has_name
+disease::BENH368,symptom::tiểu ít,has_symptom
+disease::BENH368,symptom::phù,has_symptom
+disease::BENH368,symptom::mệt,has_symptom
+disease::BENH368,symptom::buồn nôn,has_symptom
+disease::BENH369,text::Rối loạn tiêu hóa tái phát nặng nhẹ cấp,has_name
+disease::BENH369,symptom::đau bụng,has_symptom
+disease::BENH369,symptom::đầy hơi,has_symptom
+disease::BENH369,symptom::tiêu chảy,has_symptom
+disease::BENH369,symptom::buồn nôn,has_symptom
+disease::BENH370,text::Tăng huyết áp nhẹ nặng,has_name
+disease::BENH370,symptom::đau đầu,has_symptom
+disease::BENH370,symptom::hoa mắt,has_symptom
+disease::BENH370,symptom::chóng mặt,has_symptom
+disease::BENH370,symptom::mệt,has_symptom
+disease::BENH371,text::Đau bụng vừa chưa rõ nguyên nhân không đặc hiệu,has_name
+disease::BENH371,symptom::đau bụng,has_symptom
+disease::BENH371,symptom::buồn nôn,has_symptom
+disease::BENH371,symptom::chướng bụng,has_symptom
+disease::BENH372,text::Đau bụng vừa chưa rõ nguyên nhân không đặc hiệu tái phát,has_name
+disease::BENH372,symptom::đau bụng,has_symptom
+disease::BENH372,symptom::buồn nôn,has_symptom
+disease::BENH372,symptom::chướng bụng,has_symptom
+disease::BENH373,text::Nhiễm khuẩn tiết niệu nhẹ tái phát,has_name
+disease::BENH373,symptom::tiểu buốt,has_symptom
+disease::BENH373,symptom::tiểu rắt,has_symptom
+disease::BENH373,symptom::đau bụng dưới,has_symptom
+disease::BENH373,symptom::sốt,has_symptom
+disease::BENH374,text::COVID-19 nặng vừa vừa cấp,has_name
+disease::BENH374,symptom::sốt,has_symptom
+disease::BENH374,symptom::ho,has_symptom
+disease::BENH374,symptom::đau họng,has_symptom
+disease::BENH374,symptom::mất mùi vị,has_symptom
+disease::BENH375,text::Viêm niệu đạo cấp cấp,has_name
+disease::BENH375,symptom::tiểu buốt,has_symptom
+disease::BENH375,symptom::tiểu rắt,has_symptom
+disease::BENH375,symptom::ngứa niệu đạo,has_symptom
+disease::BENH376,text::Rôm sảy chưa rõ nguyên nhân,has_name
+disease::BENH376,symptom::ngứa,has_symptom
+disease::BENH376,symptom::nổi mẩn nhỏ,has_symptom
+disease::BENH376,symptom::rát da,has_symptom
+disease::BENH377,text::Đau răng cấp,has_name
+disease::BENH377,symptom::đau răng,has_symptom
+disease::BENH377,symptom::ê buốt,has_symptom
+disease::BENH377,symptom::sưng nướu,has_symptom
+disease::BENH378,text::Tăng tiểu đêm vừa không đặc hiệu,has_name
+disease::BENH378,symptom::đi tiểu đêm nhiều lần,has_symptom
+disease::BENH378,symptom::mệt,has_symptom
+disease::BENH379,text::Béo phì nhẹ tái phát nhẹ,has_name
+disease::BENH379,symptom::tăng cân,has_symptom
+disease::BENH379,symptom::thừa mỡ,has_symptom
+disease::BENH379,symptom::khó thở khi vận động,has_symptom
+disease::BENH380,text::Viêm niệu đạo mạn chưa rõ nguyên nhân nặng,has_name
+disease::BENH380,symptom::tiểu buốt,has_symptom
+disease::BENH380,symptom::tiểu rắt,has_symptom
+disease::BENH380,symptom::ngứa niệu đạo,has_symptom
+disease::BENH381,text::Nhiễm khuẩn tiết niệu nặng cấp không đặc hiệu,has_name
+disease::BENH381,symptom::tiểu buốt,has_symptom
+disease::BENH381,symptom::tiểu rắt,has_symptom
+disease::BENH381,symptom::đau bụng dưới,has_symptom
+disease::BENH381,symptom::sốt,has_symptom
+disease::BENH382,text::Chấn thương phần mềm mạn không đặc hiệu,has_name
+disease::BENH382,symptom::sưng đau,has_symptom
+disease::BENH382,symptom::bầm tím,has_symptom
+disease::BENH382,symptom::đau khi vận động,has_symptom
+disease::BENH383,text::Viêm phổi cộng đồng cấp cấp,has_name
+disease::BENH383,symptom::sốt,has_symptom
+disease::BENH383,symptom::ho,has_symptom
+disease::BENH383,symptom::khó thở,has_symptom
+disease::BENH383,symptom::đau ngực,has_symptom
+disease::BENH384,text::Nhiễm khuẩn tiết niệu nặng cấp mạn cấp cấp,has_name
+disease::BENH384,symptom::tiểu buốt,has_symptom
+disease::BENH384,symptom::tiểu rắt,has_symptom
+disease::BENH384,symptom::đau bụng dưới,has_symptom
+disease::BENH384,symptom::sốt,has_symptom
+disease::BENH385,text::Trật khớp không đặc hiệu mạn nhẹ,has_name
+disease::BENH385,symptom::đau dữ dội,has_symptom
+disease::BENH385,symptom::biến dạng khớp,has_symptom
+disease::BENH385,symptom::hạn chế vận động,has_symptom
+disease::BENH386,text::Trầm cảm nhẹ mạn vừa nặng nhẹ mạn,has_name
+disease::BENH386,symptom::buồn bã,has_symptom
+disease::BENH386,symptom::mệt mỏi,has_symptom
+disease::BENH386,symptom::mất hứng thú,has_symptom
+disease::BENH387,text::Hạ đường huyết nặng vừa chưa rõ nguyên nhân cấp,has_name
+disease::BENH387,symptom::run tay,has_symptom
+disease::BENH387,symptom::vã mồ hôi,has_symptom
+disease::BENH387,symptom::đói,has_symptom
+disease::BENH387,symptom::mệt,has_symptom
+disease::BENH388,text::Hạ đường huyết nặng vừa chưa rõ nguyên nhân cấp cấp,has_name
+disease::BENH388,symptom::run tay,has_symptom
+disease::BENH388,symptom::vã mồ hôi,has_symptom
+disease::BENH388,symptom::đói,has_symptom
+disease::BENH388,symptom::mệt,has_symptom
+disease::BENH389,text::Viêm mũi xoang cấp nhẹ,has_name
+disease::BENH389,symptom::nghẹt mũi,has_symptom
+disease::BENH389,symptom::chảy mũi,has_symptom
+disease::BENH389,symptom::đau đầu,has_symptom
+disease::BENH389,symptom::sốt,has_symptom
+disease::BENH390,text::Viêm thanh quản tái phát,has_name
+disease::BENH390,symptom::khàn tiếng,has_symptom
+disease::BENH390,symptom::ho,has_symptom
+disease::BENH390,symptom::đau họng,has_symptom
+disease::BENH391,text::Rối loạn lipid máu nhẹ tái phát,has_name
+disease::BENH391,symptom::mỡ máu cao,has_symptom
+disease::BENH391,symptom::thừa cân,has_symptom
+disease::BENH391,symptom::ít triệu chứng,has_symptom
+disease::BENH392,text::Viêm da tiếp xúc mạn chưa rõ nguyên nhân mạn,has_name
+disease::BENH392,symptom::đỏ da,has_symptom
+disease::BENH392,symptom::rát,has_symptom
+disease::BENH392,symptom::ngứa,has_symptom
+disease::BENH392,symptom::phồng rộp,has_symptom
+disease::BENH393,text::Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ nhẹ,has_name
+disease::BENH393,symptom::tiểu buốt,has_symptom
+disease::BENH393,symptom::tiểu rắt,has_symptom
+disease::BENH393,symptom::đau bụng dưới,has_symptom
+disease::BENH393,symptom::sốt,has_symptom
+disease::BENH394,text::Nấm kẽ tái phát chưa rõ nguyên nhân vừa,has_name
+disease::BENH394,symptom::ngứa,has_symptom
+disease::BENH394,symptom::hăm kẽ,has_symptom
+disease::BENH394,symptom::đỏ da,has_symptom
+disease::BENH395,text::Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ nhẹ nặng,has_name
+disease::BENH395,symptom::tiểu buốt,has_symptom
+disease::BENH395,symptom::tiểu rắt,has_symptom
+disease::BENH395,symptom::đau bụng dưới,has_symptom
+disease::BENH395,symptom::sốt,has_symptom
+disease::BENH396,text::Tiểu khó mạn,has_name
+disease::BENH396,symptom::tiểu khó,has_symptom
+disease::BENH396,symptom::dòng tiểu yếu,has_symptom
+disease::BENH396,symptom::đau rát,has_symptom
+disease::BENH397,text::Đái máu vừa,has_name
+disease::BENH397,symptom::nước tiểu đỏ,has_symptom
+disease::BENH397,symptom::đau bụng dưới,has_symptom
+disease::BENH397,symptom::tiểu buốt,has_symptom
+disease::BENH398,text::Bong gân cấp,has_name
+disease::BENH398,symptom::sưng đau,has_symptom
+disease::BENH398,symptom::hạn chế vận động,has_symptom
+disease::BENH398,symptom::bầm tím,has_symptom
+disease::BENH399,text::Thừa cân vừa không đặc hiệu,has_name
+disease::BENH399,symptom::tăng cân,has_symptom
+disease::BENH399,symptom::BMI cao,has_symptom
+disease::BENH399,symptom::mệt khi vận động,has_symptom
+disease::BENH400,text::Viêm họng cấp mạn nhẹ,has_name
+disease::BENH400,symptom::đau họng,has_symptom
+disease::BENH400,symptom::sốt nhẹ,has_symptom
+disease::BENH400,symptom::nuốt đau,has_symptom
+disease::BENH400,symptom::ho khan,has_symptom
+disease::BENH401,text::Rối loạn chuyển hóa nhẹ,has_name
+disease::BENH401,symptom::mệt,has_symptom
+disease::BENH401,symptom::tăng cân,has_symptom
+disease::BENH401,symptom::đường huyết bất thường,has_symptom
+disease::BENH402,text::Đau cổ vừa,has_name
+disease::BENH402,symptom::đau cổ,has_symptom
+disease::BENH402,symptom::cứng cổ,has_symptom
+disease::BENH402,symptom::hạn chế xoay cổ,has_symptom
+disease::BENH403,text::Sỏi tiết niệu mạn vừa mạn,has_name
+disease::BENH403,symptom::đau quặn thận,has_symptom
+disease::BENH403,symptom::tiểu buốt,has_symptom
+disease::BENH403,symptom::tiểu máu,has_symptom
+disease::BENH404,text::Đầy hơi nặng tái phát cấp,has_name
+disease::BENH404,symptom::bụng chướng,has_symptom
+disease::BENH404,symptom::ợ hơi,has_symptom
+disease::BENH404,symptom::khó chịu,has_symptom
+disease::BENH404,symptom::chán ăn,has_symptom
+disease::BENH405,text::Stress cấp không đặc hiệu,has_name
+disease::BENH405,symptom::căng thẳng,has_symptom
+disease::BENH405,symptom::mệt,has_symptom
+disease::BENH405,symptom::lo âu,has_symptom
+disease::BENH406,text::Viêm đại tràng nhẹ nặng,has_name
+disease::BENH406,symptom::đau bụng,has_symptom
+disease::BENH406,symptom::tiêu chảy,has_symptom
+disease::BENH406,symptom::đầy hơi,has_symptom
+disease::BENH406,symptom::mót rặn,has_symptom
+disease::BENH407,text::Hen phế quản không đặc hiệu,has_name
+disease::BENH407,symptom::khò khè,has_symptom
+disease::BENH407,symptom::khó thở,has_symptom
+disease::BENH407,symptom::tức ngực,has_symptom
+disease::BENH407,symptom::ho,has_symptom
+disease::BENH408,text::Viêm thanh quản cấp chưa rõ nguyên nhân mạn mạn,has_name
+disease::BENH408,symptom::khàn tiếng,has_symptom
+disease::BENH408,symptom::ho,has_symptom
+disease::BENH408,symptom::đau họng,has_symptom
+disease::BENH409,text::Viêm lợi nhẹ nhẹ cấp mạn nặng,has_name
+disease::BENH409,symptom::đỏ lợi,has_symptom
+disease::BENH409,symptom::sưng lợi,has_symptom
+disease::BENH409,symptom::chảy máu lợi,has_symptom
+disease::BENH410,text::Nấm kẽ nặng chưa rõ nguyên nhân chưa rõ nguyên nhân,has_name
+disease::BENH410,symptom::ngứa,has_symptom
+disease::BENH410,symptom::hăm kẽ,has_symptom
+disease::BENH410,symptom::đỏ da,has_symptom
+disease::BENH411,text::Viêm phổi cộng đồng mạn cấp tái phát,has_name
+disease::BENH411,symptom::sốt,has_symptom
+disease::BENH411,symptom::ho,has_symptom
+disease::BENH411,symptom::khó thở,has_symptom
+disease::BENH411,symptom::đau ngực,has_symptom
+disease::BENH412,text::Nhiễm trùng da nhẹ tái phát,has_name
+disease::BENH412,symptom::đỏ da,has_symptom
+disease::BENH412,symptom::sưng,has_symptom
+disease::BENH412,symptom::đau,has_symptom
+disease::BENH412,symptom::mủ,has_symptom
+disease::BENH412,symptom::sốt,has_symptom
+disease::BENH413,text::Rôm sảy chưa rõ nguyên nhân vừa,has_name
+disease::BENH413,symptom::ngứa,has_symptom
+disease::BENH413,symptom::nổi mẩn nhỏ,has_symptom
+disease::BENH413,symptom::rát da,has_symptom
+disease::BENH414,text::COVID-19 nặng vừa chưa rõ nguyên nhân,has_name
+disease::BENH414,symptom::sốt,has_symptom
+disease::BENH414,symptom::ho,has_symptom
+disease::BENH414,symptom::đau họng,has_symptom
+disease::BENH414,symptom::mất mùi vị,has_symptom
+disease::BENH415,text::Nấm kẽ tái phát chưa rõ nguyên nhân không đặc hiệu,has_name
+disease::BENH415,symptom::ngứa,has_symptom
+disease::BENH415,symptom::hăm kẽ,has_symptom
+disease::BENH415,symptom::đỏ da,has_symptom
+disease::BENH416,text::Viêm niệu đạo cấp cấp vừa,has_name
+disease::BENH416,symptom::tiểu buốt,has_symptom
+disease::BENH416,symptom::tiểu rắt,has_symptom
+disease::BENH416,symptom::ngứa niệu đạo,has_symptom
+disease::BENH417,text::Gan nhiễm mỡ cấp nhẹ,has_name
+disease::BENH417,symptom::mệt,has_symptom
+disease::BENH417,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH418,text::Rối loạn chuyển hóa acid uric vừa,has_name
+disease::BENH418,symptom::đau khớp,has_symptom
+disease::BENH418,symptom::sưng khớp,has_symptom
+disease::BENH418,symptom::mệt,has_symptom
+disease::BENH419,text::Gan nhiễm mỡ nhẹ nhẹ,has_name
+disease::BENH419,symptom::mệt,has_symptom
+disease::BENH419,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH420,text::Trật khớp không đặc hiệu mạn nhẹ chưa rõ nguyên nhân,has_name
+disease::BENH420,symptom::đau dữ dội,has_symptom
+disease::BENH420,symptom::biến dạng khớp,has_symptom
+disease::BENH420,symptom::hạn chế vận động,has_symptom
+disease::BENH421,text::Táo bón chưa rõ nguyên nhân không đặc hiệu,has_name
+disease::BENH421,symptom::đi ngoài khó,has_symptom
+disease::BENH421,symptom::đau bụng,has_symptom
+disease::BENH421,symptom::bụng chướng,has_symptom
+disease::BENH422,text::Nhiễm khuẩn tiết niệu nặng cấp cấp,has_name
+disease::BENH422,symptom::tiểu buốt,has_symptom
+disease::BENH422,symptom::tiểu rắt,has_symptom
+disease::BENH422,symptom::đau bụng dưới,has_symptom
+disease::BENH422,symptom::sốt,has_symptom
+disease::BENH423,text::Đau cổ nặng nặng,has_name
+disease::BENH423,symptom::đau cổ,has_symptom
+disease::BENH423,symptom::cứng cổ,has_symptom
+disease::BENH423,symptom::hạn chế xoay cổ,has_symptom
+disease::BENH424,text::Đau răng chưa rõ nguyên nhân,has_name
+disease::BENH424,symptom::đau răng,has_symptom
+disease::BENH424,symptom::ê buốt,has_symptom
+disease::BENH424,symptom::sưng nướu,has_symptom
+disease::BENH425,text::Trầm cảm nhẹ nặng,has_name
+disease::BENH425,symptom::buồn bã,has_symptom
+disease::BENH425,symptom::mệt mỏi,has_symptom
+disease::BENH425,symptom::mất hứng thú,has_symptom
+disease::BENH426,text::Viêm lợi nhẹ nhẹ cấp mạn nặng vừa,has_name
+disease::BENH426,symptom::đỏ lợi,has_symptom
+disease::BENH426,symptom::sưng lợi,has_symptom
+disease::BENH426,symptom::chảy máu lợi,has_symptom
+disease::BENH427,text::Béo phì chưa rõ nguyên nhân nặng vừa,has_name
+disease::BENH427,symptom::tăng cân,has_symptom
+disease::BENH427,symptom::thừa mỡ,has_symptom
+disease::BENH427,symptom::khó thở khi vận động,has_symptom
+disease::BENH428,text::Nấm kẽ nặng mạn vừa,has_name
+disease::BENH428,symptom::ngứa,has_symptom
+disease::BENH428,symptom::hăm kẽ,has_symptom
+disease::BENH428,symptom::đỏ da,has_symptom
+disease::BENH429,text::Tiểu rắt nhẹ cấp,has_name
+disease::BENH429,symptom::đi tiểu nhiều lần,has_symptom
+disease::BENH429,symptom::lượng ít,has_symptom
+disease::BENH429,symptom::khó chịu,has_symptom
+disease::BENH430,text::Đau lưng trên cấp cấp nhẹ,has_name
+disease::BENH430,symptom::đau lưng,has_symptom
+disease::BENH430,symptom::căng cơ,has_symptom
+disease::BENH430,symptom::mỏi vai,has_symptom
+disease::BENH431,text::Rối loạn tiêu hóa tái phát nặng nhẹ cấp không đặc hiệu,has_name
+disease::BENH431,symptom::đau bụng,has_symptom
+disease::BENH431,symptom::đầy hơi,has_symptom
+disease::BENH431,symptom::tiêu chảy,has_symptom
+disease::BENH431,symptom::buồn nôn,has_symptom
+disease::BENH432,text::Viêm thanh quản cấp chưa rõ nguyên nhân mạn nhẹ,has_name
+disease::BENH432,symptom::khàn tiếng,has_symptom
+disease::BENH432,symptom::ho,has_symptom
+disease::BENH432,symptom::đau họng,has_symptom
+disease::BENH433,text::Mụn trứng cá tái phát chưa rõ nguyên nhân,has_name
+disease::BENH433,symptom::mụn viêm,has_symptom
+disease::BENH433,symptom::mụn đầu đen,has_symptom
+disease::BENH433,symptom::da dầu,has_symptom
+disease::BENH434,text::Béo phì nhẹ mạn mạn chưa rõ nguyên nhân,has_name
+disease::BENH434,symptom::tăng cân,has_symptom
+disease::BENH434,symptom::thừa mỡ,has_symptom
+disease::BENH434,symptom::khó thở khi vận động,has_symptom
+disease::BENH435,text::Viêm thanh khí phế quản cấp cấp,has_name
+disease::BENH435,symptom::ho ông ổng,has_symptom
+disease::BENH435,symptom::khàn tiếng,has_symptom
+disease::BENH435,symptom::khó thở,has_symptom
+disease::BENH436,text::Viêm khớp vừa,has_name
+disease::BENH436,symptom::đau khớp,has_symptom
+disease::BENH436,symptom::sưng khớp,has_symptom
+disease::BENH436,symptom::cứng khớp,has_symptom
+disease::BENH436,symptom::hạn chế vận động,has_symptom
+disease::BENH437,text::Rối loạn tập trung không đặc hiệu,has_name
+disease::BENH437,symptom::khó tập trung,has_symptom
+disease::BENH437,symptom::hay quên,has_symptom
+disease::BENH437,symptom::mệt,has_symptom
+disease::BENH438,text::Đau đầu migraine không đặc hiệu nhẹ,has_name
+disease::BENH438,symptom::đau đầu một bên,has_symptom
+disease::BENH438,symptom::buồn nôn,has_symptom
+disease::BENH438,symptom::sợ ánh sáng,has_symptom
+disease::BENH439,text::Loãng xương nặng nặng,has_name
+disease::BENH439,symptom::đau lưng,has_symptom
+disease::BENH439,symptom::giảm chiều cao,has_symptom
+disease::BENH439,symptom::dễ gãy xương,has_symptom
+disease::BENH440,text::Viêm da tiếp xúc mạn chưa rõ nguyên nhân nặng,has_name
+disease::BENH440,symptom::đỏ da,has_symptom
+disease::BENH440,symptom::rát,has_symptom
+disease::BENH440,symptom::ngứa,has_symptom
+disease::BENH440,symptom::phồng rộp,has_symptom
+disease::BENH441,text::Nôn ói nặng cấp nặng,has_name
+disease::BENH441,symptom::buồn nôn,has_symptom
+disease::BENH441,symptom::nôn,has_symptom
+disease::BENH441,symptom::mệt,has_symptom
+disease::BENH441,symptom::chóng mặt,has_symptom
+disease::BENH442,text::Béo phì nhẹ vừa chưa rõ nguyên nhân,has_name
+disease::BENH442,symptom::tăng cân,has_symptom
+disease::BENH442,symptom::thừa mỡ,has_symptom
+disease::BENH442,symptom::khó thở khi vận động,has_symptom
+disease::BENH443,text::Viêm mũi cấp chưa rõ nguyên nhân vừa,has_name
+disease::BENH443,symptom::nghẹt mũi,has_symptom
+disease::BENH443,symptom::chảy mũi,has_symptom
+disease::BENH443,symptom::hắt hơi,has_symptom
+disease::BENH444,text::Viêm bao hoạt dịch cấp nhẹ,has_name
+disease::BENH444,symptom::đau khớp,has_symptom
+disease::BENH444,symptom::sưng nóng,has_symptom
+disease::BENH444,symptom::hạn chế vận động,has_symptom
+disease::BENH445,text::Viêm da dị ứng nhẹ,has_name
+disease::BENH445,symptom::ngứa da,has_symptom
+disease::BENH445,symptom::mẩn đỏ,has_symptom
+disease::BENH445,symptom::khô da,has_symptom
+disease::BENH445,symptom::rát da,has_symptom
+disease::BENH446,text::Nhiễm khuẩn tiết niệu nặng cấp không đặc hiệu tái phát,has_name
+disease::BENH446,symptom::tiểu buốt,has_symptom
+disease::BENH446,symptom::tiểu rắt,has_symptom
+disease::BENH446,symptom::đau bụng dưới,has_symptom
+disease::BENH446,symptom::sốt,has_symptom
+disease::BENH447,text::Chảy máu chân răng nhẹ,has_name
+disease::BENH447,symptom::chảy máu lợi,has_symptom
+disease::BENH447,symptom::đau nướu,has_symptom
+disease::BENH448,text::Béo phì nhẹ tái phát nhẹ chưa rõ nguyên nhân,has_name
+disease::BENH448,symptom::tăng cân,has_symptom
+disease::BENH448,symptom::thừa mỡ,has_symptom
+disease::BENH448,symptom::khó thở khi vận động,has_symptom
+disease::BENH449,text::Nhiễm khuẩn tiết niệu nặng vừa,has_name
+disease::BENH449,symptom::tiểu buốt,has_symptom
+disease::BENH449,symptom::tiểu rắt,has_symptom
+disease::BENH449,symptom::đau bụng dưới,has_symptom
+disease::BENH449,symptom::sốt,has_symptom
+disease::BENH450,text::Đau vai gáy nhẹ,has_name
+disease::BENH450,symptom::đau cổ vai gáy,has_symptom
+disease::BENH450,symptom::cứng cổ,has_symptom
+disease::BENH450,symptom::tê tay,has_symptom
+disease::BENH451,text::Tăng đường huyết chưa rõ nguyên nhân nhẹ,has_name
+disease::BENH451,symptom::khát nước,has_symptom
+disease::BENH451,symptom::tiểu nhiều,has_symptom
+disease::BENH451,symptom::mệt,has_symptom
+disease::BENH452,text::Đái máu cấp nặng tái phát,has_name
+disease::BENH452,symptom::nước tiểu đỏ,has_symptom
+disease::BENH452,symptom::đau bụng dưới,has_symptom
+disease::BENH452,symptom::tiểu buốt,has_symptom
+disease::BENH453,text::Ù tai mạn cấp,has_name
+disease::BENH453,symptom::ù tai,has_symptom
+disease::BENH453,symptom::nghe kém,has_symptom
+disease::BENH453,symptom::chóng mặt,has_symptom
+disease::BENH454,text::Viêm loét dạ dày tá tràng vừa,has_name
+disease::BENH454,symptom::đau thượng vị,has_symptom
+disease::BENH454,symptom::ợ nóng,has_symptom
+disease::BENH454,symptom::buồn nôn,has_symptom
+disease::BENH455,text::Viêm bàng quang cấp chưa rõ nguyên nhân tái phát,has_name
+disease::BENH455,symptom::tiểu buốt,has_symptom
+disease::BENH455,symptom::tiểu rắt,has_symptom
+disease::BENH455,symptom::đau hạ vị,has_symptom
+disease::BENH455,symptom::sốt nhẹ,has_symptom
+disease::BENH456,text::Khàn tiếng vừa nặng chưa rõ nguyên nhân,has_name
+disease::BENH456,symptom::nói khó,has_symptom
+disease::BENH456,symptom::giọng khàn,has_symptom
+disease::BENH456,symptom::đau họng,has_symptom
+disease::BENH457,text::Đau cổ cấp,has_name
+disease::BENH457,symptom::đau cổ,has_symptom
+disease::BENH457,symptom::cứng cổ,has_symptom
+disease::BENH457,symptom::hạn chế xoay cổ,has_symptom
+disease::BENH458,text::Cảm cúm không đặc hiệu nặng vừa,has_name
+disease::BENH458,symptom::sốt,has_symptom
+disease::BENH458,symptom::ho,has_symptom
+disease::BENH458,symptom::sổ mũi,has_symptom
+disease::BENH458,symptom::đau đầu,has_symptom
+disease::BENH459,text::Viêm phổi cộng đồng cấp chưa rõ nguyên nhân,has_name
+disease::BENH459,symptom::sốt,has_symptom
+disease::BENH459,symptom::ho,has_symptom
+disease::BENH459,symptom::khó thở,has_symptom
+disease::BENH459,symptom::đau ngực,has_symptom
+disease::BENH460,text::Đau lưng dưới vừa nặng,has_name
+disease::BENH460,symptom::đau thắt lưng,has_symptom
+disease::BENH460,symptom::đau lan mông,has_symptom
+disease::BENH460,symptom::cứng lưng,has_symptom
+disease::BENH461,text::Sâu răng cấp,has_name
+disease::BENH461,symptom::đau răng,has_symptom
+disease::BENH461,symptom::ê buốt,has_symptom
+disease::BENH461,symptom::lỗ sâu răng,has_symptom
+disease::BENH462,text::Trật khớp không đặc hiệu chưa rõ nguyên nhân,has_name
+disease::BENH462,symptom::đau dữ dội,has_symptom
+disease::BENH462,symptom::biến dạng khớp,has_symptom
+disease::BENH462,symptom::hạn chế vận động,has_symptom
+disease::BENH463,text::Đau lưng trên mạn chưa rõ nguyên nhân,has_name
+disease::BENH463,symptom::đau lưng,has_symptom
+disease::BENH463,symptom::căng cơ,has_symptom
+disease::BENH463,symptom::mỏi vai,has_symptom
+disease::BENH464,text::Thiếu máu cấp,has_name
+disease::BENH464,symptom::mệt,has_symptom
+disease::BENH464,symptom::hoa mắt,has_symptom
+disease::BENH464,symptom::chóng mặt,has_symptom
+disease::BENH464,symptom::da xanh,has_symptom
+disease::BENH465,text::Viêm thận - bể thận tái phát,has_name
+disease::BENH465,symptom::sốt cao,has_symptom
+disease::BENH465,symptom::đau hông lưng,has_symptom
+disease::BENH465,symptom::tiểu buốt,has_symptom
+disease::BENH466,text::Viêm niệu đạo cấp cấp vừa vừa,has_name
+disease::BENH466,symptom::tiểu buốt,has_symptom
+disease::BENH466,symptom::tiểu rắt,has_symptom
+disease::BENH466,symptom::ngứa niệu đạo,has_symptom
+disease::BENH467,text::Dị ứng không đặc hiệu,has_name
+disease::BENH467,symptom::ngứa,has_symptom
+disease::BENH467,symptom::nổi mề đay,has_symptom
+disease::BENH467,symptom::hắt hơi,has_symptom
+disease::BENH467,symptom::chảy nước mắt,has_symptom
+disease::BENH468,text::Nôn ói nặng không đặc hiệu nhẹ,has_name
+disease::BENH468,symptom::buồn nôn,has_symptom
+disease::BENH468,symptom::nôn,has_symptom
+disease::BENH468,symptom::mệt,has_symptom
+disease::BENH468,symptom::chóng mặt,has_symptom
+disease::BENH469,text::Bong gân cấp không đặc hiệu,has_name
+disease::BENH469,symptom::sưng đau,has_symptom
+disease::BENH469,symptom::hạn chế vận động,has_symptom
+disease::BENH469,symptom::bầm tím,has_symptom
+disease::BENH470,text::Gan nhiễm mỡ nhẹ chưa rõ nguyên nhân,has_name
+disease::BENH470,symptom::mệt,has_symptom
+disease::BENH470,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH471,text::Chấn thương phần mềm mạn nhẹ không đặc hiệu,has_name
+disease::BENH471,symptom::sưng đau,has_symptom
+disease::BENH471,symptom::bầm tím,has_symptom
+disease::BENH471,symptom::đau khi vận động,has_symptom
+disease::BENH472,text::Loãng xương nặng cấp,has_name
+disease::BENH472,symptom::đau lưng,has_symptom
+disease::BENH472,symptom::giảm chiều cao,has_symptom
+disease::BENH472,symptom::dễ gãy xương,has_symptom
+disease::BENH473,text::Rối loạn lipid máu nhẹ tái phát nhẹ,has_name
+disease::BENH473,symptom::mỡ máu cao,has_symptom
+disease::BENH473,symptom::thừa cân,has_symptom
+disease::BENH473,symptom::ít triệu chứng,has_symptom
+disease::BENH474,text::Gan nhiễm mỡ không đặc hiệu mạn,has_name
+disease::BENH474,symptom::mệt,has_symptom
+disease::BENH474,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH475,text::Tiểu đêm nhẹ,has_name
+disease::BENH475,symptom::đi tiểu nhiều về đêm,has_symptom
+disease::BENH475,symptom::mất ngủ,has_symptom
+disease::BENH475,symptom::mệt,has_symptom
+disease::BENH476,text::Suy thận cấp mạn,has_name
+disease::BENH476,symptom::tiểu ít,has_symptom
+disease::BENH476,symptom::phù,has_symptom
+disease::BENH476,symptom::mệt,has_symptom
+disease::BENH476,symptom::buồn nôn,has_symptom
+disease::BENH477,text::Tiểu đêm cấp,has_name
+disease::BENH477,symptom::đi tiểu nhiều về đêm,has_symptom
+disease::BENH477,symptom::mất ngủ,has_symptom
+disease::BENH477,symptom::mệt,has_symptom
+disease::BENH478,text::Loãng xương tái phát chưa rõ nguyên nhân,has_name
+disease::BENH478,symptom::đau lưng,has_symptom
+disease::BENH478,symptom::giảm chiều cao,has_symptom
+disease::BENH478,symptom::dễ gãy xương,has_symptom
+disease::BENH479,text::Nhiễm khuẩn tiết niệu nặng cấp mạn cấp mạn chưa rõ nguyên nhân,has_name
+disease::BENH479,symptom::tiểu buốt,has_symptom
+disease::BENH479,symptom::tiểu rắt,has_symptom
+disease::BENH479,symptom::đau bụng dưới,has_symptom
+disease::BENH479,symptom::sốt,has_symptom
+disease::BENH480,text::Viêm da tiếp xúc mạn cấp,has_name
+disease::BENH480,symptom::đỏ da,has_symptom
+disease::BENH480,symptom::rát,has_symptom
+disease::BENH480,symptom::ngứa,has_symptom
+disease::BENH480,symptom::phồng rộp,has_symptom
+disease::BENH481,text::Đau đầu migraine vừa,has_name
+disease::BENH481,symptom::đau đầu một bên,has_symptom
+disease::BENH481,symptom::buồn nôn,has_symptom
+disease::BENH481,symptom::sợ ánh sáng,has_symptom
+disease::BENH482,text::Loãng xương nặng nhẹ không đặc hiệu vừa,has_name
+disease::BENH482,symptom::đau lưng,has_symptom
+disease::BENH482,symptom::giảm chiều cao,has_symptom
+disease::BENH482,symptom::dễ gãy xương,has_symptom
+disease::BENH483,text::Đau đầu căng thẳng không đặc hiệu chưa rõ nguyên nhân,has_name
+disease::BENH483,symptom::đau đầu,has_symptom
+disease::BENH483,symptom::căng cổ,has_symptom
+disease::BENH483,symptom::mệt,has_symptom
+disease::BENH483,symptom::khó tập trung,has_symptom
+disease::BENH484,text::Thừa cân nhẹ,has_name
+disease::BENH484,symptom::tăng cân,has_symptom
+disease::BENH484,symptom::BMI cao,has_symptom
+disease::BENH484,symptom::mệt khi vận động,has_symptom
+disease::BENH485,text::Gan nhiễm mỡ không đặc hiệu mạn vừa,has_name
+disease::BENH485,symptom::mệt,has_symptom
+disease::BENH485,symptom::nặng tức hạ sườn phải,has_symptom
+disease::BENH486,text::Đầy hơi nặng tái phát cấp nhẹ,has_name
+disease::BENH486,symptom::bụng chướng,has_symptom
+disease::BENH486,symptom::ợ hơi,has_symptom
+disease::BENH486,symptom::khó chịu,has_symptom
+disease::BENH486,symptom::chán ăn,has_symptom
+disease::BENH487,text::Nôn ói nặng cấp mạn,has_name
+disease::BENH487,symptom::buồn nôn,has_symptom
+disease::BENH487,symptom::nôn,has_symptom
+disease::BENH487,symptom::mệt,has_symptom
+disease::BENH487,symptom::chóng mặt,has_symptom
+disease::BENH488,text::Khàn tiếng vừa mạn tái phát nhẹ,has_name
+disease::BENH488,symptom::nói khó,has_symptom
+disease::BENH488,symptom::giọng khàn,has_symptom
+disease::BENH488,symptom::đau họng,has_symptom
+disease::BENH489,text::Loãng xương không đặc hiệu không đặc hiệu tái phát,has_name
+disease::BENH489,symptom::đau lưng,has_symptom
+disease::BENH489,symptom::giảm chiều cao,has_symptom
+disease::BENH489,symptom::dễ gãy xương,has_symptom
+disease::BENH490,text::Viêm niệu đạo cấp cấp vừa vừa vừa,has_name
+disease::BENH490,symptom::tiểu buốt,has_symptom
+disease::BENH490,symptom::tiểu rắt,has_symptom
+disease::BENH490,symptom::ngứa niệu đạo,has_symptom
+disease::BENH491,text::Đau răng chưa rõ nguyên nhân tái phát,has_name
+disease::BENH491,symptom::đau răng,has_symptom
+disease::BENH491,symptom::ê buốt,has_symptom
+disease::BENH491,symptom::sưng nướu,has_symptom
+disease::BENH492,text::Thừa cân cấp,has_name
+disease::BENH492,symptom::tăng cân,has_symptom
+disease::BENH492,symptom::BMI cao,has_symptom
+disease::BENH492,symptom::mệt khi vận động,has_symptom
+disease::BENH493,text::Phù vừa,has_name
+disease::BENH493,symptom::sưng chân,has_symptom
+disease::BENH493,symptom::mặt,has_symptom
+disease::BENH493,symptom::tăng cân nhanh,has_symptom
+disease::BENH494,text::Béo phì nhẹ không đặc hiệu vừa,has_name
+disease::BENH494,symptom::tăng cân,has_symptom
+disease::BENH494,symptom::thừa mỡ,has_symptom
+disease::BENH494,symptom::khó thở khi vận động,has_symptom
+disease::BENH495,text::Béo phì không đặc hiệu mạn,has_name
+disease::BENH495,symptom::tăng cân,has_symptom
+disease::BENH495,symptom::thừa mỡ,has_symptom
+disease::BENH495,symptom::khó thở khi vận động,has_symptom
+disease::BENH496,text::COVID-19 nặng không đặc hiệu cấp không đặc hiệu,has_name
+disease::BENH496,symptom::sốt,has_symptom
+disease::BENH496,symptom::ho,has_symptom
+disease::BENH496,symptom::đau họng,has_symptom
+disease::BENH496,symptom::mất mùi vị,has_symptom
+disease::BENH497,text::Đau đầu căng thẳng không đặc hiệu chưa rõ nguyên nhân vừa,has_name
+disease::BENH497,symptom::đau đầu,has_symptom
+disease::BENH497,symptom::căng cổ,has_symptom
+disease::BENH497,symptom::mệt,has_symptom
+disease::BENH497,symptom::khó tập trung,has_symptom
+disease::BENH498,text::Đái máu cấp chưa rõ nguyên nhân chưa rõ nguyên nhân,has_name
+disease::BENH498,symptom::nước tiểu đỏ,has_symptom
+disease::BENH498,symptom::đau bụng dưới,has_symptom
+disease::BENH498,symptom::tiểu buốt,has_symptom
+disease::BENH499,text::Viêm tai ngoài nặng nhẹ cấp,has_name
+disease::BENH499,symptom::đau tai,has_symptom
+disease::BENH499,symptom::ngứa tai,has_symptom
+disease::BENH499,symptom::chảy dịch,has_symptom
+disease::BENH500,text::Khàn tiếng vừa nặng chưa rõ nguyên nhân không đặc hiệu,has_name
+disease::BENH500,symptom::nói khó,has_symptom
+disease::BENH500,symptom::giọng khàn,has_symptom
+disease::BENH500,symptom::đau họng,has_symptom
+drug::T001,drug::T031,co_drug
+drug::T001,drug::T061,co_drug
+drug::T001,drug::T091,co_drug
+drug::T031,drug::T061,co_drug
+drug::T031,drug::T091,co_drug
+drug::T031,drug::T121,co_drug
+drug::T061,drug::T091,co_drug
+drug::T061,drug::T121,co_drug
+drug::T061,drug::T151,co_drug
+drug::T091,drug::T121,co_drug
+drug::T091,drug::T151,co_drug
+drug::T091,drug::T181,co_drug
+drug::T121,drug::T151,co_drug
+drug::T121,drug::T181,co_drug
+drug::T121,drug::T211,co_drug
+drug::T151,drug::T181,co_drug
+drug::T151,drug::T211,co_drug
+drug::T151,drug::T241,co_drug
+drug::T181,drug::T211,co_drug
+drug::T181,drug::T241,co_drug
+drug::T181,drug::T271,co_drug
+drug::T211,drug::T241,co_drug
+drug::T211,drug::T271,co_drug
+drug::T241,drug::T271,co_drug
+drug::T002,drug::T003,co_drug
+drug::T002,drug::T004,co_drug
+drug::T002,drug::T025,co_drug
+drug::T003,drug::T004,co_drug
+drug::T003,drug::T025,co_drug
+drug::T003,drug::T026,co_drug
+drug::T004,drug::T025,co_drug
+drug::T004,drug::T026,co_drug
+drug::T004,drug::T032,co_drug
+drug::T025,drug::T026,co_drug
+drug::T025,drug::T032,co_drug
+drug::T025,drug::T033,co_drug
+drug::T026,drug::T032,co_drug
+drug::T026,drug::T033,co_drug
+drug::T026,drug::T034,co_drug
+drug::T032,drug::T033,co_drug
+drug::T032,drug::T034,co_drug
+drug::T032,drug::T055,co_drug
+drug::T033,drug::T034,co_drug
+drug::T033,drug::T055,co_drug
+drug::T033,drug::T056,co_drug
+drug::T034,drug::T055,co_drug
+drug::T034,drug::T056,co_drug
+drug::T034,drug::T062,co_drug
+drug::T055,drug::T056,co_drug
+drug::T055,drug::T062,co_drug
+drug::T055,drug::T063,co_drug
+drug::T056,drug::T062,co_drug
+drug::T056,drug::T063,co_drug
+drug::T056,drug::T064,co_drug
+drug::T062,drug::T063,co_drug
+drug::T062,drug::T064,co_drug
+drug::T062,drug::T085,co_drug
+drug::T063,drug::T064,co_drug
+drug::T063,drug::T085,co_drug
+drug::T063,drug::T086,co_drug
+drug::T064,drug::T085,co_drug
+drug::T064,drug::T086,co_drug
+drug::T064,drug::T092,co_drug
+drug::T085,drug::T086,co_drug
+drug::T085,drug::T092,co_drug
+drug::T085,drug::T093,co_drug
+drug::T086,drug::T092,co_drug
+drug::T086,drug::T093,co_drug
+drug::T086,drug::T094,co_drug
+drug::T092,drug::T093,co_drug
+drug::T092,drug::T094,co_drug
+drug::T092,drug::T115,co_drug
+drug::T093,drug::T094,co_drug
+drug::T093,drug::T115,co_drug
+drug::T093,drug::T116,co_drug
+drug::T094,drug::T115,co_drug
+drug::T094,drug::T116,co_drug
+drug::T094,drug::T122,co_drug
+drug::T115,drug::T116,co_drug
+drug::T115,drug::T122,co_drug
+drug::T115,drug::T123,co_drug
+drug::T116,drug::T122,co_drug
+drug::T116,drug::T123,co_drug
+drug::T116,drug::T124,co_drug
+drug::T122,drug::T123,co_drug
+drug::T122,drug::T124,co_drug
+drug::T122,drug::T145,co_drug
+drug::T123,drug::T124,co_drug
+drug::T123,drug::T145,co_drug
+drug::T123,drug::T146,co_drug
+drug::T124,drug::T145,co_drug
+drug::T124,drug::T146,co_drug
+drug::T124,drug::T152,co_drug
+drug::T145,drug::T146,co_drug
+drug::T145,drug::T152,co_drug
+drug::T145,drug::T153,co_drug
+drug::T146,drug::T152,co_drug
+drug::T146,drug::T153,co_drug
+drug::T146,drug::T154,co_drug
+drug::T152,drug::T153,co_drug
+drug::T152,drug::T154,co_drug
+drug::T152,drug::T175,co_drug
+drug::T153,drug::T154,co_drug
+drug::T153,drug::T175,co_drug
+drug::T153,drug::T176,co_drug
+drug::T154,drug::T175,co_drug
+drug::T154,drug::T176,co_drug
+drug::T154,drug::T182,co_drug
+drug::T175,drug::T176,co_drug
+drug::T175,drug::T182,co_drug
+drug::T175,drug::T183,co_drug
+drug::T176,drug::T182,co_drug
+drug::T176,drug::T183,co_drug
+drug::T176,drug::T184,co_drug
+drug::T182,drug::T183,co_drug
+drug::T182,drug::T184,co_drug
+drug::T182,drug::T205,co_drug
+drug::T183,drug::T184,co_drug
+drug::T183,drug::T205,co_drug
+drug::T183,drug::T206,co_drug
+drug::T184,drug::T205,co_drug
+drug::T184,drug::T206,co_drug
+drug::T184,drug::T212,co_drug
+drug::T205,drug::T206,co_drug
+drug::T205,drug::T212,co_drug
+drug::T205,drug::T213,co_drug
+drug::T206,drug::T212,co_drug
+drug::T206,drug::T213,co_drug
+drug::T206,drug::T214,co_drug
+drug::T212,drug::T213,co_drug
+drug::T212,drug::T214,co_drug
+drug::T212,drug::T235,co_drug
+drug::T213,drug::T214,co_drug
+drug::T213,drug::T235,co_drug
+drug::T213,drug::T236,co_drug
+drug::T214,drug::T235,co_drug
+drug::T214,drug::T236,co_drug
+drug::T214,drug::T242,co_drug
+drug::T235,drug::T236,co_drug
+drug::T235,drug::T242,co_drug
+drug::T235,drug::T243,co_drug
+drug::T236,drug::T242,co_drug
+drug::T236,drug::T243,co_drug
+drug::T236,drug::T244,co_drug
+drug::T242,drug::T243,co_drug
+drug::T242,drug::T244,co_drug
+drug::T242,drug::T265,co_drug
+drug::T243,drug::T244,co_drug
+drug::T243,drug::T265,co_drug
+drug::T243,drug::T266,co_drug
+drug::T244,drug::T265,co_drug
+drug::T244,drug::T266,co_drug
+drug::T244,drug::T272,co_drug
+drug::T265,drug::T266,co_drug
+drug::T265,drug::T272,co_drug
+drug::T265,drug::T273,co_drug
+drug::T266,drug::T272,co_drug
+drug::T266,drug::T273,co_drug
+drug::T266,drug::T274,co_drug
+drug::T272,drug::T273,co_drug
+drug::T272,drug::T274,co_drug
+drug::T272,drug::T295,co_drug
+drug::T273,drug::T274,co_drug
+drug::T273,drug::T295,co_drug
+drug::T273,drug::T296,co_drug
+drug::T274,drug::T295,co_drug
+drug::T274,drug::T296,co_drug
+drug::T295,drug::T296,co_drug
+drug::T005,drug::T006,co_drug
+drug::T005,drug::T027,co_drug
+drug::T005,drug::T035,co_drug
+drug::T006,drug::T027,co_drug
+drug::T006,drug::T035,co_drug
+drug::T006,drug::T036,co_drug
+drug::T027,drug::T035,co_drug
+drug::T027,drug::T036,co_drug
+drug::T027,drug::T057,co_drug
+drug::T035,drug::T036,co_drug
+drug::T035,drug::T057,co_drug
+drug::T035,drug::T065,co_drug
+drug::T036,drug::T057,co_drug
+drug::T036,drug::T065,co_drug
+drug::T036,drug::T066,co_drug
+drug::T057,drug::T065,co_drug
+drug::T057,drug::T066,co_drug
+drug::T057,drug::T087,co_drug
+drug::T065,drug::T066,co_drug
+drug::T065,drug::T087,co_drug
+drug::T065,drug::T095,co_drug
+drug::T066,drug::T087,co_drug
+drug::T066,drug::T095,co_drug
+drug::T066,drug::T096,co_drug
+drug::T087,drug::T095,co_drug
+drug::T087,drug::T096,co_drug
+drug::T087,drug::T117,co_drug
+drug::T095,drug::T096,co_drug
+drug::T095,drug::T117,co_drug
+drug::T095,drug::T125,co_drug
+drug::T096,drug::T117,co_drug
+drug::T096,drug::T125,co_drug
+drug::T096,drug::T126,co_drug
+drug::T117,drug::T125,co_drug
+drug::T117,drug::T126,co_drug
+drug::T117,drug::T147,co_drug
+drug::T125,drug::T126,co_drug
+drug::T125,drug::T147,co_drug
+drug::T125,drug::T155,co_drug
+drug::T126,drug::T147,co_drug
+drug::T126,drug::T155,co_drug
+drug::T126,drug::T156,co_drug
+drug::T147,drug::T155,co_drug
+drug::T147,drug::T156,co_drug
+drug::T147,drug::T177,co_drug
+drug::T155,drug::T156,co_drug
+drug::T155,drug::T177,co_drug
+drug::T155,drug::T185,co_drug
+drug::T156,drug::T177,co_drug
+drug::T156,drug::T185,co_drug
+drug::T156,drug::T186,co_drug
+drug::T177,drug::T185,co_drug
+drug::T177,drug::T186,co_drug
+drug::T177,drug::T207,co_drug
+drug::T185,drug::T186,co_drug
+drug::T185,drug::T207,co_drug
+drug::T185,drug::T215,co_drug
+drug::T186,drug::T207,co_drug
+drug::T186,drug::T215,co_drug
+drug::T186,drug::T216,co_drug
+drug::T207,drug::T215,co_drug
+drug::T207,drug::T216,co_drug
+drug::T207,drug::T237,co_drug
+drug::T215,drug::T216,co_drug
+drug::T215,drug::T237,co_drug
+drug::T215,drug::T245,co_drug
+drug::T216,drug::T237,co_drug
+drug::T216,drug::T245,co_drug
+drug::T216,drug::T246,co_drug
+drug::T237,drug::T245,co_drug
+drug::T237,drug::T246,co_drug
+drug::T237,drug::T267,co_drug
+drug::T245,drug::T246,co_drug
+drug::T245,drug::T267,co_drug
+drug::T245,drug::T275,co_drug
+drug::T246,drug::T267,co_drug
+drug::T246,drug::T275,co_drug
+drug::T246,drug::T276,co_drug
+drug::T267,drug::T275,co_drug
+drug::T267,drug::T276,co_drug
+drug::T267,drug::T297,co_drug
+drug::T275,drug::T276,co_drug
+drug::T275,drug::T297,co_drug
+drug::T276,drug::T297,co_drug
+drug::T007,drug::T008,co_drug
+drug::T007,drug::T022,co_drug
+drug::T007,drug::T028,co_drug
+drug::T008,drug::T022,co_drug
+drug::T008,drug::T028,co_drug
+drug::T008,drug::T037,co_drug
+drug::T022,drug::T028,co_drug
+drug::T022,drug::T037,co_drug
+drug::T022,drug::T038,co_drug
+drug::T028,drug::T037,co_drug
+drug::T028,drug::T038,co_drug
+drug::T028,drug::T052,co_drug
+drug::T037,drug::T038,co_drug
+drug::T037,drug::T052,co_drug
+drug::T037,drug::T058,co_drug
+drug::T038,drug::T052,co_drug
+drug::T038,drug::T058,co_drug
+drug::T038,drug::T067,co_drug
+drug::T052,drug::T058,co_drug
+drug::T052,drug::T067,co_drug
+drug::T052,drug::T068,co_drug
+drug::T058,drug::T067,co_drug
+drug::T058,drug::T068,co_drug
+drug::T058,drug::T082,co_drug
+drug::T067,drug::T068,co_drug
+drug::T067,drug::T082,co_drug
+drug::T067,drug::T088,co_drug
+drug::T068,drug::T082,co_drug
+drug::T068,drug::T088,co_drug
+drug::T068,drug::T097,co_drug
+drug::T082,drug::T088,co_drug
+drug::T082,drug::T097,co_drug
+drug::T082,drug::T098,co_drug
+drug::T088,drug::T097,co_drug
+drug::T088,drug::T098,co_drug
+drug::T088,drug::T112,co_drug
+drug::T097,drug::T098,co_drug
+drug::T097,drug::T112,co_drug
+drug::T097,drug::T118,co_drug
+drug::T098,drug::T112,co_drug
+drug::T098,drug::T118,co_drug
+drug::T098,drug::T127,co_drug
+drug::T112,drug::T118,co_drug
+drug::T112,drug::T127,co_drug
+drug::T112,drug::T128,co_drug
+drug::T118,drug::T127,co_drug
+drug::T118,drug::T128,co_drug
+drug::T118,drug::T142,co_drug
+drug::T127,drug::T128,co_drug
+drug::T127,drug::T142,co_drug
+drug::T127,drug::T148,co_drug
+drug::T128,drug::T142,co_drug
+drug::T128,drug::T148,co_drug
+drug::T128,drug::T157,co_drug
+drug::T142,drug::T148,co_drug
+drug::T142,drug::T157,co_drug
+drug::T142,drug::T158,co_drug
+drug::T148,drug::T157,co_drug
+drug::T148,drug::T158,co_drug
+drug::T148,drug::T172,co_drug
+drug::T157,drug::T158,co_drug
+drug::T157,drug::T172,co_drug
+drug::T157,drug::T178,co_drug
+drug::T158,drug::T172,co_drug
+drug::T158,drug::T178,co_drug
+drug::T158,drug::T187,co_drug
+drug::T172,drug::T178,co_drug
+drug::T172,drug::T187,co_drug
+drug::T172,drug::T188,co_drug
+drug::T178,drug::T187,co_drug
+drug::T178,drug::T188,co_drug
+drug::T178,drug::T202,co_drug
+drug::T187,drug::T188,co_drug
+drug::T187,drug::T202,co_drug
+drug::T187,drug::T208,co_drug
+drug::T188,drug::T202,co_drug
+drug::T188,drug::T208,co_drug
+drug::T188,drug::T217,co_drug
+drug::T202,drug::T208,co_drug
+drug::T202,drug::T217,co_drug
+drug::T202,drug::T218,co_drug
+drug::T208,drug::T217,co_drug
+drug::T208,drug::T218,co_drug
+drug::T208,drug::T232,co_drug
+drug::T217,drug::T218,co_drug
+drug::T217,drug::T232,co_drug
+drug::T217,drug::T238,co_drug
+drug::T218,drug::T232,co_drug
+drug::T218,drug::T238,co_drug
+drug::T218,drug::T247,co_drug
+drug::T232,drug::T238,co_drug
+drug::T232,drug::T247,co_drug
+drug::T232,drug::T248,co_drug
+drug::T238,drug::T247,co_drug
+drug::T238,drug::T248,co_drug
+drug::T238,drug::T262,co_drug
+drug::T247,drug::T248,co_drug
+drug::T247,drug::T262,co_drug
+drug::T247,drug::T268,co_drug
+drug::T248,drug::T262,co_drug
+drug::T248,drug::T268,co_drug
+drug::T248,drug::T277,co_drug
+drug::T262,drug::T268,co_drug
+drug::T262,drug::T277,co_drug
+drug::T262,drug::T278,co_drug
+drug::T268,drug::T277,co_drug
+drug::T268,drug::T278,co_drug
+drug::T268,drug::T292,co_drug
+drug::T277,drug::T278,co_drug
+drug::T277,drug::T292,co_drug
+drug::T277,drug::T298,co_drug
+drug::T278,drug::T292,co_drug
+drug::T278,drug::T298,co_drug
+drug::T292,drug::T298,co_drug
+drug::T009,drug::T010,co_drug
+drug::T009,drug::T024,co_drug
+drug::T009,drug::T039,co_drug
+drug::T010,drug::T024,co_drug
+drug::T010,drug::T039,co_drug
+drug::T010,drug::T040,co_drug
+drug::T024,drug::T039,co_drug
+drug::T024,drug::T040,co_drug
+drug::T024,drug::T054,co_drug
+drug::T039,drug::T040,co_drug
+drug::T039,drug::T054,co_drug
+drug::T039,drug::T069,co_drug
+drug::T040,drug::T054,co_drug
+drug::T040,drug::T069,co_drug
+drug::T040,drug::T070,co_drug
+drug::T054,drug::T069,co_drug
+drug::T054,drug::T070,co_drug
+drug::T054,drug::T084,co_drug
+drug::T069,drug::T070,co_drug
+drug::T069,drug::T084,co_drug
+drug::T069,drug::T099,co_drug
+drug::T070,drug::T084,co_drug
+drug::T070,drug::T099,co_drug
+drug::T070,drug::T100,co_drug
+drug::T084,drug::T099,co_drug
+drug::T084,drug::T100,co_drug
+drug::T084,drug::T114,co_drug
+drug::T099,drug::T100,co_drug
+drug::T099,drug::T114,co_drug
+drug::T099,drug::T129,co_drug
+drug::T100,drug::T114,co_drug
+drug::T100,drug::T129,co_drug
+drug::T100,drug::T130,co_drug
+drug::T114,drug::T129,co_drug
+drug::T114,drug::T130,co_drug
+drug::T114,drug::T144,co_drug
+drug::T129,drug::T130,co_drug
+drug::T129,drug::T144,co_drug
+drug::T129,drug::T159,co_drug
+drug::T130,drug::T144,co_drug
+drug::T130,drug::T159,co_drug
+drug::T130,drug::T160,co_drug
+drug::T144,drug::T159,co_drug
+drug::T144,drug::T160,co_drug
+drug::T144,drug::T174,co_drug
+drug::T159,drug::T160,co_drug
+drug::T159,drug::T174,co_drug
+drug::T159,drug::T189,co_drug
+drug::T160,drug::T174,co_drug
+drug::T160,drug::T189,co_drug
+drug::T160,drug::T190,co_drug
+drug::T174,drug::T189,co_drug
+drug::T174,drug::T190,co_drug
+drug::T174,drug::T204,co_drug
+drug::T189,drug::T190,co_drug
+drug::T189,drug::T204,co_drug
+drug::T189,drug::T219,co_drug
+drug::T190,drug::T204,co_drug
+drug::T190,drug::T219,co_drug
+drug::T190,drug::T220,co_drug
+drug::T204,drug::T219,co_drug
+drug::T204,drug::T220,co_drug
+drug::T204,drug::T234,co_drug
+drug::T219,drug::T220,co_drug
+drug::T219,drug::T234,co_drug
+drug::T219,drug::T249,co_drug
+drug::T220,drug::T234,co_drug
+drug::T220,drug::T249,co_drug
+drug::T220,drug::T250,co_drug
+drug::T234,drug::T249,co_drug
+drug::T234,drug::T250,co_drug
+drug::T234,drug::T264,co_drug
+drug::T249,drug::T250,co_drug
+drug::T249,drug::T264,co_drug
+drug::T249,drug::T279,co_drug
+drug::T250,drug::T264,co_drug
+drug::T250,drug::T279,co_drug
+drug::T250,drug::T280,co_drug
+drug::T264,drug::T279,co_drug
+drug::T264,drug::T280,co_drug
+drug::T264,drug::T294,co_drug
+drug::T279,drug::T280,co_drug
+drug::T279,drug::T294,co_drug
+drug::T280,drug::T294,co_drug
+drug::T011,drug::T012,co_drug
+drug::T011,drug::T023,co_drug
+drug::T011,drug::T041,co_drug
+drug::T012,drug::T023,co_drug
+drug::T012,drug::T041,co_drug
+drug::T012,drug::T042,co_drug
+drug::T023,drug::T041,co_drug
+drug::T023,drug::T042,co_drug
+drug::T023,drug::T053,co_drug
+drug::T041,drug::T042,co_drug
+drug::T041,drug::T053,co_drug
+drug::T041,drug::T071,co_drug
+drug::T042,drug::T053,co_drug
+drug::T042,drug::T071,co_drug
+drug::T042,drug::T072,co_drug
+drug::T053,drug::T071,co_drug
+drug::T053,drug::T072,co_drug
+drug::T053,drug::T083,co_drug
+drug::T071,drug::T072,co_drug
+drug::T071,drug::T083,co_drug
+drug::T071,drug::T101,co_drug
+drug::T072,drug::T083,co_drug
+drug::T072,drug::T101,co_drug
+drug::T072,drug::T102,co_drug
+drug::T083,drug::T101,co_drug
+drug::T083,drug::T102,co_drug
+drug::T083,drug::T113,co_drug
+drug::T101,drug::T102,co_drug
+drug::T101,drug::T113,co_drug
+drug::T101,drug::T131,co_drug
+drug::T102,drug::T113,co_drug
+drug::T102,drug::T131,co_drug
+drug::T102,drug::T132,co_drug
+drug::T113,drug::T131,co_drug
+drug::T113,drug::T132,co_drug
+drug::T113,drug::T143,co_drug
+drug::T131,drug::T132,co_drug
+drug::T131,drug::T143,co_drug
+drug::T131,drug::T161,co_drug
+drug::T132,drug::T143,co_drug
+drug::T132,drug::T161,co_drug
+drug::T132,drug::T162,co_drug
+drug::T143,drug::T161,co_drug
+drug::T143,drug::T162,co_drug
+drug::T143,drug::T173,co_drug
+drug::T161,drug::T162,co_drug
+drug::T161,drug::T173,co_drug
+drug::T161,drug::T191,co_drug
+drug::T162,drug::T173,co_drug
+drug::T162,drug::T191,co_drug
+drug::T162,drug::T192,co_drug
+drug::T173,drug::T191,co_drug
+drug::T173,drug::T192,co_drug
+drug::T173,drug::T203,co_drug
+drug::T191,drug::T192,co_drug
+drug::T191,drug::T203,co_drug
+drug::T191,drug::T221,co_drug
+drug::T192,drug::T203,co_drug
+drug::T192,drug::T221,co_drug
+drug::T192,drug::T222,co_drug
+drug::T203,drug::T221,co_drug
+drug::T203,drug::T222,co_drug
+drug::T203,drug::T233,co_drug
+drug::T221,drug::T222,co_drug
+drug::T221,drug::T233,co_drug
+drug::T221,drug::T251,co_drug
+drug::T222,drug::T233,co_drug
+drug::T222,drug::T251,co_drug
+drug::T222,drug::T252,co_drug
+drug::T233,drug::T251,co_drug
+drug::T233,drug::T252,co_drug
+drug::T233,drug::T263,co_drug
+drug::T251,drug::T252,co_drug
+drug::T251,drug::T263,co_drug
+drug::T251,drug::T281,co_drug
+drug::T252,drug::T263,co_drug
+drug::T252,drug::T281,co_drug
+drug::T252,drug::T282,co_drug
+drug::T263,drug::T281,co_drug
+drug::T263,drug::T282,co_drug
+drug::T263,drug::T293,co_drug
+drug::T281,drug::T282,co_drug
+drug::T281,drug::T293,co_drug
+drug::T282,drug::T293,co_drug
+drug::T013,drug::T014,co_drug
+drug::T013,drug::T030,co_drug
+drug::T013,drug::T043,co_drug
+drug::T014,drug::T030,co_drug
+drug::T014,drug::T043,co_drug
+drug::T014,drug::T044,co_drug
+drug::T030,drug::T043,co_drug
+drug::T030,drug::T044,co_drug
+drug::T030,drug::T060,co_drug
+drug::T043,drug::T044,co_drug
+drug::T043,drug::T060,co_drug
+drug::T043,drug::T073,co_drug
+drug::T044,drug::T060,co_drug
+drug::T044,drug::T073,co_drug
+drug::T044,drug::T074,co_drug
+drug::T060,drug::T073,co_drug
+drug::T060,drug::T074,co_drug
+drug::T060,drug::T090,co_drug
+drug::T073,drug::T074,co_drug
+drug::T073,drug::T090,co_drug
+drug::T073,drug::T103,co_drug
+drug::T074,drug::T090,co_drug
+drug::T074,drug::T103,co_drug
+drug::T074,drug::T104,co_drug
+drug::T090,drug::T103,co_drug
+drug::T090,drug::T104,co_drug
+drug::T090,drug::T120,co_drug
+drug::T103,drug::T104,co_drug
+drug::T103,drug::T120,co_drug
+drug::T103,drug::T133,co_drug
+drug::T104,drug::T120,co_drug
+drug::T104,drug::T133,co_drug
+drug::T104,drug::T134,co_drug
+drug::T120,drug::T133,co_drug
+drug::T120,drug::T134,co_drug
+drug::T120,drug::T150,co_drug
+drug::T133,drug::T134,co_drug
+drug::T133,drug::T150,co_drug
+drug::T133,drug::T163,co_drug
+drug::T134,drug::T150,co_drug
+drug::T134,drug::T163,co_drug
+drug::T134,drug::T164,co_drug
+drug::T150,drug::T163,co_drug
+drug::T150,drug::T164,co_drug
+drug::T150,drug::T180,co_drug
+drug::T163,drug::T164,co_drug
+drug::T163,drug::T180,co_drug
+drug::T163,drug::T193,co_drug
+drug::T164,drug::T180,co_drug
+drug::T164,drug::T193,co_drug
+drug::T164,drug::T194,co_drug
+drug::T180,drug::T193,co_drug
+drug::T180,drug::T194,co_drug
+drug::T180,drug::T210,co_drug
+drug::T193,drug::T194,co_drug
+drug::T193,drug::T210,co_drug
+drug::T193,drug::T223,co_drug
+drug::T194,drug::T210,co_drug
+drug::T194,drug::T223,co_drug
+drug::T194,drug::T224,co_drug
+drug::T210,drug::T223,co_drug
+drug::T210,drug::T224,co_drug
+drug::T210,drug::T240,co_drug
+drug::T223,drug::T224,co_drug
+drug::T223,drug::T240,co_drug
+drug::T223,drug::T253,co_drug
+drug::T224,drug::T240,co_drug
+drug::T224,drug::T253,co_drug
+drug::T224,drug::T254,co_drug
+drug::T240,drug::T253,co_drug
+drug::T240,drug::T254,co_drug
+drug::T240,drug::T270,co_drug
+drug::T253,drug::T254,co_drug
+drug::T253,drug::T270,co_drug
+drug::T253,drug::T283,co_drug
+drug::T254,drug::T270,co_drug
+drug::T254,drug::T283,co_drug
+drug::T254,drug::T284,co_drug
+drug::T270,drug::T283,co_drug
+drug::T270,drug::T284,co_drug
+drug::T270,drug::T300,co_drug
+drug::T283,drug::T284,co_drug
+drug::T283,drug::T300,co_drug
+drug::T284,drug::T300,co_drug
+drug::T015,drug::T016,co_drug
+drug::T015,drug::T017,co_drug
+drug::T015,drug::T021,co_drug
+drug::T016,drug::T017,co_drug
+drug::T016,drug::T021,co_drug
+drug::T016,drug::T029,co_drug
+drug::T017,drug::T021,co_drug
+drug::T017,drug::T029,co_drug
+drug::T017,drug::T045,co_drug
+drug::T021,drug::T029,co_drug
+drug::T021,drug::T045,co_drug
+drug::T021,drug::T046,co_drug
+drug::T029,drug::T045,co_drug
+drug::T029,drug::T046,co_drug
+drug::T029,drug::T047,co_drug
+drug::T045,drug::T046,co_drug
+drug::T045,drug::T047,co_drug
+drug::T045,drug::T051,co_drug
+drug::T046,drug::T047,co_drug
+drug::T046,drug::T051,co_drug
+drug::T046,drug::T059,co_drug
+drug::T047,drug::T051,co_drug
+drug::T047,drug::T059,co_drug
+drug::T047,drug::T075,co_drug
+drug::T051,drug::T059,co_drug
+drug::T051,drug::T075,co_drug
+drug::T051,drug::T076,co_drug
+drug::T059,drug::T075,co_drug
+drug::T059,drug::T076,co_drug
+drug::T059,drug::T077,co_drug
+drug::T075,drug::T076,co_drug
+drug::T075,drug::T077,co_drug
+drug::T075,drug::T081,co_drug
+drug::T076,drug::T077,co_drug
+drug::T076,drug::T081,co_drug
+drug::T076,drug::T089,co_drug
+drug::T077,drug::T081,co_drug
+drug::T077,drug::T089,co_drug
+drug::T077,drug::T105,co_drug
+drug::T081,drug::T089,co_drug
+drug::T081,drug::T105,co_drug
+drug::T081,drug::T106,co_drug
+drug::T089,drug::T105,co_drug
+drug::T089,drug::T106,co_drug
+drug::T089,drug::T107,co_drug
+drug::T105,drug::T106,co_drug
+drug::T105,drug::T107,co_drug
+drug::T105,drug::T111,co_drug
+drug::T106,drug::T107,co_drug
+drug::T106,drug::T111,co_drug
+drug::T106,drug::T119,co_drug
+drug::T107,drug::T111,co_drug
+drug::T107,drug::T119,co_drug
+drug::T107,drug::T135,co_drug
+drug::T111,drug::T119,co_drug
+drug::T111,drug::T135,co_drug
+drug::T111,drug::T136,co_drug
+drug::T119,drug::T135,co_drug
+drug::T119,drug::T136,co_drug
+drug::T119,drug::T137,co_drug
+drug::T135,drug::T136,co_drug
+drug::T135,drug::T137,co_drug
+drug::T135,drug::T141,co_drug
+drug::T136,drug::T137,co_drug
+drug::T136,drug::T141,co_drug
+drug::T136,drug::T149,co_drug
+drug::T137,drug::T141,co_drug
+drug::T137,drug::T149,co_drug
+drug::T137,drug::T165,co_drug
+drug::T141,drug::T149,co_drug
+drug::T141,drug::T165,co_drug
+drug::T141,drug::T166,co_drug
+drug::T149,drug::T165,co_drug
+drug::T149,drug::T166,co_drug
+drug::T149,drug::T167,co_drug
+drug::T165,drug::T166,co_drug
+drug::T165,drug::T167,co_drug
+drug::T165,drug::T171,co_drug
+drug::T166,drug::T167,co_drug
+drug::T166,drug::T171,co_drug
+drug::T166,drug::T179,co_drug
+drug::T167,drug::T171,co_drug
+drug::T167,drug::T179,co_drug
+drug::T167,drug::T195,co_drug
+drug::T171,drug::T179,co_drug
+drug::T171,drug::T195,co_drug
+drug::T171,drug::T196,co_drug
+drug::T179,drug::T195,co_drug
+drug::T179,drug::T196,co_drug
+drug::T179,drug::T197,co_drug
+drug::T195,drug::T196,co_drug
+drug::T195,drug::T197,co_drug
+drug::T195,drug::T201,co_drug
+drug::T196,drug::T197,co_drug
+drug::T196,drug::T201,co_drug
+drug::T196,drug::T209,co_drug
+drug::T197,drug::T201,co_drug
+drug::T197,drug::T209,co_drug
+drug::T197,drug::T225,co_drug
+drug::T201,drug::T209,co_drug
+drug::T201,drug::T225,co_drug
+drug::T201,drug::T226,co_drug
+drug::T209,drug::T225,co_drug
+drug::T209,drug::T226,co_drug
+drug::T209,drug::T227,co_drug
+drug::T225,drug::T226,co_drug
+drug::T225,drug::T227,co_drug
+drug::T225,drug::T231,co_drug
+drug::T226,drug::T227,co_drug
+drug::T226,drug::T231,co_drug
+drug::T226,drug::T239,co_drug
+drug::T227,drug::T231,co_drug
+drug::T227,drug::T239,co_drug
+drug::T227,drug::T255,co_drug
+drug::T231,drug::T239,co_drug
+drug::T231,drug::T255,co_drug
+drug::T231,drug::T256,co_drug
+drug::T239,drug::T255,co_drug
+drug::T239,drug::T256,co_drug
+drug::T239,drug::T257,co_drug
+drug::T255,drug::T256,co_drug
+drug::T255,drug::T257,co_drug
+drug::T255,drug::T261,co_drug
+drug::T256,drug::T257,co_drug
+drug::T256,drug::T261,co_drug
+drug::T256,drug::T269,co_drug
+drug::T257,drug::T261,co_drug
+drug::T257,drug::T269,co_drug
+drug::T257,drug::T285,co_drug
+drug::T261,drug::T269,co_drug
+drug::T261,drug::T285,co_drug
+drug::T261,drug::T286,co_drug
+drug::T269,drug::T285,co_drug
+drug::T269,drug::T286,co_drug
+drug::T269,drug::T287,co_drug
+drug::T285,drug::T286,co_drug
+drug::T285,drug::T287,co_drug
+drug::T285,drug::T291,co_drug
+drug::T286,drug::T287,co_drug
+drug::T286,drug::T291,co_drug
+drug::T286,drug::T299,co_drug
+drug::T287,drug::T291,co_drug
+drug::T287,drug::T299,co_drug
+drug::T291,drug::T299,co_drug
+drug::T018,drug::T048,co_drug
+drug::T018,drug::T078,co_drug
+drug::T018,drug::T108,co_drug
+drug::T048,drug::T078,co_drug
+drug::T048,drug::T108,co_drug
+drug::T048,drug::T138,co_drug
+drug::T078,drug::T108,co_drug
+drug::T078,drug::T138,co_drug
+drug::T078,drug::T168,co_drug
+drug::T108,drug::T138,co_drug
+drug::T108,drug::T168,co_drug
+drug::T108,drug::T198,co_drug
+drug::T138,drug::T168,co_drug
+drug::T138,drug::T198,co_drug
+drug::T138,drug::T228,co_drug
+drug::T168,drug::T198,co_drug
+drug::T168,drug::T228,co_drug
+drug::T168,drug::T258,co_drug
+drug::T198,drug::T228,co_drug
+drug::T198,drug::T258,co_drug
+drug::T198,drug::T288,co_drug
+drug::T228,drug::T258,co_drug
+drug::T228,drug::T288,co_drug
+drug::T258,drug::T288,co_drug
+drug::T019,drug::T049,co_drug
+drug::T019,drug::T079,co_drug
+drug::T019,drug::T109,co_drug
+drug::T049,drug::T079,co_drug
+drug::T049,drug::T109,co_drug
+drug::T049,drug::T139,co_drug
+drug::T079,drug::T109,co_drug
+drug::T079,drug::T139,co_drug
+drug::T079,drug::T169,co_drug
+drug::T109,drug::T139,co_drug
+drug::T109,drug::T169,co_drug
+drug::T109,drug::T199,co_drug
+drug::T139,drug::T169,co_drug
+drug::T139,drug::T199,co_drug
+drug::T139,drug::T229,co_drug
+drug::T169,drug::T199,co_drug
+drug::T169,drug::T229,co_drug
+drug::T169,drug::T259,co_drug
+drug::T199,drug::T229,co_drug
+drug::T199,drug::T259,co_drug
+drug::T199,drug::T289,co_drug
+drug::T229,drug::T259,co_drug
+drug::T229,drug::T289,co_drug
+drug::T259,drug::T289,co_drug
+drug::T020,drug::T050,co_drug
+drug::T020,drug::T080,co_drug
+drug::T020,drug::T110,co_drug
+drug::T050,drug::T080,co_drug
+drug::T050,drug::T110,co_drug
+drug::T050,drug::T140,co_drug
+drug::T080,drug::T110,co_drug
+drug::T080,drug::T140,co_drug
+drug::T080,drug::T170,co_drug
+drug::T110,drug::T140,co_drug
+drug::T110,drug::T170,co_drug
+drug::T110,drug::T200,co_drug
+drug::T140,drug::T170,co_drug
+drug::T140,drug::T200,co_drug
+drug::T140,drug::T230,co_drug
+drug::T170,drug::T200,co_drug
+drug::T170,drug::T230,co_drug
+drug::T170,drug::T260,co_drug
+drug::T200,drug::T230,co_drug
+drug::T200,drug::T260,co_drug
+drug::T200,drug::T290,co_drug
+drug::T230,drug::T260,co_drug
+drug::T230,drug::T290,co_drug
+drug::T260,drug::T290,co_drug
