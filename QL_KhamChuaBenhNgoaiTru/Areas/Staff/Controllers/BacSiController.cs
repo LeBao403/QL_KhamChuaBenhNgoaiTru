@@ -77,8 +77,69 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         {
             string maBS = Session["MaNV"]?.ToString() ?? "NV001";
 
+            // ==============================================================================
+            // 1. XỬ LÝ LỖI NHÂN ĐÔI ID (Cắt bỏ phần bị trùng lặp do MVC Model Binder)
+            // ==============================================================================
+            if (!string.IsNullOrEmpty(model.MaPhieuKhamBenh) && model.MaPhieuKhamBenh.Contains(","))
+            {
+                model.MaPhieuKhamBenh = model.MaPhieuKhamBenh.Split(',')[0].Trim();
+            }
+
             if (string.IsNullOrEmpty(model.MaPhieuKhamBenh)) return RedirectToAction("Index");
 
+            // ==============================================================================
+            // 2. KHẮC PHỤC TRIỆT ĐỂ LỖI SINH HIỆU & ÉP KIỂU CULTURE (vi-VN / en-US)
+            // ==============================================================================
+            try
+            {
+                // Hàm lấy số an toàn
+                decimal? GetNumberSafe(string key)
+                {
+                    var val = Request.Form[key];
+                    if (string.IsNullOrEmpty(val)) return null;
+
+                    if (val.Contains(", "))
+                        val = val.Split(new[] { ", " }, StringSplitOptions.None)[0];
+                    else if (val.Contains(",") && val.Split(',').Length > 2)
+                        val = val.Split(',')[0];
+
+                    val = val.Replace(",", ".").Trim();
+
+                    if (decimal.TryParse(val, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal parsedValue))
+                        return parsedValue;
+
+                    return null;
+                }
+
+                var spo2 = GetNumberSafe("SpO2");
+                if (spo2.HasValue) model.SpO2 = (int)Math.Round(spo2.Value);
+
+                var nt = GetNumberSafe("NhipTho");
+                if (nt.HasValue) model.NhipTho = (int)Math.Round(nt.Value);
+
+                var mach = GetNumberSafe("Mach");
+                if (mach.HasValue) model.Mach = (int)Math.Round(mach.Value);
+
+                var haThu = GetNumberSafe("HuyetApTamThu");
+                if (haThu.HasValue) model.HuyetApTamThu = (int)Math.Round(haThu.Value);
+
+                var haTruong = GetNumberSafe("HuyetApTamTruong");
+                if (haTruong.HasValue) model.HuyetApTamTruong = (int)Math.Round(haTruong.Value);
+
+                var cc = GetNumberSafe("ChieuCao");
+                if (cc.HasValue) model.ChieuCao = cc.Value;
+
+                var cn = GetNumberSafe("CanNang");
+                if (cn.HasValue) model.CanNang = cn.Value;
+
+                var nd = GetNumberSafe("NhietDo");
+                if (nd.HasValue) model.NhietDo = nd.Value;
+            }
+            catch { /* Bỏ qua lỗi nếu có ngoại lệ bất ngờ */ }
+
+            // ==============================================================================
+            // 3. THỰC HIỆN LƯU DỮ LIỆU BẰNG HÀM GỐC TRONG BACSIDB
+            // ==============================================================================
             string errorMsg = "";
             bool result = db.LuuKhamBenh(model, maBS, out errorMsg);
 

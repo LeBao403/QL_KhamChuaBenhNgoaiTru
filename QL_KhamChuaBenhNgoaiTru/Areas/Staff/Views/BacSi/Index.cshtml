@@ -395,7 +395,7 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    @using (Html.BeginForm("LuuKhamBenh", "BacSi", FormMethod.Post, new { id = "frmKhamBenh", @class = "form-horizontal" }))
+                    @using (Html.BeginForm("LuuKhamBenh", "BacSi", FormMethod.Post, new { id = "frmKhamBenh", @class = "form-horizontal" }))    
                     {
                         @Html.AntiForgeryToken()
                         <input type="hidden" id="MaPhieuKhamBenh" name="MaPhieuKhamBenh" value="0" />
@@ -1251,20 +1251,31 @@
             setupPagination('body-da-kham', 'page-da-kham', 5);
 
             // Bật / Tắt Yêu cầu CLS
+            // Bật / Tắt Yêu cầu CLS
             $('#chkCLS').change(function () {
                 var isDangDiCLS = (currentTrangThai === 'Chờ thanh toán' || currentTrangThai === 'Chờ cận lâm sàng');
                 var isHoanThanh = (currentTrangThai === 'Hoàn thành');
 
                 if (this.checked) {
-                    $('#vungKetLuan').slideUp(); $('#vungChiDinhCLS').slideDown();
+                    $('#vungKetLuan').slideUp();
+                    $('#vungChiDinhCLS').slideDown();
                     $('#TrieuChung').attr('placeholder', 'Nhập tóm tắt triệu chứng yêu cầu cận lâm sàng...');
+
+                    // [CODE THÊM VÀO]: Ẩn mục Dặn dò và Ngày tái khám mượt mà cùng với vungKetLuan
+                    $('#DanDo').closest('.row').slideUp();
+                    $('#NgayTaiKham').closest('.row').slideUp();
 
                     if (!isDangDiCLS && !isHoanThanh) {
                         $('#btnHoanThanh').html('<i class="fas fa-print me-2"></i> In Cận Lâm Sàng & Lưu').removeClass('btn-success btn-secondary').addClass('btn-danger').prop('disabled', false);
                     }
                 } else {
-                    $('#vungKetLuan').slideDown(); $('#vungChiDinhCLS').slideUp();
+                    $('#vungKetLuan').slideDown();
+                    $('#vungChiDinhCLS').slideUp();
                     $('#TrieuChung').attr('placeholder', 'Nhập triệu chứng, dấu hiệu sinh tồn...');
+
+                    // [CODE THÊM VÀO]: Hiện lại mục Dặn dò và Ngày tái khám
+                    $('#DanDo').closest('.row').slideDown();
+                    $('#NgayTaiKham').closest('.row').slideDown();
 
                     if (!isDangDiCLS && !isHoanThanh) {
                         $('#btnHoanThanh').html('<i class="fas fa-print me-2"></i> In Đơn Thuốc & Lưu').removeClass('btn-danger btn-secondary').addClass('btn-success').prop('disabled', false);

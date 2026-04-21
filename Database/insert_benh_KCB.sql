@@ -1,3 +1,6 @@
+USE QL_KhamBenhNgoaiTru;
+GO
+
 -- Auto-generated training seed append
 DELETE FROM DANHMUC_BENH;
 DELETE FROM DANHMUC_THUOC;
