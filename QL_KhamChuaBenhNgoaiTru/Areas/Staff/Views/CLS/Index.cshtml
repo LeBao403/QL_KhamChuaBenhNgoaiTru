@@ -538,16 +538,55 @@
                 if (rawValue.startsWith('{')) {
                     try {
                         var payload = JSON.parse(rawValue) || {};
-                        parsed.data = Array.isArray(payload.data) ? payload.data : [];
-                        parsed.ketluan = payload.ketluan || '';
-                        parsed.images = Array.isArray(payload.images) ? payload.images : [];
-                        parsed.resultType = payload.resultType || '';
-                        return parsed;
+                        return normalizeResultPayload(payload);
                     } catch (e) { }
                 }
 
                 parsed.ketluan = rawValue;
                 return parsed;
+            }
+
+            function firstDefined() {
+                for (var i = 0; i < arguments.length; i++) {
+                    if (arguments[i] !== undefined && arguments[i] !== null) {
+                        return arguments[i];
+                    }
+                }
+                return null;
+            }
+
+            function normalizeLisRow(item) {
+                item = item || {};
+                return {
+                    Ten: firstDefined(item.Ten, item.ten, ''),
+                    GiaTri: firstDefined(item.GiaTri, item.giaTri, item.Giatri, item.giatri, ''),
+                    DonVi: firstDefined(item.DonVi, item.donVi, item.donvi, ''),
+                    ThamChieu: firstDefined(item.ThamChieu, item.thamChieu, item.thamchieu, ''),
+                    Warning: !!firstDefined(item.Warning, item.warning, false)
+                };
+            }
+
+            function normalizeMediaItem(image) {
+                image = image || {};
+                return {
+                    url: firstDefined(image.url, image.Url, ''),
+                    title: firstDefined(image.title, image.Title, 'Hình ảnh CLS'),
+                    caption: firstDefined(image.caption, image.Caption, '')
+                };
+            }
+
+            function normalizeResultPayload(payload) {
+                payload = payload || {};
+
+                var rawRows = firstDefined(payload.data, payload.Data, []);
+                var rawImages = firstDefined(payload.images, payload.Images, []);
+
+                return {
+                    data: Array.isArray(rawRows) ? rawRows.map(normalizeLisRow) : [],
+                    images: Array.isArray(rawImages) ? rawImages.map(normalizeMediaItem) : [],
+                    ketluan: firstDefined(payload.ketluan, payload.KetLuan, payload.ketLuan, ''),
+                    resultType: firstDefined(payload.resultType, payload.ResultType, '')
+                };
             }
 
             function setSampleOptions(options, selectedValue) {
@@ -585,6 +624,7 @@
             }
 
             function renderLISUi(lisData) {
+                lisData = (lisData || []).map(normalizeLisRow);
                 var html = '';
                 if (!lisData || lisData.length === 0) {
                     $('#tbl-ket-qua-lis thead').html('<tr><th style="width: 50%;">Tên chỉ số</th><th style="width: 50%;">Kết quả</th></tr>');
@@ -623,6 +663,10 @@
             }
 
             function renderMediaUi(images) {
+                images = (images || []).map(normalizeMediaItem).filter(function (image) {
+                    return !!image.url;
+                });
+
                 if (!images || !images.length) {
                     $('#cls-image-grid').empty();
                     $('#cls-image-panel').hide();
@@ -645,6 +689,7 @@
             }
 
             function renderPrint(data, lisData, mauXN, chatLuong) {
+                lisData = (lisData || []).map(normalizeLisRow);
                 var now = new Date();
                 var hasMetaColumns = (lisData || []).some(function (item) {
                     var donVi = (item.DonVi || '').toString().trim();
@@ -697,7 +742,7 @@
             }
 
             function updateResultUi(resultPayload) {
-                var payload = resultPayload || { data: [], images: [] };
+                var payload = normalizeResultPayload(resultPayload);
                 var rows = payload.data || [];
                 var images = payload.images || [];
 
@@ -841,12 +886,12 @@
                         return;
                     }
 
-                    var resultPayload = {
+                    var resultPayload = normalizeResultPayload({
                         data: res.data || [],
                         images: res.images || [],
                         ketluan: res.ketluan || '',
                         resultType: res.resultType || ((res.images || []).length ? 'image' : 'lab')
-                    };
+                    });
 
                     applyServiceProfile({
                         sampleOptions: res.sampleOptions || profile.sampleOptions,
