@@ -46,7 +46,7 @@ INSERT INTO DICHVU (MaDV, TenDV, MaLoaiDV, GiaDichVu, DonViTinh, CoBHYT, TrangTh
 ('DV010', N'Khám cấp cứu ngoài giờ', 'LDV01', 250000, N'Lần', 1, 1, N'Khám ban đầu tại phòng cấp cứu.', 1),
 
 -- ===== 🚀 DỊCH VỤ ẢO: PHÍ ĐẶT LỊCH ONLINE (Nằm chìm, tự động nổ ra khi thanh toán) =====
-('DV999', N'Phí tiện ích đặt lịch Online', 'LDV01', 200000, N'Lần', 0, 1, N'Phụ thu đặt lịch hẹn trước, không áp dụng BHYT.', 1),
+('DV999', N'Phí tiện ích đặt lịch Online', 'LDV01', 100000, N'Lần', 0, 1, N'Phụ thu đặt lịch hẹn trước, không áp dụng BHYT.', 1),
 
 -- ================= NHÓM 2: XÉT NGHIỆM (LDV02) -> Map Khoa Xét nghiệm (ID: 11) =================
 ('DV011', N'Tổng phân tích tế bào máu', 'LDV02', 90000, N'Mẫu', 1, 1, N'Kiểm tra hồng cầu, bạch cầu.', 11),

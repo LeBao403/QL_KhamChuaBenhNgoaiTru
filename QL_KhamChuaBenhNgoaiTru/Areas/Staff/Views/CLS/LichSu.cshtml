@@ -116,7 +116,7 @@
                 <th style="width:35%;">Tên chỉ số</th>
                 <th style="width:25%;">Kết quả</th>
                 <th style="width:20%;">Đơn vị</th>
-                <th style="width:20%;">Trị số BT</th>
+                <th style="width:20%;">Trị số bình thường</th>
             </tr>
         </thead>
         <tbody id="prt-lis-tbody">
@@ -187,7 +187,7 @@
             var lisData = buildLisArray(d.NoiDungKetQua);
             var resultHtml = '';
             if (lisData.length > 0) {
-                resultHtml = '<table class="table table-sm table-bordered mt-2"><thead><tr class="table-light"><th>Chỉ số</th><th>Kết quả</th><th>Đơn vị</th><th>CSBT</th></tr></thead><tbody>';
+                resultHtml = '<table class="table table-sm table-bordered mt-2"><thead><tr class="table-light"><th>Chỉ số</th><th>Kết quả</th><th>Đơn vị</th><th>Chỉ số bình thường</th></tr></thead><tbody>';
                 lisData.forEach(function(item) {
                     var isWarn = item.Warning ? 'text-danger fw-bold' : 'fw-bold';
                     resultHtml += '<tr><td>' + item.Ten + '</td><td class="' + isWarn + '">' + item.GiaTri + '</td><td>' + item.DonVi + '</td><td>' + item.ThamChieu + '</td></tr>';
@@ -216,6 +216,169 @@
         var id = $(this).data('id');
         loadDetail(id, function () {
             window.print();
+        });
+    });
+</script>
+<script>
+    $(function () {
+        function parseStoredResult(noiDung) {
+            var parsed = { data: [], ketluan: '', images: [] };
+            if (!noiDung) return parsed;
+
+            if (noiDung.startsWith('[')) {
+                try { parsed.data = JSON.parse(noiDung) || []; } catch (e) { }
+                return parsed;
+            }
+
+            if (noiDung.startsWith('{')) {
+                try {
+                    var payload = JSON.parse(noiDung) || {};
+                    parsed.data = Array.isArray(payload.data) ? payload.data : [];
+                    parsed.ketluan = payload.ketluan || '';
+                    parsed.images = Array.isArray(payload.images) ? payload.images : [];
+                    return parsed;
+                } catch (e) { }
+            }
+
+            parsed.ketluan = noiDung;
+            return parsed;
+        }
+
+        function buildLisTable(lisData) {
+            if (!lisData || !lisData.length) return '';
+
+            var hasMetaColumns = lisData.some(function (item) {
+                var donVi = (item.DonVi || '').toString().trim();
+                var thamChieu = (item.ThamChieu || '').toString().trim();
+                return (donVi && donVi !== '-') || (thamChieu && thamChieu !== '-');
+            });
+
+            var html = hasMetaColumns
+                ? '<table class="table table-sm table-bordered mt-2"><thead><tr class="table-light"><th>Chỉ số</th><th>Kết quả</th><th>Đơn vị</th><th>Chỉ số bình thường</th></tr></thead><tbody>'
+                : '<table class="table table-sm table-bordered mt-2"><thead><tr class="table-light"><th>Tên chỉ số</th><th>Kết quả</th></tr></thead><tbody>';
+
+            lisData.forEach(function (item) {
+                var rowClass = item.Warning ? 'text-danger fw-bold' : 'fw-bold';
+                if (hasMetaColumns) {
+                    html += '<tr><td>' + item.Ten + '</td><td class="' + rowClass + '">' + item.GiaTri + '</td><td>' + (item.DonVi || '-') + '</td><td>' + (item.ThamChieu || '-') + '</td></tr>';
+                } else {
+                    html += '<tr><td>' + item.Ten + '</td><td class="' + rowClass + '">' + item.GiaTri + '</td></tr>';
+                }
+            });
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function buildImageHtml(images) {
+            if (!images || !images.length) return '';
+
+            return '<div class="row g-2 mt-2">' + images.map(function (image) {
+                return '' +
+                    '<div class="col-md-6">' +
+                        '<div class="border rounded p-2 h-100 bg-light">' +
+                            '<img src="' + image.url + '" alt="' + (image.title || 'Hình ảnh CLS') + '" class="img-fluid rounded" />' +
+                            '<div class="small fw-bold mt-2 text-primary">' + (image.title || 'Hình ảnh CLS') + '</div>' +
+                            '<div class="small text-muted">' + (image.caption || '') + '</div>' +
+                        '</div>' +
+                    '</div>';
+            }).join('') + '</div>';
+        }
+
+        buildLisArray = function (noiDung) {
+            return parseStoredResult(noiDung).data;
+        };
+
+        fillPrint = function (data) {
+            var parsed = parseStoredResult(data.NoiDungKetQua);
+            var lisData = parsed.data;
+            var now = new Date();
+            var hasMetaColumns = (lisData || []).some(function (item) {
+                var donVi = (item.DonVi || '').toString().trim();
+                var thamChieu = (item.ThamChieu || '').toString().trim();
+                return (donVi && donVi !== '-') || (thamChieu && thamChieu !== '-');
+            });
+
+            $('#prt-ten').text(data.TenBenhNhan || '');
+            $('#prt-tuoi').text(data.Tuoi || '');
+            $('#prt-gt').text(data.GioiTinh || '');
+            $('#prt-chandoan').text(data.LyDoDenKham || data.ChanDoan || '');
+            $('#prt-tenxn').text(data.TenDV || '');
+            $('#prt-mauxn').text(data.MauXetNghiem || 'Huyết thanh');
+            $('#prt-chatluong').text(data.ChatLuongMau || 'Đạt');
+
+            $('#print-section .print-table thead').html(
+                hasMetaColumns
+                    ? '<tr><th style="width:35%;">Tên chỉ số</th><th style="width:25%;">Kết quả</th><th style="width:20%;">Đơn vị</th><th style="width:20%;">Trị số bình thường</th></tr>'
+                    : '<tr><th style="width:35%;">Tên chỉ số</th><th style="width:65%;">Kết quả</th></tr>'
+            );
+
+            var tbody = '';
+            if (lisData && lisData.length > 0) {
+                lisData.forEach(function (item) {
+                    var isWarning = item.Warning ? 'color: red; font-weight: bold;' : 'font-weight: bold;';
+                    if (hasMetaColumns) {
+                        tbody += '<tr>' +
+                            '<td>' + item.Ten + '</td>' +
+                            '<td style="text-align:center;"><div style="' + isWarning + '">' + item.GiaTri + '</div></td>' +
+                            '<td style="text-align:center;">' + (item.DonVi || '-') + '</td>' +
+                            '<td style="text-align:center;">' + (item.ThamChieu || '-') + '</td>' +
+                            '</tr>';
+                    } else {
+                        tbody += '<tr>' +
+                            '<td>' + item.Ten + '</td>' +
+                            '<td><div style="' + isWarning + '">' + item.GiaTri + '</div></td>' +
+                            '</tr>';
+                    }
+                });
+            }
+            $('#prt-lis-tbody').html(tbody);
+            $('#prt-date-footer').text('Đắk Lắk, ngày ' + now.getDate() + ' tháng ' + (now.getMonth() + 1) + ' năm ' + now.getFullYear());
+        };
+
+        loadDetail = function (maKetQua, callback) {
+            $.post('/Staff/CLS/GetChiTiet', { maKetQua: maKetQua }, function (res) {
+                if (!res.success) {
+                    Swal.fire('Lỗi', res.message || 'Không tải được chi tiết.', 'error');
+                    return;
+                }
+
+                fillPrint(res.Data);
+                if (typeof callback === 'function') callback(res.Data);
+            });
+        };
+
+        $(document).off('click', '.btn-view');
+        $(document).on('click', '.btn-view', function () {
+            var id = $(this).data('id');
+            loadDetail(id, function (d) {
+                var parsed = parseStoredResult(d.NoiDungKetQua);
+                var tableHtml = buildLisTable(parsed.data);
+                var imageHtml = buildImageHtml(parsed.images);
+                var resultHtml = tableHtml || '<div>' + (parsed.ketluan || d.NoiDungKetQua || '').replace(/\n/g, '<br>') + '</div>';
+
+                Swal.fire({
+                    title: 'Chi tiết kết quả CLS',
+                    html: '<div class="text-start">'
+                        + '<div><b>Bệnh nhân:</b> ' + (d.TenBenhNhan || '') + '</div>'
+                        + '<div><b>Dịch vụ:</b> ' + (d.TenDV || '') + '</div>'
+                        + '<div><b>Mẫu xét nghiệm:</b> ' + (d.MauXetNghiem || '') + '</div>'
+                        + '<div><b>Chất lượng mẫu:</b> ' + (d.ChatLuongMau || '') + '</div>'
+                        + '<div class="mt-2"><b>Nội dung chỉ số:</b><br>' + resultHtml + '</div>'
+                        + (parsed.ketluan ? '<div class="mt-2"><b>Kết luận:</b> ' + parsed.ketluan + '</div>' : '')
+                        + imageHtml
+                        + '</div>',
+                    width: 900,
+                    confirmButtonText: 'Đóng'
+                });
+            });
+        });
+
+        $(document).off('click', '.btn-print');
+        $(document).on('click', '.btn-print', function () {
+            var id = $(this).data('id');
+            loadDetail(id, function () {
+                window.print();
+            });
         });
     });
 </script>

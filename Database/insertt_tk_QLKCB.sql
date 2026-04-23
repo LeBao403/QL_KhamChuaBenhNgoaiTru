@@ -165,10 +165,6 @@ VALUES
 ('0976865715', '1', 1),      -- Đinh Đỗ Quỳnh Như
 ('0978610519', '1', 1);      -- Lại Phước Thịnh
 
-
-
-
-
 -- ===========================================================================================================================
 ---------------------------------------------------- THÔNG TIN KHÁCH HÀNG ----------------------------------------------------
 -- ===========================================================================================================================
@@ -374,7 +370,6 @@ INSERT INTO DANHMUC_TIENSU_YTE VALUES
 	('TSYT109', N'Bệnh lý tự miễn khác'),
 	('TSYT110', N'Lao màng não đã điều trị'),
 	('TSYT111', N'Bệnh nghề nghiệp liên quan hóa chất');
-
 
 INSERT INTO TIENSU_YTE_BENHNHAN (MaTSYT, MaBN)
 VALUES
@@ -644,9 +639,6 @@ VALUES
 -- KH0070 - Đỗ Quốc Khánh: 1 tiền sử (phản vệ trước đó)
 ('TSYT053', 'KH0070');
 
-
-
-
 -- ===========================================================================================================================
 --------------------------------------------------- NHÂN VIÊN & TÀI KHOẢN ----------------------------------------------------
 -- ===========================================================================================================================
@@ -664,7 +656,8 @@ VALUES
 	(N'Kế toán thu ngân'),  -- Xử lý hóa đơn và thanh toán
 	(N'Nhân viên bảo vệ'),
 	(N'Nhân viên tạp vụ'),
-	(N'Nhân viên phát thuốc');
+	(N'Nhân viên phát thuốc'),
+	(N'Nhân viên kho');
 GO
 
 INSERT INTO KHOA (TenKhoa, MoTa, TrangThai)
@@ -858,7 +851,6 @@ INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive)
 VALUES
 ('baolq', '1', 1);
 
-
 -- 3. CHÈN TÀI KHOẢN VÀ BÁC SĨ QUẢN TRỊ
 INSERT INTO NHANVIEN (MaNV, HoTen, NgaySinh, GioiTinh, SDT, Email, DiaChi, MaChucVu, TrangThai, MaTK, HinhAnh)
 VALUES (
@@ -869,5 +861,468 @@ GO
 
 
 -- =========================================================================================
--- THÊM DỮ LIỆU BẢNG LOAI_DICHVU 
+-- Nhân viên kho
 -- =========================================================================================
+
+-- 2. Cập nhật 6 nhân viên Dược sĩ thành "Nhân viên kho" (MaChucVu = 12)
+UPDATE NHANVIEN SET MaChucVu = 12 WHERE MaNV IN ('NV021','NV022','NV023','NV024','NV025','NV026') AND MaChucVu <> 12;
+PRINT N'2. Đã cập nhật MaChucVu = 12 cho NV021-NV026';
+GO
+
+-- 3. Thêm tài khoản cho nhân viên kho (chỉ nếu chưa tồn tại)
+IF NOT EXISTS (SELECT 1 FROM TAIKHOAN WHERE Username = 'kho001')
+BEGIN
+    INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive) VALUES ('kho001', '123456', 1);
+    PRINT N'3. Đã tạo tài khoản kho001';
+END
+
+IF NOT EXISTS (SELECT 1 FROM TAIKHOAN WHERE Username = 'kho002')
+BEGIN
+    INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive) VALUES ('kho002', '123456', 1);
+    PRINT N'3. Đã tạo tài khoản kho002';
+END
+
+IF NOT EXISTS (SELECT 1 FROM TAIKHOAN WHERE Username = 'kho003')
+BEGIN
+    INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive) VALUES ('kho003', '123456', 1);
+    PRINT N'3. Đã tạo tài khoản kho003';
+END
+
+IF NOT EXISTS (SELECT 1 FROM TAIKHOAN WHERE Username = 'kho004')
+BEGIN
+    INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive) VALUES ('kho004', '123456', 1);
+    PRINT N'3. Đã tạo tài khoản kho004';
+END
+
+IF NOT EXISTS (SELECT 1 FROM TAIKHOAN WHERE Username = 'kho005')
+BEGIN
+    INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive) VALUES ('kho005', '123456', 1);
+    PRINT N'3. Đã tạo tài khoản kho005';
+END
+
+IF NOT EXISTS (SELECT 1 FROM TAIKHOAN WHERE Username = 'kho006')
+BEGIN
+    INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive) VALUES ('kho006', '123456', 1);
+    PRINT N'3. Đã tạo tài khoản kho006';
+END
+GO
+
+-- 4. Cập nhật MaTK cho các nhân viên kho
+UPDATE NHANVIEN SET MaTK = (SELECT TOP 1 MaTK FROM TAIKHOAN WHERE Username = 'kho001') WHERE MaNV = 'NV021' AND (MaTK IS NULL OR MaTK NOT IN (SELECT MaTK FROM TAIKHOAN WHERE Username LIKE 'kho%'));
+UPDATE NHANVIEN SET MaTK = (SELECT TOP 1 MaTK FROM TAIKHOAN WHERE Username = 'kho002') WHERE MaNV = 'NV022' AND (MaTK IS NULL OR MaTK NOT IN (SELECT MaTK FROM TAIKHOAN WHERE Username LIKE 'kho%'));
+UPDATE NHANVIEN SET MaTK = (SELECT TOP 1 MaTK FROM TAIKHOAN WHERE Username = 'kho003') WHERE MaNV = 'NV023' AND (MaTK IS NULL OR MaTK NOT IN (SELECT MaTK FROM TAIKHOAN WHERE Username LIKE 'kho%'));
+UPDATE NHANVIEN SET MaTK = (SELECT TOP 1 MaTK FROM TAIKHOAN WHERE Username = 'kho004') WHERE MaNV = 'NV024' AND (MaTK IS NULL OR MaTK NOT IN (SELECT MaTK FROM TAIKHOAN WHERE Username LIKE 'kho%'));
+UPDATE NHANVIEN SET MaTK = (SELECT TOP 1 MaTK FROM TAIKHOAN WHERE Username = 'kho005') WHERE MaNV = 'NV025' AND (MaTK IS NULL OR MaTK NOT IN (SELECT MaTK FROM TAIKHOAN WHERE Username LIKE 'kho%'));
+UPDATE NHANVIEN SET MaTK = (SELECT TOP 1 MaTK FROM TAIKHOAN WHERE Username = 'kho006') WHERE MaNV = 'NV026' AND (MaTK IS NULL OR MaTK NOT IN (SELECT MaTK FROM TAIKHOAN WHERE Username LIKE 'kho%'));
+PRINT N'4. Đã cập nhật MaTK cho NV021-NV026';
+GO
+
+PRINT '';
+PRINT N'========================================';
+PRINT N'Tài khoản đăng nhập: kho001 - kho006';
+PRINT N'Mật khẩu: 123456';
+PRINT N'========================================';
+PRINT N'Xem danh sách tài khoản:';
+SELECT MaTK, Username, IsActive FROM TAIKHOAN WHERE Username LIKE 'kho%';
+PRINT N'Xem nhân viên kho:';
+SELECT MaNV, HoTen, MaChucVu, MaTK FROM NHANVIEN WHERE MaNV IN ('NV021','NV022','NV023','NV024','NV025','NV026');
+
+
+-- =========================================================================================
+-- Nhân viên test
+-- =========================================================================================
+USE QL_KhamBenhNgoaiTru;
+GO
+
+-- ==============================================================================
+-- SCRIPT INSERT NHANVIEN + TAIKHOAN CHO TỪNG PHÒNG
+-- Quy tắc Username:
+--   Phòng khám       -> bs_<tenphong>   (bác sĩ)
+--   Quầy Tiếp Tân    -> tt_<stt>
+--   Quầy Thu ngân    -> thungan_<stt>
+--   Phòng CLS        -> cls_<tenphong>
+--   Nhà thuốc        -> duoc_<stt>
+-- Chức vụ: 4=Bác sĩ, 5=Điều dưỡng, 6=KTV CLS, 7=Dược sĩ, 8=Tiếp đón, 9=Thu ngân
+-- MaNV tiếp theo: NV046 trở đi
+-- MaTK: dùng subquery theo username để tự map
+-- ==============================================================================
+
+-- ==============================================================================
+-- BƯỚC 1: INSERT TÀI KHOẢN
+-- ==============================================================================
+
+INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive) VALUES
+-- ===== KHU VỰC TIẾP NHẬN (MaPhong 1-3: Quầy Tiếp Tân) =====
+(N'tt_01', N'123456', 1),   -- Quầy Tiếp Tân 01 - MaPhong 1
+(N'tt_02', N'123456', 1),   -- Quầy Tiếp Tân 02 - MaPhong 2
+(N'tt_03', N'123456', 1),   -- Quầy Tiếp Tân 03 - MaPhong 3
+
+-- ===== KHU VỰC THU NGÂN (MaPhong 4-5) =====
+(N'thungan_01', N'123456', 1),  -- Quầy Thu ngân 01 - MaPhong 4
+(N'thungan_02', N'123456', 1),  -- Quầy Thu ngân 02 - MaPhong 5
+
+-- ===== KHU VỰC PHÒNG KHÁM (MaPhong 6-15) =====
+(N'bs_noitongquat01', N'123456', 1),    -- Phòng khám Nội tổng quát 01  - MaPhong 6
+(N'bs_noitongquat02', N'123456', 1),    -- Phòng khám Nội tổng quát 02  - MaPhong 7
+(N'bs_ngoaitonghop01', N'123456', 1),   -- Phòng khám Ngoại tổng hợp 01 - MaPhong 8
+(N'bs_nhi01', N'123456', 1),            -- Phòng khám Nhi khoa 01        - MaPhong 9
+(N'bs_nhi02', N'123456', 1),            -- Phòng khám Nhi khoa 02        - MaPhong 10
+(N'bs_sanphukhoa01', N'123456', 1),     -- Phòng khám Sản phụ khoa 01   - MaPhong 11
+(N'bs_taimuhong01', N'123456', 1),      -- Phòng khám Tai Mũi Họng 01   - MaPhong 12
+(N'bs_ranghammat01', N'123456', 1),     -- Phòng khám Răng Hàm Mặt 01   - MaPhong 13
+(N'bs_mat01', N'123456', 1),            -- Phòng khám Mắt 01             - MaPhong 14
+(N'bs_dalieu01', N'123456', 1),         -- Phòng khám Da liễu 01         - MaPhong 15
+
+-- ===== KHU VỰC THỦ THUẬT & NỘI SOI (MaPhong 16-18) =====
+(N'cls_noisoi_tieuhoa', N'123456', 1),  -- Phòng Nội soi Tiêu hóa        - MaPhong 16
+(N'cls_tieuphauthaygang', N'123456', 1),-- Phòng Tiểu phẫu & Thay băng   - MaPhong 17
+(N'cls_thuthuatdalieu', N'123456', 1),  -- Phòng Thủ thuật Da liễu        - MaPhong 18
+
+-- ===== KHU VỰC CẬN LÂM SÀNG (MaPhong 19-21) =====
+(N'cls_xetnghiem_huyethoc', N'123456', 1), -- Phòng Xét nghiệm Huyết học  - MaPhong 19
+(N'cls_sieam4d', N'123456', 1),            -- Phòng Siêu âm 4D             - MaPhong 20
+(N'cls_xquang', N'123456', 1),             -- Phòng Chụp X-Quang            - MaPhong 21
+
+-- ===== KHU VỰC DƯỢC (MaPhong 22-26: Nhà thuốc) =====
+(N'duoc_01', N'123456', 1),   -- Nhà thuốc 01 - MaPhong 22
+(N'duoc_02', N'123456', 1),   -- Nhà thuốc 02 - MaPhong 23
+(N'duoc_03', N'123456', 1),   -- Nhà thuốc 03 - MaPhong 24
+(N'duoc_04', N'123456', 1),   -- Nhà thuốc 04 - MaPhong 25
+(N'duoc_05', N'123456', 1);   -- Nhà thuốc 05 - MaPhong 26
+
+-- (Kho Dược MaPhong 27-28: không cần tài khoản riêng theo phòng, quản lý bởi dược sĩ)
+GO
+
+-- ==============================================================================
+-- BƯỚC 2: INSERT NHÂN VIÊN (MaNV từ NV046)
+-- Mỗi nhân viên được gán MaTK qua subquery theo Username
+-- ==============================================================================
+
+INSERT INTO NHANVIEN (MaNV, HoTen, NgaySinh, GioiTinh, SDT, Email, DiaChi, MaChucVu, TrangThai, MaTK, MaKhoa, MaPhong, HinhAnh)
+VALUES
+
+-- ============================================================
+-- 1. QUẦY TIẾP TÂN (MaLoaiPhong=1, MaKhoa NULL)
+--    Chức vụ: 8 - Tiếp đón
+-- ============================================================
+(
+    'NV046', N'Trần Minh Thư', '1998-04-12', N'Nữ',
+    '0909001001', 'thu.tm046@clinic.vn', N'Quận 3, TP.HCM',
+    8, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'tt_01'),
+    NULL, -- MaKhoa NULL (hành chính)
+    1,    -- MaPhong: Quầy Tiếp Tân 01
+    NULL
+),
+(
+    'NV047', N'Lê Thị Hà', '1997-08-20', N'Nữ',
+    '0909001002', 'ha.lt047@clinic.vn', N'Quận 5, TP.HCM',
+    8, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'tt_02'),
+    NULL,
+    2,    -- MaPhong: Quầy Tiếp Tân 02
+    NULL
+),
+(
+    'NV048', N'Nguyễn Thanh Tú', '1999-02-14', N'Nam',
+    '0909001003', 'tu.nt048@clinic.vn', N'Bình Thạnh, TP.HCM',
+    8, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'tt_03'),
+    NULL,
+    3,    -- MaPhong: Quầy Tiếp Tân 03
+    NULL
+),
+
+-- ============================================================
+-- 2. QUẦY THU NGÂN (MaLoaiPhong=8, MaKhoa NULL)
+--    Chức vụ: 9 - Thu ngân
+-- ============================================================
+(
+    'NV049', N'Phạm Thị Kiều', '1996-06-30', N'Nữ',
+    '0909002001', 'kieu.pt049@clinic.vn', N'Tân Bình, TP.HCM',
+    9, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'thungan_01'),
+    NULL,
+    4,    -- MaPhong: Quầy Thu ngân 01
+    NULL
+),
+(
+    'NV050', N'Hoàng Văn Lộc', '1994-11-05', N'Nam',
+    '0909002002', 'loc.hv050@clinic.vn', N'Phú Nhuận, TP.HCM',
+    9, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'thungan_02'),
+    NULL,
+    5,    -- MaPhong: Quầy Thu ngân 02
+    NULL
+),
+
+-- ============================================================
+-- 3. PHÒNG KHÁM CHUYÊN KHOA (MaLoaiPhong=2)
+--    Chức vụ: 4 - Bác sĩ điều trị
+-- ============================================================
+
+-- Phòng khám Nội tổng quát 01 (MaPhong=6, MaKhoa=2)
+(
+    'NV051', N'Vũ Hoàng Phong', '1985-03-10', N'Nam',
+    '0909003001', 'phong.vh051@clinic.vn', N'Quận 1, TP.HCM',
+    4, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'bs_noitongquat01'),
+    2,    -- MaKhoa: Nội
+    6,    -- MaPhong: Phòng khám Nội tổng quát 01
+    'nv051.jpg'
+),
+
+-- Phòng khám Nội tổng quát 02 (MaPhong=7, MaKhoa=2)
+(
+    'NV052', N'Đinh Thị Bảo Châu', '1990-07-17', N'Nữ',
+    '0909003002', 'chau.dtb052@clinic.vn', N'Quận 10, TP.HCM',
+    4, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'bs_noitongquat02'),
+    2,
+    7,    -- MaPhong: Phòng khám Nội tổng quát 02
+    'nv052.jpg'
+),
+
+-- Phòng khám Ngoại tổng hợp 01 (MaPhong=8, MaKhoa=3)
+(
+    'NV053', N'Lưu Quốc Bình', '1983-09-22', N'Nam',
+    '0909003003', 'binh.lq053@clinic.vn', N'Gò Vấp, TP.HCM',
+    4, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'bs_ngoaitonghop01'),
+    3,    -- MaKhoa: Ngoại
+    8,
+    'nv053.jpg'
+),
+
+-- Phòng khám Nhi khoa 01 (MaPhong=9, MaKhoa=4)
+(
+    'NV054', N'Trịnh Thị Thu Hồng', '1988-12-01', N'Nữ',
+    '0909003004', 'hong.ttt054@clinic.vn', N'Bình Dương',
+    4, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'bs_nhi01'),
+    4,    -- MaKhoa: Nhi
+    9,
+    'nv054.jpg'
+),
+
+-- Phòng khám Nhi khoa 02 (MaPhong=10, MaKhoa=4)
+(
+    'NV055', N'Đặng Anh Tuấn', '1991-04-25', N'Nam',
+    '0909003005', 'tuan.da055@clinic.vn', N'Đồng Nai',
+    4, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'bs_nhi02'),
+    4,
+    10,
+    'nv055.jpg'
+),
+
+-- Phòng khám Sản phụ khoa 01 (MaPhong=11, MaKhoa=5)
+(
+    'NV056', N'Ngô Thị Thanh Vân', '1987-06-14', N'Nữ',
+    '0909003006', 'van.ntt056@clinic.vn', N'Quận 7, TP.HCM',
+    4, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'bs_sanphukhoa01'),
+    5,    -- MaKhoa: Sản
+    11,
+    'nv056.jpg'
+),
+
+-- Phòng khám Tai Mũi Họng 01 (MaPhong=12, MaKhoa=6)
+(
+    'NV057', N'Phan Trọng Hải', '1984-02-28', N'Nam',
+    '0909003007', 'hai.pt057@clinic.vn', N'Hải Châu, Đà Nẵng',
+    4, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'bs_taimuhong01'),
+    6,    -- MaKhoa: TMH
+    12,
+    'nv057.jpg'
+),
+
+-- Phòng khám Răng Hàm Mặt 01 (MaPhong=13, MaKhoa=7)
+(
+    'NV058', N'Lý Ngọc Hoa', '1992-10-09', N'Nữ',
+    '0909003008', 'hoa.ln058@clinic.vn', N'Quận 6, TP.HCM',
+    4, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'bs_ranghammat01'),
+    7,    -- MaKhoa: RHM
+    13,
+    'nv058.jpg'
+),
+
+-- Phòng khám Mắt 01 (MaPhong=14, MaKhoa=8)
+(
+    'NV059', N'Bùi Thanh Sơn', '1986-05-18', N'Nam',
+    '0909003009', 'son.bt059@clinic.vn', N'Nha Trang, Khánh Hòa',
+    4, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'bs_mat01'),
+    8,    -- MaKhoa: Mắt
+    14,
+    'nv059.jpg'
+),
+
+-- Phòng khám Da liễu 01 (MaPhong=15, MaKhoa=9)
+(
+    'NV060', N'Hồ Phương Thảo', '1993-01-07', N'Nữ',
+    '0909003010', 'thao.hp060@clinic.vn', N'Quận 12, TP.HCM',
+    4, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'bs_dalieu01'),
+    9,    -- MaKhoa: Da liễu
+    15,
+    'nv060.jpg'
+),
+
+-- ============================================================
+-- 4. PHÒNG THỦ THUẬT & NỘI SOI (CLS)
+--    Chức vụ: 6 - KTV CLS
+-- ============================================================
+
+-- Phòng Nội soi Tiêu hóa (MaPhong=16, MaKhoa=10)
+(
+    'NV061', N'Đỗ Minh Tuấn', '1989-08-13', N'Nam',
+    '0909004001', 'tuan.dm061@clinic.vn', N'Cần Thơ',
+    6, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'cls_noisoi_tieuhoa'),
+    10,   -- MaKhoa: CĐHA
+    16,
+    NULL
+),
+
+-- Phòng Tiểu phẫu & Thay băng (MaPhong=17, MaKhoa=3)
+(
+    'NV062', N'Nguyễn Thị Cẩm Ly', '1995-03-21', N'Nữ',
+    '0909004002', 'ly.ntc062@clinic.vn', N'Thủ Đức, TP.HCM',
+    6, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'cls_tieuphauthaygang'),
+    3,    -- MaKhoa: Ngoại
+    17,
+    NULL
+),
+
+-- Phòng Thủ thuật Da liễu (MaPhong=18, MaKhoa=9)
+(
+    'NV063', N'Trần Văn Khoa', '1991-11-30', N'Nam',
+    '0909004003', 'khoa.tv063@clinic.vn', N'Long An',
+    6, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'cls_thuthuatdalieu'),
+    9,    -- MaKhoa: Da liễu
+    18,
+    NULL
+),
+
+-- ============================================================
+-- 5. PHÒNG CẬN LÂM SÀNG
+--    Chức vụ: 6 - KTV CLS
+-- ============================================================
+
+-- Phòng Xét nghiệm Huyết học (MaPhong=19, MaKhoa=11)
+(
+    'NV064', N'Võ Thị Mỹ Liên', '1993-07-04', N'Nữ',
+    '0909005001', 'lien.vtm064@clinic.vn', N'Quận 8, TP.HCM',
+    6, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'cls_xetnghiem_huyethoc'),
+    11,   -- MaKhoa: Xét nghiệm
+    19,
+    NULL
+),
+
+-- Phòng Siêu âm 4D (MaPhong=20, MaKhoa=10)
+(
+    'NV065', N'Lê Quang Huy', '1988-09-16', N'Nam',
+    '0909005002', 'huy.lq065@clinic.vn', N'Bình Thạnh, TP.HCM',
+    6, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'cls_sieam4d'),
+    10,   -- MaKhoa: CĐHA
+    20,
+    NULL
+),
+
+-- Phòng Chụp X-Quang (MaPhong=21, MaKhoa=10)
+(
+    'NV066', N'Phan Thị Nguyệt', '1990-05-25', N'Nữ',
+    '0909005003', 'nguyet.pt066@clinic.vn', N'Quận 4, TP.HCM',
+    6, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'cls_xquang'),
+    10,
+    21,
+    NULL
+),
+
+-- ============================================================
+-- 6. NHÀ THUỐC (MaLoaiPhong=9, MaKhoa=12)
+--    Chức vụ: 7 - Dược sĩ
+-- ============================================================
+
+-- Nhà thuốc 01 (MaPhong=22)
+(
+    'NV067', N'Huỳnh Thị Bảo Ngân', '1994-01-19', N'Nữ',
+    '0909006001', 'ngan.htb067@clinic.vn', N'Quận 11, TP.HCM',
+    7, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'duoc_01'),
+    12,   -- MaKhoa: Dược
+    22,
+    NULL
+),
+
+-- Nhà thuốc 02 (MaPhong=23)
+(
+    'NV068', N'Nguyễn Văn Duy', '1996-04-08', N'Nam',
+    '0909006002', 'duy.nv068@clinic.vn', N'Tân Phú, TP.HCM',
+    7, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'duoc_02'),
+    12,
+    23,
+    NULL
+),
+
+-- Nhà thuốc 03 (MaPhong=24)
+(
+    'NV069', N'Lê Thị Xuân Mai', '1997-12-22', N'Nữ',
+    '0909006003', 'mai.ltx069@clinic.vn', N'Bình Chánh, TP.HCM',
+    7, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'duoc_03'),
+    12,
+    24,
+    NULL
+),
+
+-- Nhà thuốc 04 (MaPhong=25)
+(
+    'NV070', N'Đỗ Quang Minh', '1993-06-11', N'Nam',
+    '0909006004', 'minh.dq070@clinic.vn', N'Hóc Môn, TP.HCM',
+    7, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'duoc_04'),
+    12,
+    25,
+    NULL
+),
+
+-- Nhà thuốc 05 (MaPhong=26)
+(
+    'NV071', N'Trần Thị Kiều Oanh', '1995-10-03', N'Nữ',
+    '0909006005', 'oanh.ttk071@clinic.vn', N'Củ Chi, TP.HCM',
+    7, 1,
+    (SELECT MaTK FROM TAIKHOAN WHERE Username = N'duoc_05'),
+    12,
+    26,
+    NULL
+);
+GO
+
+-- ==============================================================================
+-- KIỂM TRA KẾT QUẢ
+-- ==============================================================================
+SELECT
+    nv.MaNV,
+    nv.HoTen,
+    tk.Username,
+    cv.TenChucVu,
+    p.TenPhong,
+    k.TenKhoa
+FROM NHANVIEN nv
+JOIN TAIKHOAN tk ON nv.MaTK = tk.MaTK
+JOIN CHUCVU cv   ON nv.MaChucVu = cv.MaChucVu
+LEFT JOIN PHONG p ON nv.MaPhong = p.MaPhong
+LEFT JOIN KHOA k  ON nv.MaKhoa  = k.MaKhoa
+WHERE nv.MaNV BETWEEN 'NV046' AND 'NV071'
+ORDER BY nv.MaNV;
+GO
