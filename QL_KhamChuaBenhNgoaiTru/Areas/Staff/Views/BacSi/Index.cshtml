@@ -1,4 +1,4 @@
-@model QL_KhamChuaBenhNgoaiTru.Models.KhamBenhViewModel
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.KhamBenhViewModel
 @{
     Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
     ViewBag.Title = "Phòng Khám Bác Sĩ";
@@ -206,7 +206,9 @@
     }
 </style>
 
-<div class="container-fluid py-4">
+@{ Html.RenderPartial("~/Views/Shared/_PrintDocumentStyles.cshtml"); }
+
+<div class="container-fluid py-4 d-print-none">
     <div class="card page-header-card shadow-sm mb-4">
         <div class="card-body text-white p-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
@@ -639,25 +641,19 @@
         </div>
     </div>
 
-    <div id="printPrescriptionArea" class="d-none">
-        <div class="row align-items-center mb-4">
-            <div class="col-7">
-                <div class="d-flex align-items-center gap-3">
-                    <i class="fas fa-hospital text-primary" style="font-size: 2.5rem;"></i>
-                    <div>
-                        <h2 class="mb-0 fw-bold" style="color: #1e293b; font-size: 1.8rem;">HIS CLINIC CENTER</h2>
-                        <p class="text-muted mb-0" style="font-size: 0.85rem;">MST: 0312345678 - Hotline: 1900 8888</p>
-                        <p class="text-muted mb-0" style="font-size: 0.85rem;">ĐC: Số 123 Nguyễn Văn Cừ, Quận 5, TP.HCM</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-5 text-end">
-                <h3 style="font-weight: 800; color: #3b82f6; font-size: 1.4rem; text-transform:uppercase;" id="printTitle">PHIẾU KHÁM BỆNH</h3>
-                <p class="mb-0 fw-bold text-dark fs-5">Mã PK: <span class="text-danger" id="printMaPK"></span></p>
-            </div>
-        </div>
-
-        <hr style="border-top: 2px solid #1e293b; margin-bottom: 1.5rem;" />
+    <div id="printPrescriptionArea" class="d-none app-print-sheet">
+        @{
+            Html.RenderPartial(
+                "~/Views/Shared/_PrintDocumentHeader.cshtml",
+                new ViewDataDictionary(ViewData)
+                {
+                    { "PrintDocumentTitle", "PHI&#7870;U KH&#193;M B&#7878;NH" },
+                    { "PrintDocumentTitleElementId", "printTitle" },
+                    { "PrintDocumentMaBNElementId", "printMaBN" },
+                    { "PrintDocumentCodeLabel", "M&#227; PK:" },
+                    { "PrintDocumentCodeElementId", "printMaPK" }
+                });
+        }
 
         <div class="row mb-4">
             <div class="col-12">
@@ -715,13 +711,13 @@
             <tbody id="printTbBody"></tbody>
         </table>
 
-        <div class="row mt-4 pt-4 text-center">
-            <div class="col-6">
+        <div class="app-print-signature" style="display:flex; justify-content:space-between; text-align:center; margin-top:24px;">
+            <div style="width:40%;">
             </div>
-            <div class="col-6">
-                <div style="font-weight: 700; color: #334155;">Bác sĩ điều trị</div>
-                <div class="text-muted fst-italic" style="font-size: 0.8rem;">(Ký, ghi rõ họ tên)</div>
-                <div class="mt-5 fw-bold text-dark fs-5" id="printTenBS"></div>
+            <div style="width:40%;">
+                <div id="prt-date-footer" style="font-style:italic; margin-bottom:5px;"></div>
+                <div style="font-weight:700; text-transform:uppercase;">Bác sĩ điều trị</div>
+                <div style="margin-top:70px; font-weight:bold; font-size:1.1rem;" id="printTenBS"></div>
             </div>
         </div>
     </div>
@@ -1746,6 +1742,9 @@
                 }
 
                 $('#printTbBody').html(tbodyHtml);
+
+                var now = new Date();
+                $('#prt-date-footer').text('TP.HCM, ngày ' + now.getDate() + ' tháng ' + (now.getMonth() + 1) + ' năm ' + now.getFullYear());
 
                 window.print();
                 setTimeout(function () { $('#frmKhamBenh').submit(); }, 500);
