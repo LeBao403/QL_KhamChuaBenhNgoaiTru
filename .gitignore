@@ -43,9 +43,3 @@ __pycache__/
 env/
 venv/
 ENV/
-
-# Chặn file trọng số AI (vì nó sẽ được sinh ra khi máy khác chạy train)
-AI_Recommender/models/
-
-# Chặn file môi trường của Python
-AI_Recommender/.env
