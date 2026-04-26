@@ -1,0 +1,2655 @@
+node_id,label,type
+disease::BENH001,Cảm cúm,disease
+text::Cảm cúm,Cảm cúm,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::sổ mũi,sổ mũi,symptom
+symptom::đau đầu,đau đầu,symptom
+disease::BENH002,Viêm họng cấp,disease
+text::Viêm họng cấp,Viêm họng cấp,text
+symptom::đau họng,đau họng,symptom
+symptom::sốt nhẹ,sốt nhẹ,symptom
+symptom::nuốt đau,nuốt đau,symptom
+symptom::ho khan,ho khan,symptom
+disease::BENH003,Viêm amidan,disease
+text::Viêm amidan,Viêm amidan,text
+symptom::đau họng,đau họng,symptom
+symptom::sốt,sốt,symptom
+symptom::khó nuốt,khó nuốt,symptom
+symptom::hôi miệng,hôi miệng,symptom
+disease::BENH004,Viêm phế quản cấp,disease
+text::Viêm phế quản cấp,Viêm phế quản cấp,text
+symptom::ho đờm,ho đờm,symptom
+symptom::khó thở nhẹ,khó thở nhẹ,symptom
+symptom::sốt,sốt,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH005,Viêm mũi xoang,disease
+text::Viêm mũi xoang,Viêm mũi xoang,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::đau đầu,đau đầu,symptom
+symptom::sốt,sốt,symptom
+disease::BENH006,Viêm mũi dị ứng,disease
+text::Viêm mũi dị ứng,Viêm mũi dị ứng,text
+symptom::hắt hơi,hắt hơi,symptom
+symptom::ngứa mũi,ngứa mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::nghẹt mũi,nghẹt mũi,symptom
+disease::BENH007,Hen phế quản,disease
+text::Hen phế quản,Hen phế quản,text
+symptom::khò khè,khò khè,symptom
+symptom::khó thở,khó thở,symptom
+symptom::tức ngực,tức ngực,symptom
+symptom::ho,ho,symptom
+disease::BENH008,Sốt siêu vi,disease
+text::Sốt siêu vi,Sốt siêu vi,text
+symptom::sốt,sốt,symptom
+symptom::mệt,mệt,symptom
+symptom::đau đầu,đau đầu,symptom
+symptom::đau nhức người,đau nhức người,symptom
+disease::BENH009,COVID-19,disease
+text::COVID-19,COVID-19,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+symptom::mất mùi vị,mất mùi vị,symptom
+disease::BENH010,Ho kéo dài,disease
+text::Ho kéo dài,Ho kéo dài,text
+symptom::ho khan,ho khan,symptom
+symptom::ho đờm,ho đờm,symptom
+symptom::mệt,mệt,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH011,Viêm thanh quản,disease
+text::Viêm thanh quản,Viêm thanh quản,text
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH012,Viêm mũi cấp,disease
+text::Viêm mũi cấp,Viêm mũi cấp,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::hắt hơi,hắt hơi,symptom
+disease::BENH013,Viêm thanh khí phế quản,disease
+text::Viêm thanh khí phế quản,Viêm thanh khí phế quản,text
+symptom::ho ông ổng,ho ông ổng,symptom
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::khó thở,khó thở,symptom
+disease::BENH014,Co thắt phế quản,disease
+text::Co thắt phế quản,Co thắt phế quản,text
+symptom::khò khè,khò khè,symptom
+symptom::tức ngực,tức ngực,symptom
+symptom::khó thở,khó thở,symptom
+disease::BENH015,Viêm phổi cộng đồng,disease
+text::Viêm phổi cộng đồng,Viêm phổi cộng đồng,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::khó thở,khó thở,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH016,Viêm dạ dày,disease
+text::Viêm dạ dày,Viêm dạ dày,text
+symptom::đau thượng vị,đau thượng vị,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::ợ nóng,ợ nóng,symptom
+symptom::đầy bụng,đầy bụng,symptom
+disease::BENH017,Trào ngược dạ dày thực quản,disease
+text::Trào ngược dạ dày thực quản,Trào ngược dạ dày thực quản,text
+symptom::ợ nóng,ợ nóng,symptom
+symptom::ợ chua,ợ chua,symptom
+symptom::đau ngực,đau ngực,symptom
+symptom::khó chịu,khó chịu,symptom
+disease::BENH018,Rối loạn tiêu hóa,disease
+text::Rối loạn tiêu hóa,Rối loạn tiêu hóa,text
+symptom::đau bụng,đau bụng,symptom
+symptom::đầy hơi,đầy hơi,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH019,Tiêu chảy cấp,disease
+text::Tiêu chảy cấp,Tiêu chảy cấp,text
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::đau bụng,đau bụng,symptom
+symptom::mất nước,mất nước,symptom
+symptom::mệt,mệt,symptom
+disease::BENH020,Táo bón,disease
+text::Táo bón,Táo bón,text
+symptom::đi ngoài khó,đi ngoài khó,symptom
+symptom::đau bụng,đau bụng,symptom
+symptom::bụng chướng,bụng chướng,symptom
+disease::BENH021,Bệnh trĩ,disease
+text::Bệnh trĩ,Bệnh trĩ,text
+symptom::đau rát hậu môn,đau rát hậu môn,symptom
+symptom::chảy máu khi đi ngoài,chảy máu khi đi ngoài,symptom
+disease::BENH022,Đau bụng,disease
+text::Đau bụng,Đau bụng,text
+symptom::đau bụng,đau bụng,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::chướng bụng,chướng bụng,symptom
+disease::BENH023,Viêm gan,disease
+text::Viêm gan,Viêm gan,text
+symptom::mệt,mệt,symptom
+symptom::vàng da,vàng da,symptom
+symptom::chán ăn,chán ăn,symptom
+symptom::đau hạ sườn phải,đau hạ sườn phải,symptom
+disease::BENH024,Gan nhiễm mỡ,disease
+text::Gan nhiễm mỡ,Gan nhiễm mỡ,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH025,Đầy hơi,disease
+text::Đầy hơi,Đầy hơi,text
+symptom::bụng chướng,bụng chướng,symptom
+symptom::ợ hơi,ợ hơi,symptom
+symptom::khó chịu,khó chịu,symptom
+symptom::chán ăn,chán ăn,symptom
+disease::BENH026,Viêm đại tràng,disease
+text::Viêm đại tràng,Viêm đại tràng,text
+symptom::đau bụng,đau bụng,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::đầy hơi,đầy hơi,symptom
+symptom::mót rặn,mót rặn,symptom
+disease::BENH027,Hội chứng ruột kích thích,disease
+text::Hội chứng ruột kích thích,Hội chứng ruột kích thích,text
+symptom::đau bụng,đau bụng,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::táo bón,táo bón,symptom
+symptom::đầy hơi,đầy hơi,symptom
+disease::BENH028,Viêm loét dạ dày tá tràng,disease
+text::Viêm loét dạ dày tá tràng,Viêm loét dạ dày tá tràng,text
+symptom::đau thượng vị,đau thượng vị,symptom
+symptom::ợ nóng,ợ nóng,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH029,Nôn ói,disease
+text::Nôn ói,Nôn ói,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH030,Chán ăn,disease
+text::Chán ăn,Chán ăn,text
+symptom::ăn kém,ăn kém,symptom
+symptom::sụt cân,sụt cân,symptom
+symptom::mệt,mệt,symptom
+symptom::đầy bụng,đầy bụng,symptom
+disease::BENH031,Tăng huyết áp,disease
+text::Tăng huyết áp,Tăng huyết áp,text
+symptom::đau đầu,đau đầu,symptom
+symptom::hoa mắt,hoa mắt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+symptom::mệt,mệt,symptom
+disease::BENH032,Rối loạn lipid máu,disease
+text::Rối loạn lipid máu,Rối loạn lipid máu,text
+symptom::mỡ máu cao,mỡ máu cao,symptom
+symptom::thừa cân,thừa cân,symptom
+symptom::ít triệu chứng,ít triệu chứng,symptom
+disease::BENH033,Đái tháo đường type 2,disease
+text::Đái tháo đường type 2,Đái tháo đường type 2,text
+symptom::khát nước,khát nước,symptom
+symptom::tiểu nhiều,tiểu nhiều,symptom
+symptom::mệt,mệt,symptom
+symptom::sút cân,sút cân,symptom
+disease::BENH034,Tiền đái tháo đường,disease
+text::Tiền đái tháo đường,Tiền đái tháo đường,text
+symptom::hơi khát nước,hơi khát nước,symptom
+symptom::mệt,mệt,symptom
+symptom::đường huyết tăng nhẹ,đường huyết tăng nhẹ,symptom
+disease::BENH035,Tăng acid uric máu,disease
+text::Tăng acid uric máu,Tăng acid uric máu,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng khớp,sưng khớp,symptom
+symptom::đau ngón chân cái,đau ngón chân cái,symptom
+disease::BENH036,Béo phì,disease
+text::Béo phì,Béo phì,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH037,Thừa cân,disease
+text::Thừa cân,Thừa cân,text
+symptom::tăng cân,tăng cân,symptom
+symptom::BMI cao,BMI cao,symptom
+symptom::mệt khi vận động,mệt khi vận động,symptom
+disease::BENH038,Thiếu máu,disease
+text::Thiếu máu,Thiếu máu,text
+symptom::mệt,mệt,symptom
+symptom::hoa mắt,hoa mắt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+symptom::da xanh,da xanh,symptom
+disease::BENH039,Rối loạn chuyển hóa,disease
+text::Rối loạn chuyển hóa,Rối loạn chuyển hóa,text
+symptom::mệt,mệt,symptom
+symptom::tăng cân,tăng cân,symptom
+symptom::đường huyết bất thường,đường huyết bất thường,symptom
+disease::BENH040,Hạ đường huyết,disease
+text::Hạ đường huyết,Hạ đường huyết,text
+symptom::run tay,run tay,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+symptom::đói,đói,symptom
+symptom::mệt,mệt,symptom
+disease::BENH041,Rối loạn điện giải,disease
+text::Rối loạn điện giải,Rối loạn điện giải,text
+symptom::mệt,mệt,symptom
+symptom::co cơ,co cơ,symptom
+symptom::khát nước,khát nước,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH042,Tăng đường huyết,disease
+text::Tăng đường huyết,Tăng đường huyết,text
+symptom::khát nước,khát nước,symptom
+symptom::tiểu nhiều,tiểu nhiều,symptom
+symptom::mệt,mệt,symptom
+disease::BENH043,Rối loạn tuyến giáp,disease
+text::Rối loạn tuyến giáp,Rối loạn tuyến giáp,text
+symptom::mệt,mệt,symptom
+symptom::sụt cân,sụt cân,symptom
+symptom::hồi hộp,hồi hộp,symptom
+symptom::run tay,run tay,symptom
+disease::BENH044,Rối loạn mỡ máu,disease
+text::Rối loạn mỡ máu,Rối loạn mỡ máu,text
+symptom::ít triệu chứng,ít triệu chứng,symptom
+symptom::mỡ máu cao,mỡ máu cao,symptom
+disease::BENH045,Rối loạn chuyển hóa acid uric,disease
+text::Rối loạn chuyển hóa acid uric,Rối loạn chuyển hóa acid uric,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng khớp,sưng khớp,symptom
+symptom::mệt,mệt,symptom
+disease::BENH046,Đau cơ xương khớp,disease
+text::Đau cơ xương khớp,Đau cơ xương khớp,text
+symptom::đau cơ,đau cơ,symptom
+symptom::đau khớp,đau khớp,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::đau khi vận động,đau khi vận động,symptom
+disease::BENH047,Đau lưng dưới,disease
+text::Đau lưng dưới,Đau lưng dưới,text
+symptom::đau thắt lưng,đau thắt lưng,symptom
+symptom::đau lan mông,đau lan mông,symptom
+symptom::cứng lưng,cứng lưng,symptom
+disease::BENH048,Viêm khớp,disease
+text::Viêm khớp,Viêm khớp,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng khớp,sưng khớp,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH049,Thoái hóa khớp gối,disease
+text::Thoái hóa khớp gối,Thoái hóa khớp gối,text
+symptom::đau gối,đau gối,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::khó đi lại,khó đi lại,symptom
+disease::BENH050,Chấn thương phần mềm,disease
+text::Chấn thương phần mềm,Chấn thương phần mềm,text
+symptom::sưng đau,sưng đau,symptom
+symptom::bầm tím,bầm tím,symptom
+symptom::đau khi vận động,đau khi vận động,symptom
+disease::BENH051,Trật khớp,disease
+text::Trật khớp,Trật khớp,text
+symptom::đau dữ dội,đau dữ dội,symptom
+symptom::biến dạng khớp,biến dạng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH052,Đau vai gáy,disease
+text::Đau vai gáy,Đau vai gáy,text
+symptom::đau cổ vai gáy,đau cổ vai gáy,symptom
+symptom::cứng cổ,cứng cổ,symptom
+symptom::tê tay,tê tay,symptom
+disease::BENH053,Đau cổ,disease
+text::Đau cổ,Đau cổ,text
+symptom::đau cổ,đau cổ,symptom
+symptom::cứng cổ,cứng cổ,symptom
+symptom::hạn chế xoay cổ,hạn chế xoay cổ,symptom
+disease::BENH054,Viêm gân,disease
+text::Viêm gân,Viêm gân,text
+symptom::đau tại gân,đau tại gân,symptom
+symptom::sưng nhẹ,sưng nhẹ,symptom
+symptom::đau khi vận động,đau khi vận động,symptom
+disease::BENH055,Loãng xương,disease
+text::Loãng xương,Loãng xương,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH056,Bong gân,disease
+text::Bong gân,Bong gân,text
+symptom::sưng đau,sưng đau,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+symptom::bầm tím,bầm tím,symptom
+disease::BENH057,Đau khớp gối,disease
+text::Đau khớp gối,Đau khớp gối,text
+symptom::đau gối,đau gối,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::đi lại khó,đi lại khó,symptom
+disease::BENH058,Đau vai,disease
+text::Đau vai,Đau vai,text
+symptom::đau vai,đau vai,symptom
+symptom::hạn chế nâng tay,hạn chế nâng tay,symptom
+symptom::cứng khớp,cứng khớp,symptom
+disease::BENH059,Đau lưng trên,disease
+text::Đau lưng trên,Đau lưng trên,text
+symptom::đau lưng,đau lưng,symptom
+symptom::căng cơ,căng cơ,symptom
+symptom::mỏi vai,mỏi vai,symptom
+disease::BENH060,Viêm bao hoạt dịch,disease
+text::Viêm bao hoạt dịch,Viêm bao hoạt dịch,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng nóng,sưng nóng,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH061,Dị ứng,disease
+text::Dị ứng,Dị ứng,text
+symptom::ngứa,ngứa,symptom
+symptom::nổi mề đay,nổi mề đay,symptom
+symptom::hắt hơi,hắt hơi,symptom
+symptom::chảy nước mắt,chảy nước mắt,symptom
+disease::BENH062,Viêm da dị ứng,disease
+text::Viêm da dị ứng,Viêm da dị ứng,text
+symptom::ngứa da,ngứa da,symptom
+symptom::mẩn đỏ,mẩn đỏ,symptom
+symptom::khô da,khô da,symptom
+symptom::rát da,rát da,symptom
+disease::BENH063,Chàm da,disease
+text::Chàm da,Chàm da,text
+symptom::ngứa,ngứa,symptom
+symptom::da khô,da khô,symptom
+symptom::mẩn đỏ,mẩn đỏ,symptom
+symptom::bong vảy,bong vảy,symptom
+disease::BENH064,Nhiễm trùng da,disease
+text::Nhiễm trùng da,Nhiễm trùng da,text
+symptom::đỏ da,đỏ da,symptom
+symptom::sưng,sưng,symptom
+symptom::đau,đau,symptom
+symptom::mủ,mủ,symptom
+symptom::sốt,sốt,symptom
+disease::BENH065,Mẩn ngứa,disease
+text::Mẩn ngứa,Mẩn ngứa,text
+symptom::ngứa,ngứa,symptom
+symptom::nổi ban,nổi ban,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH066,Mề đay,disease
+text::Mề đay,Mề đay,text
+symptom::nổi mảng phù,nổi mảng phù,symptom
+symptom::ngứa,ngứa,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH067,Nấm da,disease
+text::Nấm da,Nấm da,text
+symptom::ngứa,ngứa,symptom
+symptom::bong vảy,bong vảy,symptom
+symptom::tổn thương vòng,tổn thương vòng,symptom
+disease::BENH068,Nấm kẽ,disease
+text::Nấm kẽ,Nấm kẽ,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH069,Viêm da tiếp xúc,disease
+text::Viêm da tiếp xúc,Viêm da tiếp xúc,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH070,Rôm sảy,disease
+text::Rôm sảy,Rôm sảy,text
+symptom::ngứa,ngứa,symptom
+symptom::nổi mẩn nhỏ,nổi mẩn nhỏ,symptom
+symptom::rát da,rát da,symptom
+disease::BENH071,Mụn trứng cá,disease
+text::Mụn trứng cá,Mụn trứng cá,text
+symptom::mụn viêm,mụn viêm,symptom
+symptom::mụn đầu đen,mụn đầu đen,symptom
+symptom::da dầu,da dầu,symptom
+disease::BENH072,Khô da,disease
+text::Khô da,Khô da,text
+symptom::da khô,da khô,symptom
+symptom::nứt nẻ,nứt nẻ,symptom
+symptom::ngứa,ngứa,symptom
+disease::BENH073,Nấm móng,disease
+text::Nấm móng,Nấm móng,text
+symptom::móng dày,móng dày,symptom
+symptom::đổi màu,đổi màu,symptom
+symptom::giòn móng,giòn móng,symptom
+disease::BENH074,Viêm nang lông,disease
+text::Viêm nang lông,Viêm nang lông,text
+symptom::mụn mủ nhỏ,mụn mủ nhỏ,symptom
+symptom::ngứa,ngứa,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH075,Vảy nến,disease
+text::Vảy nến,Vảy nến,text
+symptom::mảng đỏ,mảng đỏ,symptom
+symptom::vảy trắng,vảy trắng,symptom
+symptom::ngứa,ngứa,symptom
+disease::BENH076,Nhiễm khuẩn tiết niệu,disease
+text::Nhiễm khuẩn tiết niệu,Nhiễm khuẩn tiết niệu,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH077,Viêm bàng quang,disease
+text::Viêm bàng quang,Viêm bàng quang,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau hạ vị,đau hạ vị,symptom
+symptom::sốt nhẹ,sốt nhẹ,symptom
+disease::BENH078,Viêm thận - bể thận,disease
+text::Viêm thận - bể thận,Viêm thận - bể thận,text
+symptom::sốt cao,sốt cao,symptom
+symptom::đau hông lưng,đau hông lưng,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH079,Tiểu buốt,disease
+text::Tiểu buốt,Tiểu buốt,text
+symptom::tiểu đau,tiểu đau,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::khó chịu khi đi tiểu,khó chịu khi đi tiểu,symptom
+disease::BENH080,Tiểu rắt,disease
+text::Tiểu rắt,Tiểu rắt,text
+symptom::đi tiểu nhiều lần,đi tiểu nhiều lần,symptom
+symptom::lượng ít,lượng ít,symptom
+symptom::khó chịu,khó chịu,symptom
+disease::BENH081,Tiểu đêm,disease
+text::Tiểu đêm,Tiểu đêm,text
+symptom::đi tiểu nhiều về đêm,đi tiểu nhiều về đêm,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::mệt,mệt,symptom
+disease::BENH082,Sỏi tiết niệu,disease
+text::Sỏi tiết niệu,Sỏi tiết niệu,text
+symptom::đau quặn thận,đau quặn thận,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu máu,tiểu máu,symptom
+disease::BENH083,Suy thận mạn,disease
+text::Suy thận mạn,Suy thận mạn,text
+symptom::mệt,mệt,symptom
+symptom::phù,phù,symptom
+symptom::tiểu ít,tiểu ít,symptom
+symptom::chán ăn,chán ăn,symptom
+disease::BENH084,Đái máu,disease
+text::Đái máu,Đái máu,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH085,Phù,disease
+text::Phù,Phù,text
+symptom::sưng chân,sưng chân,symptom
+symptom::mặt,mặt,symptom
+symptom::tăng cân nhanh,tăng cân nhanh,symptom
+disease::BENH086,Tiểu khó,disease
+text::Tiểu khó,Tiểu khó,text
+symptom::tiểu khó,tiểu khó,symptom
+symptom::dòng tiểu yếu,dòng tiểu yếu,symptom
+symptom::đau rát,đau rát,symptom
+disease::BENH087,Viêm niệu đạo,disease
+text::Viêm niệu đạo,Viêm niệu đạo,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::ngứa niệu đạo,ngứa niệu đạo,symptom
+disease::BENH088,Tăng tiểu đêm,disease
+text::Tăng tiểu đêm,Tăng tiểu đêm,text
+symptom::đi tiểu đêm nhiều lần,đi tiểu đêm nhiều lần,symptom
+symptom::mệt,mệt,symptom
+disease::BENH089,Suy thận cấp,disease
+text::Suy thận cấp,Suy thận cấp,text
+symptom::tiểu ít,tiểu ít,symptom
+symptom::phù,phù,symptom
+symptom::mệt,mệt,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH090,Đau hông lưng,disease
+text::Đau hông lưng,Đau hông lưng,text
+symptom::đau hông lưng,đau hông lưng,symptom
+symptom::sốt,sốt,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH091,Viêm kết mạc,disease
+text::Viêm kết mạc,Viêm kết mạc,text
+symptom::đỏ mắt,đỏ mắt,symptom
+symptom::ngứa mắt,ngứa mắt,symptom
+symptom::chảy ghèn,chảy ghèn,symptom
+disease::BENH092,Viêm tai giữa,disease
+text::Viêm tai giữa,Viêm tai giữa,text
+symptom::đau tai,đau tai,symptom
+symptom::sốt,sốt,symptom
+symptom::ù tai,ù tai,symptom
+symptom::nghe kém,nghe kém,symptom
+disease::BENH093,Viêm lợi,disease
+text::Viêm lợi,Viêm lợi,text
+symptom::đỏ lợi,đỏ lợi,symptom
+symptom::sưng lợi,sưng lợi,symptom
+symptom::chảy máu lợi,chảy máu lợi,symptom
+disease::BENH094,Đau răng,disease
+text::Đau răng,Đau răng,text
+symptom::đau răng,đau răng,symptom
+symptom::ê buốt,ê buốt,symptom
+symptom::sưng nướu,sưng nướu,symptom
+disease::BENH095,Sâu răng,disease
+text::Sâu răng,Sâu răng,text
+symptom::đau răng,đau răng,symptom
+symptom::ê buốt,ê buốt,symptom
+symptom::lỗ sâu răng,lỗ sâu răng,symptom
+disease::BENH096,Áp xe răng,disease
+text::Áp xe răng,Áp xe răng,text
+symptom::đau răng,đau răng,symptom
+symptom::sưng nướu,sưng nướu,symptom
+symptom::mủ,mủ,symptom
+symptom::sốt,sốt,symptom
+disease::BENH097,Ù tai,disease
+text::Ù tai,Ù tai,text
+symptom::ù tai,ù tai,symptom
+symptom::nghe kém,nghe kém,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH098,Khàn tiếng,disease
+text::Khàn tiếng,Khàn tiếng,text
+symptom::nói khó,nói khó,symptom
+symptom::giọng khàn,giọng khàn,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH099,Chảy máu chân răng,disease
+text::Chảy máu chân răng,Chảy máu chân răng,text
+symptom::chảy máu lợi,chảy máu lợi,symptom
+symptom::đau nướu,đau nướu,symptom
+disease::BENH100,Viêm xoang mạn,disease
+text::Viêm xoang mạn,Viêm xoang mạn,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::đau đầu,đau đầu,symptom
+symptom::chảy mũi,chảy mũi,symptom
+disease::BENH101,Viêm mũi họng,disease
+text::Viêm mũi họng,Viêm mũi họng,text
+symptom::sổ mũi,sổ mũi,symptom
+symptom::đau họng,đau họng,symptom
+symptom::ho,ho,symptom
+disease::BENH102,Viêm thanh quản cấp,disease
+text::Viêm thanh quản cấp,Viêm thanh quản cấp,text
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH103,Viêm tai ngoài,disease
+text::Viêm tai ngoài,Viêm tai ngoài,text
+symptom::đau tai,đau tai,symptom
+symptom::ngứa tai,ngứa tai,symptom
+symptom::chảy dịch,chảy dịch,symptom
+disease::BENH104,Viêm nha chu,disease
+text::Viêm nha chu,Viêm nha chu,text
+symptom::chảy máu lợi,chảy máu lợi,symptom
+symptom::hôi miệng,hôi miệng,symptom
+symptom::lung lay răng,lung lay răng,symptom
+disease::BENH105,Khô mắt,disease
+text::Khô mắt,Khô mắt,text
+symptom::cộm mắt,cộm mắt,symptom
+symptom::khô mắt,khô mắt,symptom
+symptom::mỏi mắt,mỏi mắt,symptom
+disease::BENH106,Đau đầu căng thẳng,disease
+text::Đau đầu căng thẳng,Đau đầu căng thẳng,text
+symptom::đau đầu,đau đầu,symptom
+symptom::căng cổ,căng cổ,symptom
+symptom::mệt,mệt,symptom
+symptom::khó tập trung,khó tập trung,symptom
+disease::BENH107,Đau nửa đầu,disease
+text::Đau nửa đầu,Đau nửa đầu,text
+symptom::đau đầu một bên,đau đầu một bên,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::sợ ánh sáng,sợ ánh sáng,symptom
+disease::BENH108,Rối loạn lo âu,disease
+text::Rối loạn lo âu,Rối loạn lo âu,text
+symptom::lo lắng,lo lắng,symptom
+symptom::hồi hộp,hồi hộp,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::căng thẳng,căng thẳng,symptom
+disease::BENH109,Trầm cảm nhẹ,disease
+text::Trầm cảm nhẹ,Trầm cảm nhẹ,text
+symptom::buồn bã,buồn bã,symptom
+symptom::mệt mỏi,mệt mỏi,symptom
+symptom::mất hứng thú,mất hứng thú,symptom
+disease::BENH110,Rối loạn giấc ngủ,disease
+text::Rối loạn giấc ngủ,Rối loạn giấc ngủ,text
+symptom::khó ngủ,khó ngủ,symptom
+symptom::ngủ không sâu,ngủ không sâu,symptom
+symptom::thức giấc sớm,thức giấc sớm,symptom
+disease::BENH111,Căng thẳng,disease
+text::Căng thẳng,Căng thẳng,text
+symptom::mệt,mệt,symptom
+symptom::lo âu,lo âu,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::đau đầu,đau đầu,symptom
+disease::BENH112,Chóng mặt,disease
+text::Chóng mặt,Chóng mặt,text
+symptom::choáng váng,choáng váng,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::mất thăng bằng,mất thăng bằng,symptom
+disease::BENH113,Run tay,disease
+text::Run tay,Run tay,text
+symptom::run tay,run tay,symptom
+symptom::hồi hộp,hồi hộp,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+disease::BENH114,Rối loạn tập trung,disease
+text::Rối loạn tập trung,Rối loạn tập trung,text
+symptom::khó tập trung,khó tập trung,symptom
+symptom::hay quên,hay quên,symptom
+symptom::mệt,mệt,symptom
+disease::BENH115,Mệt mỏi,disease
+text::Mệt mỏi,Mệt mỏi,text
+symptom::mệt,mệt,symptom
+symptom::uể oải,uể oải,symptom
+symptom::giảm tập trung,giảm tập trung,symptom
+disease::BENH116,Mất ngủ mạn,disease
+text::Mất ngủ mạn,Mất ngủ mạn,text
+symptom::khó ngủ kéo dài,khó ngủ kéo dài,symptom
+symptom::thức giấc sớm,thức giấc sớm,symptom
+disease::BENH117,Stress,disease
+text::Stress,Stress,text
+symptom::căng thẳng,căng thẳng,symptom
+symptom::mệt,mệt,symptom
+symptom::lo âu,lo âu,symptom
+disease::BENH118,Rối loạn cảm xúc,disease
+text::Rối loạn cảm xúc,Rối loạn cảm xúc,text
+symptom::buồn bã,buồn bã,symptom
+symptom::lo lắng,lo lắng,symptom
+symptom::mất ngủ,mất ngủ,symptom
+disease::BENH119,Đau đầu migraine,disease
+text::Đau đầu migraine,Đau đầu migraine,text
+symptom::đau đầu một bên,đau đầu một bên,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::sợ ánh sáng,sợ ánh sáng,symptom
+disease::BENH120,Hội chứng mệt mỏi,disease
+text::Hội chứng mệt mỏi,Hội chứng mệt mỏi,text
+symptom::mệt kéo dài,mệt kéo dài,symptom
+symptom::giảm tập trung,giảm tập trung,symptom
+disease::BENH121,Sỏi tiết niệu mạn,disease
+text::Sỏi tiết niệu mạn,Sỏi tiết niệu mạn,text
+symptom::đau quặn thận,đau quặn thận,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu máu,tiểu máu,symptom
+disease::BENH122,Viêm phế quản cấp vừa,disease
+text::Viêm phế quản cấp vừa,Viêm phế quản cấp vừa,text
+symptom::ho đờm,ho đờm,symptom
+symptom::khó thở nhẹ,khó thở nhẹ,symptom
+symptom::sốt,sốt,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH123,Rối loạn lipid máu nhẹ,disease
+text::Rối loạn lipid máu nhẹ,Rối loạn lipid máu nhẹ,text
+symptom::mỡ máu cao,mỡ máu cao,symptom
+symptom::thừa cân,thừa cân,symptom
+symptom::ít triệu chứng,ít triệu chứng,symptom
+disease::BENH124,Rối loạn tiêu hóa mạn,disease
+text::Rối loạn tiêu hóa mạn,Rối loạn tiêu hóa mạn,text
+symptom::đau bụng,đau bụng,symptom
+symptom::đầy hơi,đầy hơi,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH125,Viêm niệu đạo mạn,disease
+text::Viêm niệu đạo mạn,Viêm niệu đạo mạn,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::ngứa niệu đạo,ngứa niệu đạo,symptom
+disease::BENH126,Nhiễm khuẩn tiết niệu không đặc hiệu,disease
+text::Nhiễm khuẩn tiết niệu không đặc hiệu,Nhiễm khuẩn tiết niệu không đặc hiệu,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH127,Viêm mũi xoang cấp,disease
+text::Viêm mũi xoang cấp,Viêm mũi xoang cấp,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::đau đầu,đau đầu,symptom
+symptom::sốt,sốt,symptom
+disease::BENH128,Viêm mũi cấp nhẹ,disease
+text::Viêm mũi cấp nhẹ,Viêm mũi cấp nhẹ,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::hắt hơi,hắt hơi,symptom
+disease::BENH129,Viêm bao hoạt dịch cấp,disease
+text::Viêm bao hoạt dịch cấp,Viêm bao hoạt dịch cấp,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng nóng,sưng nóng,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH130,Trật khớp không đặc hiệu,disease
+text::Trật khớp không đặc hiệu,Trật khớp không đặc hiệu,text
+symptom::đau dữ dội,đau dữ dội,symptom
+symptom::biến dạng khớp,biến dạng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH131,Đau khớp gối chưa rõ nguyên nhân,disease
+text::Đau khớp gối chưa rõ nguyên nhân,Đau khớp gối chưa rõ nguyên nhân,text
+symptom::đau gối,đau gối,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::đi lại khó,đi lại khó,symptom
+disease::BENH132,Khô da cấp,disease
+text::Khô da cấp,Khô da cấp,text
+symptom::da khô,da khô,symptom
+symptom::nứt nẻ,nứt nẻ,symptom
+symptom::ngứa,ngứa,symptom
+disease::BENH133,Rối loạn điện giải không đặc hiệu,disease
+text::Rối loạn điện giải không đặc hiệu,Rối loạn điện giải không đặc hiệu,text
+symptom::mệt,mệt,symptom
+symptom::co cơ,co cơ,symptom
+symptom::khát nước,khát nước,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH134,Tăng tiểu đêm vừa,disease
+text::Tăng tiểu đêm vừa,Tăng tiểu đêm vừa,text
+symptom::đi tiểu đêm nhiều lần,đi tiểu đêm nhiều lần,symptom
+symptom::mệt,mệt,symptom
+disease::BENH135,Hạ đường huyết nhẹ,disease
+text::Hạ đường huyết nhẹ,Hạ đường huyết nhẹ,text
+symptom::run tay,run tay,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+symptom::đói,đói,symptom
+symptom::mệt,mệt,symptom
+disease::BENH136,Gan nhiễm mỡ không đặc hiệu,disease
+text::Gan nhiễm mỡ không đặc hiệu,Gan nhiễm mỡ không đặc hiệu,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH137,Đầy hơi nặng,disease
+text::Đầy hơi nặng,Đầy hơi nặng,text
+symptom::bụng chướng,bụng chướng,symptom
+symptom::ợ hơi,ợ hơi,symptom
+symptom::khó chịu,khó chịu,symptom
+symptom::chán ăn,chán ăn,symptom
+disease::BENH138,Suy thận cấp vừa,disease
+text::Suy thận cấp vừa,Suy thận cấp vừa,text
+symptom::tiểu ít,tiểu ít,symptom
+symptom::phù,phù,symptom
+symptom::mệt,mệt,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH139,Viêm mũi cấp chưa rõ nguyên nhân,disease
+text::Viêm mũi cấp chưa rõ nguyên nhân,Viêm mũi cấp chưa rõ nguyên nhân,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::hắt hơi,hắt hơi,symptom
+disease::BENH140,Suy thận cấp vừa mạn,disease
+text::Suy thận cấp vừa mạn,Suy thận cấp vừa mạn,text
+symptom::tiểu ít,tiểu ít,symptom
+symptom::phù,phù,symptom
+symptom::mệt,mệt,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH141,Ù tai mạn,disease
+text::Ù tai mạn,Ù tai mạn,text
+symptom::ù tai,ù tai,symptom
+symptom::nghe kém,nghe kém,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH142,Nhiễm khuẩn tiết niệu nặng,disease
+text::Nhiễm khuẩn tiết niệu nặng,Nhiễm khuẩn tiết niệu nặng,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH143,Chấn thương phần mềm mạn,disease
+text::Chấn thương phần mềm mạn,Chấn thương phần mềm mạn,text
+symptom::sưng đau,sưng đau,symptom
+symptom::bầm tím,bầm tím,symptom
+symptom::đau khi vận động,đau khi vận động,symptom
+disease::BENH144,Vảy nến mạn,disease
+text::Vảy nến mạn,Vảy nến mạn,text
+symptom::mảng đỏ,mảng đỏ,symptom
+symptom::vảy trắng,vảy trắng,symptom
+symptom::ngứa,ngứa,symptom
+disease::BENH145,Viêm bao hoạt dịch mạn,disease
+text::Viêm bao hoạt dịch mạn,Viêm bao hoạt dịch mạn,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng nóng,sưng nóng,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH146,Khàn tiếng vừa,disease
+text::Khàn tiếng vừa,Khàn tiếng vừa,text
+symptom::nói khó,nói khó,symptom
+symptom::giọng khàn,giọng khàn,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH147,Stress nặng,disease
+text::Stress nặng,Stress nặng,text
+symptom::căng thẳng,căng thẳng,symptom
+symptom::mệt,mệt,symptom
+symptom::lo âu,lo âu,symptom
+disease::BENH148,Tăng đường huyết nặng,disease
+text::Tăng đường huyết nặng,Tăng đường huyết nặng,text
+symptom::khát nước,khát nước,symptom
+symptom::tiểu nhiều,tiểu nhiều,symptom
+symptom::mệt,mệt,symptom
+disease::BENH149,Viêm kết mạc nhẹ,disease
+text::Viêm kết mạc nhẹ,Viêm kết mạc nhẹ,text
+symptom::đỏ mắt,đỏ mắt,symptom
+symptom::ngứa mắt,ngứa mắt,symptom
+symptom::chảy ghèn,chảy ghèn,symptom
+disease::BENH150,Viêm da tiếp xúc mạn,disease
+text::Viêm da tiếp xúc mạn,Viêm da tiếp xúc mạn,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH151,Rối loạn mỡ máu nhẹ,disease
+text::Rối loạn mỡ máu nhẹ,Rối loạn mỡ máu nhẹ,text
+symptom::ít triệu chứng,ít triệu chứng,symptom
+symptom::mỡ máu cao,mỡ máu cao,symptom
+disease::BENH152,Tăng đường huyết chưa rõ nguyên nhân,disease
+text::Tăng đường huyết chưa rõ nguyên nhân,Tăng đường huyết chưa rõ nguyên nhân,text
+symptom::khát nước,khát nước,symptom
+symptom::tiểu nhiều,tiểu nhiều,symptom
+symptom::mệt,mệt,symptom
+disease::BENH153,Chấn thương phần mềm mạn nhẹ,disease
+text::Chấn thương phần mềm mạn nhẹ,Chấn thương phần mềm mạn nhẹ,text
+symptom::sưng đau,sưng đau,symptom
+symptom::bầm tím,bầm tím,symptom
+symptom::đau khi vận động,đau khi vận động,symptom
+disease::BENH154,Đái máu cấp,disease
+text::Đái máu cấp,Đái máu cấp,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH155,Đau lưng trên cấp,disease
+text::Đau lưng trên cấp,Đau lưng trên cấp,text
+symptom::đau lưng,đau lưng,symptom
+symptom::căng cơ,căng cơ,symptom
+symptom::mỏi vai,mỏi vai,symptom
+disease::BENH156,Tiểu đêm không đặc hiệu,disease
+text::Tiểu đêm không đặc hiệu,Tiểu đêm không đặc hiệu,text
+symptom::đi tiểu nhiều về đêm,đi tiểu nhiều về đêm,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::mệt,mệt,symptom
+disease::BENH157,Loãng xương nặng,disease
+text::Loãng xương nặng,Loãng xương nặng,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH158,Loãng xương chưa rõ nguyên nhân,disease
+text::Loãng xương chưa rõ nguyên nhân,Loãng xương chưa rõ nguyên nhân,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH159,Viêm thanh quản cấp chưa rõ nguyên nhân,disease
+text::Viêm thanh quản cấp chưa rõ nguyên nhân,Viêm thanh quản cấp chưa rõ nguyên nhân,text
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH160,Thừa cân vừa,disease
+text::Thừa cân vừa,Thừa cân vừa,text
+symptom::tăng cân,tăng cân,symptom
+symptom::BMI cao,BMI cao,symptom
+symptom::mệt khi vận động,mệt khi vận động,symptom
+disease::BENH161,Béo phì nhẹ,disease
+text::Béo phì nhẹ,Béo phì nhẹ,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH162,Vảy nến mạn vừa,disease
+text::Vảy nến mạn vừa,Vảy nến mạn vừa,text
+symptom::mảng đỏ,mảng đỏ,symptom
+symptom::vảy trắng,vảy trắng,symptom
+symptom::ngứa,ngứa,symptom
+disease::BENH163,Viêm da tiếp xúc mạn không đặc hiệu,disease
+text::Viêm da tiếp xúc mạn không đặc hiệu,Viêm da tiếp xúc mạn không đặc hiệu,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH164,Viêm lợi nhẹ,disease
+text::Viêm lợi nhẹ,Viêm lợi nhẹ,text
+symptom::đỏ lợi,đỏ lợi,symptom
+symptom::sưng lợi,sưng lợi,symptom
+symptom::chảy máu lợi,chảy máu lợi,symptom
+disease::BENH165,Béo phì chưa rõ nguyên nhân,disease
+text::Béo phì chưa rõ nguyên nhân,Béo phì chưa rõ nguyên nhân,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH166,Gan nhiễm mỡ cấp,disease
+text::Gan nhiễm mỡ cấp,Gan nhiễm mỡ cấp,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH167,Nôn ói tái phát,disease
+text::Nôn ói tái phát,Nôn ói tái phát,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH168,Béo phì nhẹ tái phát,disease
+text::Béo phì nhẹ tái phát,Béo phì nhẹ tái phát,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH169,Trầm cảm nhẹ mạn,disease
+text::Trầm cảm nhẹ mạn,Trầm cảm nhẹ mạn,text
+symptom::buồn bã,buồn bã,symptom
+symptom::mệt mỏi,mệt mỏi,symptom
+symptom::mất hứng thú,mất hứng thú,symptom
+disease::BENH170,Chảy máu chân răng không đặc hiệu,disease
+text::Chảy máu chân răng không đặc hiệu,Chảy máu chân răng không đặc hiệu,text
+symptom::chảy máu lợi,chảy máu lợi,symptom
+symptom::đau nướu,đau nướu,symptom
+disease::BENH171,Chấn thương phần mềm mạn nhẹ chưa rõ nguyên nhân,disease
+text::Chấn thương phần mềm mạn nhẹ chưa rõ nguyên nhân,Chấn thương phần mềm mạn nhẹ chưa rõ nguyên nhân,text
+symptom::sưng đau,sưng đau,symptom
+symptom::bầm tím,bầm tím,symptom
+symptom::đau khi vận động,đau khi vận động,symptom
+disease::BENH172,Gan nhiễm mỡ không đặc hiệu vừa,disease
+text::Gan nhiễm mỡ không đặc hiệu vừa,Gan nhiễm mỡ không đặc hiệu vừa,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH173,Nhiễm khuẩn tiết niệu nặng cấp,disease
+text::Nhiễm khuẩn tiết niệu nặng cấp,Nhiễm khuẩn tiết niệu nặng cấp,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH174,Chán ăn vừa,disease
+text::Chán ăn vừa,Chán ăn vừa,text
+symptom::ăn kém,ăn kém,symptom
+symptom::sụt cân,sụt cân,symptom
+symptom::mệt,mệt,symptom
+symptom::đầy bụng,đầy bụng,symptom
+disease::BENH175,Béo phì chưa rõ nguyên nhân nặng,disease
+text::Béo phì chưa rõ nguyên nhân nặng,Béo phì chưa rõ nguyên nhân nặng,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH176,Nôn ói vừa,disease
+text::Nôn ói vừa,Nôn ói vừa,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH177,Chóng mặt tái phát,disease
+text::Chóng mặt tái phát,Chóng mặt tái phát,text
+symptom::choáng váng,choáng váng,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::mất thăng bằng,mất thăng bằng,symptom
+disease::BENH178,Stress cấp,disease
+text::Stress cấp,Stress cấp,text
+symptom::căng thẳng,căng thẳng,symptom
+symptom::mệt,mệt,symptom
+symptom::lo âu,lo âu,symptom
+disease::BENH179,Nấm kẽ tái phát,disease
+text::Nấm kẽ tái phát,Nấm kẽ tái phát,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH180,Trật khớp không đặc hiệu mạn,disease
+text::Trật khớp không đặc hiệu mạn,Trật khớp không đặc hiệu mạn,text
+symptom::đau dữ dội,đau dữ dội,symptom
+symptom::biến dạng khớp,biến dạng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH181,Béo phì nhẹ vừa,disease
+text::Béo phì nhẹ vừa,Béo phì nhẹ vừa,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH182,Viêm lợi nhẹ nhẹ,disease
+text::Viêm lợi nhẹ nhẹ,Viêm lợi nhẹ nhẹ,text
+symptom::đỏ lợi,đỏ lợi,symptom
+symptom::sưng lợi,sưng lợi,symptom
+symptom::chảy máu lợi,chảy máu lợi,symptom
+disease::BENH183,Hạ đường huyết nặng,disease
+text::Hạ đường huyết nặng,Hạ đường huyết nặng,text
+symptom::run tay,run tay,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+symptom::đói,đói,symptom
+symptom::mệt,mệt,symptom
+disease::BENH184,Tăng đường huyết cấp,disease
+text::Tăng đường huyết cấp,Tăng đường huyết cấp,text
+symptom::khát nước,khát nước,symptom
+symptom::tiểu nhiều,tiểu nhiều,symptom
+symptom::mệt,mệt,symptom
+disease::BENH185,Đái máu cấp nặng,disease
+text::Đái máu cấp nặng,Đái máu cấp nặng,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH186,Nhiễm khuẩn tiết niệu không đặc hiệu cấp,disease
+text::Nhiễm khuẩn tiết niệu không đặc hiệu cấp,Nhiễm khuẩn tiết niệu không đặc hiệu cấp,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH187,Nôn ói nặng,disease
+text::Nôn ói nặng,Nôn ói nặng,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH188,Tiểu buốt nhẹ,disease
+text::Tiểu buốt nhẹ,Tiểu buốt nhẹ,text
+symptom::tiểu đau,tiểu đau,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::khó chịu khi đi tiểu,khó chịu khi đi tiểu,symptom
+disease::BENH189,Viêm phổi cộng đồng nhẹ,disease
+text::Viêm phổi cộng đồng nhẹ,Viêm phổi cộng đồng nhẹ,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::khó thở,khó thở,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH190,Khàn tiếng vừa mạn,disease
+text::Khàn tiếng vừa mạn,Khàn tiếng vừa mạn,text
+symptom::nói khó,nói khó,symptom
+symptom::giọng khàn,giọng khàn,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH191,Đau bụng chưa rõ nguyên nhân,disease
+text::Đau bụng chưa rõ nguyên nhân,Đau bụng chưa rõ nguyên nhân,text
+symptom::đau bụng,đau bụng,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::chướng bụng,chướng bụng,symptom
+disease::BENH192,Rối loạn tiêu hóa tái phát,disease
+text::Rối loạn tiêu hóa tái phát,Rối loạn tiêu hóa tái phát,text
+symptom::đau bụng,đau bụng,symptom
+symptom::đầy hơi,đầy hơi,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH193,Đái tháo đường type 2 chưa rõ nguyên nhân,disease
+text::Đái tháo đường type 2 chưa rõ nguyên nhân,Đái tháo đường type 2 chưa rõ nguyên nhân,text
+symptom::khát nước,khát nước,symptom
+symptom::tiểu nhiều,tiểu nhiều,symptom
+symptom::mệt,mệt,symptom
+symptom::sút cân,sút cân,symptom
+disease::BENH194,Ù tai mạn tái phát,disease
+text::Ù tai mạn tái phát,Ù tai mạn tái phát,text
+symptom::ù tai,ù tai,symptom
+symptom::nghe kém,nghe kém,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH195,Nấm kẽ không đặc hiệu,disease
+text::Nấm kẽ không đặc hiệu,Nấm kẽ không đặc hiệu,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH196,Loãng xương nhẹ,disease
+text::Loãng xương nhẹ,Loãng xương nhẹ,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH197,Hạ đường huyết nặng vừa,disease
+text::Hạ đường huyết nặng vừa,Hạ đường huyết nặng vừa,text
+symptom::run tay,run tay,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+symptom::đói,đói,symptom
+symptom::mệt,mệt,symptom
+disease::BENH198,Viêm tai ngoài nặng,disease
+text::Viêm tai ngoài nặng,Viêm tai ngoài nặng,text
+symptom::đau tai,đau tai,symptom
+symptom::ngứa tai,ngứa tai,symptom
+symptom::chảy dịch,chảy dịch,symptom
+disease::BENH199,Run tay chưa rõ nguyên nhân,disease
+text::Run tay chưa rõ nguyên nhân,Run tay chưa rõ nguyên nhân,text
+symptom::run tay,run tay,symptom
+symptom::hồi hộp,hồi hộp,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+disease::BENH200,Tăng huyết áp nhẹ,disease
+text::Tăng huyết áp nhẹ,Tăng huyết áp nhẹ,text
+symptom::đau đầu,đau đầu,symptom
+symptom::hoa mắt,hoa mắt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+symptom::mệt,mệt,symptom
+disease::BENH201,Đau vai mạn,disease
+text::Đau vai mạn,Đau vai mạn,text
+symptom::đau vai,đau vai,symptom
+symptom::hạn chế nâng tay,hạn chế nâng tay,symptom
+symptom::cứng khớp,cứng khớp,symptom
+disease::BENH202,Viêm niệu đạo cấp,disease
+text::Viêm niệu đạo cấp,Viêm niệu đạo cấp,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::ngứa niệu đạo,ngứa niệu đạo,symptom
+disease::BENH203,Rối loạn mỡ máu nhẹ nhẹ,disease
+text::Rối loạn mỡ máu nhẹ nhẹ,Rối loạn mỡ máu nhẹ nhẹ,text
+symptom::ít triệu chứng,ít triệu chứng,symptom
+symptom::mỡ máu cao,mỡ máu cao,symptom
+disease::BENH204,Viêm họng cấp mạn,disease
+text::Viêm họng cấp mạn,Viêm họng cấp mạn,text
+symptom::đau họng,đau họng,symptom
+symptom::sốt nhẹ,sốt nhẹ,symptom
+symptom::nuốt đau,nuốt đau,symptom
+symptom::ho khan,ho khan,symptom
+disease::BENH205,Viêm lợi nhẹ nhẹ cấp,disease
+text::Viêm lợi nhẹ nhẹ cấp,Viêm lợi nhẹ nhẹ cấp,text
+symptom::đỏ lợi,đỏ lợi,symptom
+symptom::sưng lợi,sưng lợi,symptom
+symptom::chảy máu lợi,chảy máu lợi,symptom
+disease::BENH206,Đau lưng trên mạn,disease
+text::Đau lưng trên mạn,Đau lưng trên mạn,text
+symptom::đau lưng,đau lưng,symptom
+symptom::căng cơ,căng cơ,symptom
+symptom::mỏi vai,mỏi vai,symptom
+disease::BENH207,COVID-19 nặng,disease
+text::COVID-19 nặng,COVID-19 nặng,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+symptom::mất mùi vị,mất mùi vị,symptom
+disease::BENH208,Tiêu chảy cấp nhẹ,disease
+text::Tiêu chảy cấp nhẹ,Tiêu chảy cấp nhẹ,text
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::đau bụng,đau bụng,symptom
+symptom::mất nước,mất nước,symptom
+symptom::mệt,mệt,symptom
+disease::BENH209,Khô da chưa rõ nguyên nhân,disease
+text::Khô da chưa rõ nguyên nhân,Khô da chưa rõ nguyên nhân,text
+symptom::da khô,da khô,symptom
+symptom::nứt nẻ,nứt nẻ,symptom
+symptom::ngứa,ngứa,symptom
+disease::BENH210,Loãng xương tái phát,disease
+text::Loãng xương tái phát,Loãng xương tái phát,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH211,Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân,disease
+text::Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân,Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH212,Chàm da chưa rõ nguyên nhân,disease
+text::Chàm da chưa rõ nguyên nhân,Chàm da chưa rõ nguyên nhân,text
+symptom::ngứa,ngứa,symptom
+symptom::da khô,da khô,symptom
+symptom::mẩn đỏ,mẩn đỏ,symptom
+symptom::bong vảy,bong vảy,symptom
+disease::BENH213,COVID-19 nặng không đặc hiệu,disease
+text::COVID-19 nặng không đặc hiệu,COVID-19 nặng không đặc hiệu,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+symptom::mất mùi vị,mất mùi vị,symptom
+disease::BENH214,Thoái hóa khớp gối mạn,disease
+text::Thoái hóa khớp gối mạn,Thoái hóa khớp gối mạn,text
+symptom::đau gối,đau gối,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::khó đi lại,khó đi lại,symptom
+disease::BENH215,Đầy hơi không đặc hiệu,disease
+text::Đầy hơi không đặc hiệu,Đầy hơi không đặc hiệu,text
+symptom::bụng chướng,bụng chướng,symptom
+symptom::ợ hơi,ợ hơi,symptom
+symptom::khó chịu,khó chịu,symptom
+symptom::chán ăn,chán ăn,symptom
+disease::BENH216,Viêm kết mạc không đặc hiệu,disease
+text::Viêm kết mạc không đặc hiệu,Viêm kết mạc không đặc hiệu,text
+symptom::đỏ mắt,đỏ mắt,symptom
+symptom::ngứa mắt,ngứa mắt,symptom
+symptom::chảy ghèn,chảy ghèn,symptom
+disease::BENH217,Đau đầu căng thẳng chưa rõ nguyên nhân,disease
+text::Đau đầu căng thẳng chưa rõ nguyên nhân,Đau đầu căng thẳng chưa rõ nguyên nhân,text
+symptom::đau đầu,đau đầu,symptom
+symptom::căng cổ,căng cổ,symptom
+symptom::mệt,mệt,symptom
+symptom::khó tập trung,khó tập trung,symptom
+disease::BENH218,Nôn ói nặng cấp,disease
+text::Nôn ói nặng cấp,Nôn ói nặng cấp,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH219,Nhiễm khuẩn tiết niệu nặng cấp mạn,disease
+text::Nhiễm khuẩn tiết niệu nặng cấp mạn,Nhiễm khuẩn tiết niệu nặng cấp mạn,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH220,Viêm dạ dày không đặc hiệu,disease
+text::Viêm dạ dày không đặc hiệu,Viêm dạ dày không đặc hiệu,text
+symptom::đau thượng vị,đau thượng vị,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::ợ nóng,ợ nóng,symptom
+symptom::đầy bụng,đầy bụng,symptom
+disease::BENH221,Nôn ói nặng nặng,disease
+text::Nôn ói nặng nặng,Nôn ói nặng nặng,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH222,Viêm lợi nhẹ nhẹ cấp mạn,disease
+text::Viêm lợi nhẹ nhẹ cấp mạn,Viêm lợi nhẹ nhẹ cấp mạn,text
+symptom::đỏ lợi,đỏ lợi,symptom
+symptom::sưng lợi,sưng lợi,symptom
+symptom::chảy máu lợi,chảy máu lợi,symptom
+disease::BENH223,Nhiễm trùng da nhẹ,disease
+text::Nhiễm trùng da nhẹ,Nhiễm trùng da nhẹ,text
+symptom::đỏ da,đỏ da,symptom
+symptom::sưng,sưng,symptom
+symptom::đau,đau,symptom
+symptom::mủ,mủ,symptom
+symptom::sốt,sốt,symptom
+disease::BENH224,Thoái hóa khớp gối chưa rõ nguyên nhân,disease
+text::Thoái hóa khớp gối chưa rõ nguyên nhân,Thoái hóa khớp gối chưa rõ nguyên nhân,text
+symptom::đau gối,đau gối,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::khó đi lại,khó đi lại,symptom
+disease::BENH225,Béo phì không đặc hiệu,disease
+text::Béo phì không đặc hiệu,Béo phì không đặc hiệu,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH226,Đau lưng dưới vừa,disease
+text::Đau lưng dưới vừa,Đau lưng dưới vừa,text
+symptom::đau thắt lưng,đau thắt lưng,symptom
+symptom::đau lan mông,đau lan mông,symptom
+symptom::cứng lưng,cứng lưng,symptom
+disease::BENH227,Đau đầu migraine nhẹ,disease
+text::Đau đầu migraine nhẹ,Đau đầu migraine nhẹ,text
+symptom::đau đầu một bên,đau đầu một bên,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::sợ ánh sáng,sợ ánh sáng,symptom
+disease::BENH228,Thoái hóa khớp gối chưa rõ nguyên nhân mạn,disease
+text::Thoái hóa khớp gối chưa rõ nguyên nhân mạn,Thoái hóa khớp gối chưa rõ nguyên nhân mạn,text
+symptom::đau gối,đau gối,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::khó đi lại,khó đi lại,symptom
+disease::BENH229,Rối loạn tập trung mạn,disease
+text::Rối loạn tập trung mạn,Rối loạn tập trung mạn,text
+symptom::khó tập trung,khó tập trung,symptom
+symptom::hay quên,hay quên,symptom
+symptom::mệt,mệt,symptom
+disease::BENH230,Viêm thanh khí phế quản cấp,disease
+text::Viêm thanh khí phế quản cấp,Viêm thanh khí phế quản cấp,text
+symptom::ho ông ổng,ho ông ổng,symptom
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::khó thở,khó thở,symptom
+disease::BENH231,Gan nhiễm mỡ nhẹ,disease
+text::Gan nhiễm mỡ nhẹ,Gan nhiễm mỡ nhẹ,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH232,Rối loạn tuyến giáp không đặc hiệu,disease
+text::Rối loạn tuyến giáp không đặc hiệu,Rối loạn tuyến giáp không đặc hiệu,text
+symptom::mệt,mệt,symptom
+symptom::sụt cân,sụt cân,symptom
+symptom::hồi hộp,hồi hộp,symptom
+symptom::run tay,run tay,symptom
+disease::BENH233,Viêm niệu đạo mạn chưa rõ nguyên nhân,disease
+text::Viêm niệu đạo mạn chưa rõ nguyên nhân,Viêm niệu đạo mạn chưa rõ nguyên nhân,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::ngứa niệu đạo,ngứa niệu đạo,symptom
+disease::BENH234,Loãng xương không đặc hiệu,disease
+text::Loãng xương không đặc hiệu,Loãng xương không đặc hiệu,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH235,Rối loạn tuyến giáp không đặc hiệu cấp,disease
+text::Rối loạn tuyến giáp không đặc hiệu cấp,Rối loạn tuyến giáp không đặc hiệu cấp,text
+symptom::mệt,mệt,symptom
+symptom::sụt cân,sụt cân,symptom
+symptom::hồi hộp,hồi hộp,symptom
+symptom::run tay,run tay,symptom
+disease::BENH236,Cảm cúm không đặc hiệu,disease
+text::Cảm cúm không đặc hiệu,Cảm cúm không đặc hiệu,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::sổ mũi,sổ mũi,symptom
+symptom::đau đầu,đau đầu,symptom
+disease::BENH237,Nấm kẽ chưa rõ nguyên nhân,disease
+text::Nấm kẽ chưa rõ nguyên nhân,Nấm kẽ chưa rõ nguyên nhân,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH238,Viêm nang lông không đặc hiệu,disease
+text::Viêm nang lông không đặc hiệu,Viêm nang lông không đặc hiệu,text
+symptom::mụn mủ nhỏ,mụn mủ nhỏ,symptom
+symptom::ngứa,ngứa,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH239,Nấm kẽ tái phát chưa rõ nguyên nhân,disease
+text::Nấm kẽ tái phát chưa rõ nguyên nhân,Nấm kẽ tái phát chưa rõ nguyên nhân,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH240,Nhiễm khuẩn tiết niệu nhẹ,disease
+text::Nhiễm khuẩn tiết niệu nhẹ,Nhiễm khuẩn tiết niệu nhẹ,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH241,Viêm phổi cộng đồng cấp,disease
+text::Viêm phổi cộng đồng cấp,Viêm phổi cộng đồng cấp,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::khó thở,khó thở,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH242,Rối loạn tiêu hóa tái phát nặng,disease
+text::Rối loạn tiêu hóa tái phát nặng,Rối loạn tiêu hóa tái phát nặng,text
+symptom::đau bụng,đau bụng,symptom
+symptom::đầy hơi,đầy hơi,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH243,Viêm da tiếp xúc mạn chưa rõ nguyên nhân,disease
+text::Viêm da tiếp xúc mạn chưa rõ nguyên nhân,Viêm da tiếp xúc mạn chưa rõ nguyên nhân,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH244,Viêm bao hoạt dịch cấp tái phát,disease
+text::Viêm bao hoạt dịch cấp tái phát,Viêm bao hoạt dịch cấp tái phát,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng nóng,sưng nóng,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH245,Viêm phổi cộng đồng mạn,disease
+text::Viêm phổi cộng đồng mạn,Viêm phổi cộng đồng mạn,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::khó thở,khó thở,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH246,Nôn ói nặng cấp tái phát,disease
+text::Nôn ói nặng cấp tái phát,Nôn ói nặng cấp tái phát,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH247,Nhiễm khuẩn tiết niệu nặng cấp nhẹ,disease
+text::Nhiễm khuẩn tiết niệu nặng cấp nhẹ,Nhiễm khuẩn tiết niệu nặng cấp nhẹ,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH248,Viêm nha chu mạn,disease
+text::Viêm nha chu mạn,Viêm nha chu mạn,text
+symptom::chảy máu lợi,chảy máu lợi,symptom
+symptom::hôi miệng,hôi miệng,symptom
+symptom::lung lay răng,lung lay răng,symptom
+disease::BENH249,Rối loạn tiêu hóa tái phát nặng nhẹ,disease
+text::Rối loạn tiêu hóa tái phát nặng nhẹ,Rối loạn tiêu hóa tái phát nặng nhẹ,text
+symptom::đau bụng,đau bụng,symptom
+symptom::đầy hơi,đầy hơi,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH250,Viêm kết mạc nhẹ cấp,disease
+text::Viêm kết mạc nhẹ cấp,Viêm kết mạc nhẹ cấp,text
+symptom::đỏ mắt,đỏ mắt,symptom
+symptom::ngứa mắt,ngứa mắt,symptom
+symptom::chảy ghèn,chảy ghèn,symptom
+disease::BENH251,Viêm thanh quản cấp chưa rõ nguyên nhân mạn,disease
+text::Viêm thanh quản cấp chưa rõ nguyên nhân mạn,Viêm thanh quản cấp chưa rõ nguyên nhân mạn,text
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH252,Rối loạn lo âu nặng,disease
+text::Rối loạn lo âu nặng,Rối loạn lo âu nặng,text
+symptom::lo lắng,lo lắng,symptom
+symptom::hồi hộp,hồi hộp,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::căng thẳng,căng thẳng,symptom
+disease::BENH253,Nhiễm khuẩn tiết niệu nhẹ vừa,disease
+text::Nhiễm khuẩn tiết niệu nhẹ vừa,Nhiễm khuẩn tiết niệu nhẹ vừa,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH254,Đau cổ nặng,disease
+text::Đau cổ nặng,Đau cổ nặng,text
+symptom::đau cổ,đau cổ,symptom
+symptom::cứng cổ,cứng cổ,symptom
+symptom::hạn chế xoay cổ,hạn chế xoay cổ,symptom
+disease::BENH255,Viêm da dị ứng vừa,disease
+text::Viêm da dị ứng vừa,Viêm da dị ứng vừa,text
+symptom::ngứa da,ngứa da,symptom
+symptom::mẩn đỏ,mẩn đỏ,symptom
+symptom::khô da,khô da,symptom
+symptom::rát da,rát da,symptom
+disease::BENH256,Viêm thanh quản cấp tái phát,disease
+text::Viêm thanh quản cấp tái phát,Viêm thanh quản cấp tái phát,text
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH257,Đái máu cấp chưa rõ nguyên nhân,disease
+text::Đái máu cấp chưa rõ nguyên nhân,Đái máu cấp chưa rõ nguyên nhân,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH258,Vảy nến mạn vừa mạn,disease
+text::Vảy nến mạn vừa mạn,Vảy nến mạn vừa mạn,text
+symptom::mảng đỏ,mảng đỏ,symptom
+symptom::vảy trắng,vảy trắng,symptom
+symptom::ngứa,ngứa,symptom
+disease::BENH259,Viêm mũi xoang chưa rõ nguyên nhân,disease
+text::Viêm mũi xoang chưa rõ nguyên nhân,Viêm mũi xoang chưa rõ nguyên nhân,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::đau đầu,đau đầu,symptom
+symptom::sốt,sốt,symptom
+disease::BENH260,Đau vai gáy mạn,disease
+text::Đau vai gáy mạn,Đau vai gáy mạn,text
+symptom::đau cổ vai gáy,đau cổ vai gáy,symptom
+symptom::cứng cổ,cứng cổ,symptom
+symptom::tê tay,tê tay,symptom
+disease::BENH261,Rối loạn giấc ngủ vừa,disease
+text::Rối loạn giấc ngủ vừa,Rối loạn giấc ngủ vừa,text
+symptom::khó ngủ,khó ngủ,symptom
+symptom::ngủ không sâu,ngủ không sâu,symptom
+symptom::thức giấc sớm,thức giấc sớm,symptom
+disease::BENH262,Nấm kẽ nặng,disease
+text::Nấm kẽ nặng,Nấm kẽ nặng,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH263,Khàn tiếng vừa mạn vừa,disease
+text::Khàn tiếng vừa mạn vừa,Khàn tiếng vừa mạn vừa,text
+symptom::nói khó,nói khó,symptom
+symptom::giọng khàn,giọng khàn,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH264,Tiểu đêm chưa rõ nguyên nhân,disease
+text::Tiểu đêm chưa rõ nguyên nhân,Tiểu đêm chưa rõ nguyên nhân,text
+symptom::đi tiểu nhiều về đêm,đi tiểu nhiều về đêm,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::mệt,mệt,symptom
+disease::BENH265,Đau lưng trên cấp cấp,disease
+text::Đau lưng trên cấp cấp,Đau lưng trên cấp cấp,text
+symptom::đau lưng,đau lưng,symptom
+symptom::căng cơ,căng cơ,symptom
+symptom::mỏi vai,mỏi vai,symptom
+disease::BENH266,Đái máu cấp mạn,disease
+text::Đái máu cấp mạn,Đái máu cấp mạn,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH267,Viêm da tiếp xúc vừa,disease
+text::Viêm da tiếp xúc vừa,Viêm da tiếp xúc vừa,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH268,Tiểu rắt vừa,disease
+text::Tiểu rắt vừa,Tiểu rắt vừa,text
+symptom::đi tiểu nhiều lần,đi tiểu nhiều lần,symptom
+symptom::lượng ít,lượng ít,symptom
+symptom::khó chịu,khó chịu,symptom
+disease::BENH269,Viêm bao hoạt dịch mạn nhẹ,disease
+text::Viêm bao hoạt dịch mạn nhẹ,Viêm bao hoạt dịch mạn nhẹ,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng nóng,sưng nóng,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH270,Nôn ói vừa nhẹ,disease
+text::Nôn ói vừa nhẹ,Nôn ói vừa nhẹ,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH271,Gan nhiễm mỡ không đặc hiệu chưa rõ nguyên nhân,disease
+text::Gan nhiễm mỡ không đặc hiệu chưa rõ nguyên nhân,Gan nhiễm mỡ không đặc hiệu chưa rõ nguyên nhân,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH272,Viêm bao hoạt dịch cấp cấp,disease
+text::Viêm bao hoạt dịch cấp cấp,Viêm bao hoạt dịch cấp cấp,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng nóng,sưng nóng,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH273,Viêm khớp không đặc hiệu,disease
+text::Viêm khớp không đặc hiệu,Viêm khớp không đặc hiệu,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng khớp,sưng khớp,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH274,Viêm họng cấp nặng,disease
+text::Viêm họng cấp nặng,Viêm họng cấp nặng,text
+symptom::đau họng,đau họng,symptom
+symptom::sốt nhẹ,sốt nhẹ,symptom
+symptom::nuốt đau,nuốt đau,symptom
+symptom::ho khan,ho khan,symptom
+disease::BENH275,Nấm da vừa,disease
+text::Nấm da vừa,Nấm da vừa,text
+symptom::ngứa,ngứa,symptom
+symptom::bong vảy,bong vảy,symptom
+symptom::tổn thương vòng,tổn thương vòng,symptom
+disease::BENH276,Suy thận mạn chưa rõ nguyên nhân,disease
+text::Suy thận mạn chưa rõ nguyên nhân,Suy thận mạn chưa rõ nguyên nhân,text
+symptom::mệt,mệt,symptom
+symptom::phù,phù,symptom
+symptom::tiểu ít,tiểu ít,symptom
+symptom::chán ăn,chán ăn,symptom
+disease::BENH277,Nhiễm khuẩn tiết niệu nặng cấp mạn cấp,disease
+text::Nhiễm khuẩn tiết niệu nặng cấp mạn cấp,Nhiễm khuẩn tiết niệu nặng cấp mạn cấp,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH278,Viêm bàng quang cấp,disease
+text::Viêm bàng quang cấp,Viêm bàng quang cấp,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau hạ vị,đau hạ vị,symptom
+symptom::sốt nhẹ,sốt nhẹ,symptom
+disease::BENH279,Khàn tiếng vừa mạn tái phát,disease
+text::Khàn tiếng vừa mạn tái phát,Khàn tiếng vừa mạn tái phát,text
+symptom::nói khó,nói khó,symptom
+symptom::giọng khàn,giọng khàn,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH280,Nôn ói nặng nặng tái phát,disease
+text::Nôn ói nặng nặng tái phát,Nôn ói nặng nặng tái phát,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH281,Đau bụng vừa,disease
+text::Đau bụng vừa,Đau bụng vừa,text
+symptom::đau bụng,đau bụng,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::chướng bụng,chướng bụng,symptom
+disease::BENH282,Tăng đường huyết cấp nhẹ,disease
+text::Tăng đường huyết cấp nhẹ,Tăng đường huyết cấp nhẹ,text
+symptom::khát nước,khát nước,symptom
+symptom::tiểu nhiều,tiểu nhiều,symptom
+symptom::mệt,mệt,symptom
+disease::BENH283,Viêm mũi cấp nhẹ mạn,disease
+text::Viêm mũi cấp nhẹ mạn,Viêm mũi cấp nhẹ mạn,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::hắt hơi,hắt hơi,symptom
+disease::BENH284,Viêm lợi nhẹ nhẹ không đặc hiệu,disease
+text::Viêm lợi nhẹ nhẹ không đặc hiệu,Viêm lợi nhẹ nhẹ không đặc hiệu,text
+symptom::đỏ lợi,đỏ lợi,symptom
+symptom::sưng lợi,sưng lợi,symptom
+symptom::chảy máu lợi,chảy máu lợi,symptom
+disease::BENH285,Tiểu rắt nhẹ,disease
+text::Tiểu rắt nhẹ,Tiểu rắt nhẹ,text
+symptom::đi tiểu nhiều lần,đi tiểu nhiều lần,symptom
+symptom::lượng ít,lượng ít,symptom
+symptom::khó chịu,khó chịu,symptom
+disease::BENH286,Đái máu tái phát,disease
+text::Đái máu tái phát,Đái máu tái phát,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH287,Chàm da chưa rõ nguyên nhân cấp,disease
+text::Chàm da chưa rõ nguyên nhân cấp,Chàm da chưa rõ nguyên nhân cấp,text
+symptom::ngứa,ngứa,symptom
+symptom::da khô,da khô,symptom
+symptom::mẩn đỏ,mẩn đỏ,symptom
+symptom::bong vảy,bong vảy,symptom
+disease::BENH288,Viêm tai giữa nặng,disease
+text::Viêm tai giữa nặng,Viêm tai giữa nặng,text
+symptom::đau tai,đau tai,symptom
+symptom::sốt,sốt,symptom
+symptom::ù tai,ù tai,symptom
+symptom::nghe kém,nghe kém,symptom
+disease::BENH289,Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ,disease
+text::Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ,Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH290,Đầy hơi nặng tái phát,disease
+text::Đầy hơi nặng tái phát,Đầy hơi nặng tái phát,text
+symptom::bụng chướng,bụng chướng,symptom
+symptom::ợ hơi,ợ hơi,symptom
+symptom::khó chịu,khó chịu,symptom
+symptom::chán ăn,chán ăn,symptom
+disease::BENH291,Bong gân không đặc hiệu,disease
+text::Bong gân không đặc hiệu,Bong gân không đặc hiệu,text
+symptom::sưng đau,sưng đau,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+symptom::bầm tím,bầm tím,symptom
+disease::BENH292,Táo bón chưa rõ nguyên nhân,disease
+text::Táo bón chưa rõ nguyên nhân,Táo bón chưa rõ nguyên nhân,text
+symptom::đi ngoài khó,đi ngoài khó,symptom
+symptom::đau bụng,đau bụng,symptom
+symptom::bụng chướng,bụng chướng,symptom
+disease::BENH293,Rối loạn tập trung nhẹ,disease
+text::Rối loạn tập trung nhẹ,Rối loạn tập trung nhẹ,text
+symptom::khó tập trung,khó tập trung,symptom
+symptom::hay quên,hay quên,symptom
+symptom::mệt,mệt,symptom
+disease::BENH294,Cảm cúm không đặc hiệu nặng,disease
+text::Cảm cúm không đặc hiệu nặng,Cảm cúm không đặc hiệu nặng,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::sổ mũi,sổ mũi,symptom
+symptom::đau đầu,đau đầu,symptom
+disease::BENH295,Loãng xương nặng nhẹ,disease
+text::Loãng xương nặng nhẹ,Loãng xương nặng nhẹ,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH296,Mệt mỏi cấp,disease
+text::Mệt mỏi cấp,Mệt mỏi cấp,text
+symptom::mệt,mệt,symptom
+symptom::uể oải,uể oải,symptom
+symptom::giảm tập trung,giảm tập trung,symptom
+disease::BENH297,Trầm cảm nhẹ mạn vừa,disease
+text::Trầm cảm nhẹ mạn vừa,Trầm cảm nhẹ mạn vừa,text
+symptom::buồn bã,buồn bã,symptom
+symptom::mệt mỏi,mệt mỏi,symptom
+symptom::mất hứng thú,mất hứng thú,symptom
+disease::BENH298,Béo phì vừa,disease
+text::Béo phì vừa,Béo phì vừa,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH299,Trật khớp không đặc hiệu mạn không đặc hiệu,disease
+text::Trật khớp không đặc hiệu mạn không đặc hiệu,Trật khớp không đặc hiệu mạn không đặc hiệu,text
+symptom::đau dữ dội,đau dữ dội,symptom
+symptom::biến dạng khớp,biến dạng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH300,Nấm da vừa nặng,disease
+text::Nấm da vừa nặng,Nấm da vừa nặng,text
+symptom::ngứa,ngứa,symptom
+symptom::bong vảy,bong vảy,symptom
+symptom::tổn thương vòng,tổn thương vòng,symptom
+disease::BENH301,Tăng tiểu đêm vừa tái phát,disease
+text::Tăng tiểu đêm vừa tái phát,Tăng tiểu đêm vừa tái phát,text
+symptom::đi tiểu đêm nhiều lần,đi tiểu đêm nhiều lần,symptom
+symptom::mệt,mệt,symptom
+disease::BENH302,Béo phì vừa vừa,disease
+text::Béo phì vừa vừa,Béo phì vừa vừa,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH303,Táo bón mạn,disease
+text::Táo bón mạn,Táo bón mạn,text
+symptom::đi ngoài khó,đi ngoài khó,symptom
+symptom::đau bụng,đau bụng,symptom
+symptom::bụng chướng,bụng chướng,symptom
+disease::BENH304,Nhiễm trùng da nhẹ nặng,disease
+text::Nhiễm trùng da nhẹ nặng,Nhiễm trùng da nhẹ nặng,text
+symptom::đỏ da,đỏ da,symptom
+symptom::sưng,sưng,symptom
+symptom::đau,đau,symptom
+symptom::mủ,mủ,symptom
+symptom::sốt,sốt,symptom
+disease::BENH305,Béo phì nhẹ không đặc hiệu,disease
+text::Béo phì nhẹ không đặc hiệu,Béo phì nhẹ không đặc hiệu,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH306,Nấm kẽ nặng mạn,disease
+text::Nấm kẽ nặng mạn,Nấm kẽ nặng mạn,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH307,Viêm tai ngoài nặng nhẹ,disease
+text::Viêm tai ngoài nặng nhẹ,Viêm tai ngoài nặng nhẹ,text
+symptom::đau tai,đau tai,symptom
+symptom::ngứa tai,ngứa tai,symptom
+symptom::chảy dịch,chảy dịch,symptom
+disease::BENH308,Đau khớp gối chưa rõ nguyên nhân cấp,disease
+text::Đau khớp gối chưa rõ nguyên nhân cấp,Đau khớp gối chưa rõ nguyên nhân cấp,text
+symptom::đau gối,đau gối,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::đi lại khó,đi lại khó,symptom
+disease::BENH309,Thoái hóa khớp gối chưa rõ nguyên nhân cấp,disease
+text::Thoái hóa khớp gối chưa rõ nguyên nhân cấp,Thoái hóa khớp gối chưa rõ nguyên nhân cấp,text
+symptom::đau gối,đau gối,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::khó đi lại,khó đi lại,symptom
+disease::BENH310,Viêm da tiếp xúc vừa nhẹ,disease
+text::Viêm da tiếp xúc vừa nhẹ,Viêm da tiếp xúc vừa nhẹ,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH311,Nôn ói nặng không đặc hiệu,disease
+text::Nôn ói nặng không đặc hiệu,Nôn ói nặng không đặc hiệu,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH312,Béo phì nặng,disease
+text::Béo phì nặng,Béo phì nặng,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH313,Béo phì nhẹ mạn,disease
+text::Béo phì nhẹ mạn,Béo phì nhẹ mạn,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH314,Đái máu cấp vừa,disease
+text::Đái máu cấp vừa,Đái máu cấp vừa,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH315,Loãng xương tái phát nặng,disease
+text::Loãng xương tái phát nặng,Loãng xương tái phát nặng,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH316,COVID-19 nặng vừa,disease
+text::COVID-19 nặng vừa,COVID-19 nặng vừa,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+symptom::mất mùi vị,mất mùi vị,symptom
+disease::BENH317,Viêm lợi nhẹ nhẹ không đặc hiệu tái phát,disease
+text::Viêm lợi nhẹ nhẹ không đặc hiệu tái phát,Viêm lợi nhẹ nhẹ không đặc hiệu tái phát,text
+symptom::đỏ lợi,đỏ lợi,symptom
+symptom::sưng lợi,sưng lợi,symptom
+symptom::chảy máu lợi,chảy máu lợi,symptom
+disease::BENH318,Nấm kẽ không đặc hiệu tái phát,disease
+text::Nấm kẽ không đặc hiệu tái phát,Nấm kẽ không đặc hiệu tái phát,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH319,COVID-19 nặng vừa vừa,disease
+text::COVID-19 nặng vừa vừa,COVID-19 nặng vừa vừa,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+symptom::mất mùi vị,mất mùi vị,symptom
+disease::BENH320,Tiêu chảy cấp nhẹ cấp,disease
+text::Tiêu chảy cấp nhẹ cấp,Tiêu chảy cấp nhẹ cấp,text
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::đau bụng,đau bụng,symptom
+symptom::mất nước,mất nước,symptom
+symptom::mệt,mệt,symptom
+disease::BENH321,Tiểu đêm không đặc hiệu vừa,disease
+text::Tiểu đêm không đặc hiệu vừa,Tiểu đêm không đặc hiệu vừa,text
+symptom::đi tiểu nhiều về đêm,đi tiểu nhiều về đêm,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::mệt,mệt,symptom
+disease::BENH322,Rối loạn lo âu không đặc hiệu,disease
+text::Rối loạn lo âu không đặc hiệu,Rối loạn lo âu không đặc hiệu,text
+symptom::lo lắng,lo lắng,symptom
+symptom::hồi hộp,hồi hộp,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::căng thẳng,căng thẳng,symptom
+disease::BENH323,Trầm cảm nhẹ mạn vừa nặng,disease
+text::Trầm cảm nhẹ mạn vừa nặng,Trầm cảm nhẹ mạn vừa nặng,text
+symptom::buồn bã,buồn bã,symptom
+symptom::mệt mỏi,mệt mỏi,symptom
+symptom::mất hứng thú,mất hứng thú,symptom
+disease::BENH324,Nấm kẽ tái phát chưa rõ nguyên nhân chưa rõ nguyên nhân,disease
+text::Nấm kẽ tái phát chưa rõ nguyên nhân chưa rõ nguyên nhân,Nấm kẽ tái phát chưa rõ nguyên nhân chưa rõ nguyên nhân,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH325,Đau đầu migraine nhẹ nhẹ,disease
+text::Đau đầu migraine nhẹ nhẹ,Đau đầu migraine nhẹ nhẹ,text
+symptom::đau đầu một bên,đau đầu một bên,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::sợ ánh sáng,sợ ánh sáng,symptom
+disease::BENH326,Nấm kẽ nặng chưa rõ nguyên nhân,disease
+text::Nấm kẽ nặng chưa rõ nguyên nhân,Nấm kẽ nặng chưa rõ nguyên nhân,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH327,Khàn tiếng vừa nặng,disease
+text::Khàn tiếng vừa nặng,Khàn tiếng vừa nặng,text
+symptom::nói khó,nói khó,symptom
+symptom::giọng khàn,giọng khàn,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH328,Viêm khớp nhẹ,disease
+text::Viêm khớp nhẹ,Viêm khớp nhẹ,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng khớp,sưng khớp,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH329,Viêm thanh quản cấp chưa rõ nguyên nhân nhẹ,disease
+text::Viêm thanh quản cấp chưa rõ nguyên nhân nhẹ,Viêm thanh quản cấp chưa rõ nguyên nhân nhẹ,text
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH330,Nhiễm khuẩn tiết niệu không đặc hiệu chưa rõ nguyên nhân,disease
+text::Nhiễm khuẩn tiết niệu không đặc hiệu chưa rõ nguyên nhân,Nhiễm khuẩn tiết niệu không đặc hiệu chưa rõ nguyên nhân,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH331,Béo phì nhẹ mạn mạn,disease
+text::Béo phì nhẹ mạn mạn,Béo phì nhẹ mạn mạn,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH332,Loãng xương không đặc hiệu không đặc hiệu,disease
+text::Loãng xương không đặc hiệu không đặc hiệu,Loãng xương không đặc hiệu không đặc hiệu,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH333,Trầm cảm nhẹ mạn vừa nặng nhẹ,disease
+text::Trầm cảm nhẹ mạn vừa nặng nhẹ,Trầm cảm nhẹ mạn vừa nặng nhẹ,text
+symptom::buồn bã,buồn bã,symptom
+symptom::mệt mỏi,mệt mỏi,symptom
+symptom::mất hứng thú,mất hứng thú,symptom
+disease::BENH334,Hạ đường huyết nặng vừa chưa rõ nguyên nhân,disease
+text::Hạ đường huyết nặng vừa chưa rõ nguyên nhân,Hạ đường huyết nặng vừa chưa rõ nguyên nhân,text
+symptom::run tay,run tay,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+symptom::đói,đói,symptom
+symptom::mệt,mệt,symptom
+disease::BENH335,Viêm lợi nhẹ nhẹ cấp nhẹ,disease
+text::Viêm lợi nhẹ nhẹ cấp nhẹ,Viêm lợi nhẹ nhẹ cấp nhẹ,text
+symptom::đỏ lợi,đỏ lợi,symptom
+symptom::sưng lợi,sưng lợi,symptom
+symptom::chảy máu lợi,chảy máu lợi,symptom
+disease::BENH336,Nhiễm khuẩn tiết niệu cấp,disease
+text::Nhiễm khuẩn tiết niệu cấp,Nhiễm khuẩn tiết niệu cấp,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH337,Run tay tái phát,disease
+text::Run tay tái phát,Run tay tái phát,text
+symptom::run tay,run tay,symptom
+symptom::hồi hộp,hồi hộp,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+disease::BENH338,Đái máu cấp mạn chưa rõ nguyên nhân,disease
+text::Đái máu cấp mạn chưa rõ nguyên nhân,Đái máu cấp mạn chưa rõ nguyên nhân,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH339,Viêm đại tràng nhẹ,disease
+text::Viêm đại tràng nhẹ,Viêm đại tràng nhẹ,text
+symptom::đau bụng,đau bụng,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::đầy hơi,đầy hơi,symptom
+symptom::mót rặn,mót rặn,symptom
+disease::BENH340,Viêm da tiếp xúc chưa rõ nguyên nhân,disease
+text::Viêm da tiếp xúc chưa rõ nguyên nhân,Viêm da tiếp xúc chưa rõ nguyên nhân,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH341,Viêm bao hoạt dịch cấp cấp nặng,disease
+text::Viêm bao hoạt dịch cấp cấp nặng,Viêm bao hoạt dịch cấp cấp nặng,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng nóng,sưng nóng,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH342,Đau đầu migraine nhẹ không đặc hiệu,disease
+text::Đau đầu migraine nhẹ không đặc hiệu,Đau đầu migraine nhẹ không đặc hiệu,text
+symptom::đau đầu một bên,đau đầu một bên,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::sợ ánh sáng,sợ ánh sáng,symptom
+disease::BENH343,Đau bụng vừa chưa rõ nguyên nhân,disease
+text::Đau bụng vừa chưa rõ nguyên nhân,Đau bụng vừa chưa rõ nguyên nhân,text
+symptom::đau bụng,đau bụng,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::chướng bụng,chướng bụng,symptom
+disease::BENH344,Sỏi tiết niệu chưa rõ nguyên nhân,disease
+text::Sỏi tiết niệu chưa rõ nguyên nhân,Sỏi tiết niệu chưa rõ nguyên nhân,text
+symptom::đau quặn thận,đau quặn thận,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu máu,tiểu máu,symptom
+disease::BENH345,Gan nhiễm mỡ nhẹ vừa,disease
+text::Gan nhiễm mỡ nhẹ vừa,Gan nhiễm mỡ nhẹ vừa,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH346,Viêm mũi xoang cấp vừa,disease
+text::Viêm mũi xoang cấp vừa,Viêm mũi xoang cấp vừa,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::đau đầu,đau đầu,symptom
+symptom::sốt,sốt,symptom
+disease::BENH347,Viêm da tiếp xúc vừa chưa rõ nguyên nhân,disease
+text::Viêm da tiếp xúc vừa chưa rõ nguyên nhân,Viêm da tiếp xúc vừa chưa rõ nguyên nhân,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH348,Tiểu đêm không đặc hiệu vừa nhẹ,disease
+text::Tiểu đêm không đặc hiệu vừa nhẹ,Tiểu đêm không đặc hiệu vừa nhẹ,text
+symptom::đi tiểu nhiều về đêm,đi tiểu nhiều về đêm,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::mệt,mệt,symptom
+disease::BENH349,Ù tai mạn chưa rõ nguyên nhân,disease
+text::Ù tai mạn chưa rõ nguyên nhân,Ù tai mạn chưa rõ nguyên nhân,text
+symptom::ù tai,ù tai,symptom
+symptom::nghe kém,nghe kém,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH350,Hạ đường huyết vừa,disease
+text::Hạ đường huyết vừa,Hạ đường huyết vừa,text
+symptom::run tay,run tay,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+symptom::đói,đói,symptom
+symptom::mệt,mệt,symptom
+disease::BENH351,Sỏi tiết niệu mạn vừa,disease
+text::Sỏi tiết niệu mạn vừa,Sỏi tiết niệu mạn vừa,text
+symptom::đau quặn thận,đau quặn thận,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu máu,tiểu máu,symptom
+disease::BENH352,Gan nhiễm mỡ không đặc hiệu vừa nặng,disease
+text::Gan nhiễm mỡ không đặc hiệu vừa nặng,Gan nhiễm mỡ không đặc hiệu vừa nặng,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH353,Nhiễm khuẩn tiết niệu nặng cấp mạn cấp mạn,disease
+text::Nhiễm khuẩn tiết niệu nặng cấp mạn cấp mạn,Nhiễm khuẩn tiết niệu nặng cấp mạn cấp mạn,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH354,Mụn trứng cá tái phát,disease
+text::Mụn trứng cá tái phát,Mụn trứng cá tái phát,text
+symptom::mụn viêm,mụn viêm,symptom
+symptom::mụn đầu đen,mụn đầu đen,symptom
+symptom::da dầu,da dầu,symptom
+disease::BENH355,Đau đầu migraine không đặc hiệu,disease
+text::Đau đầu migraine không đặc hiệu,Đau đầu migraine không đặc hiệu,text
+symptom::đau đầu một bên,đau đầu một bên,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::sợ ánh sáng,sợ ánh sáng,symptom
+disease::BENH356,Đái tháo đường type 2 không đặc hiệu,disease
+text::Đái tháo đường type 2 không đặc hiệu,Đái tháo đường type 2 không đặc hiệu,text
+symptom::khát nước,khát nước,symptom
+symptom::tiểu nhiều,tiểu nhiều,symptom
+symptom::mệt,mệt,symptom
+symptom::sút cân,sút cân,symptom
+disease::BENH357,Khô da chưa rõ nguyên nhân nặng,disease
+text::Khô da chưa rõ nguyên nhân nặng,Khô da chưa rõ nguyên nhân nặng,text
+symptom::da khô,da khô,symptom
+symptom::nứt nẻ,nứt nẻ,symptom
+symptom::ngứa,ngứa,symptom
+disease::BENH358,Viêm bàng quang cấp chưa rõ nguyên nhân,disease
+text::Viêm bàng quang cấp chưa rõ nguyên nhân,Viêm bàng quang cấp chưa rõ nguyên nhân,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau hạ vị,đau hạ vị,symptom
+symptom::sốt nhẹ,sốt nhẹ,symptom
+disease::BENH359,COVID-19 nặng không đặc hiệu cấp,disease
+text::COVID-19 nặng không đặc hiệu cấp,COVID-19 nặng không đặc hiệu cấp,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+symptom::mất mùi vị,mất mùi vị,symptom
+disease::BENH360,Đau đầu căng thẳng không đặc hiệu,disease
+text::Đau đầu căng thẳng không đặc hiệu,Đau đầu căng thẳng không đặc hiệu,text
+symptom::đau đầu,đau đầu,symptom
+symptom::căng cổ,căng cổ,symptom
+symptom::mệt,mệt,symptom
+symptom::khó tập trung,khó tập trung,symptom
+disease::BENH361,Tăng huyết áp nhẹ cấp,disease
+text::Tăng huyết áp nhẹ cấp,Tăng huyết áp nhẹ cấp,text
+symptom::đau đầu,đau đầu,symptom
+symptom::hoa mắt,hoa mắt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+symptom::mệt,mệt,symptom
+disease::BENH362,Loãng xương nặng nhẹ không đặc hiệu,disease
+text::Loãng xương nặng nhẹ không đặc hiệu,Loãng xương nặng nhẹ không đặc hiệu,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH363,Viêm phổi cộng đồng mạn cấp,disease
+text::Viêm phổi cộng đồng mạn cấp,Viêm phổi cộng đồng mạn cấp,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::khó thở,khó thở,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH364,Béo phì nhẹ vừa vừa,disease
+text::Béo phì nhẹ vừa vừa,Béo phì nhẹ vừa vừa,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH365,Tăng huyết áp nhẹ không đặc hiệu,disease
+text::Tăng huyết áp nhẹ không đặc hiệu,Tăng huyết áp nhẹ không đặc hiệu,text
+symptom::đau đầu,đau đầu,symptom
+symptom::hoa mắt,hoa mắt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+symptom::mệt,mệt,symptom
+disease::BENH366,Suy thận mạn chưa rõ nguyên nhân nhẹ,disease
+text::Suy thận mạn chưa rõ nguyên nhân nhẹ,Suy thận mạn chưa rõ nguyên nhân nhẹ,text
+symptom::mệt,mệt,symptom
+symptom::phù,phù,symptom
+symptom::tiểu ít,tiểu ít,symptom
+symptom::chán ăn,chán ăn,symptom
+disease::BENH367,Viêm kết mạc nhẹ cấp nhẹ,disease
+text::Viêm kết mạc nhẹ cấp nhẹ,Viêm kết mạc nhẹ cấp nhẹ,text
+symptom::đỏ mắt,đỏ mắt,symptom
+symptom::ngứa mắt,ngứa mắt,symptom
+symptom::chảy ghèn,chảy ghèn,symptom
+disease::BENH368,Suy thận cấp vừa mạn không đặc hiệu,disease
+text::Suy thận cấp vừa mạn không đặc hiệu,Suy thận cấp vừa mạn không đặc hiệu,text
+symptom::tiểu ít,tiểu ít,symptom
+symptom::phù,phù,symptom
+symptom::mệt,mệt,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH369,Rối loạn tiêu hóa tái phát nặng nhẹ cấp,disease
+text::Rối loạn tiêu hóa tái phát nặng nhẹ cấp,Rối loạn tiêu hóa tái phát nặng nhẹ cấp,text
+symptom::đau bụng,đau bụng,symptom
+symptom::đầy hơi,đầy hơi,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH370,Tăng huyết áp nhẹ nặng,disease
+text::Tăng huyết áp nhẹ nặng,Tăng huyết áp nhẹ nặng,text
+symptom::đau đầu,đau đầu,symptom
+symptom::hoa mắt,hoa mắt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+symptom::mệt,mệt,symptom
+disease::BENH371,Đau bụng vừa chưa rõ nguyên nhân không đặc hiệu,disease
+text::Đau bụng vừa chưa rõ nguyên nhân không đặc hiệu,Đau bụng vừa chưa rõ nguyên nhân không đặc hiệu,text
+symptom::đau bụng,đau bụng,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::chướng bụng,chướng bụng,symptom
+disease::BENH372,Đau bụng vừa chưa rõ nguyên nhân không đặc hiệu tái phát,disease
+text::Đau bụng vừa chưa rõ nguyên nhân không đặc hiệu tái phát,Đau bụng vừa chưa rõ nguyên nhân không đặc hiệu tái phát,text
+symptom::đau bụng,đau bụng,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::chướng bụng,chướng bụng,symptom
+disease::BENH373,Nhiễm khuẩn tiết niệu nhẹ tái phát,disease
+text::Nhiễm khuẩn tiết niệu nhẹ tái phát,Nhiễm khuẩn tiết niệu nhẹ tái phát,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH374,COVID-19 nặng vừa vừa cấp,disease
+text::COVID-19 nặng vừa vừa cấp,COVID-19 nặng vừa vừa cấp,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+symptom::mất mùi vị,mất mùi vị,symptom
+disease::BENH375,Viêm niệu đạo cấp cấp,disease
+text::Viêm niệu đạo cấp cấp,Viêm niệu đạo cấp cấp,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::ngứa niệu đạo,ngứa niệu đạo,symptom
+disease::BENH376,Rôm sảy chưa rõ nguyên nhân,disease
+text::Rôm sảy chưa rõ nguyên nhân,Rôm sảy chưa rõ nguyên nhân,text
+symptom::ngứa,ngứa,symptom
+symptom::nổi mẩn nhỏ,nổi mẩn nhỏ,symptom
+symptom::rát da,rát da,symptom
+disease::BENH377,Đau răng cấp,disease
+text::Đau răng cấp,Đau răng cấp,text
+symptom::đau răng,đau răng,symptom
+symptom::ê buốt,ê buốt,symptom
+symptom::sưng nướu,sưng nướu,symptom
+disease::BENH378,Tăng tiểu đêm vừa không đặc hiệu,disease
+text::Tăng tiểu đêm vừa không đặc hiệu,Tăng tiểu đêm vừa không đặc hiệu,text
+symptom::đi tiểu đêm nhiều lần,đi tiểu đêm nhiều lần,symptom
+symptom::mệt,mệt,symptom
+disease::BENH379,Béo phì nhẹ tái phát nhẹ,disease
+text::Béo phì nhẹ tái phát nhẹ,Béo phì nhẹ tái phát nhẹ,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH380,Viêm niệu đạo mạn chưa rõ nguyên nhân nặng,disease
+text::Viêm niệu đạo mạn chưa rõ nguyên nhân nặng,Viêm niệu đạo mạn chưa rõ nguyên nhân nặng,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::ngứa niệu đạo,ngứa niệu đạo,symptom
+disease::BENH381,Nhiễm khuẩn tiết niệu nặng cấp không đặc hiệu,disease
+text::Nhiễm khuẩn tiết niệu nặng cấp không đặc hiệu,Nhiễm khuẩn tiết niệu nặng cấp không đặc hiệu,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH382,Chấn thương phần mềm mạn không đặc hiệu,disease
+text::Chấn thương phần mềm mạn không đặc hiệu,Chấn thương phần mềm mạn không đặc hiệu,text
+symptom::sưng đau,sưng đau,symptom
+symptom::bầm tím,bầm tím,symptom
+symptom::đau khi vận động,đau khi vận động,symptom
+disease::BENH383,Viêm phổi cộng đồng cấp cấp,disease
+text::Viêm phổi cộng đồng cấp cấp,Viêm phổi cộng đồng cấp cấp,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::khó thở,khó thở,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH384,Nhiễm khuẩn tiết niệu nặng cấp mạn cấp cấp,disease
+text::Nhiễm khuẩn tiết niệu nặng cấp mạn cấp cấp,Nhiễm khuẩn tiết niệu nặng cấp mạn cấp cấp,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH385,Trật khớp không đặc hiệu mạn nhẹ,disease
+text::Trật khớp không đặc hiệu mạn nhẹ,Trật khớp không đặc hiệu mạn nhẹ,text
+symptom::đau dữ dội,đau dữ dội,symptom
+symptom::biến dạng khớp,biến dạng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH386,Trầm cảm nhẹ mạn vừa nặng nhẹ mạn,disease
+text::Trầm cảm nhẹ mạn vừa nặng nhẹ mạn,Trầm cảm nhẹ mạn vừa nặng nhẹ mạn,text
+symptom::buồn bã,buồn bã,symptom
+symptom::mệt mỏi,mệt mỏi,symptom
+symptom::mất hứng thú,mất hứng thú,symptom
+disease::BENH387,Hạ đường huyết nặng vừa chưa rõ nguyên nhân cấp,disease
+text::Hạ đường huyết nặng vừa chưa rõ nguyên nhân cấp,Hạ đường huyết nặng vừa chưa rõ nguyên nhân cấp,text
+symptom::run tay,run tay,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+symptom::đói,đói,symptom
+symptom::mệt,mệt,symptom
+disease::BENH388,Hạ đường huyết nặng vừa chưa rõ nguyên nhân cấp cấp,disease
+text::Hạ đường huyết nặng vừa chưa rõ nguyên nhân cấp cấp,Hạ đường huyết nặng vừa chưa rõ nguyên nhân cấp cấp,text
+symptom::run tay,run tay,symptom
+symptom::vã mồ hôi,vã mồ hôi,symptom
+symptom::đói,đói,symptom
+symptom::mệt,mệt,symptom
+disease::BENH389,Viêm mũi xoang cấp nhẹ,disease
+text::Viêm mũi xoang cấp nhẹ,Viêm mũi xoang cấp nhẹ,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::đau đầu,đau đầu,symptom
+symptom::sốt,sốt,symptom
+disease::BENH390,Viêm thanh quản tái phát,disease
+text::Viêm thanh quản tái phát,Viêm thanh quản tái phát,text
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH391,Rối loạn lipid máu nhẹ tái phát,disease
+text::Rối loạn lipid máu nhẹ tái phát,Rối loạn lipid máu nhẹ tái phát,text
+symptom::mỡ máu cao,mỡ máu cao,symptom
+symptom::thừa cân,thừa cân,symptom
+symptom::ít triệu chứng,ít triệu chứng,symptom
+disease::BENH392,Viêm da tiếp xúc mạn chưa rõ nguyên nhân mạn,disease
+text::Viêm da tiếp xúc mạn chưa rõ nguyên nhân mạn,Viêm da tiếp xúc mạn chưa rõ nguyên nhân mạn,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH393,Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ nhẹ,disease
+text::Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ nhẹ,Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ nhẹ,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH394,Nấm kẽ tái phát chưa rõ nguyên nhân vừa,disease
+text::Nấm kẽ tái phát chưa rõ nguyên nhân vừa,Nấm kẽ tái phát chưa rõ nguyên nhân vừa,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH395,Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ nhẹ nặng,disease
+text::Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ nhẹ nặng,Nhiễm khuẩn tiết niệu không đặc hiệu cấp chưa rõ nguyên nhân nhẹ nhẹ nặng,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH396,Tiểu khó mạn,disease
+text::Tiểu khó mạn,Tiểu khó mạn,text
+symptom::tiểu khó,tiểu khó,symptom
+symptom::dòng tiểu yếu,dòng tiểu yếu,symptom
+symptom::đau rát,đau rát,symptom
+disease::BENH397,Đái máu vừa,disease
+text::Đái máu vừa,Đái máu vừa,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH398,Bong gân cấp,disease
+text::Bong gân cấp,Bong gân cấp,text
+symptom::sưng đau,sưng đau,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+symptom::bầm tím,bầm tím,symptom
+disease::BENH399,Thừa cân vừa không đặc hiệu,disease
+text::Thừa cân vừa không đặc hiệu,Thừa cân vừa không đặc hiệu,text
+symptom::tăng cân,tăng cân,symptom
+symptom::BMI cao,BMI cao,symptom
+symptom::mệt khi vận động,mệt khi vận động,symptom
+disease::BENH400,Viêm họng cấp mạn nhẹ,disease
+text::Viêm họng cấp mạn nhẹ,Viêm họng cấp mạn nhẹ,text
+symptom::đau họng,đau họng,symptom
+symptom::sốt nhẹ,sốt nhẹ,symptom
+symptom::nuốt đau,nuốt đau,symptom
+symptom::ho khan,ho khan,symptom
+disease::BENH401,Rối loạn chuyển hóa nhẹ,disease
+text::Rối loạn chuyển hóa nhẹ,Rối loạn chuyển hóa nhẹ,text
+symptom::mệt,mệt,symptom
+symptom::tăng cân,tăng cân,symptom
+symptom::đường huyết bất thường,đường huyết bất thường,symptom
+disease::BENH402,Đau cổ vừa,disease
+text::Đau cổ vừa,Đau cổ vừa,text
+symptom::đau cổ,đau cổ,symptom
+symptom::cứng cổ,cứng cổ,symptom
+symptom::hạn chế xoay cổ,hạn chế xoay cổ,symptom
+disease::BENH403,Sỏi tiết niệu mạn vừa mạn,disease
+text::Sỏi tiết niệu mạn vừa mạn,Sỏi tiết niệu mạn vừa mạn,text
+symptom::đau quặn thận,đau quặn thận,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu máu,tiểu máu,symptom
+disease::BENH404,Đầy hơi nặng tái phát cấp,disease
+text::Đầy hơi nặng tái phát cấp,Đầy hơi nặng tái phát cấp,text
+symptom::bụng chướng,bụng chướng,symptom
+symptom::ợ hơi,ợ hơi,symptom
+symptom::khó chịu,khó chịu,symptom
+symptom::chán ăn,chán ăn,symptom
+disease::BENH405,Stress cấp không đặc hiệu,disease
+text::Stress cấp không đặc hiệu,Stress cấp không đặc hiệu,text
+symptom::căng thẳng,căng thẳng,symptom
+symptom::mệt,mệt,symptom
+symptom::lo âu,lo âu,symptom
+disease::BENH406,Viêm đại tràng nhẹ nặng,disease
+text::Viêm đại tràng nhẹ nặng,Viêm đại tràng nhẹ nặng,text
+symptom::đau bụng,đau bụng,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::đầy hơi,đầy hơi,symptom
+symptom::mót rặn,mót rặn,symptom
+disease::BENH407,Hen phế quản không đặc hiệu,disease
+text::Hen phế quản không đặc hiệu,Hen phế quản không đặc hiệu,text
+symptom::khò khè,khò khè,symptom
+symptom::khó thở,khó thở,symptom
+symptom::tức ngực,tức ngực,symptom
+symptom::ho,ho,symptom
+disease::BENH408,Viêm thanh quản cấp chưa rõ nguyên nhân mạn mạn,disease
+text::Viêm thanh quản cấp chưa rõ nguyên nhân mạn mạn,Viêm thanh quản cấp chưa rõ nguyên nhân mạn mạn,text
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH409,Viêm lợi nhẹ nhẹ cấp mạn nặng,disease
+text::Viêm lợi nhẹ nhẹ cấp mạn nặng,Viêm lợi nhẹ nhẹ cấp mạn nặng,text
+symptom::đỏ lợi,đỏ lợi,symptom
+symptom::sưng lợi,sưng lợi,symptom
+symptom::chảy máu lợi,chảy máu lợi,symptom
+disease::BENH410,Nấm kẽ nặng chưa rõ nguyên nhân chưa rõ nguyên nhân,disease
+text::Nấm kẽ nặng chưa rõ nguyên nhân chưa rõ nguyên nhân,Nấm kẽ nặng chưa rõ nguyên nhân chưa rõ nguyên nhân,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH411,Viêm phổi cộng đồng mạn cấp tái phát,disease
+text::Viêm phổi cộng đồng mạn cấp tái phát,Viêm phổi cộng đồng mạn cấp tái phát,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::khó thở,khó thở,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH412,Nhiễm trùng da nhẹ tái phát,disease
+text::Nhiễm trùng da nhẹ tái phát,Nhiễm trùng da nhẹ tái phát,text
+symptom::đỏ da,đỏ da,symptom
+symptom::sưng,sưng,symptom
+symptom::đau,đau,symptom
+symptom::mủ,mủ,symptom
+symptom::sốt,sốt,symptom
+disease::BENH413,Rôm sảy chưa rõ nguyên nhân vừa,disease
+text::Rôm sảy chưa rõ nguyên nhân vừa,Rôm sảy chưa rõ nguyên nhân vừa,text
+symptom::ngứa,ngứa,symptom
+symptom::nổi mẩn nhỏ,nổi mẩn nhỏ,symptom
+symptom::rát da,rát da,symptom
+disease::BENH414,COVID-19 nặng vừa chưa rõ nguyên nhân,disease
+text::COVID-19 nặng vừa chưa rõ nguyên nhân,COVID-19 nặng vừa chưa rõ nguyên nhân,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+symptom::mất mùi vị,mất mùi vị,symptom
+disease::BENH415,Nấm kẽ tái phát chưa rõ nguyên nhân không đặc hiệu,disease
+text::Nấm kẽ tái phát chưa rõ nguyên nhân không đặc hiệu,Nấm kẽ tái phát chưa rõ nguyên nhân không đặc hiệu,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH416,Viêm niệu đạo cấp cấp vừa,disease
+text::Viêm niệu đạo cấp cấp vừa,Viêm niệu đạo cấp cấp vừa,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::ngứa niệu đạo,ngứa niệu đạo,symptom
+disease::BENH417,Gan nhiễm mỡ cấp nhẹ,disease
+text::Gan nhiễm mỡ cấp nhẹ,Gan nhiễm mỡ cấp nhẹ,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH418,Rối loạn chuyển hóa acid uric vừa,disease
+text::Rối loạn chuyển hóa acid uric vừa,Rối loạn chuyển hóa acid uric vừa,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng khớp,sưng khớp,symptom
+symptom::mệt,mệt,symptom
+disease::BENH419,Gan nhiễm mỡ nhẹ nhẹ,disease
+text::Gan nhiễm mỡ nhẹ nhẹ,Gan nhiễm mỡ nhẹ nhẹ,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH420,Trật khớp không đặc hiệu mạn nhẹ chưa rõ nguyên nhân,disease
+text::Trật khớp không đặc hiệu mạn nhẹ chưa rõ nguyên nhân,Trật khớp không đặc hiệu mạn nhẹ chưa rõ nguyên nhân,text
+symptom::đau dữ dội,đau dữ dội,symptom
+symptom::biến dạng khớp,biến dạng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH421,Táo bón chưa rõ nguyên nhân không đặc hiệu,disease
+text::Táo bón chưa rõ nguyên nhân không đặc hiệu,Táo bón chưa rõ nguyên nhân không đặc hiệu,text
+symptom::đi ngoài khó,đi ngoài khó,symptom
+symptom::đau bụng,đau bụng,symptom
+symptom::bụng chướng,bụng chướng,symptom
+disease::BENH422,Nhiễm khuẩn tiết niệu nặng cấp cấp,disease
+text::Nhiễm khuẩn tiết niệu nặng cấp cấp,Nhiễm khuẩn tiết niệu nặng cấp cấp,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH423,Đau cổ nặng nặng,disease
+text::Đau cổ nặng nặng,Đau cổ nặng nặng,text
+symptom::đau cổ,đau cổ,symptom
+symptom::cứng cổ,cứng cổ,symptom
+symptom::hạn chế xoay cổ,hạn chế xoay cổ,symptom
+disease::BENH424,Đau răng chưa rõ nguyên nhân,disease
+text::Đau răng chưa rõ nguyên nhân,Đau răng chưa rõ nguyên nhân,text
+symptom::đau răng,đau răng,symptom
+symptom::ê buốt,ê buốt,symptom
+symptom::sưng nướu,sưng nướu,symptom
+disease::BENH425,Trầm cảm nhẹ nặng,disease
+text::Trầm cảm nhẹ nặng,Trầm cảm nhẹ nặng,text
+symptom::buồn bã,buồn bã,symptom
+symptom::mệt mỏi,mệt mỏi,symptom
+symptom::mất hứng thú,mất hứng thú,symptom
+disease::BENH426,Viêm lợi nhẹ nhẹ cấp mạn nặng vừa,disease
+text::Viêm lợi nhẹ nhẹ cấp mạn nặng vừa,Viêm lợi nhẹ nhẹ cấp mạn nặng vừa,text
+symptom::đỏ lợi,đỏ lợi,symptom
+symptom::sưng lợi,sưng lợi,symptom
+symptom::chảy máu lợi,chảy máu lợi,symptom
+disease::BENH427,Béo phì chưa rõ nguyên nhân nặng vừa,disease
+text::Béo phì chưa rõ nguyên nhân nặng vừa,Béo phì chưa rõ nguyên nhân nặng vừa,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH428,Nấm kẽ nặng mạn vừa,disease
+text::Nấm kẽ nặng mạn vừa,Nấm kẽ nặng mạn vừa,text
+symptom::ngứa,ngứa,symptom
+symptom::hăm kẽ,hăm kẽ,symptom
+symptom::đỏ da,đỏ da,symptom
+disease::BENH429,Tiểu rắt nhẹ cấp,disease
+text::Tiểu rắt nhẹ cấp,Tiểu rắt nhẹ cấp,text
+symptom::đi tiểu nhiều lần,đi tiểu nhiều lần,symptom
+symptom::lượng ít,lượng ít,symptom
+symptom::khó chịu,khó chịu,symptom
+disease::BENH430,Đau lưng trên cấp cấp nhẹ,disease
+text::Đau lưng trên cấp cấp nhẹ,Đau lưng trên cấp cấp nhẹ,text
+symptom::đau lưng,đau lưng,symptom
+symptom::căng cơ,căng cơ,symptom
+symptom::mỏi vai,mỏi vai,symptom
+disease::BENH431,Rối loạn tiêu hóa tái phát nặng nhẹ cấp không đặc hiệu,disease
+text::Rối loạn tiêu hóa tái phát nặng nhẹ cấp không đặc hiệu,Rối loạn tiêu hóa tái phát nặng nhẹ cấp không đặc hiệu,text
+symptom::đau bụng,đau bụng,symptom
+symptom::đầy hơi,đầy hơi,symptom
+symptom::tiêu chảy,tiêu chảy,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH432,Viêm thanh quản cấp chưa rõ nguyên nhân mạn nhẹ,disease
+text::Viêm thanh quản cấp chưa rõ nguyên nhân mạn nhẹ,Viêm thanh quản cấp chưa rõ nguyên nhân mạn nhẹ,text
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH433,Mụn trứng cá tái phát chưa rõ nguyên nhân,disease
+text::Mụn trứng cá tái phát chưa rõ nguyên nhân,Mụn trứng cá tái phát chưa rõ nguyên nhân,text
+symptom::mụn viêm,mụn viêm,symptom
+symptom::mụn đầu đen,mụn đầu đen,symptom
+symptom::da dầu,da dầu,symptom
+disease::BENH434,Béo phì nhẹ mạn mạn chưa rõ nguyên nhân,disease
+text::Béo phì nhẹ mạn mạn chưa rõ nguyên nhân,Béo phì nhẹ mạn mạn chưa rõ nguyên nhân,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH435,Viêm thanh khí phế quản cấp cấp,disease
+text::Viêm thanh khí phế quản cấp cấp,Viêm thanh khí phế quản cấp cấp,text
+symptom::ho ông ổng,ho ông ổng,symptom
+symptom::khàn tiếng,khàn tiếng,symptom
+symptom::khó thở,khó thở,symptom
+disease::BENH436,Viêm khớp vừa,disease
+text::Viêm khớp vừa,Viêm khớp vừa,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng khớp,sưng khớp,symptom
+symptom::cứng khớp,cứng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH437,Rối loạn tập trung không đặc hiệu,disease
+text::Rối loạn tập trung không đặc hiệu,Rối loạn tập trung không đặc hiệu,text
+symptom::khó tập trung,khó tập trung,symptom
+symptom::hay quên,hay quên,symptom
+symptom::mệt,mệt,symptom
+disease::BENH438,Đau đầu migraine không đặc hiệu nhẹ,disease
+text::Đau đầu migraine không đặc hiệu nhẹ,Đau đầu migraine không đặc hiệu nhẹ,text
+symptom::đau đầu một bên,đau đầu một bên,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::sợ ánh sáng,sợ ánh sáng,symptom
+disease::BENH439,Loãng xương nặng nặng,disease
+text::Loãng xương nặng nặng,Loãng xương nặng nặng,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH440,Viêm da tiếp xúc mạn chưa rõ nguyên nhân nặng,disease
+text::Viêm da tiếp xúc mạn chưa rõ nguyên nhân nặng,Viêm da tiếp xúc mạn chưa rõ nguyên nhân nặng,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH441,Nôn ói nặng cấp nặng,disease
+text::Nôn ói nặng cấp nặng,Nôn ói nặng cấp nặng,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH442,Béo phì nhẹ vừa chưa rõ nguyên nhân,disease
+text::Béo phì nhẹ vừa chưa rõ nguyên nhân,Béo phì nhẹ vừa chưa rõ nguyên nhân,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH443,Viêm mũi cấp chưa rõ nguyên nhân vừa,disease
+text::Viêm mũi cấp chưa rõ nguyên nhân vừa,Viêm mũi cấp chưa rõ nguyên nhân vừa,text
+symptom::nghẹt mũi,nghẹt mũi,symptom
+symptom::chảy mũi,chảy mũi,symptom
+symptom::hắt hơi,hắt hơi,symptom
+disease::BENH444,Viêm bao hoạt dịch cấp nhẹ,disease
+text::Viêm bao hoạt dịch cấp nhẹ,Viêm bao hoạt dịch cấp nhẹ,text
+symptom::đau khớp,đau khớp,symptom
+symptom::sưng nóng,sưng nóng,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH445,Viêm da dị ứng nhẹ,disease
+text::Viêm da dị ứng nhẹ,Viêm da dị ứng nhẹ,text
+symptom::ngứa da,ngứa da,symptom
+symptom::mẩn đỏ,mẩn đỏ,symptom
+symptom::khô da,khô da,symptom
+symptom::rát da,rát da,symptom
+disease::BENH446,Nhiễm khuẩn tiết niệu nặng cấp không đặc hiệu tái phát,disease
+text::Nhiễm khuẩn tiết niệu nặng cấp không đặc hiệu tái phát,Nhiễm khuẩn tiết niệu nặng cấp không đặc hiệu tái phát,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH447,Chảy máu chân răng nhẹ,disease
+text::Chảy máu chân răng nhẹ,Chảy máu chân răng nhẹ,text
+symptom::chảy máu lợi,chảy máu lợi,symptom
+symptom::đau nướu,đau nướu,symptom
+disease::BENH448,Béo phì nhẹ tái phát nhẹ chưa rõ nguyên nhân,disease
+text::Béo phì nhẹ tái phát nhẹ chưa rõ nguyên nhân,Béo phì nhẹ tái phát nhẹ chưa rõ nguyên nhân,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH449,Nhiễm khuẩn tiết niệu nặng vừa,disease
+text::Nhiễm khuẩn tiết niệu nặng vừa,Nhiễm khuẩn tiết niệu nặng vừa,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH450,Đau vai gáy nhẹ,disease
+text::Đau vai gáy nhẹ,Đau vai gáy nhẹ,text
+symptom::đau cổ vai gáy,đau cổ vai gáy,symptom
+symptom::cứng cổ,cứng cổ,symptom
+symptom::tê tay,tê tay,symptom
+disease::BENH451,Tăng đường huyết chưa rõ nguyên nhân nhẹ,disease
+text::Tăng đường huyết chưa rõ nguyên nhân nhẹ,Tăng đường huyết chưa rõ nguyên nhân nhẹ,text
+symptom::khát nước,khát nước,symptom
+symptom::tiểu nhiều,tiểu nhiều,symptom
+symptom::mệt,mệt,symptom
+disease::BENH452,Đái máu cấp nặng tái phát,disease
+text::Đái máu cấp nặng tái phát,Đái máu cấp nặng tái phát,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH453,Ù tai mạn cấp,disease
+text::Ù tai mạn cấp,Ù tai mạn cấp,text
+symptom::ù tai,ù tai,symptom
+symptom::nghe kém,nghe kém,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH454,Viêm loét dạ dày tá tràng vừa,disease
+text::Viêm loét dạ dày tá tràng vừa,Viêm loét dạ dày tá tràng vừa,text
+symptom::đau thượng vị,đau thượng vị,symptom
+symptom::ợ nóng,ợ nóng,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH455,Viêm bàng quang cấp chưa rõ nguyên nhân tái phát,disease
+text::Viêm bàng quang cấp chưa rõ nguyên nhân tái phát,Viêm bàng quang cấp chưa rõ nguyên nhân tái phát,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau hạ vị,đau hạ vị,symptom
+symptom::sốt nhẹ,sốt nhẹ,symptom
+disease::BENH456,Khàn tiếng vừa nặng chưa rõ nguyên nhân,disease
+text::Khàn tiếng vừa nặng chưa rõ nguyên nhân,Khàn tiếng vừa nặng chưa rõ nguyên nhân,text
+symptom::nói khó,nói khó,symptom
+symptom::giọng khàn,giọng khàn,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH457,Đau cổ cấp,disease
+text::Đau cổ cấp,Đau cổ cấp,text
+symptom::đau cổ,đau cổ,symptom
+symptom::cứng cổ,cứng cổ,symptom
+symptom::hạn chế xoay cổ,hạn chế xoay cổ,symptom
+disease::BENH458,Cảm cúm không đặc hiệu nặng vừa,disease
+text::Cảm cúm không đặc hiệu nặng vừa,Cảm cúm không đặc hiệu nặng vừa,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::sổ mũi,sổ mũi,symptom
+symptom::đau đầu,đau đầu,symptom
+disease::BENH459,Viêm phổi cộng đồng cấp chưa rõ nguyên nhân,disease
+text::Viêm phổi cộng đồng cấp chưa rõ nguyên nhân,Viêm phổi cộng đồng cấp chưa rõ nguyên nhân,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::khó thở,khó thở,symptom
+symptom::đau ngực,đau ngực,symptom
+disease::BENH460,Đau lưng dưới vừa nặng,disease
+text::Đau lưng dưới vừa nặng,Đau lưng dưới vừa nặng,text
+symptom::đau thắt lưng,đau thắt lưng,symptom
+symptom::đau lan mông,đau lan mông,symptom
+symptom::cứng lưng,cứng lưng,symptom
+disease::BENH461,Sâu răng cấp,disease
+text::Sâu răng cấp,Sâu răng cấp,text
+symptom::đau răng,đau răng,symptom
+symptom::ê buốt,ê buốt,symptom
+symptom::lỗ sâu răng,lỗ sâu răng,symptom
+disease::BENH462,Trật khớp không đặc hiệu chưa rõ nguyên nhân,disease
+text::Trật khớp không đặc hiệu chưa rõ nguyên nhân,Trật khớp không đặc hiệu chưa rõ nguyên nhân,text
+symptom::đau dữ dội,đau dữ dội,symptom
+symptom::biến dạng khớp,biến dạng khớp,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+disease::BENH463,Đau lưng trên mạn chưa rõ nguyên nhân,disease
+text::Đau lưng trên mạn chưa rõ nguyên nhân,Đau lưng trên mạn chưa rõ nguyên nhân,text
+symptom::đau lưng,đau lưng,symptom
+symptom::căng cơ,căng cơ,symptom
+symptom::mỏi vai,mỏi vai,symptom
+disease::BENH464,Thiếu máu cấp,disease
+text::Thiếu máu cấp,Thiếu máu cấp,text
+symptom::mệt,mệt,symptom
+symptom::hoa mắt,hoa mắt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+symptom::da xanh,da xanh,symptom
+disease::BENH465,Viêm thận - bể thận tái phát,disease
+text::Viêm thận - bể thận tái phát,Viêm thận - bể thận tái phát,text
+symptom::sốt cao,sốt cao,symptom
+symptom::đau hông lưng,đau hông lưng,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH466,Viêm niệu đạo cấp cấp vừa vừa,disease
+text::Viêm niệu đạo cấp cấp vừa vừa,Viêm niệu đạo cấp cấp vừa vừa,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::ngứa niệu đạo,ngứa niệu đạo,symptom
+disease::BENH467,Dị ứng không đặc hiệu,disease
+text::Dị ứng không đặc hiệu,Dị ứng không đặc hiệu,text
+symptom::ngứa,ngứa,symptom
+symptom::nổi mề đay,nổi mề đay,symptom
+symptom::hắt hơi,hắt hơi,symptom
+symptom::chảy nước mắt,chảy nước mắt,symptom
+disease::BENH468,Nôn ói nặng không đặc hiệu nhẹ,disease
+text::Nôn ói nặng không đặc hiệu nhẹ,Nôn ói nặng không đặc hiệu nhẹ,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH469,Bong gân cấp không đặc hiệu,disease
+text::Bong gân cấp không đặc hiệu,Bong gân cấp không đặc hiệu,text
+symptom::sưng đau,sưng đau,symptom
+symptom::hạn chế vận động,hạn chế vận động,symptom
+symptom::bầm tím,bầm tím,symptom
+disease::BENH470,Gan nhiễm mỡ nhẹ chưa rõ nguyên nhân,disease
+text::Gan nhiễm mỡ nhẹ chưa rõ nguyên nhân,Gan nhiễm mỡ nhẹ chưa rõ nguyên nhân,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH471,Chấn thương phần mềm mạn nhẹ không đặc hiệu,disease
+text::Chấn thương phần mềm mạn nhẹ không đặc hiệu,Chấn thương phần mềm mạn nhẹ không đặc hiệu,text
+symptom::sưng đau,sưng đau,symptom
+symptom::bầm tím,bầm tím,symptom
+symptom::đau khi vận động,đau khi vận động,symptom
+disease::BENH472,Loãng xương nặng cấp,disease
+text::Loãng xương nặng cấp,Loãng xương nặng cấp,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH473,Rối loạn lipid máu nhẹ tái phát nhẹ,disease
+text::Rối loạn lipid máu nhẹ tái phát nhẹ,Rối loạn lipid máu nhẹ tái phát nhẹ,text
+symptom::mỡ máu cao,mỡ máu cao,symptom
+symptom::thừa cân,thừa cân,symptom
+symptom::ít triệu chứng,ít triệu chứng,symptom
+disease::BENH474,Gan nhiễm mỡ không đặc hiệu mạn,disease
+text::Gan nhiễm mỡ không đặc hiệu mạn,Gan nhiễm mỡ không đặc hiệu mạn,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH475,Tiểu đêm nhẹ,disease
+text::Tiểu đêm nhẹ,Tiểu đêm nhẹ,text
+symptom::đi tiểu nhiều về đêm,đi tiểu nhiều về đêm,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::mệt,mệt,symptom
+disease::BENH476,Suy thận cấp mạn,disease
+text::Suy thận cấp mạn,Suy thận cấp mạn,text
+symptom::tiểu ít,tiểu ít,symptom
+symptom::phù,phù,symptom
+symptom::mệt,mệt,symptom
+symptom::buồn nôn,buồn nôn,symptom
+disease::BENH477,Tiểu đêm cấp,disease
+text::Tiểu đêm cấp,Tiểu đêm cấp,text
+symptom::đi tiểu nhiều về đêm,đi tiểu nhiều về đêm,symptom
+symptom::mất ngủ,mất ngủ,symptom
+symptom::mệt,mệt,symptom
+disease::BENH478,Loãng xương tái phát chưa rõ nguyên nhân,disease
+text::Loãng xương tái phát chưa rõ nguyên nhân,Loãng xương tái phát chưa rõ nguyên nhân,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH479,Nhiễm khuẩn tiết niệu nặng cấp mạn cấp mạn chưa rõ nguyên nhân,disease
+text::Nhiễm khuẩn tiết niệu nặng cấp mạn cấp mạn chưa rõ nguyên nhân,Nhiễm khuẩn tiết niệu nặng cấp mạn cấp mạn chưa rõ nguyên nhân,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::sốt,sốt,symptom
+disease::BENH480,Viêm da tiếp xúc mạn cấp,disease
+text::Viêm da tiếp xúc mạn cấp,Viêm da tiếp xúc mạn cấp,text
+symptom::đỏ da,đỏ da,symptom
+symptom::rát,rát,symptom
+symptom::ngứa,ngứa,symptom
+symptom::phồng rộp,phồng rộp,symptom
+disease::BENH481,Đau đầu migraine vừa,disease
+text::Đau đầu migraine vừa,Đau đầu migraine vừa,text
+symptom::đau đầu một bên,đau đầu một bên,symptom
+symptom::buồn nôn,buồn nôn,symptom
+symptom::sợ ánh sáng,sợ ánh sáng,symptom
+disease::BENH482,Loãng xương nặng nhẹ không đặc hiệu vừa,disease
+text::Loãng xương nặng nhẹ không đặc hiệu vừa,Loãng xương nặng nhẹ không đặc hiệu vừa,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH483,Đau đầu căng thẳng không đặc hiệu chưa rõ nguyên nhân,disease
+text::Đau đầu căng thẳng không đặc hiệu chưa rõ nguyên nhân,Đau đầu căng thẳng không đặc hiệu chưa rõ nguyên nhân,text
+symptom::đau đầu,đau đầu,symptom
+symptom::căng cổ,căng cổ,symptom
+symptom::mệt,mệt,symptom
+symptom::khó tập trung,khó tập trung,symptom
+disease::BENH484,Thừa cân nhẹ,disease
+text::Thừa cân nhẹ,Thừa cân nhẹ,text
+symptom::tăng cân,tăng cân,symptom
+symptom::BMI cao,BMI cao,symptom
+symptom::mệt khi vận động,mệt khi vận động,symptom
+disease::BENH485,Gan nhiễm mỡ không đặc hiệu mạn vừa,disease
+text::Gan nhiễm mỡ không đặc hiệu mạn vừa,Gan nhiễm mỡ không đặc hiệu mạn vừa,text
+symptom::mệt,mệt,symptom
+symptom::nặng tức hạ sườn phải,nặng tức hạ sườn phải,symptom
+disease::BENH486,Đầy hơi nặng tái phát cấp nhẹ,disease
+text::Đầy hơi nặng tái phát cấp nhẹ,Đầy hơi nặng tái phát cấp nhẹ,text
+symptom::bụng chướng,bụng chướng,symptom
+symptom::ợ hơi,ợ hơi,symptom
+symptom::khó chịu,khó chịu,symptom
+symptom::chán ăn,chán ăn,symptom
+disease::BENH487,Nôn ói nặng cấp mạn,disease
+text::Nôn ói nặng cấp mạn,Nôn ói nặng cấp mạn,text
+symptom::buồn nôn,buồn nôn,symptom
+symptom::nôn,nôn,symptom
+symptom::mệt,mệt,symptom
+symptom::chóng mặt,chóng mặt,symptom
+disease::BENH488,Khàn tiếng vừa mạn tái phát nhẹ,disease
+text::Khàn tiếng vừa mạn tái phát nhẹ,Khàn tiếng vừa mạn tái phát nhẹ,text
+symptom::nói khó,nói khó,symptom
+symptom::giọng khàn,giọng khàn,symptom
+symptom::đau họng,đau họng,symptom
+disease::BENH489,Loãng xương không đặc hiệu không đặc hiệu tái phát,disease
+text::Loãng xương không đặc hiệu không đặc hiệu tái phát,Loãng xương không đặc hiệu không đặc hiệu tái phát,text
+symptom::đau lưng,đau lưng,symptom
+symptom::giảm chiều cao,giảm chiều cao,symptom
+symptom::dễ gãy xương,dễ gãy xương,symptom
+disease::BENH490,Viêm niệu đạo cấp cấp vừa vừa vừa,disease
+text::Viêm niệu đạo cấp cấp vừa vừa vừa,Viêm niệu đạo cấp cấp vừa vừa vừa,text
+symptom::tiểu buốt,tiểu buốt,symptom
+symptom::tiểu rắt,tiểu rắt,symptom
+symptom::ngứa niệu đạo,ngứa niệu đạo,symptom
+disease::BENH491,Đau răng chưa rõ nguyên nhân tái phát,disease
+text::Đau răng chưa rõ nguyên nhân tái phát,Đau răng chưa rõ nguyên nhân tái phát,text
+symptom::đau răng,đau răng,symptom
+symptom::ê buốt,ê buốt,symptom
+symptom::sưng nướu,sưng nướu,symptom
+disease::BENH492,Thừa cân cấp,disease
+text::Thừa cân cấp,Thừa cân cấp,text
+symptom::tăng cân,tăng cân,symptom
+symptom::BMI cao,BMI cao,symptom
+symptom::mệt khi vận động,mệt khi vận động,symptom
+disease::BENH493,Phù vừa,disease
+text::Phù vừa,Phù vừa,text
+symptom::sưng chân,sưng chân,symptom
+symptom::mặt,mặt,symptom
+symptom::tăng cân nhanh,tăng cân nhanh,symptom
+disease::BENH494,Béo phì nhẹ không đặc hiệu vừa,disease
+text::Béo phì nhẹ không đặc hiệu vừa,Béo phì nhẹ không đặc hiệu vừa,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH495,Béo phì không đặc hiệu mạn,disease
+text::Béo phì không đặc hiệu mạn,Béo phì không đặc hiệu mạn,text
+symptom::tăng cân,tăng cân,symptom
+symptom::thừa mỡ,thừa mỡ,symptom
+symptom::khó thở khi vận động,khó thở khi vận động,symptom
+disease::BENH496,COVID-19 nặng không đặc hiệu cấp không đặc hiệu,disease
+text::COVID-19 nặng không đặc hiệu cấp không đặc hiệu,COVID-19 nặng không đặc hiệu cấp không đặc hiệu,text
+symptom::sốt,sốt,symptom
+symptom::ho,ho,symptom
+symptom::đau họng,đau họng,symptom
+symptom::mất mùi vị,mất mùi vị,symptom
+disease::BENH497,Đau đầu căng thẳng không đặc hiệu chưa rõ nguyên nhân vừa,disease
+text::Đau đầu căng thẳng không đặc hiệu chưa rõ nguyên nhân vừa,Đau đầu căng thẳng không đặc hiệu chưa rõ nguyên nhân vừa,text
+symptom::đau đầu,đau đầu,symptom
+symptom::căng cổ,căng cổ,symptom
+symptom::mệt,mệt,symptom
+symptom::khó tập trung,khó tập trung,symptom
+disease::BENH498,Đái máu cấp chưa rõ nguyên nhân chưa rõ nguyên nhân,disease
+text::Đái máu cấp chưa rõ nguyên nhân chưa rõ nguyên nhân,Đái máu cấp chưa rõ nguyên nhân chưa rõ nguyên nhân,text
+symptom::nước tiểu đỏ,nước tiểu đỏ,symptom
+symptom::đau bụng dưới,đau bụng dưới,symptom
+symptom::tiểu buốt,tiểu buốt,symptom
+disease::BENH499,Viêm tai ngoài nặng nhẹ cấp,disease
+text::Viêm tai ngoài nặng nhẹ cấp,Viêm tai ngoài nặng nhẹ cấp,text
+symptom::đau tai,đau tai,symptom
+symptom::ngứa tai,ngứa tai,symptom
+symptom::chảy dịch,chảy dịch,symptom
+disease::BENH500,Khàn tiếng vừa nặng chưa rõ nguyên nhân không đặc hiệu,disease
+text::Khàn tiếng vừa nặng chưa rõ nguyên nhân không đặc hiệu,Khàn tiếng vừa nặng chưa rõ nguyên nhân không đặc hiệu,text
+symptom::nói khó,nói khó,symptom
+symptom::giọng khàn,giọng khàn,symptom
+symptom::đau họng,đau họng,symptom

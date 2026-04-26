@@ -4,6 +4,7 @@ import '../../core/services/auth_service.dart';
 import '../../core/theme/app_theme.dart';
 import '../auth/login_screen.dart';
 import '../guide/guide_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -110,12 +111,25 @@ class SettingsScreen extends StatelessWidget {
               _tile(
                 icon: Icons.phone_in_talk_rounded,
                 title: 'Liên hệ tư vấn',
-                subtitle: 'Tổng đài hỗ trợ: 1900 6789',
+                subtitle: 'Tổng đài hỗ trợ: 19001175',
+              ),
+              _tile(
+                icon: Icons.map_outlined,
+                title: 'Chỉ đường (Bản đồ)',
+                subtitle: '786 Nguyễn Kiệm, Gò Vấp, TP. HCM',
+                onTap: () async {
+                  final url = Uri.parse(
+                      'https://www.google.com/maps/search/?api=1&query=786+Nguyễn+Kiệm,+Phường+3,+Quận+Gò+Vấp,+TP.+Hồ+Chí+Minh');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  }
+                },
               ),
               _tile(
                 icon: Icons.info_outline_rounded,
                 title: 'Về ứng dụng',
-                subtitle: 'DigiMed Clinic dành cho đặt lịch và theo dõi hồ sơ khám',
+                subtitle:
+                    'DigiMed Clinic dành cho đặt lịch và theo dõi hồ sơ khám',
               ),
             ],
           ),

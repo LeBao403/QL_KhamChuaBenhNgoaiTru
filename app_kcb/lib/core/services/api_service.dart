@@ -23,6 +23,17 @@ class ApiService {
     return 'http://localhost:8080';
   }
 
+  static String resolveUrl(String path) {
+    final trimmed = path.trim();
+    if (trimmed.isEmpty) return '';
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+
+    final normalized = trimmed.startsWith('/') ? trimmed : '/$trimmed';
+    return '$baseUrl$normalized';
+  }
+
   // IIS Express chỉ chấp nhận Host: localhost → ép header này vào mọi request
   // để tránh bị từ chối khi chạy từ Android Emulator (Host: 10.0.2.2)
   static const String _iisHostHeader = 'localhost';

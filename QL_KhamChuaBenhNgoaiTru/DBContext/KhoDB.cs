@@ -318,7 +318,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 string query = @"
                     SELECT
                         TK.*,
-                        T.TenThuoc, T.DonViCoBan, T.GiaBan, T.CoBHYT, T.GiaBHYT,
+                        T.TenThuoc, T.DonViCoBan, T.GiaBan, T.CoBHYT,
                         NSX.TenNSX,
                         K.TenKho
                     FROM TONKHO TK
@@ -349,7 +349,9 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             DonViCoBan = dr["DonViCoBan"] != DBNull.Value ? dr["DonViCoBan"].ToString() : "",
                             GiaBan = dr["GiaBan"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBan"]) : 0,
                             CoBHYT = dr["CoBHYT"] != DBNull.Value && Convert.ToBoolean(dr["CoBHYT"]),
-                            GiaBHYT = dr["GiaBHYT"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBHYT"]) : 0,
+                            GiaBHYT = dr["CoBHYT"] != DBNull.Value && Convert.ToBoolean(dr["CoBHYT"])
+                                ? (dr["GiaBan"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBan"]) : 0)
+                                : 0,
                             TenNSX = dr["TenNSX"] != DBNull.Value ? dr["TenNSX"].ToString() : "",
                             TenKho = dr["TenKho"] != DBNull.Value ? dr["TenKho"].ToString() : ""
                         };

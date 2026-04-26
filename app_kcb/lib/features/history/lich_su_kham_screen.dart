@@ -91,7 +91,6 @@ class _LichSuKhamScreenState extends State<LichSuKhamScreen> {
       ),
       child: Column(
         children: [
-          // Header
           Container(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
             decoration: BoxDecoration(
@@ -112,8 +111,11 @@ class _LichSuKhamScreenState extends State<LichSuKhamScreen> {
                     color: AppTheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.medical_information_rounded,
-                      color: AppTheme.primary, size: 20),
+                  child: const Icon(
+                    Icons.medical_information_rounded,
+                    color: AppTheme.primary,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -132,16 +134,17 @@ class _LichSuKhamScreenState extends State<LichSuKhamScreen> {
                         Text(
                           'BS. ${item.tenBacSi}',
                           style: const TextStyle(
-                              color: AppTheme.primary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600),
+                            color: AppTheme.primary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: statusColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(50),
@@ -150,24 +153,26 @@ class _LichSuKhamScreenState extends State<LichSuKhamScreen> {
                   child: Text(
                     item.trangThai,
                     style: TextStyle(
-                        color: statusColor,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600),
+                      color: statusColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           const Divider(height: 0),
-          // Info rows
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (item.tenKhoa.isNotEmpty || item.tenPhong.isNotEmpty)
-                  _infoRow(Icons.location_on_outlined,
-                      '${item.tenKhoa} – ${item.tenPhong}'),
+                  _infoRow(
+                    Icons.location_on_outlined,
+                    '${item.tenKhoa} - ${item.tenPhong}',
+                  ),
                 if (item.lyDoDenKham.isNotEmpty)
                   _infoRow(Icons.info_outline_rounded, item.lyDoDenKham),
                 if (item.trieuChung.isNotEmpty)
@@ -184,8 +189,11 @@ class _LichSuKhamScreenState extends State<LichSuKhamScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(Icons.check_circle_outline_rounded,
-                            color: AppTheme.secondary, size: 16),
+                        const Icon(
+                          Icons.check_circle_outline_rounded,
+                          color: AppTheme.secondary,
+                          size: 16,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -221,7 +229,10 @@ class _LichSuKhamScreenState extends State<LichSuKhamScreen> {
             child: Text(
               text,
               style: const TextStyle(
-                  color: AppTheme.textBody, fontSize: 13, height: 1.4),
+                color: AppTheme.textBody,
+                fontSize: 13,
+                height: 1.4,
+              ),
             ),
           ),
         ],
@@ -256,16 +267,20 @@ class _LichSuKhamScreenState extends State<LichSuKhamScreen> {
               color: AppTheme.primary.withOpacity(0.08),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.medical_information_rounded,
-                size: 40, color: AppTheme.primary),
+            child: const Icon(
+              Icons.medical_information_rounded,
+              size: 40,
+              color: AppTheme.primary,
+            ),
           ),
           const SizedBox(height: 16),
           const Text(
             'Chưa có lịch sử khám bệnh',
             style: TextStyle(
-                color: AppTheme.textDark,
-                fontSize: 16,
-                fontWeight: FontWeight.w600),
+              color: AppTheme.textDark,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 8),
           const Text(
@@ -284,12 +299,17 @@ class _LichSuKhamScreenState extends State<LichSuKhamScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline_rounded,
-                size: 56, color: AppTheme.textLight),
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 56,
+              color: AppTheme.textLight,
+            ),
             const SizedBox(height: 16),
-            Text(_error!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: AppTheme.textMuted)),
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppTheme.textMuted),
+            ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _load,

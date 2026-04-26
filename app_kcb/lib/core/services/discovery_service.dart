@@ -56,13 +56,13 @@ class DiscoveryService {
       }
 
       return ApiResult.fail(
-        json?['message'] ?? 'Khong tai duoc du lieu trang chu.',
+        json?['message'] ?? 'Không tải được dữ liệu trang chủ.',
       );
     } catch (e) {
       if (cached != null) {
         return ApiResult.ok(cached);
       }
-      return ApiResult.fail('Loi ket noi: $e');
+      return ApiResult.fail('Lỗi kết nối: $e');
     }
   }
 
@@ -93,10 +93,10 @@ class DiscoveryService {
       }
 
       return ApiResult.fail(
-        json?['message'] ?? 'Khong tai duoc danh sach bac si.',
+        json?['message'] ?? 'Không tải được danh sách bác sĩ.',
       );
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: $e');
+      return ApiResult.fail('Lỗi kết nối: $e');
     }
   }
 
@@ -117,10 +117,10 @@ class DiscoveryService {
       }
 
       return ApiResult.fail(
-        json?['message'] ?? 'Khong tai duoc danh sach chuyen khoa.',
+        json?['message'] ?? 'Không tải được danh sách chuyên khoa.',
       );
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: $e');
+      return ApiResult.fail('Lỗi kết nối: $e');
     }
   }
 }

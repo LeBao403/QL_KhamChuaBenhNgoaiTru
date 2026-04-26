@@ -90,11 +90,21 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         ct.KetQua,
                         ct.FileKetQua,
                         dv.TenDV,
+                        bn.MaBN,
                         bn.HoTen,
                         bn.GioiTinh,
                         bn.NgaySinh,
+                        bn.CCCD,
+                        bn.SDT AS SoDienThoai,
+                        bn.DiaChi,
+                        bn.SoTheBHYT,
                         pkb.LyDoDenKham,
+                        pkb.TrieuChung AS ChanDoan,
                         ct.MaBacSiThucHien,
+                        ct.MauXetNghiem,
+                        ct.ChatLuongMau,
+                        ktv.HoTen AS TenNguoiThucHien,
+                        bs.HoTen AS TenBacSiChiDinh,
                         ct.ThoiGianCoKetQua,
                         pc.NgayChiDinh
                     FROM CHITIET_CHIDINH ct
@@ -102,6 +112,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     JOIN PHIEUKHAMBENH pkb ON pc.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
                     JOIN BENHNHAN bn ON pkb.MaBN = bn.MaBN
                     JOIN DICHVU dv ON ct.MaDV = dv.MaDV
+                    LEFT JOIN NHANVIEN bs ON pc.MaBacSiChiDinh = bs.MaNV
+                    LEFT JOIN NHANVIEN ktv ON ct.MaBacSiThucHien = ktv.MaNV
                     WHERE ct.MaCTChiDinh = @MaKetQua";
 
                 using (SqlCommand cmd = new SqlCommand(sql, con))
@@ -127,14 +139,25 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 MaPhieuChiDinh = rd["MaPhieuChiDinh"],
                                 MaPhieuKhamBenh = rd["MaPhieuKhamBenh"],
                                 TenDV = rd["TenDV"].ToString(),
+                                TenDichVu = rd["TenDV"].ToString(),
+                                MaBenhNhan = rd["MaBN"].ToString(),
                                 TenBenhNhan = rd["HoTen"].ToString(),
+                                CCCD = rd["CCCD"] != DBNull.Value ? rd["CCCD"].ToString() : "",
+                                SDT = rd["SoDienThoai"] != DBNull.Value ? rd["SoDienThoai"].ToString() : "",
+                                DiaChi = rd["DiaChi"] != DBNull.Value ? rd["DiaChi"].ToString() : "",
+                                SoTheBHYT = rd["SoTheBHYT"] != DBNull.Value ? rd["SoTheBHYT"].ToString() : "",
                                 GioiTinh = rd["GioiTinh"] != DBNull.Value ? rd["GioiTinh"].ToString() : "",
                                 Tuoi = tuoi,
                                 TrangThai = rd["TrangThai"].ToString(),
                                 LyDoDenKham = rd["LyDoDenKham"] != DBNull.Value ? rd["LyDoDenKham"].ToString() : "",
+                                ChanDoan = rd["ChanDoan"] != DBNull.Value ? rd["ChanDoan"].ToString() : "",
                                 NoiDungKetQua = rd["KetQua"] != DBNull.Value ? rd["KetQua"].ToString() : "",
                                 FileKetQua = rd["FileKetQua"] != DBNull.Value ? rd["FileKetQua"].ToString() : "",
                                 MaBacSiThucHien = rd["MaBacSiThucHien"] != DBNull.Value ? rd["MaBacSiThucHien"].ToString() : "",
+                                MauXetNghiem = rd["MauXetNghiem"] != DBNull.Value ? rd["MauXetNghiem"].ToString() : "",
+                                ChatLuongMau = rd["ChatLuongMau"] != DBNull.Value ? rd["ChatLuongMau"].ToString() : "",
+                                TenNguoiThucHien = rd["TenNguoiThucHien"] != DBNull.Value ? rd["TenNguoiThucHien"].ToString() : "",
+                                TenBacSiChiDinh = rd["TenBacSiChiDinh"] != DBNull.Value ? rd["TenBacSiChiDinh"].ToString() : "",
                                 ThoiGianCoKetQua = thoiGian
                             };
                         }
@@ -221,7 +244,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 ThoiGianCoKetQua = CAST(GETDATE() AS TIME),
                                 MaBacSiThucHien = @MaBacSi,
                                 FileKetQua = @FileKetQua,
-                                MauXN = @MauXN,
+                                MauXetNghiem = @MauXN,
                                 ChatLuongMau = @ChatLuong
                             WHERE MaCTChiDinh = @MaKetQua";
 

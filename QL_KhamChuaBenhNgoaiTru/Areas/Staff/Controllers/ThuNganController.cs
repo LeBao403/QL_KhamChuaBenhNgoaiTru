@@ -126,8 +126,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 string apiKey = ConfigurationManager.AppSettings["PayOS:ApiKey"];
                 string checksumKey = ConfigurationManager.AppSettings["PayOS:ChecksumKey"];
 
-                // [BÍ KÍP TRÁNH CRASH PAYOS] Cắt chữ "HD" ra, chỉ lấy dãy số + giờ để ép sang long
+                // [BÍ KÍP TRÁNH CRASH PAYOS] Cắt chữ "HD" ra, chỉ lấy tối đa 6 số cuối + giờ để JS không bị lỗi Max Safe Integer
                 string cleanMaHD = maHD.Replace("HD", "");
+                if (cleanMaHD.Length > 6) cleanMaHD = cleanMaHD.Substring(cleanMaHD.Length - 6);
                 long orderCode = long.Parse(cleanMaHD + DateTime.Now.ToString("HHmmss"));
 
                 string returnUrl = ConfigurationManager.AppSettings["PayOS:ReturnUrl"] ?? "https://localhost:44326/Staff/ThuNgan";

@@ -1,14 +1,20 @@
-@section Styles {
+﻿@section Styles {
     <style>
+        @@media screen {
+            #print-header { display: none; }
+        }
         @@media print {
             .sidebar, .top-navbar, .btn, .alert, nav, footer, .no-print { display: none !important; }
             body { background: white; }
             .main-content, .container-fluid { margin: 0 !important; padding: 20px !important; }
             .card { box-shadow: none !important; border: 1px solid #ddd !important; }
             a { text-decoration: none; color: black; }
+            #print-header { display: block !important; margin-bottom: 20px; }
         }
     </style>
 }
+
+@{ Html.RenderPartial("~/Views/Shared/_PrintDocumentStyles.cshtml"); }
 
     var phieu = ViewBag.Phieu as QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.PhieuNhapItem;
     var chiTiet = ViewBag.ChiTiet as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoNhapDB.CT_PhieuNhapItem>;
@@ -48,6 +54,19 @@
         </a>
     </div>
 }
+
+<div id="print-header" class="app-print-sheet">
+    @{
+        Html.RenderPartial(
+            "~/Views/Shared/_PrintDocumentHeader.cshtml",
+            new ViewDataDictionary(ViewData)
+            {
+                { "PrintDocumentTitle", "PHI&#7870;U NH&#7852;P KHO" },
+                { "PrintDocumentCodeLabel", "M&#227; phi&#7871;u:" },
+                { "PrintDocumentCodeText", "#" + phieu.MaPhieuNhap }
+            });
+    }
+</div>
 
 <div class="row g-4">
     <!-- Thông tin phiếu -->
@@ -186,3 +205,21 @@
         </div>
     </div>
 </div>
+
+<div class="row mt-4 app-print-signature" style="display:none;">
+    <div class="col-6 text-center">
+        <div style="font-weight:700; text-transform:uppercase;">Người giao hàng</div>
+        <div style="font-style:italic; font-size:0.8rem;">(Ký, ghi rõ họ tên)</div>
+    </div>
+    <div class="col-6 text-center">
+        <div id="prt-date-footer" style="font-style:italic; margin-bottom:5px;">TP.HCM, ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year</div>
+        <div style="font-weight:700; text-transform:uppercase;">Người lập phiếu</div>
+        <div style="font-style:italic; font-size:0.8rem;">(Ký, ghi rõ họ tên)</div>
+        <div style="margin-top:70px; font-weight:bold;">@phieu.TenNV_Lap</div>
+    </div>
+</div>
+<style>
+    @media print {
+        .app-print-signature { display: flex !important; }
+    }
+</style>

@@ -25,7 +25,7 @@ class BookingService {
 
     final resp = await _api.get(_bookingPagePath);
     if (resp.statusCode != 200) {
-      throw Exception('Khong tai duoc trang dat lich.');
+      throw Exception('Không tải được trang đặt lịch.');
     }
 
     final body = resp.body;
@@ -110,7 +110,7 @@ class BookingService {
         fallbackMessage: webResult.message,
       );
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: $e');
+      return ApiResult.fail('Lỗi kết nối: $e');
     }
   }
 
@@ -150,7 +150,7 @@ class BookingService {
 
       return _parseBookingResponse(mobileResp);
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: $e');
+      return ApiResult.fail('Lỗi kết nối: $e');
     }
   }
 
@@ -172,12 +172,12 @@ class BookingService {
               'orderCode': json['orderCode'],
             });
           }
-          return ApiResult.fail(json['message'] ?? 'Tao QR that bai!');
+          return ApiResult.fail(json['message'] ?? 'Tạo QR thất bại!');
         }
       }
       return ApiResult.fail('Loi tao ma QR!');
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: $e');
+      return ApiResult.fail('Lỗi kết nối: $e');
     }
   }
 
@@ -210,12 +210,12 @@ class BookingService {
           return const ApiResult(success: true);
         }
         return ApiResult.fail(
-          json?['message']?.toString() ?? 'Xac nhan thanh toan that bai!',
+          json?['message']?.toString() ?? 'Xác nhận thanh toán thất bại!',
         );
       }
-      return ApiResult.fail('Xac nhan thanh toan that bai!');
+      return ApiResult.fail('Xác nhận thanh toán thất bại!');
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: $e');
+      return ApiResult.fail('Lỗi kết nối: $e');
     }
   }
 
@@ -229,11 +229,11 @@ class BookingService {
         if (json != null && json['success'] == true) {
           return const ApiResult(success: true);
         }
-        return ApiResult.fail(json?['message']?.toString() ?? 'Huy that bai!');
+        return ApiResult.fail(json?['message']?.toString() ?? 'Hủy thất bại!');
       }
-      return ApiResult.fail('Huy that bai!');
+      return ApiResult.fail('Hủy thất bại!');
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: $e');
+      return ApiResult.fail('Lỗi kết nối: $e');
     }
   }
 
@@ -253,13 +253,13 @@ class BookingService {
           return ApiResult.ok(list);
         }
       }
-      return ApiResult.fail('Khong tai duoc lich kham!');
+      return ApiResult.fail('Không tải được lịch khám!');
     } on TimeoutException {
       return ApiResult.fail(
-        'Tai lich dat kham qua lau. Vui long thu lai sau it phut.',
+        'Tải lịch đặt khám quá lâu. Vui lòng thử lại sau ít phút.',
       );
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: $e');
+      return ApiResult.fail('Lỗi kết nối: $e');
     }
   }
 
@@ -274,12 +274,12 @@ class BookingService {
           return const ApiResult(success: true);
         }
         return ApiResult.fail(
-          json?['message']?.toString() ?? 'Huy lich that bai!',
+          json?['message']?.toString() ?? 'Hủy lịch thất bại!',
         );
       }
-      return ApiResult.fail('Huy lich that bai!');
+      return ApiResult.fail('Hủy lịch thất bại!');
     } catch (e) {
-      return ApiResult.fail('Loi ket noi: $e');
+      return ApiResult.fail('Lỗi kết nối: $e');
     }
   }
 
@@ -299,7 +299,7 @@ class BookingService {
       return ApiResult.fail(
         json?['message']?.toString() ??
             fallbackMessage ??
-            'Khong tai duoc khung gio!',
+            'Không tải được khung giờ!',
       );
     }
 
@@ -321,11 +321,11 @@ class BookingService {
         }
 
         return ApiResult.fail(
-          json['message']?.toString() ?? 'Dat lich that bai!',
+          json['message']?.toString() ?? 'Đặt lịch thất bại!',
         );
       }
     }
 
-    return ApiResult.fail('Loi may chu! Vui long thu lai.');
+    return ApiResult.fail('Lỗi máy chủ! Vui lòng thử lại.');
   }
 }

@@ -125,14 +125,13 @@ class _HoaDonScreenState extends State<HoaDonScreen>
       ),
       child: Column(
         children: [
-          // Header
           Container(
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
                   AppTheme.primary.withOpacity(0.05),
-                  Colors.transparent
+                  Colors.transparent,
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -149,8 +148,11 @@ class _HoaDonScreenState extends State<HoaDonScreen>
                     color: AppTheme.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.receipt_long_rounded,
-                      color: AppTheme.primary, size: 20),
+                  child: const Icon(
+                    Icons.receipt_long_rounded,
+                    color: AppTheme.primary,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -168,7 +170,9 @@ class _HoaDonScreenState extends State<HoaDonScreen>
                       Text(
                         item.ghiChu.isNotEmpty ? item.ghiChu : 'Hóa đơn khám bệnh',
                         style: const TextStyle(
-                            color: AppTheme.textMuted, fontSize: 12),
+                          color: AppTheme.textMuted,
+                          fontSize: 12,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -176,27 +180,26 @@ class _HoaDonScreenState extends State<HoaDonScreen>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
                     color: item.statusColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(50),
-                    border:
-                        Border.all(color: item.statusColor.withOpacity(0.3)),
+                    border: Border.all(color: item.statusColor.withOpacity(0.3)),
                   ),
                   child: Text(
                     item.trangThaiThanhToan,
                     style: TextStyle(
-                        color: item.statusColor,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600),
+                      color: item.statusColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           const Divider(height: 0),
-          // Amount
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -204,9 +207,13 @@ class _HoaDonScreenState extends State<HoaDonScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Tổng tiền',
-                        style: TextStyle(
-                            color: AppTheme.textMuted, fontSize: 13)),
+                    const Text(
+                      'Tổng tiền',
+                      style: TextStyle(
+                        color: AppTheme.textMuted,
+                        fontSize: 13,
+                      ),
+                    ),
                     Text(
                       _fmtMoney(item.tongTien),
                       style: TextStyle(
@@ -225,20 +232,28 @@ class _HoaDonScreenState extends State<HoaDonScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Hình thức',
-                          style: TextStyle(
-                              color: AppTheme.textMuted, fontSize: 12)),
+                      const Text(
+                        'Hình thức',
+                        style: TextStyle(
+                          color: AppTheme.textMuted,
+                          fontSize: 12,
+                        ),
+                      ),
                       Row(
                         children: [
-                          const Icon(Icons.check_circle_rounded,
-                              color: AppTheme.secondary, size: 14),
+                          const Icon(
+                            Icons.check_circle_rounded,
+                            color: AppTheme.secondary,
+                            size: 14,
+                          ),
                           const SizedBox(width: 4),
                           Text(
                             item.hinhThucThanhToan,
                             style: const TextStyle(
-                                color: AppTheme.secondary,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600),
+                              color: AppTheme.secondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
                       ),
@@ -250,15 +265,20 @@ class _HoaDonScreenState extends State<HoaDonScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Ngày thanh toán',
-                          style: TextStyle(
-                              color: AppTheme.textMuted, fontSize: 12)),
+                      const Text(
+                        'Ngày thanh toán',
+                        style: TextStyle(
+                          color: AppTheme.textMuted,
+                          fontSize: 12,
+                        ),
+                      ),
                       Text(
                         _fmtDate(item.ngayThanhToan),
                         style: const TextStyle(
-                            color: AppTheme.textBody,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500),
+                          color: AppTheme.textBody,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
@@ -268,15 +288,20 @@ class _HoaDonScreenState extends State<HoaDonScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Ngày khám',
-                          style: TextStyle(
-                              color: AppTheme.textMuted, fontSize: 12)),
+                      const Text(
+                        'Ngày khám',
+                        style: TextStyle(
+                          color: AppTheme.textMuted,
+                          fontSize: 12,
+                        ),
+                      ),
                       Text(
                         _fmtDate(item.ngayKham),
                         style: const TextStyle(
-                            color: AppTheme.textBody,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500),
+                          color: AppTheme.textBody,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
@@ -301,16 +326,20 @@ class _HoaDonScreenState extends State<HoaDonScreen>
               color: AppTheme.primary.withOpacity(0.08),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.receipt_long_rounded,
-                size: 40, color: AppTheme.primary),
+            child: const Icon(
+              Icons.receipt_long_rounded,
+              size: 40,
+              color: AppTheme.primary,
+            ),
           ),
           const SizedBox(height: 16),
           const Text(
             'Chưa có hóa đơn nào',
             style: TextStyle(
-                color: AppTheme.textDark,
-                fontSize: 16,
-                fontWeight: FontWeight.w600),
+              color: AppTheme.textDark,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 8),
           const Text(
@@ -329,12 +358,17 @@ class _HoaDonScreenState extends State<HoaDonScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.error_outline_rounded,
-                size: 56, color: AppTheme.textLight),
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 56,
+              color: AppTheme.textLight,
+            ),
             const SizedBox(height: 16),
-            Text(_error!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: AppTheme.textMuted)),
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppTheme.textMuted),
+            ),
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _load,

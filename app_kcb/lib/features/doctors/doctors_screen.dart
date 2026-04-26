@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/models/discovery_models.dart';
 import '../../core/services/discovery_service.dart';
 import '../../core/theme/app_theme.dart';
-import '../booking/booking_screen.dart';
+import '../../shared/widgets/common_widgets.dart';
 
 class DoctorsScreen extends StatefulWidget {
   const DoctorsScreen({super.key, this.initialSpecialty});
@@ -56,13 +56,6 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
         _error = result.message;
       }
     });
-  }
-
-  void _openBooking() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const BookingScreen()),
-    );
   }
 
   @override
@@ -123,7 +116,7 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
           ),
           SizedBox(height: 10),
           Text(
-            'Tìm theo tên hoặc chuyên khoa để chọn bác sĩ phù hợp trước khi đặt lịch khám.',
+            'Tìm theo tên hoặc chuyên khoa để chọn hướng khám phù hợp trước khi đặt lịch khám.',
             style: TextStyle(
               color: Colors.white,
               fontSize: 14,
@@ -196,8 +189,11 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
       ),
       child: Column(
         children: [
-          const Icon(Icons.error_outline_rounded,
-              color: AppTheme.danger, size: 42),
+          const Icon(
+            Icons.error_outline_rounded,
+            color: AppTheme.danger,
+            size: 42,
+          ),
           const SizedBox(height: 12),
           Text(
             _error ?? 'Không tải được danh sách bác sĩ.',
@@ -226,8 +222,11 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
           ),
           child: const Column(
             children: [
-              Icon(Icons.person_search_rounded,
-                  size: 44, color: AppTheme.textMuted),
+              Icon(
+                Icons.person_search_rounded,
+                size: 44,
+                color: AppTheme.textMuted,
+              ),
               SizedBox(height: 12),
               Text(
                 'Không tìm thấy bác sĩ phù hợp.',
@@ -272,16 +271,10 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: AppTheme.primary.withOpacity(0.12),
-            child: Text(
-              doctor.initials,
-              style: const TextStyle(
-                color: AppTheme.primary,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+          DoctorAvatar(
+            name: doctor.hoTen,
+            imagePath: doctor.hinhAnh,
+            radius: 30,
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -320,29 +313,6 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
                       fontSize: 12,
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectedSpecialty = doctor.chuyenKhoa;
-                          });
-                          _loadDoctors();
-                        },
-                        child: const Text('Xem chuyên khoa'),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _openBooking,
-                        child: const Text('Đặt lịch'),
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),

@@ -1,0 +1,66 @@
+@{
+    var documentTitle = Convert.ToString(ViewData["PrintDocumentTitle"] ?? "TÀI LIỆU");
+    var titleElementId = Convert.ToString(ViewData["PrintDocumentTitleElementId"] ?? "");
+    var maBNLabel = Convert.ToString(ViewData["PrintDocumentMaBNLabel"] ?? "Mã BN:");
+    var maBNText = Convert.ToString(ViewData["PrintDocumentMaBNText"] ?? "");
+    var maBNElementId = Convert.ToString(ViewData["PrintDocumentMaBNElementId"] ?? "");
+    var codeLabel = Convert.ToString(ViewData["PrintDocumentCodeLabel"] ?? "Mã điều trị:");
+    var codeText = Convert.ToString(ViewData["PrintDocumentCodeText"] ?? "");
+    var codeElementId = Convert.ToString(ViewData["PrintDocumentCodeElementId"] ?? "");
+}
+
+<div class="app-print-header-wrapper">
+    <div class="app-print-header">
+        <div class="app-print-brand">
+            <img src="@Url.Content("~/Images/Logo/app_favicon.png")" alt="Clinic Logo" class="app-print-logo" />
+            <div class="app-print-brand-copy">
+                <div class="app-print-brand-name">PHÒNG KHÁM ĐA KHOA DIGIMED</div>
+                <div class="app-print-brand-meta">Hệ thống Y tế Thông minh</div>
+                <div class="app-print-brand-meta">Địa chỉ: 786 Nguyễn Kiệm, Quận Gò Vấp, TP.HCM</div>
+            </div>
+        </div>
+
+        <div class="app-print-doc-codes">
+            @if (!string.IsNullOrWhiteSpace(maBNText) || !string.IsNullOrWhiteSpace(maBNElementId))
+            {
+                <div class="app-print-doc-code-line">
+                    <span>@Html.Raw(maBNLabel)</span>
+                    @if (!string.IsNullOrWhiteSpace(maBNElementId))
+                    {
+                        <span id="@maBNElementId"></span>
+                    }
+                    else
+                    {
+                        <span>@maBNText</span>
+                    }
+                </div>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(codeLabel) && (!string.IsNullOrWhiteSpace(codeText) || !string.IsNullOrWhiteSpace(codeElementId)))
+            {
+                <div class="app-print-doc-code-line">
+                    <span>@Html.Raw(codeLabel)</span>
+                    @if (!string.IsNullOrWhiteSpace(codeElementId))
+                    {
+                        <span id="@codeElementId"></span>
+                    }
+                    else
+                    {
+                        <span>@codeText</span>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="app-print-doc-title-wrapper">
+        @if (!string.IsNullOrWhiteSpace(titleElementId))
+        {
+            <h2 class="app-print-doc-title" id="@titleElementId">@Html.Raw(documentTitle)</h2>
+        }
+        else
+        {
+            <h2 class="app-print-doc-title">@Html.Raw(documentTitle)</h2>
+        }
+    </div>
+</div>
