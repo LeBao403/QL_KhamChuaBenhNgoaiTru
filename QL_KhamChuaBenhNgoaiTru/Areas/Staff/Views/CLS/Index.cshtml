@@ -1,4 +1,4 @@
-@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.KetQuaCLS>
+﻿@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.KetQuaCLS>
 @using QL_KhamChuaBenhNgoaiTru.Models
 @{
     ViewBag.Title = "Phòng Cận Lâm Sàng";
@@ -129,6 +129,45 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
 
+    .cls-media-panel {
+        display: none;
+        background: linear-gradient(180deg, #f9fbff 0%, #f4f8ff 100%);
+        border: 1px dashed #b9d4ff;
+        border-radius: 14px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .cls-media-card {
+        background: #fff;
+        border: 1px solid #e9ecef;
+        border-radius: 14px;
+        box-shadow: 0 4px 14px rgba(13, 110, 253, 0.08);
+        padding: .75rem;
+        height: 100%;
+    }
+
+    .cls-media-card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        border-radius: 10px;
+        background: #eef3fb;
+    }
+
+    .cls-media-title {
+        font-weight: 700;
+        color: #0d6efd;
+        margin-top: .75rem;
+    }
+
+    .cls-media-caption {
+        color: #6c757d;
+        font-size: .82rem;
+        line-height: 1.5;
+        margin-top: .25rem;
+    }
+
     @@media screen {
         #print-section {
             display: none;
@@ -137,25 +176,26 @@
 
     @@media print {
         @@page {
-            size: A5 landscape;
-            margin: 1cm;
+            size: A4 portrait;
+            margin: 10mm;
         }
 
-        body * {
-            visibility: hidden !important;
+        #sidebar, .top-navbar, .cls-page, .d-print-none {
+            display: none !important;
         }
 
-        #print-section, #print-section * {
-            visibility: visible !important;
+        #content {
+            margin-left: 0 !important;
+            width: 100% !important;
+            padding: 0 !important;
+        }
+
+        .main-body {
+            padding: 0 !important;
         }
 
         #print-section {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            font-family: 'Times New Roman', serif;
-            color: #000;
+            display: block !important;
         }
 
         .print-table {
@@ -187,7 +227,26 @@
     }
 </style>
 
-<div class="cls-page container-fluid py-4">
+@Html.Partial("~/Views/Shared/_PrintDocumentStyles.cshtml")
+
+<style>
+    #print-section > h2 {
+        display: none;
+    }
+
+    #print-section .app-print-section b,
+    #print-section .app-print-section span {
+        color: #0f172a;
+    }
+
+    #print-section #prt-ten,
+    #print-section #prt-ketluan {
+        color: #dc2626 !important;
+        font-weight: 800;
+    }
+</style>
+
+<div class="cls-page container-fluid py-4 d-print-none">
     <div class="card page-header-card shadow-sm mb-4">
         <div class="card-body text-white p-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
@@ -307,7 +366,9 @@
                                 <div class="info-label">Bệnh nhân</div>
                                 <div class="fs-5 fw-bold text-danger" id="lblTenBN"></div>
                                 <div class="text-muted small mb-1" id="lblTuoiGT"></div>
-                                <div class="text-muted small"><i class="fas fa-map-marker-alt"></i> <span id="lblDiaChi"></span></div>
+                                <div class="text-muted small mb-1"><i class="fas fa-id-badge"></i> CCCD: <span id="lblCCCD" class="fw-bold text-dark"></span></div>
+                                <div class="text-muted small mb-1"><i class="fas fa-phone-alt"></i> SĐT: <span id="lblSDT" class="fw-bold text-dark"></span></div>
+                                <div class="text-muted small mb-1"><i class="fas fa-map-marker-alt"></i> <span id="lblDiaChi"></span></div>
                                 <div class="text-muted small mt-1"><i class="fas fa-id-card"></i> BHYT: <span id="lblBHYT" class="text-success fw-bold"></span></div>
                             </div>
                             <div class="col-md-7 border-start pl-3">
@@ -348,7 +409,7 @@
                         <i class="fas fa-chart-line"></i> <span id="ui-ten-xn">Kết quả Xét Nghiệm</span>
                         <div class="ms-auto">
                             <button class="btn btn-warning btn-sm btn-action fw-semibold" id="btn-ket-noi-lis">
-                                <i class="fas fa-satellite-dish me-1"></i> Chạy máy LIS
+                                <i class="fas fa-satellite-dish me-1"></i> Lấy kết quả CLS
                             </button>
                         </div>
                     </div>
@@ -357,15 +418,28 @@
                         <table class="table table-bordered align-middle mb-3" id="tbl-ket-qua-lis">
                             <thead class="table-dark text-center">
                                 <tr>
-                                    <th style="width: 30%;">Tên chỉ số</th>
-                                    <th style="width: 25%;">Kết quả</th>
-                                    <th style="width: 20%;">Đơn vị</th>
-                                    <th style="width: 25%;">CS Bình thường</th>
+                                    <th style="width: 35%;">Tên chỉ số</th>
+                                    <th style="width: 65%;">Kết quả</th>
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
+                    </div>
+
+                    <div class="cls-media-panel" id="cls-image-panel">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                            <div class="fw-bold text-primary">
+                                <i class="fas fa-image me-2"></i>Hình ảnh CLS
+                            </div>
+                            <div class="small text-muted">Ảnh demo lấy từ thư mục Images/cls</div>
+                        </div>
+                        <div class="row g-3" id="cls-image-grid"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold" style="color: #0d6efd;">Kết luận (LIS):</label>
+                        <input type="text" class="form-control" id="ui-ket-luan" placeholder="Nhập kết luận chạy máy / chỉ số (nếu có)..." />
                     </div>
 
                     <div class="d-flex justify-content-end gap-2 border-top pt-3 mt-3">
@@ -390,21 +464,20 @@
     </div>
 </div>
 
-<div id="print-section">
-    <div style="display:flex;justify-content:space-between;border-bottom:2px solid #000;padding-bottom:4px;">
-        <div style="width:45%;text-align:center;">
-            <div style="font-weight:700;">SỞ Y TẾ ĐẮK LẮK</div>
-            <div style="font-weight:700;">PHÒNG KHÁM ĐA KHOA CHẤT LƯỢNG CAO SÀI GÒN</div>
-        </div>
-        <div style="width:55%;text-align:center;">
-            <div style="font-weight:700;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
-            <div style="font-weight:700;">Độc lập - Tự do - Hạnh phúc</div>
-        </div>
-    </div>
+<div id="print-section" class="app-print-sheet">
+    @{
+        Html.RenderPartial(
+            "~/Views/Shared/_PrintDocumentHeader.cshtml",
+            new ViewDataDictionary(ViewData)
+            {
+                { "PrintDocumentTitle", "PHI&#7870;U K&#7870;T QU&#7842; XÉT NGHIỆM" },
+                { "PrintDocumentMaBNElementId", "prt-mabn" },
+                { "PrintDocumentCodeLabel", "Mã phiếu:" },
+                { "PrintDocumentCodeElementId", "prt-maphieu" }
+            });
+    }
 
-    <h2 style="text-align:center;margin:12px 0 8px;font-weight:700;">PHIẾU KẾT QUẢ XÉT NGHIỆM</h2>
-
-    <div style="line-height:1.6;">
+    <div class="app-print-section" style="line-height:1.6;">
         <div style="display:flex;">
             <div style="flex:2;">Họ và tên: <b id="prt-ten" style="text-transform:uppercase;"></b></div>
             <div style="flex:1;">Tuổi: <span id="prt-tuoi"></span></div>
@@ -420,27 +493,30 @@
         </div>
     </div>
 
-    <div style="line-height:1.6;margin-top:12px;margin-bottom:12px;">
+    <div class="app-print-section" style="line-height:1.6;margin-top:12px;margin-bottom:12px;">
         <div style="display:flex;">
             <div style="flex:2;">Mẫu xét nghiệm: <b id="prt-mauxn"></b></div>
             <div style="flex:1;">Chất lượng mẫu: <span id="prt-chatluong"></span></div>
         </div>
+        <div style="display:flex; margin-top:4px;">
+            <div style="flex:1;">Kết luận: <b id="prt-ketluan" style="color:red;"></b></div>
+        </div>
     </div>
 
-    <table class="print-table">
+    <table class="print-table app-print-table">
         <thead>
             <tr>
                 <th style="width:35%;">Tên chỉ số</th>
                 <th style="width:25%;">Kết quả</th>
                 <th style="width:20%;">Đơn vị</th>
-                <th style="width:20%;">Trị số BT</th>
+                <th style="width:20%;">Trị số bình thường</th>
             </tr>
         </thead>
         <tbody id="prt-lis-tbody">
         </tbody>
     </table>
 
-    <div style="display:flex; justify-content:space-between; text-align:center; margin-top:24px;">
+    <div class="app-print-signature" style="display:flex; justify-content:space-between; text-align:center; margin-top:24px;">
         <div style="width:40%;">
             <div style="font-weight:700;">BÁC SĨ CHỈ ĐỊNH</div>
             <div style="margin-top:70px; font-weight:bold;" id="prt-sign-bschidinh"></div>
@@ -457,15 +533,199 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(function () {
+            var defaultSampleOptions = ['Huyết thanh', 'Huyết tương', 'Máu toàn phần', 'Nước tiểu', 'Khác'];
+
+            function normalizeText(value) {
+                return (value || '')
+                    .toString()
+                    .trim()
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/đ/g, 'd');
+            }
+
+            function parseStoredResult(rawValue) {
+                var parsed = { data: [], ketluan: '', images: [] };
+                if (!rawValue) return parsed;
+
+                if (rawValue.startsWith('[')) {
+                    try { parsed.data = JSON.parse(rawValue) || []; } catch (e) { }
+                    return parsed;
+                }
+
+                if (rawValue.startsWith('{')) {
+                    try {
+                        var payload = JSON.parse(rawValue) || {};
+                        return normalizeResultPayload(payload);
+                    } catch (e) { }
+                }
+
+                parsed.ketluan = rawValue;
+                return parsed;
+            }
+
+            function firstDefined() {
+                for (var i = 0; i < arguments.length; i++) {
+                    if (arguments[i] !== undefined && arguments[i] !== null) {
+                        return arguments[i];
+                    }
+                }
+                return null;
+            }
+
+            function normalizeLisRow(item) {
+                item = item || {};
+                return {
+                    Ten: firstDefined(item.Ten, item.ten, ''),
+                    GiaTri: firstDefined(item.GiaTri, item.giaTri, item.Giatri, item.giatri, ''),
+                    DonVi: firstDefined(item.DonVi, item.donVi, item.donvi, ''),
+                    ThamChieu: firstDefined(item.ThamChieu, item.thamChieu, item.thamchieu, ''),
+                    Warning: !!firstDefined(item.Warning, item.warning, false)
+                };
+            }
+
+            function normalizeMediaItem(image) {
+                image = image || {};
+                return {
+                    url: firstDefined(image.url, image.Url, ''),
+                    title: firstDefined(image.title, image.Title, 'Hình ảnh CLS'),
+                    caption: firstDefined(image.caption, image.Caption, '')
+                };
+            }
+
+            function normalizeResultPayload(payload) {
+                payload = payload || {};
+
+                var rawRows = firstDefined(payload.data, payload.Data, []);
+                var rawImages = firstDefined(payload.images, payload.Images, []);
+
+                return {
+                    data: Array.isArray(rawRows) ? rawRows.map(normalizeLisRow) : [],
+                    images: Array.isArray(rawImages) ? rawImages.map(normalizeMediaItem) : [],
+                    ketluan: firstDefined(payload.ketluan, payload.KetLuan, payload.ketLuan, ''),
+                    resultType: firstDefined(payload.resultType, payload.ResultType, '')
+                };
+            }
+
+            function setSampleOptions(options, selectedValue) {
+                var items = (options && options.length ? options.slice() : defaultSampleOptions.slice());
+                if (selectedValue && items.indexOf(selectedValue) < 0) {
+                    items.unshift(selectedValue);
+                }
+
+                var html = items.map(function (item) {
+                    return '<option value="' + item + '">' + item + '</option>';
+                }).join('');
+
+                $('#ui-mau-xn').html(html);
+                $('#ui-mau-xn').val(selectedValue || items[0] || '');
+            }
+
+            function setQualityValue(value) {
+                var qualityValue = value || 'Đạt';
+                if ($('#ui-chat-luong option[value="' + qualityValue + '"]').length === 0) {
+                    $('#ui-chat-luong').append('<option value="' + qualityValue + '">' + qualityValue + '</option>');
+                }
+                $('#ui-chat-luong').val(qualityValue);
+            }
+
+            function setReadonly(readOnly) {
+                $('#ui-mau-xn').prop('disabled', readOnly);
+                $('#ui-chat-luong').prop('disabled', readOnly);
+                $('#ui-ket-luan').prop('disabled', readOnly);
+
+                if (readOnly) {
+                    $('#ui-mau-xn, #ui-chat-luong, #ui-ket-luan').addClass('bg-light');
+                } else {
+                    $('#ui-mau-xn, #ui-chat-luong, #ui-ket-luan').removeClass('bg-light');
+                }
+            }
+
+            function renderLISUi(lisData) {
+                lisData = (lisData || []).map(normalizeLisRow);
+                var html = '';
+                if (!lisData || lisData.length === 0) {
+                    $('#tbl-ket-qua-lis thead').html('<tr><th style="width: 50%;">Tên chỉ số</th><th style="width: 50%;">Kết quả</th></tr>');
+                    html = '<tr><td colspan="2" class="text-center text-muted py-3">Chưa có kết quả. Nhấn nút lấy kết quả để mô phỏng máy CLS.</td></tr>';
+                } else {
+                    var hasMetaColumns = lisData.some(function (item) {
+                        var donVi = (item.DonVi || '').toString().trim();
+                        var thamChieu = (item.ThamChieu || '').toString().trim();
+                        return (donVi && donVi !== '-') || (thamChieu && thamChieu !== '-');
+                    });
+
+                    if (hasMetaColumns) {
+                        $('#tbl-ket-qua-lis thead').html('<tr><th style="width: 30%;">Tên chỉ số</th><th style="width: 25%;">Kết quả</th><th style="width: 20%;">Đơn vị</th><th style="width: 25%;">Chỉ số bình thường</th></tr>');
+                    } else {
+                        $('#tbl-ket-qua-lis thead').html('<tr><th style="width: 35%;">Tên chỉ số</th><th style="width: 65%;">Kết quả</th></tr>');
+                    }
+
+                    lisData.forEach(function (item) {
+                        var rowClass = item.Warning ? 'text-danger fw-bold' : 'fw-bold';
+                        if (hasMetaColumns) {
+                            html += '<tr>' +
+                                '<td class="fw-semibold">' + item.Ten + '</td>' +
+                                '<td class="text-center ' + rowClass + '">' + item.GiaTri + '</td>' +
+                                '<td class="text-center text-muted">' + (item.DonVi || '-') + '</td>' +
+                                '<td class="text-center text-muted">' + (item.ThamChieu || '-') + '</td>' +
+                                '</tr>';
+                        } else {
+                            html += '<tr>' +
+                                '<td class="fw-semibold">' + item.Ten + '</td>' +
+                                '<td class="' + rowClass + '">' + item.GiaTri + '</td>' +
+                                '</tr>';
+                        }
+                    });
+                }
+                $('#tbl-ket-qua-lis tbody').html(html);
+            }
+
+            function renderMediaUi(images) {
+                images = (images || []).map(normalizeMediaItem).filter(function (image) {
+                    return !!image.url;
+                });
+
+                if (!images || !images.length) {
+                    $('#cls-image-grid').empty();
+                    $('#cls-image-panel').hide();
+                    return;
+                }
+
+                var html = images.map(function (image) {
+                    return '' +
+                        '<div class="col-md-6">' +
+                            '<div class="cls-media-card">' +
+                                '<img src="' + image.url + '" alt="' + (image.title || 'Hình ảnh CLS') + '" />' +
+                                '<div class="cls-media-title">' + (image.title || 'Hình ảnh CLS') + '</div>' +
+                                '<div class="cls-media-caption">' + (image.caption || '') + '</div>' +
+                            '</div>' +
+                        '</div>';
+                }).join('');
+
+                $('#cls-image-grid').html(html);
+                $('#cls-image-panel').show();
+            }
+
             function renderPrint(data, lisData, mauXN, chatLuong) {
+                lisData = (lisData || []).map(normalizeLisRow);
                 var now = new Date();
+                var hasMetaColumns = (lisData || []).some(function (item) {
+                    var donVi = (item.DonVi || '').toString().trim();
+                    var thamChieu = (item.ThamChieu || '').toString().trim();
+                    return (donVi && donVi !== '-') || (thamChieu && thamChieu !== '-');
+                });
+
+                $('#prt-mabn').text(data.MaBenhNhan || data.MaBN || '');
+                $('#prt-maphieu').text(data.MaPhieuKhamBenh || data.MaKetQua || '');
                 $('#prt-ten').text(data.TenBenhNhan || data.TenBN || '');
                 $('#prt-tuoi').text(data.Tuoi || '');
                 $('#prt-gt').text(data.GioiTinh || '');
                 $('#prt-chandoan').text(data.LyDoDenKham || data.ChanDoan || '');
-                $('#prt-tenxn').text(data.TenDV || '');
+                $('#prt-tenxn').text(data.TenDV || data.TenDichVu || '');
                 $('#prt-mauxn').text(mauXN || 'Huyết thanh');
                 $('#prt-chatluong').text(chatLuong || 'Đạt');
+                $('#prt-ketluan').text($('#ui-ket-luan').val() || '');
 
                 $('#prt-diachi').text(data.DiaChi || 'Chưa cập nhật');
                 $('#prt-bhyt').text(data.SoTheBHYT || 'Không có');
@@ -473,59 +733,94 @@
                 $('#prt-sign-bschidinh').text(data.TenBacSiChiDinh || '');
                 $('#prt-sign-thuchien').text(data.TenNguoiThucHien || data.MaBacSiThucHien || '');
 
+                $('#print-section .print-table thead').html(
+                    hasMetaColumns
+                        ? '<tr><th style="width:35%;">Tên chỉ số</th><th style="width:25%;">Kết quả</th><th style="width:20%;">Đơn vị</th><th style="width:20%;">Trị số bình thường</th></tr>'
+                        : '<tr><th style="width:35%;">Tên chỉ số</th><th style="width:65%;">Kết quả</th></tr>'
+                );
+
                 var tbody = '';
                 if (lisData && lisData.length > 0) {
                     lisData.forEach(function (item) {
-                        var isWarning = item.Warning ? 'color: red; font-weight: bold;' : 'font-weight: bold;';
-                        tbody += '<tr>' +
-                            '<td>' + item.Ten + '</td>' +
-                            '<td style="text-align:center;"><div style="' + isWarning + '">' + item.GiaTri + '</div></td>' +
-                            '<td style="text-align:center;">' + item.DonVi + '</td>' +
-                            '<td style="text-align:center;">' + item.ThamChieu + '</td>' +
-                            '</tr>';
+                        var style = item.Warning ? 'color: red; font-weight: bold;' : 'font-weight: bold;';
+                        if (hasMetaColumns) {
+                            tbody += '<tr>' +
+                                '<td>' + item.Ten + '</td>' +
+                                '<td style="text-align:center;"><div style="' + style + '">' + item.GiaTri + '</div></td>' +
+                                '<td style="text-align:center;">' + (item.DonVi || '-') + '</td>' +
+                                '<td style="text-align:center;">' + (item.ThamChieu || '-') + '</td>' +
+                                '</tr>';
+                        } else {
+                            tbody += '<tr>' +
+                                '<td>' + item.Ten + '</td>' +
+                                '<td><div style="' + style + '">' + item.GiaTri + '</div></td>' +
+                                '</tr>';
+                        }
                     });
                 }
                 $('#prt-lis-tbody').html(tbody);
-                $('#prt-date-footer').text('Đắk Lắk, ngày ' + now.getDate() + ' tháng ' + (now.getMonth() + 1) + ' năm ' + now.getFullYear());
+                $('#prt-date-footer').text('TP.HCM, ngày ' + now.getDate() + ' tháng ' + (now.getMonth() + 1) + ' năm ' + now.getFullYear());
             }
 
-            function setReadonly(readOnly) {
-                $('#ui-mau-xn').prop('disabled', readOnly);
-                $('#ui-chat-luong').prop('disabled', readOnly);
-                if (readOnly) {
-                    $('#ui-mau-xn').addClass('bg-light');
-                    $('#ui-chat-luong').addClass('bg-light');
-                } else {
-                    $('#ui-mau-xn').removeClass('bg-light');
-                    $('#ui-chat-luong').removeClass('bg-light');
+            function updateResultUi(resultPayload) {
+                var payload = normalizeResultPayload(resultPayload);
+                var rows = payload.data || [];
+                var images = payload.images || [];
+
+                $('#btn-ket-noi-lis').data('lis', rows);
+                $('#btn-ket-noi-lis').data('demoResult', payload);
+                $('#btn-in-phieu').data('plis', rows);
+                $('#btn-in-phieu').data('pimages', images);
+
+                renderLISUi(rows);
+                renderMediaUi(images);
+            }
+
+            function getServiceProfile(serviceName) {
+                var normalized = normalizeText(serviceName);
+                var profile = {
+                    sampleOptions: defaultSampleOptions.slice(),
+                    sampleDefault: 'Huyết thanh',
+                    qualityDefault: 'Đạt',
+                    actionLabel: 'Lấy kết quả CLS'
+                };
+
+                if (normalized.includes('nuoc tieu')) {
+                    profile.sampleOptions = ['Nước tiểu'];
+                    profile.sampleDefault = 'Nước tiểu';
+                } else if (normalized.includes('mau') || normalized.includes('huyet') || normalized.includes('hba1c')) {
+                    profile.sampleOptions = ['Máu toàn phần', 'Huyết thanh', 'Huyết tương'];
+                    profile.sampleDefault = 'Máu toàn phần';
+                } else if (normalized.includes('glucose') || normalized.includes('creatinin') || normalized.includes('cholesterol') || normalized.includes('gan')) {
+                    profile.sampleOptions = ['Huyết thanh', 'Huyết tương'];
+                    profile.sampleDefault = 'Huyết thanh';
+                } else if (normalized.includes('sieu am') || normalized.includes('x-quang') || normalized.includes('x quang') || normalized.includes('noi soi') || normalized.includes('dien tam do') || normalized.includes('ecg')) {
+                    profile.sampleOptions = ['Không áp dụng'];
+                    profile.sampleDefault = 'Không áp dụng';
+                    profile.qualityDefault = 'Không áp dụng';
                 }
+
+                return profile;
             }
 
-            function renderLISUi(lisData) {
-                var html = '';
-                if (!lisData || lisData.length === 0) {
-                    html = '<tr><td colspan="4" class="text-center text-muted py-3">Chưa có kết quả (Nhấn Chạy máy LIS)</td></tr>';
-                } else {
-                    lisData.forEach(function (item) {
-                        var isWarning = item.Warning ? 'text-danger fw-bold' : 'fw-bold';
-                        html += `<tr>
-                            <td class="fw-semibold">${item.Ten}</td>
-                            <td class="text-center ${isWarning}">${item.GiaTri}</td>
-                            <td class="text-center text-muted">${item.DonVi}</td>
-                            <td class="text-center text-muted">${item.ThamChieu}</td>
-                        </tr>`;
-                    });
-                }
-                $('#tbl-ket-qua-lis tbody').html(html);
+            function applyServiceProfile(profile, selectedSample, selectedQuality) {
+                var sampleValue = selectedSample || profile.sampleDefault || defaultSampleOptions[0];
+                var qualityValue = selectedQuality || profile.qualityDefault || 'Đạt';
+
+                setSampleOptions(profile.sampleOptions || defaultSampleOptions, sampleValue);
+                setQualityValue(qualityValue);
+                $('#btn-ket-noi-lis').html('<i class="fas fa-satellite-dish me-1"></i> ' + (profile.actionLabel || 'Lấy kết quả CLS'));
             }
 
-            // Gắn vào window để gọi từ thuộc tính onclick của HTML
-            window.loadCase = function(maKetQua, fromHistory) {
+            $('#btn-ket-noi-lis').off('click');
+            $('#btn-in-phieu').off('click');
+            $('#btn-xac-nhan').off('click');
+
+            window.loadCase = function (maKetQua, fromHistory) {
                 maKetQua = String(maKetQua);
                 $('.cls-row').removeClass('active');
 
-                // Active dòng đang chọn
-                if(fromHistory) {
+                if (fromHistory) {
                     $('#row-done-' + maKetQua).addClass('active');
                 } else {
                     $('#row-' + maKetQua).addClass('active');
@@ -538,31 +833,39 @@
                     }
 
                     var d = res.Data;
+                    var profile = getServiceProfile(d.TenDV || d.TenDichVu || '');
+                    var parsed = parseStoredResult(d.NoiDungKetQua || '');
+                    var currentStaff = '@(Session["HoTenNV"] ?? "Nhân viên")';
+                    var bsThucHien = d.TenNguoiThucHien || d.MaBacSiThucHien;
+
                     $('#hdnMaKetQua').val(d.MaKetQua);
                     $('#hdnMaPhieuKham').val(d.MaPhieuKhamBenh);
                     $('#lblTenBN').text(d.TenBenhNhan || d.TenBN || '');
                     $('#lblTuoiGT').text((d.Tuoi || '') + ' tuổi / ' + (d.GioiTinh || ''));
+                    $('#lblCCCD').text(d.CCCD || 'Chưa cập nhật');
+                    $('#lblSDT').text(d.SDT || 'Chưa cập nhật');
                     $('#lblDiaChi').text(d.DiaChi || 'Chưa cập nhật');
                     $('#lblBHYT').text(d.SoTheBHYT || 'Không có');
                     $('#lblMaPhieuKhamText').text(d.MaPhieuKhamBenh || '');
                     $('#lblBSChiDinh').text(d.TenBacSiChiDinh || '--');
                     $('#lblLyDo').text(d.ChanDoan || d.LyDoDenKham || '');
-                    $('#lblBS').text(d.TenNguoiThucHien || d.MaBacSiThucHien || 'Chưa cập nhật');
-                    $('#ui-ten-xn').text(d.TenDV || '');
+                    $('#ui-ten-xn').text(d.TenDV || d.TenDichVu || '');
 
-                    var ketQua = d.NoiDungKetQua || '';
-                    var lisData = [];
-                    if (ketQua.startsWith('[')) {
-                        try { lisData = JSON.parse(ketQua); } catch (e) { }
+                    if (bsThucHien) {
+                        $('#lblBS').text(bsThucHien);
+                    } else {
+                        $('#lblBS').html(currentStaff + ' <span class="badge bg-warning text-dark ms-1" style="font-size:0.65rem;">Đang thực hiện</span>');
                     }
 
-                    $('#ui-mau-xn').val(d.MauXetNghiem || 'Huyết thanh');
-                    $('#ui-chat-luong').val(d.ChatLuongMau || 'Đạt');
-                    $('#btn-in-phieu').data('pdata', d);
-                    $('#btn-in-phieu').data('plis', lisData);
+                    applyServiceProfile(profile, d.MauXetNghiem, d.ChatLuongMau);
+                    $('#ui-ket-luan').val(parsed.ketluan || '');
 
-                    renderLISUi(lisData);
-                    renderPrint(d, lisData, $('#ui-mau-xn').val(), $('#ui-chat-luong').val());
+                    $('#detail-card').data('caseData', d);
+                    $('#btn-ket-noi-lis').data('profile', profile);
+                    $('#btn-in-phieu').data('pdata', d);
+
+                    updateResultUi(parsed);
+                    renderPrint(d, parsed.data || [], $('#ui-mau-xn').val(), $('#ui-chat-luong').val());
 
                     var daCoKetQua = (d.TrangThai === 'Đã có kết quả' || fromHistory === true);
                     $('#btn-xac-nhan').toggle(!daCoKetQua);
@@ -572,52 +875,88 @@
                     $('#empty-card').hide();
                     $('#detail-card').show();
                 });
-            }
+            };
 
             $('#btn-in-phieu').on('click', function () {
-                var text = $('#tbl-ket-qua-lis tbody').text();
-                if (text.indexOf('Chưa có kết quả') >= 0 || $('#tbl-ket-qua-lis tbody tr').length <= 1) {
+                var d = $(this).data('pdata');
+                var rows = $(this).data('plis') || [];
+                var images = $(this).data('pimages') || [];
+                var hasTextConclusion = ($('#ui-ket-luan').val() || '').trim().length > 0;
+
+                if (!rows.length && !images.length && !hasTextConclusion) {
                     Swal.fire('Chú ý', 'Chưa có kết quả chuyên môn để in!', 'warning');
                     return;
                 }
-                var d = $(this).data('pdata');
-                var lis = $(this).data('plis');
-                if (d) renderPrint(d, lis, $('#ui-mau-xn').val(), $('#ui-chat-luong').val());
+
+                if (d) {
+                    renderPrint(d, rows, $('#ui-mau-xn').val(), $('#ui-chat-luong').val());
+                }
                 window.print();
             });
 
-            $('#btn-ket-noi-lis').click(function () {
-                var lisData = [
-                    { Ten: 'Glucose', GiaTri: (Math.random() * 3 + 4).toFixed(2), DonVi: 'mmol/L', ThamChieu: '3.9 - 6.4', Warning: false },
-                    { Ten: 'Ure', GiaTri: (Math.random() * 4 + 3).toFixed(2), DonVi: 'mmol/L', ThamChieu: '2.5 - 7.5', Warning: false },
-                    { Ten: 'Creatinin', GiaTri: (Math.random() * 40 + 50).toFixed(0), DonVi: 'µmol/L', ThamChieu: '53 - 106', Warning: false },
-                    { Ten: 'AST (GOT)', GiaTri: (Math.random() * 40 + 10).toFixed(0), DonVi: 'U/L', ThamChieu: '< 37', Warning: false },
-                    { Ten: 'ALT (GPT)', GiaTri: (Math.random() * 45 + 10).toFixed(0), DonVi: 'U/L', ThamChieu: '< 40', Warning: false }
-                ];
-                if (Math.random() > 0.5) {
-                    lisData[0].GiaTri = (parseFloat(lisData[0].GiaTri) + 3).toFixed(2);
-                    lisData[0].Warning = true;
-                }
-                $(this).data('lis', lisData);
-                $('#btn-in-phieu').data('plis', lisData);
-                renderLISUi(lisData);
-                $(this).prop('disabled', true);
-                Swal.fire({ icon: 'success', title: 'Máy LIS đã trả kết quả', timer: 1200, showConfirmButton: false });
+            $('#btn-ket-noi-lis').on('click', function () {
+                var currentCase = $('#detail-card').data('caseData') || $('#btn-in-phieu').data('pdata') || {};
+                var profile = $(this).data('profile') || getServiceProfile(currentCase.TenDV || currentCase.TenDichVu || $('#ui-ten-xn').text());
+                var button = $(this);
+
+                button.prop('disabled', true);
+                $.post('@Url.Action("NhanKetQuaTuMay", "MockLIS", new { area = "" })', { maKetQua: String($('#hdnMaKetQua').val()) }, function (res) {
+                    if (!res.success) {
+                        button.prop('disabled', false);
+                        Swal.fire('Lỗi', res.message || 'Không thể lấy kết quả từ máy CLS.', 'error');
+                        return;
+                    }
+
+                    var resultPayload = normalizeResultPayload({
+                        data: res.data || [],
+                        images: res.images || [],
+                        ketluan: res.ketluan || '',
+                        resultType: res.resultType || ((res.images || []).length ? 'image' : 'lab')
+                    });
+
+                    applyServiceProfile({
+                        sampleOptions: res.sampleOptions || profile.sampleOptions,
+                        sampleDefault: res.sampleDefault || profile.sampleDefault,
+                        qualityDefault: res.chatLuong || profile.qualityDefault,
+                        actionLabel: res.actionLabel || profile.actionLabel
+                    }, res.sampleDefault || $('#ui-mau-xn').val(), res.chatLuong || $('#ui-chat-luong').val());
+
+                    $('#ui-ket-luan').val(resultPayload.ketluan || '');
+                    updateResultUi(resultPayload);
+                    renderPrint(currentCase, resultPayload.data, $('#ui-mau-xn').val(), $('#ui-chat-luong').val());
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã nhận kết quả CLS',
+                        text: res.message || 'Máy CLS đã trả kết quả mô phỏng.',
+                        timer: 1400,
+                        showConfirmButton: false
+                    });
+                });
             });
 
-            $('#btn-xac-nhan').click(function () {
+            $('#btn-xac-nhan').on('click', function () {
                 var maKetQua = String($('#hdnMaKetQua').val());
                 var maPhieu = String($('#hdnMaPhieuKham').val());
                 var mauXN = $('#ui-mau-xn').val();
                 var chatLuong = $('#ui-chat-luong').val();
-                var lisData = $('#btn-ket-noi-lis').data('lis');
+                var resultPayload = $('#btn-ket-noi-lis').data('demoResult') || { data: [], images: [] };
+                var lisData = resultPayload.data || [];
+                var images = resultPayload.images || [];
+                var ketLuan = ($('#ui-ket-luan').val() || '').trim();
 
-                if (!lisData || lisData.length === 0) {
-                    Swal.fire('Thiếu kết quả', 'Vui lòng nhấn Chạy máy LIS để nhận kết quả phân tích.', 'warning');
+                if (!lisData.length && !images.length && !ketLuan) {
+                    Swal.fire('Thiếu kết quả', 'Vui lòng nhận kết quả CLS trước khi gửi cho bác sĩ.', 'warning');
                     return;
                 }
 
-                var noiDung = JSON.stringify(lisData);
+                var noiDung = JSON.stringify({
+                    data: lisData,
+                    ketluan: ketLuan,
+                    images: images,
+                    resultType: resultPayload.resultType || (images.length ? 'image' : 'lab')
+                });
+
                 Swal.fire({
                     title: 'Gửi kết quả về bác sĩ?',
                     html: '<div class="form-check text-start mt-2"><input class="form-check-input" type="checkbox" id="chkPrintAfterSend" checked><label class="form-check-label" for="chkPrintAfterSend">In kết quả ngay sau khi gửi</label></div>',
@@ -629,9 +968,9 @@
                     if (!result.isConfirmed) return;
 
                     $.post('@Url.Action("XacNhanKetQua", "CLS")', {
-                        maKetQua: maKetQua, // C# nhận string
+                        maKetQua: maKetQua,
                         noiDung: noiDung,
-                        maPhieuKhamBenh: maPhieu, // C# nhận string
+                        maPhieuKhamBenh: maPhieu,
                         mauXN: mauXN,
                         chatLuong: chatLuong
                     }, function (res) {
@@ -647,8 +986,13 @@
                             renderPrint(d, lisData, mauXN, chatLuong);
                         }
 
-                        Swal.fire({ icon: 'success', title: 'Đã gửi kết quả', timer: 1200, showConfirmButton: false }).then(function () {
-                            if (result.value && $('#chkPrintAfterSend').is(':checked')) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Đã gửi kết quả',
+                            timer: 1200,
+                            showConfirmButton: false
+                        }).then(function () {
+                            if ($('#chkPrintAfterSend').is(':checked')) {
                                 window.print();
                             }
                             location.reload();
@@ -659,3 +1003,4 @@
         });
     </script>
 }
+

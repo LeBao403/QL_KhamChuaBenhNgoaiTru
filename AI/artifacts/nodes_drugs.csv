@@ -1,0 +1,901 @@
+node_id,label,type
+drug::T001,Paracetamol 500mg,drug
+group::DM005,DM005,group
+family::Paracetamol 500mg,Paracetamol 500mg,family
+drug::T002,Amoxicillin 500mg,drug
+group::DM008,DM008,group
+family::Amoxicillin 500mg,Amoxicillin 500mg,family
+drug::T003,Cefixime 200mg,drug
+group::DM008,DM008,group
+family::Cefixime 200mg,Cefixime 200mg,family
+drug::T004,Azithromycin 500mg,drug
+group::DM008,DM008,group
+family::Azithromycin 500mg,Azithromycin 500mg,family
+drug::T005,Cetirizine 10mg,drug
+group::DM007,DM007,group
+family::Cetirizine 10mg,Cetirizine 10mg,family
+drug::T006,Loratadine 10mg,drug
+group::DM007,DM007,group
+family::Loratadine 10mg,Loratadine 10mg,family
+drug::T007,Omeprazole 20mg,drug
+group::DM004,DM004,group
+family::Omeprazole 20mg,Omeprazole 20mg,family
+drug::T008,Pantoprazole 40mg,drug
+group::DM004,DM004,group
+family::Pantoprazole 40mg,Pantoprazole 40mg,family
+drug::T009,Metformin 500mg,drug
+group::DM009,DM009,group
+family::Metformin 500mg,Metformin 500mg,family
+drug::T010,Gliclazide 80mg,drug
+group::DM009,DM009,group
+family::Gliclazide 80mg,Gliclazide 80mg,family
+drug::T011,Amlodipine 5mg,drug
+group::DM011,DM011,group
+family::Amlodipine 5mg,Amlodipine 5mg,family
+drug::T012,Losartan 50mg,drug
+group::DM011,DM011,group
+family::Losartan 50mg,Losartan 50mg,family
+drug::T013,Ibuprofen 400mg,drug
+group::DM002,DM002,group
+family::Ibuprofen 400mg,Ibuprofen 400mg,family
+drug::T014,Diclofenac 50mg,drug
+group::DM002,DM002,group
+family::Diclofenac 50mg,Diclofenac 50mg,family
+drug::T015,Salbutamol 2mg,drug
+group::DM006,DM006,group
+family::Salbutamol 2mg,Salbutamol 2mg,family
+drug::T016,Bromhexine 8mg,drug
+group::DM006,DM006,group
+family::Bromhexine 8mg,Bromhexine 8mg,family
+drug::T017,Acetylcysteine 200mg,drug
+group::DM006,DM006,group
+family::Acetylcysteine 200mg,Acetylcysteine 200mg,family
+drug::T018,ORS 1 gói,drug
+group::DM001,DM001,group
+family::ORS 1 gói,ORS 1 gói,family
+drug::T019,Melatonin 3mg,drug
+group::DM010,DM010,group
+family::Melatonin 3mg,Melatonin 3mg,family
+drug::T020,Clotrimazole 1%,drug
+group::DM003,DM003,group
+family::Clotrimazole 1%,Clotrimazole 1%,family
+drug::T021,Dextromethorphan 15mg,drug
+group::DM006,DM006,group
+family::Dextromethorphan 15mg,Dextromethorphan 15mg,family
+drug::T022,Domperidone 10mg,drug
+group::DM004,DM004,group
+family::Domperidone 10mg,Domperidone 10mg,family
+drug::T023,Captopril 25mg,drug
+group::DM011,DM011,group
+family::Captopril 25mg,Captopril 25mg,family
+drug::T024,Insulin 100IU/ml,drug
+group::DM009,DM009,group
+family::Insulin 100IU/ml,Insulin 100IU/ml,family
+drug::T025,Levofloxacin 500mg,drug
+group::DM008,DM008,group
+family::Levofloxacin 500mg,Levofloxacin 500mg,family
+drug::T026,Ciprofloxacin 500mg,drug
+group::DM008,DM008,group
+family::Ciprofloxacin 500mg,Ciprofloxacin 500mg,family
+drug::T027,Fexofenadine 120mg,drug
+group::DM007,DM007,group
+family::Fexofenadine 120mg,Fexofenadine 120mg,family
+drug::T028,Esomeprazole 20mg,drug
+group::DM004,DM004,group
+family::Esomeprazole 20mg,Esomeprazole 20mg,family
+drug::T029,Budesonide 200mcg,drug
+group::DM006,DM006,group
+family::Budesonide 200mcg,Budesonide 200mcg,family
+drug::T030,Naproxen 250mg,drug
+group::DM002,DM002,group
+family::Naproxen 250mg,Naproxen 250mg,family
+drug::T031,Paracetamol 500mg 2,drug
+group::DM005,DM005,group
+family::Paracetamol 500mg 2,Paracetamol 500mg 2,family
+drug::T032,Amoxicillin 500mg 2,drug
+group::DM008,DM008,group
+family::Amoxicillin 500mg 2,Amoxicillin 500mg 2,family
+drug::T033,Cefixime 200mg 2,drug
+group::DM008,DM008,group
+family::Cefixime 200mg 2,Cefixime 200mg 2,family
+drug::T034,Azithromycin 500mg 2,drug
+group::DM008,DM008,group
+family::Azithromycin 500mg 2,Azithromycin 500mg 2,family
+drug::T035,Cetirizine 10mg 2,drug
+group::DM007,DM007,group
+family::Cetirizine 10mg 2,Cetirizine 10mg 2,family
+drug::T036,Loratadine 10mg 2,drug
+group::DM007,DM007,group
+family::Loratadine 10mg 2,Loratadine 10mg 2,family
+drug::T037,Omeprazole 20mg 2,drug
+group::DM004,DM004,group
+family::Omeprazole 20mg 2,Omeprazole 20mg 2,family
+drug::T038,Pantoprazole 40mg 2,drug
+group::DM004,DM004,group
+family::Pantoprazole 40mg 2,Pantoprazole 40mg 2,family
+drug::T039,Metformin 500mg 2,drug
+group::DM009,DM009,group
+family::Metformin 500mg 2,Metformin 500mg 2,family
+drug::T040,Gliclazide 80mg 2,drug
+group::DM009,DM009,group
+family::Gliclazide 80mg 2,Gliclazide 80mg 2,family
+drug::T041,Amlodipine 5mg 2,drug
+group::DM011,DM011,group
+family::Amlodipine 5mg 2,Amlodipine 5mg 2,family
+drug::T042,Losartan 50mg 2,drug
+group::DM011,DM011,group
+family::Losartan 50mg 2,Losartan 50mg 2,family
+drug::T043,Ibuprofen 400mg 2,drug
+group::DM002,DM002,group
+family::Ibuprofen 400mg 2,Ibuprofen 400mg 2,family
+drug::T044,Diclofenac 50mg 2,drug
+group::DM002,DM002,group
+family::Diclofenac 50mg 2,Diclofenac 50mg 2,family
+drug::T045,Salbutamol 2mg 2,drug
+group::DM006,DM006,group
+family::Salbutamol 2mg 2,Salbutamol 2mg 2,family
+drug::T046,Bromhexine 8mg 2,drug
+group::DM006,DM006,group
+family::Bromhexine 8mg 2,Bromhexine 8mg 2,family
+drug::T047,Acetylcysteine 200mg 2,drug
+group::DM006,DM006,group
+family::Acetylcysteine 200mg 2,Acetylcysteine 200mg 2,family
+drug::T048,ORS 1 gói 2,drug
+group::DM001,DM001,group
+family::ORS 1 gói 2,ORS 1 gói 2,family
+drug::T049,Melatonin 3mg 2,drug
+group::DM010,DM010,group
+family::Melatonin 3mg 2,Melatonin 3mg 2,family
+drug::T050,Clotrimazole 1% 2,drug
+group::DM003,DM003,group
+family::Clotrimazole 1% 2,Clotrimazole 1% 2,family
+drug::T051,Dextromethorphan 15mg 2,drug
+group::DM006,DM006,group
+family::Dextromethorphan 15mg 2,Dextromethorphan 15mg 2,family
+drug::T052,Domperidone 10mg 2,drug
+group::DM004,DM004,group
+family::Domperidone 10mg 2,Domperidone 10mg 2,family
+drug::T053,Captopril 25mg 2,drug
+group::DM011,DM011,group
+family::Captopril 25mg 2,Captopril 25mg 2,family
+drug::T054,Insulin 100IU/ml 2,drug
+group::DM009,DM009,group
+family::Insulin 100IU/ml 2,Insulin 100IU/ml 2,family
+drug::T055,Levofloxacin 500mg 2,drug
+group::DM008,DM008,group
+family::Levofloxacin 500mg 2,Levofloxacin 500mg 2,family
+drug::T056,Ciprofloxacin 500mg 2,drug
+group::DM008,DM008,group
+family::Ciprofloxacin 500mg 2,Ciprofloxacin 500mg 2,family
+drug::T057,Fexofenadine 120mg 2,drug
+group::DM007,DM007,group
+family::Fexofenadine 120mg 2,Fexofenadine 120mg 2,family
+drug::T058,Esomeprazole 20mg 2,drug
+group::DM004,DM004,group
+family::Esomeprazole 20mg 2,Esomeprazole 20mg 2,family
+drug::T059,Budesonide 200mcg 2,drug
+group::DM006,DM006,group
+family::Budesonide 200mcg 2,Budesonide 200mcg 2,family
+drug::T060,Naproxen 250mg 2,drug
+group::DM002,DM002,group
+family::Naproxen 250mg 2,Naproxen 250mg 2,family
+drug::T061,Paracetamol 500mg 3,drug
+group::DM005,DM005,group
+family::Paracetamol 500mg 3,Paracetamol 500mg 3,family
+drug::T062,Amoxicillin 500mg 3,drug
+group::DM008,DM008,group
+family::Amoxicillin 500mg 3,Amoxicillin 500mg 3,family
+drug::T063,Cefixime 200mg 3,drug
+group::DM008,DM008,group
+family::Cefixime 200mg 3,Cefixime 200mg 3,family
+drug::T064,Azithromycin 500mg 3,drug
+group::DM008,DM008,group
+family::Azithromycin 500mg 3,Azithromycin 500mg 3,family
+drug::T065,Cetirizine 10mg 3,drug
+group::DM007,DM007,group
+family::Cetirizine 10mg 3,Cetirizine 10mg 3,family
+drug::T066,Loratadine 10mg 3,drug
+group::DM007,DM007,group
+family::Loratadine 10mg 3,Loratadine 10mg 3,family
+drug::T067,Omeprazole 20mg 3,drug
+group::DM004,DM004,group
+family::Omeprazole 20mg 3,Omeprazole 20mg 3,family
+drug::T068,Pantoprazole 40mg 3,drug
+group::DM004,DM004,group
+family::Pantoprazole 40mg 3,Pantoprazole 40mg 3,family
+drug::T069,Metformin 500mg 3,drug
+group::DM009,DM009,group
+family::Metformin 500mg 3,Metformin 500mg 3,family
+drug::T070,Gliclazide 80mg 3,drug
+group::DM009,DM009,group
+family::Gliclazide 80mg 3,Gliclazide 80mg 3,family
+drug::T071,Amlodipine 5mg 3,drug
+group::DM011,DM011,group
+family::Amlodipine 5mg 3,Amlodipine 5mg 3,family
+drug::T072,Losartan 50mg 3,drug
+group::DM011,DM011,group
+family::Losartan 50mg 3,Losartan 50mg 3,family
+drug::T073,Ibuprofen 400mg 3,drug
+group::DM002,DM002,group
+family::Ibuprofen 400mg 3,Ibuprofen 400mg 3,family
+drug::T074,Diclofenac 50mg 3,drug
+group::DM002,DM002,group
+family::Diclofenac 50mg 3,Diclofenac 50mg 3,family
+drug::T075,Salbutamol 2mg 3,drug
+group::DM006,DM006,group
+family::Salbutamol 2mg 3,Salbutamol 2mg 3,family
+drug::T076,Bromhexine 8mg 3,drug
+group::DM006,DM006,group
+family::Bromhexine 8mg 3,Bromhexine 8mg 3,family
+drug::T077,Acetylcysteine 200mg 3,drug
+group::DM006,DM006,group
+family::Acetylcysteine 200mg 3,Acetylcysteine 200mg 3,family
+drug::T078,ORS 1 gói 3,drug
+group::DM001,DM001,group
+family::ORS 1 gói 3,ORS 1 gói 3,family
+drug::T079,Melatonin 3mg 3,drug
+group::DM010,DM010,group
+family::Melatonin 3mg 3,Melatonin 3mg 3,family
+drug::T080,Clotrimazole 1% 3,drug
+group::DM003,DM003,group
+family::Clotrimazole 1% 3,Clotrimazole 1% 3,family
+drug::T081,Dextromethorphan 15mg 3,drug
+group::DM006,DM006,group
+family::Dextromethorphan 15mg 3,Dextromethorphan 15mg 3,family
+drug::T082,Domperidone 10mg 3,drug
+group::DM004,DM004,group
+family::Domperidone 10mg 3,Domperidone 10mg 3,family
+drug::T083,Captopril 25mg 3,drug
+group::DM011,DM011,group
+family::Captopril 25mg 3,Captopril 25mg 3,family
+drug::T084,Insulin 100IU/ml 3,drug
+group::DM009,DM009,group
+family::Insulin 100IU/ml 3,Insulin 100IU/ml 3,family
+drug::T085,Levofloxacin 500mg 3,drug
+group::DM008,DM008,group
+family::Levofloxacin 500mg 3,Levofloxacin 500mg 3,family
+drug::T086,Ciprofloxacin 500mg 3,drug
+group::DM008,DM008,group
+family::Ciprofloxacin 500mg 3,Ciprofloxacin 500mg 3,family
+drug::T087,Fexofenadine 120mg 3,drug
+group::DM007,DM007,group
+family::Fexofenadine 120mg 3,Fexofenadine 120mg 3,family
+drug::T088,Esomeprazole 20mg 3,drug
+group::DM004,DM004,group
+family::Esomeprazole 20mg 3,Esomeprazole 20mg 3,family
+drug::T089,Budesonide 200mcg 3,drug
+group::DM006,DM006,group
+family::Budesonide 200mcg 3,Budesonide 200mcg 3,family
+drug::T090,Naproxen 250mg 3,drug
+group::DM002,DM002,group
+family::Naproxen 250mg 3,Naproxen 250mg 3,family
+drug::T091,Paracetamol 500mg 4,drug
+group::DM005,DM005,group
+family::Paracetamol 500mg 4,Paracetamol 500mg 4,family
+drug::T092,Amoxicillin 500mg 4,drug
+group::DM008,DM008,group
+family::Amoxicillin 500mg 4,Amoxicillin 500mg 4,family
+drug::T093,Cefixime 200mg 4,drug
+group::DM008,DM008,group
+family::Cefixime 200mg 4,Cefixime 200mg 4,family
+drug::T094,Azithromycin 500mg 4,drug
+group::DM008,DM008,group
+family::Azithromycin 500mg 4,Azithromycin 500mg 4,family
+drug::T095,Cetirizine 10mg 4,drug
+group::DM007,DM007,group
+family::Cetirizine 10mg 4,Cetirizine 10mg 4,family
+drug::T096,Loratadine 10mg 4,drug
+group::DM007,DM007,group
+family::Loratadine 10mg 4,Loratadine 10mg 4,family
+drug::T097,Omeprazole 20mg 4,drug
+group::DM004,DM004,group
+family::Omeprazole 20mg 4,Omeprazole 20mg 4,family
+drug::T098,Pantoprazole 40mg 4,drug
+group::DM004,DM004,group
+family::Pantoprazole 40mg 4,Pantoprazole 40mg 4,family
+drug::T099,Metformin 500mg 4,drug
+group::DM009,DM009,group
+family::Metformin 500mg 4,Metformin 500mg 4,family
+drug::T100,Gliclazide 80mg 4,drug
+group::DM009,DM009,group
+family::Gliclazide 80mg 4,Gliclazide 80mg 4,family
+drug::T101,Amlodipine 5mg 4,drug
+group::DM011,DM011,group
+family::Amlodipine 5mg 4,Amlodipine 5mg 4,family
+drug::T102,Losartan 50mg 4,drug
+group::DM011,DM011,group
+family::Losartan 50mg 4,Losartan 50mg 4,family
+drug::T103,Ibuprofen 400mg 4,drug
+group::DM002,DM002,group
+family::Ibuprofen 400mg 4,Ibuprofen 400mg 4,family
+drug::T104,Diclofenac 50mg 4,drug
+group::DM002,DM002,group
+family::Diclofenac 50mg 4,Diclofenac 50mg 4,family
+drug::T105,Salbutamol 2mg 4,drug
+group::DM006,DM006,group
+family::Salbutamol 2mg 4,Salbutamol 2mg 4,family
+drug::T106,Bromhexine 8mg 4,drug
+group::DM006,DM006,group
+family::Bromhexine 8mg 4,Bromhexine 8mg 4,family
+drug::T107,Acetylcysteine 200mg 4,drug
+group::DM006,DM006,group
+family::Acetylcysteine 200mg 4,Acetylcysteine 200mg 4,family
+drug::T108,ORS 1 gói 4,drug
+group::DM001,DM001,group
+family::ORS 1 gói 4,ORS 1 gói 4,family
+drug::T109,Melatonin 3mg 4,drug
+group::DM010,DM010,group
+family::Melatonin 3mg 4,Melatonin 3mg 4,family
+drug::T110,Clotrimazole 1% 4,drug
+group::DM003,DM003,group
+family::Clotrimazole 1% 4,Clotrimazole 1% 4,family
+drug::T111,Dextromethorphan 15mg 4,drug
+group::DM006,DM006,group
+family::Dextromethorphan 15mg 4,Dextromethorphan 15mg 4,family
+drug::T112,Domperidone 10mg 4,drug
+group::DM004,DM004,group
+family::Domperidone 10mg 4,Domperidone 10mg 4,family
+drug::T113,Captopril 25mg 4,drug
+group::DM011,DM011,group
+family::Captopril 25mg 4,Captopril 25mg 4,family
+drug::T114,Insulin 100IU/ml 4,drug
+group::DM009,DM009,group
+family::Insulin 100IU/ml 4,Insulin 100IU/ml 4,family
+drug::T115,Levofloxacin 500mg 4,drug
+group::DM008,DM008,group
+family::Levofloxacin 500mg 4,Levofloxacin 500mg 4,family
+drug::T116,Ciprofloxacin 500mg 4,drug
+group::DM008,DM008,group
+family::Ciprofloxacin 500mg 4,Ciprofloxacin 500mg 4,family
+drug::T117,Fexofenadine 120mg 4,drug
+group::DM007,DM007,group
+family::Fexofenadine 120mg 4,Fexofenadine 120mg 4,family
+drug::T118,Esomeprazole 20mg 4,drug
+group::DM004,DM004,group
+family::Esomeprazole 20mg 4,Esomeprazole 20mg 4,family
+drug::T119,Budesonide 200mcg 4,drug
+group::DM006,DM006,group
+family::Budesonide 200mcg 4,Budesonide 200mcg 4,family
+drug::T120,Naproxen 250mg 4,drug
+group::DM002,DM002,group
+family::Naproxen 250mg 4,Naproxen 250mg 4,family
+drug::T121,Paracetamol 500mg 5,drug
+group::DM005,DM005,group
+family::Paracetamol 500mg 5,Paracetamol 500mg 5,family
+drug::T122,Amoxicillin 500mg 5,drug
+group::DM008,DM008,group
+family::Amoxicillin 500mg 5,Amoxicillin 500mg 5,family
+drug::T123,Cefixime 200mg 5,drug
+group::DM008,DM008,group
+family::Cefixime 200mg 5,Cefixime 200mg 5,family
+drug::T124,Azithromycin 500mg 5,drug
+group::DM008,DM008,group
+family::Azithromycin 500mg 5,Azithromycin 500mg 5,family
+drug::T125,Cetirizine 10mg 5,drug
+group::DM007,DM007,group
+family::Cetirizine 10mg 5,Cetirizine 10mg 5,family
+drug::T126,Loratadine 10mg 5,drug
+group::DM007,DM007,group
+family::Loratadine 10mg 5,Loratadine 10mg 5,family
+drug::T127,Omeprazole 20mg 5,drug
+group::DM004,DM004,group
+family::Omeprazole 20mg 5,Omeprazole 20mg 5,family
+drug::T128,Pantoprazole 40mg 5,drug
+group::DM004,DM004,group
+family::Pantoprazole 40mg 5,Pantoprazole 40mg 5,family
+drug::T129,Metformin 500mg 5,drug
+group::DM009,DM009,group
+family::Metformin 500mg 5,Metformin 500mg 5,family
+drug::T130,Gliclazide 80mg 5,drug
+group::DM009,DM009,group
+family::Gliclazide 80mg 5,Gliclazide 80mg 5,family
+drug::T131,Amlodipine 5mg 5,drug
+group::DM011,DM011,group
+family::Amlodipine 5mg 5,Amlodipine 5mg 5,family
+drug::T132,Losartan 50mg 5,drug
+group::DM011,DM011,group
+family::Losartan 50mg 5,Losartan 50mg 5,family
+drug::T133,Ibuprofen 400mg 5,drug
+group::DM002,DM002,group
+family::Ibuprofen 400mg 5,Ibuprofen 400mg 5,family
+drug::T134,Diclofenac 50mg 5,drug
+group::DM002,DM002,group
+family::Diclofenac 50mg 5,Diclofenac 50mg 5,family
+drug::T135,Salbutamol 2mg 5,drug
+group::DM006,DM006,group
+family::Salbutamol 2mg 5,Salbutamol 2mg 5,family
+drug::T136,Bromhexine 8mg 5,drug
+group::DM006,DM006,group
+family::Bromhexine 8mg 5,Bromhexine 8mg 5,family
+drug::T137,Acetylcysteine 200mg 5,drug
+group::DM006,DM006,group
+family::Acetylcysteine 200mg 5,Acetylcysteine 200mg 5,family
+drug::T138,ORS 1 gói 5,drug
+group::DM001,DM001,group
+family::ORS 1 gói 5,ORS 1 gói 5,family
+drug::T139,Melatonin 3mg 5,drug
+group::DM010,DM010,group
+family::Melatonin 3mg 5,Melatonin 3mg 5,family
+drug::T140,Clotrimazole 1% 5,drug
+group::DM003,DM003,group
+family::Clotrimazole 1% 5,Clotrimazole 1% 5,family
+drug::T141,Dextromethorphan 15mg 5,drug
+group::DM006,DM006,group
+family::Dextromethorphan 15mg 5,Dextromethorphan 15mg 5,family
+drug::T142,Domperidone 10mg 5,drug
+group::DM004,DM004,group
+family::Domperidone 10mg 5,Domperidone 10mg 5,family
+drug::T143,Captopril 25mg 5,drug
+group::DM011,DM011,group
+family::Captopril 25mg 5,Captopril 25mg 5,family
+drug::T144,Insulin 100IU/ml 5,drug
+group::DM009,DM009,group
+family::Insulin 100IU/ml 5,Insulin 100IU/ml 5,family
+drug::T145,Levofloxacin 500mg 5,drug
+group::DM008,DM008,group
+family::Levofloxacin 500mg 5,Levofloxacin 500mg 5,family
+drug::T146,Ciprofloxacin 500mg 5,drug
+group::DM008,DM008,group
+family::Ciprofloxacin 500mg 5,Ciprofloxacin 500mg 5,family
+drug::T147,Fexofenadine 120mg 5,drug
+group::DM007,DM007,group
+family::Fexofenadine 120mg 5,Fexofenadine 120mg 5,family
+drug::T148,Esomeprazole 20mg 5,drug
+group::DM004,DM004,group
+family::Esomeprazole 20mg 5,Esomeprazole 20mg 5,family
+drug::T149,Budesonide 200mcg 5,drug
+group::DM006,DM006,group
+family::Budesonide 200mcg 5,Budesonide 200mcg 5,family
+drug::T150,Naproxen 250mg 5,drug
+group::DM002,DM002,group
+family::Naproxen 250mg 5,Naproxen 250mg 5,family
+drug::T151,Paracetamol 500mg 6,drug
+group::DM005,DM005,group
+family::Paracetamol 500mg 6,Paracetamol 500mg 6,family
+drug::T152,Amoxicillin 500mg 6,drug
+group::DM008,DM008,group
+family::Amoxicillin 500mg 6,Amoxicillin 500mg 6,family
+drug::T153,Cefixime 200mg 6,drug
+group::DM008,DM008,group
+family::Cefixime 200mg 6,Cefixime 200mg 6,family
+drug::T154,Azithromycin 500mg 6,drug
+group::DM008,DM008,group
+family::Azithromycin 500mg 6,Azithromycin 500mg 6,family
+drug::T155,Cetirizine 10mg 6,drug
+group::DM007,DM007,group
+family::Cetirizine 10mg 6,Cetirizine 10mg 6,family
+drug::T156,Loratadine 10mg 6,drug
+group::DM007,DM007,group
+family::Loratadine 10mg 6,Loratadine 10mg 6,family
+drug::T157,Omeprazole 20mg 6,drug
+group::DM004,DM004,group
+family::Omeprazole 20mg 6,Omeprazole 20mg 6,family
+drug::T158,Pantoprazole 40mg 6,drug
+group::DM004,DM004,group
+family::Pantoprazole 40mg 6,Pantoprazole 40mg 6,family
+drug::T159,Metformin 500mg 6,drug
+group::DM009,DM009,group
+family::Metformin 500mg 6,Metformin 500mg 6,family
+drug::T160,Gliclazide 80mg 6,drug
+group::DM009,DM009,group
+family::Gliclazide 80mg 6,Gliclazide 80mg 6,family
+drug::T161,Amlodipine 5mg 6,drug
+group::DM011,DM011,group
+family::Amlodipine 5mg 6,Amlodipine 5mg 6,family
+drug::T162,Losartan 50mg 6,drug
+group::DM011,DM011,group
+family::Losartan 50mg 6,Losartan 50mg 6,family
+drug::T163,Ibuprofen 400mg 6,drug
+group::DM002,DM002,group
+family::Ibuprofen 400mg 6,Ibuprofen 400mg 6,family
+drug::T164,Diclofenac 50mg 6,drug
+group::DM002,DM002,group
+family::Diclofenac 50mg 6,Diclofenac 50mg 6,family
+drug::T165,Salbutamol 2mg 6,drug
+group::DM006,DM006,group
+family::Salbutamol 2mg 6,Salbutamol 2mg 6,family
+drug::T166,Bromhexine 8mg 6,drug
+group::DM006,DM006,group
+family::Bromhexine 8mg 6,Bromhexine 8mg 6,family
+drug::T167,Acetylcysteine 200mg 6,drug
+group::DM006,DM006,group
+family::Acetylcysteine 200mg 6,Acetylcysteine 200mg 6,family
+drug::T168,ORS 1 gói 6,drug
+group::DM001,DM001,group
+family::ORS 1 gói 6,ORS 1 gói 6,family
+drug::T169,Melatonin 3mg 6,drug
+group::DM010,DM010,group
+family::Melatonin 3mg 6,Melatonin 3mg 6,family
+drug::T170,Clotrimazole 1% 6,drug
+group::DM003,DM003,group
+family::Clotrimazole 1% 6,Clotrimazole 1% 6,family
+drug::T171,Dextromethorphan 15mg 6,drug
+group::DM006,DM006,group
+family::Dextromethorphan 15mg 6,Dextromethorphan 15mg 6,family
+drug::T172,Domperidone 10mg 6,drug
+group::DM004,DM004,group
+family::Domperidone 10mg 6,Domperidone 10mg 6,family
+drug::T173,Captopril 25mg 6,drug
+group::DM011,DM011,group
+family::Captopril 25mg 6,Captopril 25mg 6,family
+drug::T174,Insulin 100IU/ml 6,drug
+group::DM009,DM009,group
+family::Insulin 100IU/ml 6,Insulin 100IU/ml 6,family
+drug::T175,Levofloxacin 500mg 6,drug
+group::DM008,DM008,group
+family::Levofloxacin 500mg 6,Levofloxacin 500mg 6,family
+drug::T176,Ciprofloxacin 500mg 6,drug
+group::DM008,DM008,group
+family::Ciprofloxacin 500mg 6,Ciprofloxacin 500mg 6,family
+drug::T177,Fexofenadine 120mg 6,drug
+group::DM007,DM007,group
+family::Fexofenadine 120mg 6,Fexofenadine 120mg 6,family
+drug::T178,Esomeprazole 20mg 6,drug
+group::DM004,DM004,group
+family::Esomeprazole 20mg 6,Esomeprazole 20mg 6,family
+drug::T179,Budesonide 200mcg 6,drug
+group::DM006,DM006,group
+family::Budesonide 200mcg 6,Budesonide 200mcg 6,family
+drug::T180,Naproxen 250mg 6,drug
+group::DM002,DM002,group
+family::Naproxen 250mg 6,Naproxen 250mg 6,family
+drug::T181,Paracetamol 500mg 7,drug
+group::DM005,DM005,group
+family::Paracetamol 500mg 7,Paracetamol 500mg 7,family
+drug::T182,Amoxicillin 500mg 7,drug
+group::DM008,DM008,group
+family::Amoxicillin 500mg 7,Amoxicillin 500mg 7,family
+drug::T183,Cefixime 200mg 7,drug
+group::DM008,DM008,group
+family::Cefixime 200mg 7,Cefixime 200mg 7,family
+drug::T184,Azithromycin 500mg 7,drug
+group::DM008,DM008,group
+family::Azithromycin 500mg 7,Azithromycin 500mg 7,family
+drug::T185,Cetirizine 10mg 7,drug
+group::DM007,DM007,group
+family::Cetirizine 10mg 7,Cetirizine 10mg 7,family
+drug::T186,Loratadine 10mg 7,drug
+group::DM007,DM007,group
+family::Loratadine 10mg 7,Loratadine 10mg 7,family
+drug::T187,Omeprazole 20mg 7,drug
+group::DM004,DM004,group
+family::Omeprazole 20mg 7,Omeprazole 20mg 7,family
+drug::T188,Pantoprazole 40mg 7,drug
+group::DM004,DM004,group
+family::Pantoprazole 40mg 7,Pantoprazole 40mg 7,family
+drug::T189,Metformin 500mg 7,drug
+group::DM009,DM009,group
+family::Metformin 500mg 7,Metformin 500mg 7,family
+drug::T190,Gliclazide 80mg 7,drug
+group::DM009,DM009,group
+family::Gliclazide 80mg 7,Gliclazide 80mg 7,family
+drug::T191,Amlodipine 5mg 7,drug
+group::DM011,DM011,group
+family::Amlodipine 5mg 7,Amlodipine 5mg 7,family
+drug::T192,Losartan 50mg 7,drug
+group::DM011,DM011,group
+family::Losartan 50mg 7,Losartan 50mg 7,family
+drug::T193,Ibuprofen 400mg 7,drug
+group::DM002,DM002,group
+family::Ibuprofen 400mg 7,Ibuprofen 400mg 7,family
+drug::T194,Diclofenac 50mg 7,drug
+group::DM002,DM002,group
+family::Diclofenac 50mg 7,Diclofenac 50mg 7,family
+drug::T195,Salbutamol 2mg 7,drug
+group::DM006,DM006,group
+family::Salbutamol 2mg 7,Salbutamol 2mg 7,family
+drug::T196,Bromhexine 8mg 7,drug
+group::DM006,DM006,group
+family::Bromhexine 8mg 7,Bromhexine 8mg 7,family
+drug::T197,Acetylcysteine 200mg 7,drug
+group::DM006,DM006,group
+family::Acetylcysteine 200mg 7,Acetylcysteine 200mg 7,family
+drug::T198,ORS 1 gói 7,drug
+group::DM001,DM001,group
+family::ORS 1 gói 7,ORS 1 gói 7,family
+drug::T199,Melatonin 3mg 7,drug
+group::DM010,DM010,group
+family::Melatonin 3mg 7,Melatonin 3mg 7,family
+drug::T200,Clotrimazole 1% 7,drug
+group::DM003,DM003,group
+family::Clotrimazole 1% 7,Clotrimazole 1% 7,family
+drug::T201,Dextromethorphan 15mg 7,drug
+group::DM006,DM006,group
+family::Dextromethorphan 15mg 7,Dextromethorphan 15mg 7,family
+drug::T202,Domperidone 10mg 7,drug
+group::DM004,DM004,group
+family::Domperidone 10mg 7,Domperidone 10mg 7,family
+drug::T203,Captopril 25mg 7,drug
+group::DM011,DM011,group
+family::Captopril 25mg 7,Captopril 25mg 7,family
+drug::T204,Insulin 100IU/ml 7,drug
+group::DM009,DM009,group
+family::Insulin 100IU/ml 7,Insulin 100IU/ml 7,family
+drug::T205,Levofloxacin 500mg 7,drug
+group::DM008,DM008,group
+family::Levofloxacin 500mg 7,Levofloxacin 500mg 7,family
+drug::T206,Ciprofloxacin 500mg 7,drug
+group::DM008,DM008,group
+family::Ciprofloxacin 500mg 7,Ciprofloxacin 500mg 7,family
+drug::T207,Fexofenadine 120mg 7,drug
+group::DM007,DM007,group
+family::Fexofenadine 120mg 7,Fexofenadine 120mg 7,family
+drug::T208,Esomeprazole 20mg 7,drug
+group::DM004,DM004,group
+family::Esomeprazole 20mg 7,Esomeprazole 20mg 7,family
+drug::T209,Budesonide 200mcg 7,drug
+group::DM006,DM006,group
+family::Budesonide 200mcg 7,Budesonide 200mcg 7,family
+drug::T210,Naproxen 250mg 7,drug
+group::DM002,DM002,group
+family::Naproxen 250mg 7,Naproxen 250mg 7,family
+drug::T211,Paracetamol 500mg 8,drug
+group::DM005,DM005,group
+family::Paracetamol 500mg 8,Paracetamol 500mg 8,family
+drug::T212,Amoxicillin 500mg 8,drug
+group::DM008,DM008,group
+family::Amoxicillin 500mg 8,Amoxicillin 500mg 8,family
+drug::T213,Cefixime 200mg 8,drug
+group::DM008,DM008,group
+family::Cefixime 200mg 8,Cefixime 200mg 8,family
+drug::T214,Azithromycin 500mg 8,drug
+group::DM008,DM008,group
+family::Azithromycin 500mg 8,Azithromycin 500mg 8,family
+drug::T215,Cetirizine 10mg 8,drug
+group::DM007,DM007,group
+family::Cetirizine 10mg 8,Cetirizine 10mg 8,family
+drug::T216,Loratadine 10mg 8,drug
+group::DM007,DM007,group
+family::Loratadine 10mg 8,Loratadine 10mg 8,family
+drug::T217,Omeprazole 20mg 8,drug
+group::DM004,DM004,group
+family::Omeprazole 20mg 8,Omeprazole 20mg 8,family
+drug::T218,Pantoprazole 40mg 8,drug
+group::DM004,DM004,group
+family::Pantoprazole 40mg 8,Pantoprazole 40mg 8,family
+drug::T219,Metformin 500mg 8,drug
+group::DM009,DM009,group
+family::Metformin 500mg 8,Metformin 500mg 8,family
+drug::T220,Gliclazide 80mg 8,drug
+group::DM009,DM009,group
+family::Gliclazide 80mg 8,Gliclazide 80mg 8,family
+drug::T221,Amlodipine 5mg 8,drug
+group::DM011,DM011,group
+family::Amlodipine 5mg 8,Amlodipine 5mg 8,family
+drug::T222,Losartan 50mg 8,drug
+group::DM011,DM011,group
+family::Losartan 50mg 8,Losartan 50mg 8,family
+drug::T223,Ibuprofen 400mg 8,drug
+group::DM002,DM002,group
+family::Ibuprofen 400mg 8,Ibuprofen 400mg 8,family
+drug::T224,Diclofenac 50mg 8,drug
+group::DM002,DM002,group
+family::Diclofenac 50mg 8,Diclofenac 50mg 8,family
+drug::T225,Salbutamol 2mg 8,drug
+group::DM006,DM006,group
+family::Salbutamol 2mg 8,Salbutamol 2mg 8,family
+drug::T226,Bromhexine 8mg 8,drug
+group::DM006,DM006,group
+family::Bromhexine 8mg 8,Bromhexine 8mg 8,family
+drug::T227,Acetylcysteine 200mg 8,drug
+group::DM006,DM006,group
+family::Acetylcysteine 200mg 8,Acetylcysteine 200mg 8,family
+drug::T228,ORS 1 gói 8,drug
+group::DM001,DM001,group
+family::ORS 1 gói 8,ORS 1 gói 8,family
+drug::T229,Melatonin 3mg 8,drug
+group::DM010,DM010,group
+family::Melatonin 3mg 8,Melatonin 3mg 8,family
+drug::T230,Clotrimazole 1% 8,drug
+group::DM003,DM003,group
+family::Clotrimazole 1% 8,Clotrimazole 1% 8,family
+drug::T231,Dextromethorphan 15mg 8,drug
+group::DM006,DM006,group
+family::Dextromethorphan 15mg 8,Dextromethorphan 15mg 8,family
+drug::T232,Domperidone 10mg 8,drug
+group::DM004,DM004,group
+family::Domperidone 10mg 8,Domperidone 10mg 8,family
+drug::T233,Captopril 25mg 8,drug
+group::DM011,DM011,group
+family::Captopril 25mg 8,Captopril 25mg 8,family
+drug::T234,Insulin 100IU/ml 8,drug
+group::DM009,DM009,group
+family::Insulin 100IU/ml 8,Insulin 100IU/ml 8,family
+drug::T235,Levofloxacin 500mg 8,drug
+group::DM008,DM008,group
+family::Levofloxacin 500mg 8,Levofloxacin 500mg 8,family
+drug::T236,Ciprofloxacin 500mg 8,drug
+group::DM008,DM008,group
+family::Ciprofloxacin 500mg 8,Ciprofloxacin 500mg 8,family
+drug::T237,Fexofenadine 120mg 8,drug
+group::DM007,DM007,group
+family::Fexofenadine 120mg 8,Fexofenadine 120mg 8,family
+drug::T238,Esomeprazole 20mg 8,drug
+group::DM004,DM004,group
+family::Esomeprazole 20mg 8,Esomeprazole 20mg 8,family
+drug::T239,Budesonide 200mcg 8,drug
+group::DM006,DM006,group
+family::Budesonide 200mcg 8,Budesonide 200mcg 8,family
+drug::T240,Naproxen 250mg 8,drug
+group::DM002,DM002,group
+family::Naproxen 250mg 8,Naproxen 250mg 8,family
+drug::T241,Paracetamol 500mg 9,drug
+group::DM005,DM005,group
+family::Paracetamol 500mg 9,Paracetamol 500mg 9,family
+drug::T242,Amoxicillin 500mg 9,drug
+group::DM008,DM008,group
+family::Amoxicillin 500mg 9,Amoxicillin 500mg 9,family
+drug::T243,Cefixime 200mg 9,drug
+group::DM008,DM008,group
+family::Cefixime 200mg 9,Cefixime 200mg 9,family
+drug::T244,Azithromycin 500mg 9,drug
+group::DM008,DM008,group
+family::Azithromycin 500mg 9,Azithromycin 500mg 9,family
+drug::T245,Cetirizine 10mg 9,drug
+group::DM007,DM007,group
+family::Cetirizine 10mg 9,Cetirizine 10mg 9,family
+drug::T246,Loratadine 10mg 9,drug
+group::DM007,DM007,group
+family::Loratadine 10mg 9,Loratadine 10mg 9,family
+drug::T247,Omeprazole 20mg 9,drug
+group::DM004,DM004,group
+family::Omeprazole 20mg 9,Omeprazole 20mg 9,family
+drug::T248,Pantoprazole 40mg 9,drug
+group::DM004,DM004,group
+family::Pantoprazole 40mg 9,Pantoprazole 40mg 9,family
+drug::T249,Metformin 500mg 9,drug
+group::DM009,DM009,group
+family::Metformin 500mg 9,Metformin 500mg 9,family
+drug::T250,Gliclazide 80mg 9,drug
+group::DM009,DM009,group
+family::Gliclazide 80mg 9,Gliclazide 80mg 9,family
+drug::T251,Amlodipine 5mg 9,drug
+group::DM011,DM011,group
+family::Amlodipine 5mg 9,Amlodipine 5mg 9,family
+drug::T252,Losartan 50mg 9,drug
+group::DM011,DM011,group
+family::Losartan 50mg 9,Losartan 50mg 9,family
+drug::T253,Ibuprofen 400mg 9,drug
+group::DM002,DM002,group
+family::Ibuprofen 400mg 9,Ibuprofen 400mg 9,family
+drug::T254,Diclofenac 50mg 9,drug
+group::DM002,DM002,group
+family::Diclofenac 50mg 9,Diclofenac 50mg 9,family
+drug::T255,Salbutamol 2mg 9,drug
+group::DM006,DM006,group
+family::Salbutamol 2mg 9,Salbutamol 2mg 9,family
+drug::T256,Bromhexine 8mg 9,drug
+group::DM006,DM006,group
+family::Bromhexine 8mg 9,Bromhexine 8mg 9,family
+drug::T257,Acetylcysteine 200mg 9,drug
+group::DM006,DM006,group
+family::Acetylcysteine 200mg 9,Acetylcysteine 200mg 9,family
+drug::T258,ORS 1 gói 9,drug
+group::DM001,DM001,group
+family::ORS 1 gói 9,ORS 1 gói 9,family
+drug::T259,Melatonin 3mg 9,drug
+group::DM010,DM010,group
+family::Melatonin 3mg 9,Melatonin 3mg 9,family
+drug::T260,Clotrimazole 1% 9,drug
+group::DM003,DM003,group
+family::Clotrimazole 1% 9,Clotrimazole 1% 9,family
+drug::T261,Dextromethorphan 15mg 9,drug
+group::DM006,DM006,group
+family::Dextromethorphan 15mg 9,Dextromethorphan 15mg 9,family
+drug::T262,Domperidone 10mg 9,drug
+group::DM004,DM004,group
+family::Domperidone 10mg 9,Domperidone 10mg 9,family
+drug::T263,Captopril 25mg 9,drug
+group::DM011,DM011,group
+family::Captopril 25mg 9,Captopril 25mg 9,family
+drug::T264,Insulin 100IU/ml 9,drug
+group::DM009,DM009,group
+family::Insulin 100IU/ml 9,Insulin 100IU/ml 9,family
+drug::T265,Levofloxacin 500mg 9,drug
+group::DM008,DM008,group
+family::Levofloxacin 500mg 9,Levofloxacin 500mg 9,family
+drug::T266,Ciprofloxacin 500mg 9,drug
+group::DM008,DM008,group
+family::Ciprofloxacin 500mg 9,Ciprofloxacin 500mg 9,family
+drug::T267,Fexofenadine 120mg 9,drug
+group::DM007,DM007,group
+family::Fexofenadine 120mg 9,Fexofenadine 120mg 9,family
+drug::T268,Esomeprazole 20mg 9,drug
+group::DM004,DM004,group
+family::Esomeprazole 20mg 9,Esomeprazole 20mg 9,family
+drug::T269,Budesonide 200mcg 9,drug
+group::DM006,DM006,group
+family::Budesonide 200mcg 9,Budesonide 200mcg 9,family
+drug::T270,Naproxen 250mg 9,drug
+group::DM002,DM002,group
+family::Naproxen 250mg 9,Naproxen 250mg 9,family
+drug::T271,Paracetamol 500mg 10,drug
+group::DM005,DM005,group
+family::Paracetamol 500mg 10,Paracetamol 500mg 10,family
+drug::T272,Amoxicillin 500mg 10,drug
+group::DM008,DM008,group
+family::Amoxicillin 500mg 10,Amoxicillin 500mg 10,family
+drug::T273,Cefixime 200mg 10,drug
+group::DM008,DM008,group
+family::Cefixime 200mg 10,Cefixime 200mg 10,family
+drug::T274,Azithromycin 500mg 10,drug
+group::DM008,DM008,group
+family::Azithromycin 500mg 10,Azithromycin 500mg 10,family
+drug::T275,Cetirizine 10mg 10,drug
+group::DM007,DM007,group
+family::Cetirizine 10mg 10,Cetirizine 10mg 10,family
+drug::T276,Loratadine 10mg 10,drug
+group::DM007,DM007,group
+family::Loratadine 10mg 10,Loratadine 10mg 10,family
+drug::T277,Omeprazole 20mg 10,drug
+group::DM004,DM004,group
+family::Omeprazole 20mg 10,Omeprazole 20mg 10,family
+drug::T278,Pantoprazole 40mg 10,drug
+group::DM004,DM004,group
+family::Pantoprazole 40mg 10,Pantoprazole 40mg 10,family
+drug::T279,Metformin 500mg 10,drug
+group::DM009,DM009,group
+family::Metformin 500mg 10,Metformin 500mg 10,family
+drug::T280,Gliclazide 80mg 10,drug
+group::DM009,DM009,group
+family::Gliclazide 80mg 10,Gliclazide 80mg 10,family
+drug::T281,Amlodipine 5mg 10,drug
+group::DM011,DM011,group
+family::Amlodipine 5mg 10,Amlodipine 5mg 10,family
+drug::T282,Losartan 50mg 10,drug
+group::DM011,DM011,group
+family::Losartan 50mg 10,Losartan 50mg 10,family
+drug::T283,Ibuprofen 400mg 10,drug
+group::DM002,DM002,group
+family::Ibuprofen 400mg 10,Ibuprofen 400mg 10,family
+drug::T284,Diclofenac 50mg 10,drug
+group::DM002,DM002,group
+family::Diclofenac 50mg 10,Diclofenac 50mg 10,family
+drug::T285,Salbutamol 2mg 10,drug
+group::DM006,DM006,group
+family::Salbutamol 2mg 10,Salbutamol 2mg 10,family
+drug::T286,Bromhexine 8mg 10,drug
+group::DM006,DM006,group
+family::Bromhexine 8mg 10,Bromhexine 8mg 10,family
+drug::T287,Acetylcysteine 200mg 10,drug
+group::DM006,DM006,group
+family::Acetylcysteine 200mg 10,Acetylcysteine 200mg 10,family
+drug::T288,ORS 1 gói 10,drug
+group::DM001,DM001,group
+family::ORS 1 gói 10,ORS 1 gói 10,family
+drug::T289,Melatonin 3mg 10,drug
+group::DM010,DM010,group
+family::Melatonin 3mg 10,Melatonin 3mg 10,family
+drug::T290,Clotrimazole 1% 10,drug
+group::DM003,DM003,group
+family::Clotrimazole 1% 10,Clotrimazole 1% 10,family
+drug::T291,Dextromethorphan 15mg 10,drug
+group::DM006,DM006,group
+family::Dextromethorphan 15mg 10,Dextromethorphan 15mg 10,family
+drug::T292,Domperidone 10mg 10,drug
+group::DM004,DM004,group
+family::Domperidone 10mg 10,Domperidone 10mg 10,family
+drug::T293,Captopril 25mg 10,drug
+group::DM011,DM011,group
+family::Captopril 25mg 10,Captopril 25mg 10,family
+drug::T294,Insulin 100IU/ml 10,drug
+group::DM009,DM009,group
+family::Insulin 100IU/ml 10,Insulin 100IU/ml 10,family
+drug::T295,Levofloxacin 500mg 10,drug
+group::DM008,DM008,group
+family::Levofloxacin 500mg 10,Levofloxacin 500mg 10,family
+drug::T296,Ciprofloxacin 500mg 10,drug
+group::DM008,DM008,group
+family::Ciprofloxacin 500mg 10,Ciprofloxacin 500mg 10,family
+drug::T297,Fexofenadine 120mg 10,drug
+group::DM007,DM007,group
+family::Fexofenadine 120mg 10,Fexofenadine 120mg 10,family
+drug::T298,Esomeprazole 20mg 10,drug
+group::DM004,DM004,group
+family::Esomeprazole 20mg 10,Esomeprazole 20mg 10,family
+drug::T299,Budesonide 200mcg 10,drug
+group::DM006,DM006,group
+family::Budesonide 200mcg 10,Budesonide 200mcg 10,family
+drug::T300,Naproxen 250mg 10,drug
+group::DM002,DM002,group
+family::Naproxen 250mg 10,Naproxen 250mg 10,family

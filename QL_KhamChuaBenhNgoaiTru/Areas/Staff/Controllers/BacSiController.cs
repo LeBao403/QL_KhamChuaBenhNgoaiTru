@@ -1,13 +1,18 @@
 using QL_KhamChuaBenhNgoaiTru.Models;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
-using System.Web.Mvc;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Text;
+using System.Web.Mvc;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 {
     public class BacSiController : BaseStaffController
     {
         private BacSiDB db = new BacSiDB();
+        private static readonly string MlApiUrl = "http://127.0.0.1:8000/recommend";
 
         public ActionResult Index()
         {
@@ -72,11 +77,71 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         {
             string maBS = Session["MaNV"]?.ToString() ?? "NV001";
 
-            // [ĐÃ SỬA] Check NullOrEmpty cho chuỗi thay vì check = 0
+            // ==============================================================================
+            // 1. XỬ LÝ LỖI NHÂN ĐÔI ID (Cắt bỏ phần bị trùng lặp do MVC Model Binder)
+            // ==============================================================================
+            if (!string.IsNullOrEmpty(model.MaPhieuKhamBenh) && model.MaPhieuKhamBenh.Contains(","))
+            {
+                model.MaPhieuKhamBenh = model.MaPhieuKhamBenh.Split(',')[0].Trim();
+            }
+
             if (string.IsNullOrEmpty(model.MaPhieuKhamBenh)) return RedirectToAction("Index");
 
+            // ==============================================================================
+            // 2. KHẮC PHỤC TRIỆT ĐỂ LỖI SINH HIỆU & ÉP KIỂU CULTURE (vi-VN / en-US)
+            // ==============================================================================
+            try
+            {
+                // Hàm lấy số an toàn
+                decimal? GetNumberSafe(string key)
+                {
+                    var val = Request.Form[key];
+                    if (string.IsNullOrEmpty(val)) return null;
+
+                    if (val.Contains(", "))
+                        val = val.Split(new[] { ", " }, StringSplitOptions.None)[0];
+                    else if (val.Contains(",") && val.Split(',').Length > 2)
+                        val = val.Split(',')[0];
+
+                    val = val.Replace(",", ".").Trim();
+
+                    if (decimal.TryParse(val, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out decimal parsedValue))
+                        return parsedValue;
+
+                    return null;
+                }
+
+                var spo2 = GetNumberSafe("SpO2");
+                if (spo2.HasValue) model.SpO2 = (int)Math.Round(spo2.Value);
+
+                var nt = GetNumberSafe("NhipTho");
+                if (nt.HasValue) model.NhipTho = (int)Math.Round(nt.Value);
+
+                var mach = GetNumberSafe("Mach");
+                if (mach.HasValue) model.Mach = (int)Math.Round(mach.Value);
+
+                var haThu = GetNumberSafe("HuyetApTamThu");
+                if (haThu.HasValue) model.HuyetApTamThu = (int)Math.Round(haThu.Value);
+
+                var haTruong = GetNumberSafe("HuyetApTamTruong");
+                if (haTruong.HasValue) model.HuyetApTamTruong = (int)Math.Round(haTruong.Value);
+
+                var cc = GetNumberSafe("ChieuCao");
+                if (cc.HasValue) model.ChieuCao = cc.Value;
+
+                var cn = GetNumberSafe("CanNang");
+                if (cn.HasValue) model.CanNang = cn.Value;
+
+                var nd = GetNumberSafe("NhietDo");
+                if (nd.HasValue) model.NhietDo = nd.Value;
+            }
+            catch { /* Bỏ qua lỗi nếu có ngoại lệ bất ngờ */ }
+
+            // ==============================================================================
+            // 3. THỰC HIỆN LƯU DỮ LIỆU BẰNG HÀM GỐC TRONG BACSIDB
+            // ==============================================================================
             string errorMsg = "";
-            bool result = db.LuuKhamBenh(model, maBS, out errorMsg); // Truyền thêm maBS
+            bool result = db.LuuKhamBenh(model, maBS, out errorMsg);
 
             if (result)
                 TempData["SuccessMsg"] = model.YeuCauCanLamSang ? "Đã chuyển bệnh nhân đi Cận Lâm Sàng." : "Hoàn tất khám và kê đơn!";
@@ -84,6 +149,61 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 TempData["ErrorMsg"] = "Lỗi khi lưu dữ liệu. Chi tiết: " + errorMsg;
 
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult GoiYThuoc(string trieuChung, string ketLuan, int? tuoi, string gioiTinh, string maPhieu)
+        {
+            try
+            {
+                var dsThuoc = db.GetDanhSachThuoc();
+                bool hasBhyt = false;
+                if (!string.IsNullOrEmpty(maPhieu))
+                {
+                    dynamic info = db.GetThongTinChiTiet(maPhieu);
+                    if (info != null)
+                    {
+                        hasBhyt = info.BHYT;
+                    }
+                }
+
+                var req = new
+                {
+                    age = tuoi ?? 30,
+                    sex = string.IsNullOrWhiteSpace(gioiTinh) ? "Nam" : gioiTinh,
+                    age_group = (tuoi ?? 30) < 13 ? "TreEm" : (tuoi ?? 30) < 18 ? "ThieuNien" : ((tuoi ?? 30) < 40 ? "NguoiLonTre" : ((tuoi ?? 30) < 60 ? "TrungNien" : "NguoiCaoTuoi")),
+                    disease = string.IsNullOrWhiteSpace(ketLuan) ? "Cảm cúm" : ketLuan,
+                    symptoms = string.IsNullOrWhiteSpace(trieuChung) ? "sốt | ho" : trieuChung,
+                    comorbidity = "None",
+                    allergy = "None",
+                    has_bhyt = hasBhyt,
+                    candidates = new List<object>()
+                };
+
+                foreach (var t in dsThuoc)
+                {
+                    req.candidates.Add(new
+                    {
+                        drug_code = t.MaThuoc,
+                        drug_name = t.TenThuoc,
+                        drug_group = t.MaLoaiThuoc ?? "Khac",
+                        route = t.DuongDung ?? t.DonViCoBan ?? "Uống",
+                        drug_family = string.Format("{0} {1}", t.TenThuoc, t.DonViCoBan),
+                        in_stock = 1,
+                        contraindication = 0,
+                        interaction_risk = 0,
+                        is_bhyt = t.CoBHYT ? 1 : 0
+                    });
+                }
+
+                var json = System.Web.Helpers.Json.Encode(req);
+                var response = PostJson(MlApiUrl, json);
+                return Content(response, "application/json");
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
         // --- TÍNH NĂNG TRA CỨU HỒ SƠ ---
         [HttpGet]
@@ -111,6 +231,27 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             catch (Exception ex)
             {
                 return Json(new { error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private static string PostJson(string url, string jsonBody)
+        {
+            var request = (HttpWebRequest)WebRequest.Create(url);
+            request.Method = "POST";
+            request.ContentType = "application/json";
+            request.Accept = "application/json";
+
+            var bytes = Encoding.UTF8.GetBytes(jsonBody);
+            request.ContentLength = bytes.Length;
+            using (var stream = request.GetRequestStream())
+            {
+                stream.Write(bytes, 0, bytes.Length);
+            }
+
+            using (var response = (HttpWebResponse)request.GetResponse())
+            using (var reader = new StreamReader(response.GetResponseStream()))
+            {
+                return reader.ReadToEnd();
             }
         }
     }

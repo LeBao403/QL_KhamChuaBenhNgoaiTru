@@ -1,4 +1,4 @@
-﻿using QL_KhamChuaBenhNgoaiTru.Models;
+using QL_KhamChuaBenhNgoaiTru.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -92,7 +92,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 conn.Open();
                 string sql = @"
         SELECT PKB.MaPhieuKhamBenh, PKB.LyDoDenKham, PKB.TrieuChung, PKB.KetLuan, PKB.TrangThai, PKB.DanDo, PKB.NgayTaiKham,
-               BN.HoTen, BN.GioiTinh, BN.NgaySinh, BN.DiaChi, BN.SDT, BN.CCCD,
+               BN.HoTen, BN.GioiTinh, BN.NgaySinh, BN.DiaChi, BN.SDT, BN.CCCD, BN.BHYT, BN.SoTheBHYT, BN.HanSuDungBHYT, BN.MucHuongBHYT,
                SL.ChieuCao, SL.CanNang, SL.NhietDo, SL.HuyetApTamThu, SL.HuyetApTamTruong, SL.Mach, SL.NhipTho, SL.SpO2,
                (SELECT TOP 1 HoTen FROM NHANVIEN WHERE MaNV = PKB.MaBacSiKham) AS TenBS,
                (SELECT TOP 1 TrangThaiThanhToan FROM HOADON WHERE MaPhieuKhamBenh = PKB.MaPhieuKhamBenh ORDER BY MaHD ASC) AS TrangThaiHD,
@@ -112,6 +112,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     DiaChi = "",
                     SoDienThoai = "",
                     CCCD = "",
+                    BHYT = false,
+                    SoTheBHYT = "",
+                    HanSuDungBHYTStr = "",
+                    MucHuongBHYT = 0m,
                     LyDoDenKham = "",
                     TrieuChung = "",
                     KetLuan = "",
@@ -157,6 +161,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 DiaChi = dr["DiaChi"] != DBNull.Value ? dr["DiaChi"].ToString() : "Chưa cập nhật",
                                 SoDienThoai = dr["SDT"] != DBNull.Value ? dr["SDT"].ToString() : "Chưa cập nhật",
                                 CCCD = dr["CCCD"] != DBNull.Value ? dr["CCCD"].ToString() : "Chưa cập nhật",
+                                BHYT = dr["BHYT"] != DBNull.Value ? Convert.ToBoolean(dr["BHYT"]) : false,
+                                SoTheBHYT = dr["SoTheBHYT"].ToString(),
+                                HanSuDungBHYTStr = dr["HanSuDungBHYT"] != DBNull.Value ? Convert.ToDateTime(dr["HanSuDungBHYT"]).ToString("dd/MM/yyyy") : "",
+                                MucHuongBHYT = dr["MucHuongBHYT"] != DBNull.Value ? Convert.ToDecimal(dr["MucHuongBHYT"]) : 0m,
                                 LyDoDenKham = dr["LyDoDenKham"].ToString(),
                                 TrieuChung = dr["TrieuChung"] != DBNull.Value ? dr["TrieuChung"].ToString() : "",
                                 KetLuan = dr["KetLuan"] != DBNull.Value ? dr["KetLuan"].ToString() : "",
@@ -319,7 +327,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             var list = new List<Thuoc>();
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
-                string sql = "SELECT MaThuoc, TenThuoc, DonViCoBan, GiaBan, CoBHYT FROM THUOC WHERE TrangThai = 1";
+                string sql = @"
+                    SELECT t.MaThuoc, t.TenThuoc, t.DonViCoBan, t.DuongDung, t.GiaBan, t.CoBHYT, t.MaLoaiThuoc
+                    FROM THUOC t
+                    WHERE t.TrangThai = 1";
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     conn.Open();
@@ -332,6 +343,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 MaThuoc = dr["MaThuoc"].ToString(),
                                 TenThuoc = dr["TenThuoc"].ToString(),
                                 DonViCoBan = dr["DonViCoBan"].ToString(),
+                                DuongDung = dr["DuongDung"] != DBNull.Value ? dr["DuongDung"].ToString() : null,
+                                MaLoaiThuoc = dr["MaLoaiThuoc"] != DBNull.Value ? dr["MaLoaiThuoc"].ToString() : null,
                                 GiaBan = dr["GiaBan"] != DBNull.Value ? Convert.ToDecimal(dr["GiaBan"]) : 0,
                                 CoBHYT = dr["CoBHYT"] != DBNull.Value ? Convert.ToBoolean(dr["CoBHYT"]) : false
                             });

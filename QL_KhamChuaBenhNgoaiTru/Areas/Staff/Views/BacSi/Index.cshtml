@@ -1,4 +1,4 @@
-@model QL_KhamChuaBenhNgoaiTru.Models.KhamBenhViewModel
+﻿@model QL_KhamChuaBenhNgoaiTru.Models.KhamBenhViewModel
 @{
     Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
     ViewBag.Title = "Phòng Khám Bác Sĩ";
@@ -206,7 +206,9 @@
     }
 </style>
 
-<div class="container-fluid py-4">
+@{ Html.RenderPartial("~/Views/Shared/_PrintDocumentStyles.cshtml"); }
+
+<div class="container-fluid py-4 d-print-none">
     <div class="card page-header-card shadow-sm mb-4">
         <div class="card-body text-white p-4">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
@@ -395,7 +397,7 @@
                     </button>
                 </div>
                 <div class="card-body">
-                    @using (Html.BeginForm("LuuKhamBenh", "BacSi", FormMethod.Post, new { id = "frmKhamBenh", @class = "form-horizontal" }))
+                    @using (Html.BeginForm("LuuKhamBenh", "BacSi", FormMethod.Post, new { id = "frmKhamBenh", @class = "form-horizontal" }))    
                     {
                         @Html.AntiForgeryToken()
                         <input type="hidden" id="MaPhieuKhamBenh" name="MaPhieuKhamBenh" value="0" />
@@ -560,8 +562,11 @@
                                 </table>
                             </div>
 
-                            <div class="section-header green mt-3">
-                                <i class="fas fa-pills"></i> Kê Đơn Thuốc
+                            <div class="section-header green mt-3 d-flex justify-content-between align-items-center">
+                                <span><i class="fas fa-pills"></i> Kê Đơn Thuốc</span>
+                                <button type="button" class="btn btn-sm btn-outline-success" id="btnGoiYThuoc">
+                                    <i class="fas fa-magic me-1"></i> Gợi ý thuốc
+                                </button>
                             </div>
 
                             <div class="mb-3">
@@ -578,16 +583,16 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div id="drugSuggestionBox" class="alert alert-info py-2 px-3 mb-2 d-none"></div>
+                                <div id="drugSuggestionList" class="mb-2 d-none"></div>
                                 <select id="cboThuoc" class="form-select select2" data-placeholder="-- Tìm kiếm và chọn thuốc --">
                                     <option value=""></option>
                                     @if (ViewBag.DanhSachThuoc != null)
                                     {
-                                        int sttThuoc = 1;
                                         foreach (var t in ViewBag.DanhSachThuoc)
                                         {
-                                            string ttBHYT = t.CoBHYT ? "Hỗ trợ BHYT" : "Không BHYT";
                                             int isBHYT = t.CoBHYT ? 1 : 0;
-                                            <option value="@t.MaThuoc" data-gia="@t.GiaBan" data-bhyt="@isBHYT">[#@(sttThuoc++)]|@ttBHYT| @t.TenThuoc | (ĐVT: @t.DonViCoBan)</option>
+                                            <option value="@t.MaThuoc" data-gia="@t.GiaBan" data-bhyt="@isBHYT" data-donvi="@t.DonViCoBan" data-tenthuoc="@t.TenThuoc">@t.TenThuoc (@t.DonViCoBan)</option>
                                         }
                                     }
                                 </select>
@@ -636,25 +641,19 @@
         </div>
     </div>
 
-    <div id="printPrescriptionArea" class="d-none">
-        <div class="row align-items-center mb-4">
-            <div class="col-7">
-                <div class="d-flex align-items-center gap-3">
-                    <i class="fas fa-hospital text-primary" style="font-size: 2.5rem;"></i>
-                    <div>
-                        <h2 class="mb-0 fw-bold" style="color: #1e293b; font-size: 1.8rem;">HIS CLINIC CENTER</h2>
-                        <p class="text-muted mb-0" style="font-size: 0.85rem;">MST: 0312345678 - Hotline: 1900 8888</p>
-                        <p class="text-muted mb-0" style="font-size: 0.85rem;">ĐC: Số 123 Nguyễn Văn Cừ, Quận 5, TP.HCM</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-5 text-end">
-                <h3 style="font-weight: 800; color: #3b82f6; font-size: 1.4rem; text-transform:uppercase;" id="printTitle">PHIẾU KHÁM BỆNH</h3>
-                <p class="mb-0 fw-bold text-dark fs-5">Mã PK: <span class="text-danger" id="printMaPK"></span></p>
-            </div>
-        </div>
-
-        <hr style="border-top: 2px solid #1e293b; margin-bottom: 1.5rem;" />
+    <div id="printPrescriptionArea" class="d-none app-print-sheet">
+        @{
+            Html.RenderPartial(
+                "~/Views/Shared/_PrintDocumentHeader.cshtml",
+                new ViewDataDictionary(ViewData)
+                {
+                    { "PrintDocumentTitle", "PHI&#7870;U KH&#193;M B&#7878;NH" },
+                    { "PrintDocumentTitleElementId", "printTitle" },
+                    { "PrintDocumentMaBNElementId", "printMaBN" },
+                    { "PrintDocumentCodeLabel", "M&#227; PK:" },
+                    { "PrintDocumentCodeElementId", "printMaPK" }
+                });
+        }
 
         <div class="row mb-4">
             <div class="col-12">
@@ -712,13 +711,13 @@
             <tbody id="printTbBody"></tbody>
         </table>
 
-        <div class="row mt-4 pt-4 text-center">
-            <div class="col-6">
+        <div class="app-print-signature" style="display:flex; justify-content:space-between; text-align:center; margin-top:24px;">
+            <div style="width:40%;">
             </div>
-            <div class="col-6">
-                <div style="font-weight: 700; color: #334155;">Bác sĩ điều trị</div>
-                <div class="text-muted fst-italic" style="font-size: 0.8rem;">(Ký, ghi rõ họ tên)</div>
-                <div class="mt-5 fw-bold text-dark fs-5" id="printTenBS"></div>
+            <div style="width:40%;">
+                <div id="prt-date-footer" style="font-style:italic; margin-bottom:5px;"></div>
+                <div style="font-weight:700; text-transform:uppercase;">Bác sĩ điều trị</div>
+                <div style="margin-top:70px; font-weight:bold; font-size:1.1rem;" id="printTenBS"></div>
             </div>
         </div>
     </div>
@@ -737,6 +736,7 @@
         var isDaThanhToanKham = true;
         var phiKhamBenh = 0;
         var currentTrangThai = '';
+        var suggestedDrugCodes = [];
 
         // Hàm thêm Dòng Bệnh
         function AddBenhRow(maBenh, tenBenh) {
@@ -797,22 +797,37 @@
             var showAll = (chkCo && chkKhong) || (!chkCo && !chkKhong);
 
             var currentVal = $('#cboThuoc').val();
+            var currentSuggestions = suggestedDrugCodes.slice();
+            var currentSuggestionMap = {};
+            $('#cboThuoc option').each(function () {
+                var code = (($(this).val() == null ? '' : String($(this).val()))).trim();
+                if (code) currentSuggestionMap[code] = $(this).attr('data-suggested') === '1';
+            });
+
             $('#cboThuoc').select2('destroy'); // Tắt Select2 để can thiệp DOM
 
             $('#cboThuoc option').each(function () {
                 if ($(this).val() === "") return;
 
+                var optionCode = (($(this).val() == null ? '' : String($(this).val()))).trim();
                 var isBHYT = $(this).attr('data-bhyt') === "1";
                 var inPrescription = $(this).hasClass('in-prescription');
+                var isSuggested = currentSuggestions.indexOf(optionCode) >= 0 || currentSuggestionMap[optionCode] === true;
 
                 if (showAll || (chkCo && isBHYT) || (chkKhong && !isBHYT)) {
                     $(this).prop('disabled', inPrescription); // Mở khóa nếu chưa kê
+                    if (isSuggested) {
+                        $(this).attr('data-suggested', '1');
+                    }
                     // Bỏ thẻ span ẩn đi (nếu có)
                     if ($(this).parent().is('span.hidden-opt')) {
                         $(this).unwrap();
                     }
                 } else {
                     $(this).prop('disabled', true);
+                    if (isSuggested) {
+                        $(this).attr('data-suggested', '1');
+                    }
                     // Bọc bằng thẻ span có display:none để Select2 bỏ qua option này
                     if (!$(this).parent().is('span.hidden-opt')) {
                         $(this).wrap('<span class="hidden-opt" style="display:none;"></span>');
@@ -820,7 +835,28 @@
                 }
             });
 
-            $('#cboThuoc').select2({ width: '100%', theme: "classic", allowClear: true });
+            $('#cboThuoc').select2({
+                width: '100%',
+                theme: "classic",
+                allowClear: true,
+                dropdownCssClass: 'thuoc-dropdown-below',
+                escapeMarkup: function (markup) { return markup; },
+                templateResult: function (data) {
+                    if (!data.id) return data.text;
+                    var $el = data.element ? $(data.element) : null;
+                    var isSug = $el && $el.attr('data-suggested') === '1';
+                    var bhytStatus = $el && $el.attr('data-bhyt') === '1' ? '<span class="badge bg-success" style="font-size: 0.75rem;">BHYT</span>' : '<span class="badge bg-secondary" style="font-size: 0.75rem;">Không BHYT</span>';
+                    var text = ($el && $el.text()) || data.text;
+                    if (isSug) {
+                        return $('<div style="background-color: #fffae6; border-left: 3px solid #ffc107; padding: 4px 8px; border-radius: 4px;"><i class="fas fa-star text-warning me-1"></i> ' + bhytStatus + ' <strong class="text-danger ms-1">' + text.replace(/^★\s*/, '') + '</strong></div>');
+                    }
+                    return $('<div style="padding: 4px 8px;">' + bhytStatus + ' <span class="ms-1 fw-bold text-dark">' + text + '</span></div>');
+                },
+                templateSelection: function (data) {
+                    if (!data.id) return data.text;
+                    return data.text || '';
+                }
+            });
 
             // Xóa giá trị đang hiển thị trên combobox nếu nó bị bộ lọc ẩn đi
             if ($('#cboThuoc option:selected').prop('disabled') || $('#cboThuoc option:selected').parent().is('span.hidden-opt')) {
@@ -1198,6 +1234,7 @@
             // --- KẾT THÚC CẬP NHẬT ---
             // Khởi tạo Select2
             $('.select2').select2({ width: '100%', theme: "classic", allowClear: true });
+            $('<style>.thuoc-dropdown-below{z-index:99999 !important;} .select2-results__option[aria-selected="true"]{font-weight:700;} .suggestion-pill{box-shadow:0 1px 3px rgba(0,0,0,.12);} .suggested-drug-item{display:block;padding:2px 0;color:#111827;font-weight:700;}</style>').appendTo('head');
 
             // SỰ KIỆN CLICK LỌC THUỐC THEO BHYT
             $('.filter-bhyt').on('change', function () {
@@ -1210,20 +1247,31 @@
             setupPagination('body-da-kham', 'page-da-kham', 5);
 
             // Bật / Tắt Yêu cầu CLS
+            // Bật / Tắt Yêu cầu CLS
             $('#chkCLS').change(function () {
                 var isDangDiCLS = (currentTrangThai === 'Chờ thanh toán' || currentTrangThai === 'Chờ cận lâm sàng');
                 var isHoanThanh = (currentTrangThai === 'Hoàn thành');
 
                 if (this.checked) {
-                    $('#vungKetLuan').slideUp(); $('#vungChiDinhCLS').slideDown();
+                    $('#vungKetLuan').slideUp();
+                    $('#vungChiDinhCLS').slideDown();
                     $('#TrieuChung').attr('placeholder', 'Nhập tóm tắt triệu chứng yêu cầu cận lâm sàng...');
+
+                    // [CODE THÊM VÀO]: Ẩn mục Dặn dò và Ngày tái khám mượt mà cùng với vungKetLuan
+                    $('#DanDo').closest('.row').slideUp();
+                    $('#NgayTaiKham').closest('.row').slideUp();
 
                     if (!isDangDiCLS && !isHoanThanh) {
                         $('#btnHoanThanh').html('<i class="fas fa-print me-2"></i> In Cận Lâm Sàng & Lưu').removeClass('btn-success btn-secondary').addClass('btn-danger').prop('disabled', false);
                     }
                 } else {
-                    $('#vungKetLuan').slideDown(); $('#vungChiDinhCLS').slideUp();
+                    $('#vungKetLuan').slideDown();
+                    $('#vungChiDinhCLS').slideUp();
                     $('#TrieuChung').attr('placeholder', 'Nhập triệu chứng, dấu hiệu sinh tồn...');
+
+                    // [CODE THÊM VÀO]: Hiện lại mục Dặn dò và Ngày tái khám
+                    $('#DanDo').closest('.row').slideDown();
+                    $('#NgayTaiKham').closest('.row').slideDown();
 
                     if (!isDangDiCLS && !isHoanThanh) {
                         $('#btnHoanThanh').html('<i class="fas fa-print me-2"></i> In Đơn Thuốc & Lưu').removeClass('btn-danger btn-secondary').addClass('btn-success').prop('disabled', false);
@@ -1243,10 +1291,193 @@
             // SỰ KIỆN COMBOBOX CHỌN THUỐC
             $('#cboThuoc').on('select2:select', function (e) {
                 var id = e.params.data.id;
-                var text = e.params.data.text;
-                var ten = text.split('|')[2].trim();
+                var text = e.params.data.text || '';
+                var ten = text
+                    .replace(/^★\s*/, '')
+                    .replace(/^\[(BHYT|Không BHYT)\]\s*/, '')
+                    .split('- Điểm:')[0]
+                    .split('|')[0]
+                    .trim();
                 AddThuocRow({ MaThuoc: id, TenThuoc: ten });
                 $(this).val(null).trigger('change');
+            });
+
+            function buildFallbackDrugSuggestions(trieuChung, ketLuan) {
+                var text = (trieuChung + ' ' + ketLuan).toLowerCase();
+                var fallback = [];
+                function pick(code, name, score) {
+                    if (fallback.some(function (x) { return x.code === code; })) return;
+                    fallback.push({ code: code, name: name, score: score });
+                }
+
+                if (text.indexOf('sốt') >= 0 || text.indexOf('ho') >= 0 || text.indexOf('mũi') >= 0 || text.indexOf('nhức đầu') >= 0 || text.indexOf('đau đầu') >= 0 || text.indexOf('cảm') >= 0) {
+                    pick('T001', 'Paracetamol 500mg', 0.96);
+                    pick('T005', 'Cetirizine 10mg', 0.84);
+                    pick('T006', 'Loratadine 10mg', 0.82);
+                    pick('T004', 'Azithromycin 500mg', 0.68);
+                    pick('T002', 'Amoxicillin 500mg', 0.66);
+                }
+
+                if (!fallback.length) {
+                    pick('T001', 'Paracetamol 500mg', 0.80);
+                    pick('T005', 'Cetirizine 10mg', 0.72);
+                    pick('T007', 'Omeprazole 20mg', 0.60);
+                }
+                return fallback;
+            }
+
+            function refreshThuocDropdownSuggestions(items) {
+                items = Array.isArray(items) ? items : [];
+
+                var normalizeCode = function (value) {
+                    return (value == null ? '' : String(value)).trim();
+                };
+
+                var normalized = items.map(function (x) {
+                    var code = normalizeCode(x.drug_code || x.drugCode || x.MaThuoc || '');
+                    var name = x.drug_name || x.drugName || x.TenThuoc || 'Thuốc gợi ý';
+                    var score = typeof x.score === 'number' ? x.score : parseFloat(x.Score || x.score || 0);
+                    if (isNaN(score)) score = 0;
+                    return { code: code, name: name, score: score };
+                }).filter(function (x) { return x.code; }).sort(function (a, b) { return b.score - a.score; });
+
+                suggestedDrugCodes = normalized.map(function (x) { return x.code; });
+                var suggestedMap = {};
+                normalized.forEach(function (x) { suggestedMap[x.code] = x.score; });
+
+                var $select = $('#cboThuoc');
+                
+                $('#drugSuggestionBox').addClass('d-none').empty();
+                $('#drugSuggestionList').addClass('d-none').empty();
+
+                var allOptions = $select.find('option').toArray();
+                var firstOption = allOptions.filter(function (o) { return $(o).val() === ''; });
+                var suggestedOptions = allOptions.filter(function (o) {
+                    return normalizeCode($(o).val()) && suggestedDrugCodes.indexOf(normalizeCode($(o).val())) >= 0;
+                }).map(function (o) {
+                    var $o = $(o);
+                    var code = normalizeCode($o.val());
+                    var score = suggestedMap[code] || 0;
+                    var pct = (score * 100).toFixed(1) + '%';
+                    var donvi = $o.attr('data-donvi') || 'Viên';
+                    var cleanName = ($o.attr('data-tenthuoc') || $o.text()).replace(/^★[\s\[BHYT\]]*/, '').split('- Điểm:')[0].replace(/\(.*?\)$/, '').trim();
+                    $o.text('★ ' + cleanName + ' (' + donvi + ') - Điểm: ' + pct).attr('data-suggested', '1').attr('data-score', score);
+                    return o;
+                }).sort(function (a, b) {
+                    return parseFloat($(b).attr('data-score') || '0') - parseFloat($(a).attr('data-score') || '0');
+                });
+
+                var otherOptions = allOptions.filter(function (o) {
+                    return normalizeCode($(o).val()) && suggestedDrugCodes.indexOf(normalizeCode($(o).val())) < 0;
+                }).map(function (o) {
+                    var $o = $(o);
+                    var donvi = $o.attr('data-donvi') || 'Viên';
+                    var cleanName = ($o.attr('data-tenthuoc') || $o.text()).replace(/^★\s*/, '').split('- Điểm:')[0].replace(/\(.*?\)$/, '').trim();
+                    $o.text(cleanName + ' (' + donvi + ')').attr('data-suggested', '0').removeAttr('data-score');
+                    return o;
+                });
+
+                $select.empty();
+                firstOption.forEach(function (o) { $select.append(o); });
+                suggestedOptions.forEach(function (o) { $select.append(o); });
+                otherOptions.forEach(function (o) { $select.append(o); });
+
+                if ($select.data('select2')) {
+                    $select.select2('destroy');
+                }
+                $select.select2({
+                    width: '100%',
+                    theme: 'classic',
+                    allowClear: true,
+                    dropdownCssClass: 'thuoc-dropdown-below',
+                    escapeMarkup: function (markup) { return markup; },
+                    templateResult: function (data) {
+                        if (!data.id) return data.text;
+                        var $el = data.element ? $(data.element) : null;
+                        var isSug = $el && $el.attr('data-suggested') === '1';
+                        var bhytStatus = $el && $el.attr('data-bhyt') === '1' ? '<span class="badge bg-success" style="font-size: 0.75rem;">BHYT</span>' : '<span class="badge bg-secondary" style="font-size: 0.75rem;">Không BHYT</span>';
+                        var text = ($el && $el.text()) || data.text;
+                        if (isSug) {
+                            return $('<div style="background-color: #fffae6; border-left: 3px solid #ffc107; padding: 4px 8px; border-radius: 4px;"><i class="fas fa-star text-warning me-1"></i> ' + bhytStatus + ' <strong class="text-danger ms-1">' + text.replace(/^★\s*/, '') + '</strong></div>');
+                        }
+                        return $('<div style="padding: 4px 8px;">' + bhytStatus + ' <span class="ms-1 fw-bold text-dark">' + text + '</span></div>');
+                    },
+                    templateSelection: function (data) {
+                        if (!data.id) return data.text;
+                        return data.text || '';
+                    }
+                });
+                $select.trigger('change.select2');
+            }
+
+            $('#btnGoiYThuoc').on('click', function () {
+                var maPhieu = $('#MaPhieuKhamBenh').val();
+                var trieuChung = $('#TrieuChung').val() || $('#txtTrieuChung').val() || '';
+                var ketLuan = $('#KetLuan').val() || $('#txtKetLuan').val() || '';
+                var tuoiText = $('#lblTuoi').text() || '';
+                var tuoi = parseInt((tuoiText.match(/(\d+)/) || ['30'])[0], 10) || 30;
+                var gioiTinh = $('#lblGioiTinh').text() || 'Nam';
+
+                if (!maPhieu) {
+                    var msgNoPhieu = 'Chưa có mã phiếu khám, không thể gợi ý thuốc.';
+                    if (window.Swal && Swal.fire) Swal.fire('Thông báo', msgNoPhieu, 'info'); else alert(msgNoPhieu);
+                    return;
+                }
+
+                var payload = {
+                    trieuChung: trieuChung,
+                    ketLuan: ketLuan,
+                    tuoi: tuoi,
+                    gioiTinh: gioiTinh,
+                    maPhieu: maPhieu,
+                    age: tuoi,
+                    sex: gioiTinh,
+                    age_group: (tuoi < 13 ? 'TreEm' : (tuoi < 18 ? 'ThieuNien' : (tuoi < 40 ? 'NguoiLonTre' : (tuoi < 60 ? 'TrungNien' : 'NguoiCaoTuoi')))),
+                    disease: ketLuan,
+                    symptoms: trieuChung,
+                    comorbidity: 'None',
+                    allergy: 'None'
+                };
+                console.log('GoiYThuoc payload', payload);
+
+                $.ajax({
+                    url: '@Url.Action("GoiYThuoc", "BacSi", new { area = "Staff" })',
+                    method: 'POST',
+                    data: payload,
+                    dataType: 'json'
+                }).done(function (res) {
+                    console.log('GoiYThuoc response', res);
+                    if (!res || !res.success) {
+                        var msg = (res && res.message) ? res.message : 'Không lấy được gợi ý thuốc';
+                        if (window.Swal && Swal.fire) Swal.fire('Lỗi', msg, 'error'); else alert(msg);
+                        return;
+                    }
+
+                    var items = [];
+                    if (res.data && Array.isArray(res.data.items)) items = res.data.items;
+                    else if (Array.isArray(res.items)) items = res.items;
+                    else if (Array.isArray(res.data)) items = res.data;
+
+                    if (!items.length) {
+                        var msgEmpty = 'Không có thuốc gợi ý phù hợp từ AI. Đang hiển thị danh sách tham khảo.';
+                        if (window.Swal && Swal.fire) Swal.fire('Thông báo', msgEmpty, 'info'); else alert(msgEmpty);
+                        var fallbackItems = buildFallbackDrugSuggestions(trieuChung, ketLuan);
+                        refreshThuocDropdownSuggestions(fallbackItems);
+                        return;
+                    }
+
+                    refreshThuocDropdownSuggestions(items);
+                    if (res.meta && res.meta.disease_category) {
+                        $('#drugSuggestionBox').removeClass('d-none').html('<div class="small fw-bold text-primary"><i class="fas fa-robot me-1"></i> AI gợi ý nhóm bệnh: <span class="text-danger">' + res.meta.disease_category + '</span></div>');
+                    }
+                    if (window.Swal && Swal.fire) {
+                        Swal.fire('Đã gợi ý thuốc', 'Các thuốc gợi ý đã được đánh dấu ★ trong danh sách.', 'success');
+                    }
+                }).fail(function (xhr, status, err) {
+                    console.error('GoiYThuoc ajax fail', status, err, xhr && xhr.responseText);
+                    var msgFail = 'Không gọi được API gợi ý thuốc.';
+                    if (window.Swal && Swal.fire) Swal.fire('Lỗi', msgFail, 'error'); else alert(msgFail);
+                });
             });
 
             $('#cboTimBenhNhan').select2();
@@ -1511,6 +1742,9 @@
                 }
 
                 $('#printTbBody').html(tbodyHtml);
+
+                var now = new Date();
+                $('#prt-date-footer').text('TP.HCM, ngày ' + now.getDate() + ' tháng ' + (now.getMonth() + 1) + ' năm ' + now.getFullYear());
 
                 window.print();
                 setTimeout(function () { $('#frmKhamBenh').submit(); }, 500);

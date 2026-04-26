@@ -99,6 +99,8 @@
     }
 </style>
 
+@{ Html.RenderPartial("~/Views/Shared/_PrintDocumentStyles.cshtml"); }
+
 <div class="action-bar d-flex justify-content-between align-items-center d-print-none">
     <div class="d-flex align-items-center gap-3">
         <a href="@Url.Action("Index", "HoaDon")" class="btn btn-light border shadow-sm rounded-pill fw-bold text-secondary px-3">
@@ -116,26 +118,25 @@
     </div>
 </div>
 
-<div class="invoice-wrapper" id="invoiceArea">
+<div class="invoice-wrapper app-print-sheet" id="invoiceArea">
     <div class="invoice-watermark">
         @(isPaid ? "ĐÃ THANH TOÁN" : "CHƯA THANH TOÁN")
     </div>
 
-    <div class="invoice-header row align-items-center">
-        <div class="col-sm-7">
-            <div class="d-flex align-items-center gap-3">
-                <i class="bi bi-hospital-fill text-primary" style="font-size: 2.5rem;"></i>
-                <div>
-                    <h2 class="clinic-name mb-0">HIS CLINIC CENTER</h2>
-                    <p class="text-muted mb-0" style="font-size: 0.85rem;">MST: 0312345678 - Hotline: 1900 8888</p>
-                    <p class="text-muted mb-0" style="font-size: 0.85rem;">ĐC: Số 123 Nguyễn Văn Cừ, Quận 5, TP.HCM</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-5 text-sm-end mt-4 mt-sm-0">
-            <h3 class="invoice-title">HÓA ĐƠN VIỆN PHÍ</h3>
-            <p class="mb-0 fw-bold text-dark fs-5">Mã HĐ: <span class="text-danger">#@info["MaHD"]</span></p>
-            <span class="badge @(isPaid ? "bg-success" : "bg-danger") px-3 py-2 rounded-pill mt-2 fs-6 shadow-sm">
+    <div class="invoice-header">
+        @{
+            Html.RenderPartial(
+                "~/Views/Shared/_PrintDocumentHeader.cshtml",
+                new ViewDataDictionary(ViewData)
+                {
+                    { "PrintDocumentTitle", "H&#211;A &#272;&#416;N VI&#7878;N PH&#205;" },
+                    { "PrintDocumentMaBNText", info["MaBN"].ToString() },
+                    { "PrintDocumentCodeLabel", "M&#227; h&#243;a &#273;&#417;n" },
+                    { "PrintDocumentCodeText", "#" + info["MaHD"] }
+                });
+        }
+        <div class="d-flex justify-content-end mt-3">
+            <span class="badge @(isPaid ? "bg-success" : "bg-danger") px-3 py-2 rounded-pill fs-6 shadow-sm">
                 <i class="bi @(isPaid ? "bi-check-circle" : "bi-exclamation-circle") me-1"></i> @trangThai
             </span>
         </div>
@@ -188,7 +189,7 @@
     </div>
 
     <div class="table-responsive table-invoice mt-4">
-        <table class="table mb-0">
+        <table class="table mb-0 app-print-table">
             <thead>
                 <tr>
                     <th class="text-center" style="width: 50px;">STT</th>
@@ -241,13 +242,13 @@
         </div>
     </div>
 
-    <div class="row signature-area position-relative z-1">
+    <div class="row signature-area position-relative z-1 app-print-signature text-center">
         <div class="col-6">
-            <div class="signature-title">Người nộp tiền</div>
+            <div class="signature-title text-uppercase mt-2">Người nộp tiền</div>
             <div class="text-muted fst-italic" style="font-size: 0.8rem;">(Ký, ghi rõ họ tên)</div>
         </div>
         <div class="col-6">
-            <div class="signature-title">Nhân viên thu ngân</div>
+            <div id="prt-date-footer" style="font-style:italic; margin-bottom:5px;">TP.HCM, ngày @DateTime.Now.Day tháng @DateTime.Now.Month năm @DateTime.Now.Year</div>`n            <div class="signature-title text-uppercase mt-2">Nhân viên thu ngân</div>
             <div class="text-muted fst-italic" style="font-size: 0.8rem;">(Ký, ghi rõ họ tên)</div>
             <div class="fw-bold mt-5 text-dark">@Session["HoTenNV"]</div>
         </div>
@@ -258,3 +259,4 @@
         <p class="text-muted fst-italic" style="font-size: 0.75rem;">Hóa đơn điện tử có giá trị lưu hành nội bộ. Quý khách vui lòng kiểm tra kỹ thông tin trước khi rời quầy.</p>
     </div>
 </div>
+
