@@ -12,47 +12,35 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
         private readonly DashboardDB db = new DashboardDB();
 
         // GET: Admin/Dashboard
+        // 1. Hàm Index giờ chỉ đóng vai trò cái "Vỏ"
         public ActionResult Index()
         {
-            ViewBag.Title = "Tổng quan";
+            ViewBag.Title = "Trung tâm điều khiển";
+            return View();
+        }
 
+        // 2. Hàm mới: Xử lý data và trả về "Ruột" Tổng quan
+        public ActionResult LoadDashboardTongQuan()
+        {
             try
             {
                 var model = new DashboardViewModel();
-
-                // 1. Thống kê tổng quan
                 model.ThongKe = db.GetThongKeTongQuan();
-
-                // 2. Thống kê khám bệnh
                 model.ThongKeKhamBenh = db.GetThongKeKhamBenh();
-
-                // 3. Doanh thu tháng hiện tại
                 model.DoanhThuThang = db.GetDoanhThu();
-
-                // 4. Doanh thu 7 ngày gần nhất (cho biểu đồ)
                 model.DoanhThu7Ngay = db.GetDoanhThu7Ngay();
-
-                // 5. Doanh thu 12 tháng (cho biểu đồ)
                 model.DoanhThu12Thang = db.GetDoanhThu12Thang(DateTime.Now.Year);
-
-                // 6. Thuốc sắp hết hạn
                 model.ThuocSapHetHan = db.GetThuocSapHetHan(30);
-
-                // 7. Thuốc sắp hết hàng
                 model.ThuocSapHetHang = db.GetThuocSapHetHang(10);
-
-                // 8. Phiếu nhập gần đây
                 model.PhieuNhapGanDay = db.GetPhieuNhapGanDay(5);
-
-                // 9. Bác sĩ khám nhiều nhất
                 model.BacSiKhamNhieuNhat = db.GetBacSiKhamNhieuNhat(5);
 
-                return View(model);
+                // Chú ý: Trả về PartialView thay vì View
+                return PartialView("_DashboardTongQuan", model);
             }
             catch (Exception ex)
             {
-                ViewBag.ErrorMessage = "Đã xảy ra lỗi khi tải dữ liệu Dashboard: " + ex.Message;
-                return View("Error");
+                return Content("<div class='alert alert-danger'>Lỗi tải dữ liệu: " + ex.Message + "</div>");
             }
         }
 
@@ -105,6 +93,137 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             }
         }
 
+        // Load Giao diện Dashboard Doanh Thu
+        public ActionResult LoadDashboardDoanhThu()
+        {
+            try
+            {
+                DateTime denNgay = DateTime.Now;
+                DateTime tuNgay = denNgay.AddYears(-1);
+
+                // Mặc định load lên là xem theo "month" (Tháng)
+                var model = db.GetPhanTichDoanhThu(tuNgay, denNgay, "month");
+
+                ViewBag.TuNgay = tuNgay.ToString("yyyy-MM-dd");
+                ViewBag.DenNgay = denNgay.ToString("yyyy-MM-dd");
+
+                return PartialView("_DashboardDoanhThu", model);
+            }
+            catch (Exception ex)
+            {
+                return Content("<div class='alert alert-danger'>Lỗi: " + ex.Message + "</div>");
+            }
+        }
+
+        // API AJAX xử lý khi chọn Lịch hoặc Dropdown
+        [HttpPost]
+        public ActionResult FilterDoanhThu(string tuNgay, string denNgay, string groupBy = "day")
+        {
+            try
+            {
+                // Ép kiểu thủ công để chống lỗi Format ngày của C#
+                DateTime dtTu = DateTime.Parse(tuNgay);
+                DateTime dtDen = DateTime.Parse(denNgay);
+
+                // Truyền biến groupBy (day/week/month/year) xuống DB
+                var data = db.GetPhanTichDoanhThu(dtTu, dtDen, groupBy);
+                return Json(new { success = true, data = data });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+        // Load Giao diện Dashboard Bệnh Nhân
+        public ActionResult LoadDashboardBenhNhan()
+        {
+            try
+            {
+                DateTime denNgay = DateTime.Now;
+
+                // SỬA Ở ĐÂY: Lùi về 1 năm thay vì 1 tháng
+                DateTime tuNgay = denNgay.AddYears(-1);
+
+                var model = db.GetThongKeBenhNhan(tuNgay, denNgay, 0);
+
+                ViewBag.TuNgay = tuNgay.ToString("yyyy-MM-dd");
+                ViewBag.DenNgay = denNgay.ToString("yyyy-MM-dd");
+
+                return PartialView("_DashboardBenhNhan", model);
+            }
+            catch (Exception ex)
+            {
+                return Content("<div class='alert alert-danger'>Lỗi: " + ex.Message + "</div>");
+            }
+        }
+
+        // API AJAX xử lý lọc Dashboard Bệnh nhân
+        [HttpPost]
+        public ActionResult FilterBenhNhan(string tuNgay, string denNgay, int maKhoa = 0)
+        {
+            try
+            {
+                DateTime dtTu = DateTime.Parse(tuNgay);
+                DateTime dtDen = DateTime.Parse(denNgay);
+
+                var data = db.GetThongKeBenhNhan(dtTu, dtDen, maKhoa);
+                return Json(new { success = true, data = data });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
+
+
+        // Load Giao diện Dashboard Kho Dược
+        public ActionResult LoadDashboardKhoDuoc()
+        {
+            try
+            {
+                DateTime denNgay = DateTime.Now;
+                DateTime tuNgay = denNgay.AddMonths(-6); // Xem 6 tháng gần nhất
+
+                var model = db.GetThongKeKhoDuoc(tuNgay, denNgay, 0);
+
+                ViewBag.TuNgay = tuNgay.ToString("yyyy-MM-dd");
+                ViewBag.DenNgay = denNgay.ToString("yyyy-MM-dd");
+
+                return PartialView("_DashboardKhoDuoc", model);
+            }
+            catch (Exception ex)
+            {
+                return Content("<div class='alert alert-danger'>Lỗi: " + ex.Message + "</div>");
+            }
+        }
+
+        // API AJAX xử lý lọc Kho Dược
+        [HttpPost]
+        public ActionResult FilterKhoDuoc(string tuNgay, string denNgay, int maKho = 0)
+        {
+            try
+            {
+                DateTime dtTu = DateTime.Parse(tuNgay);
+                DateTime dtDen = DateTime.Parse(denNgay);
+
+                var data = db.GetThongKeKhoDuoc(dtTu, dtDen, maKho);
+                return Json(new { success = true, data = data });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+
+
+
         // ===================== AJAX: Cảnh báo kho =====================
         public ActionResult GetCanhBaoKho()
         {
@@ -132,6 +251,10 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             }
         }
     }
+
+
+
+
 
     // ViewModel cho Dashboard
     public class DashboardViewModel

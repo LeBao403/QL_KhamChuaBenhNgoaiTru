@@ -1,0 +1,194 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanThongKeViewModel
+@{
+    Func<decimal, string> fmt = (m) => m.ToString("N0");
+}
+
+<style>
+    /* ÉP CSS ĐỂ HIỆN RÕ THÁNG VÀ NĂM TRÊN LỊCH FLATPICKR */
+    .flatpickr-months .flatpickr-month {
+        height: 45px !important;
+    }
+
+    .flatpickr-current-month {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+    }
+
+        .flatpickr-current-month .numInputWrapper {
+            width: 70px !important;
+            display: block !important;
+        }
+
+        .flatpickr-current-month input.cur-year {
+            display: block !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            font-weight: 700 !important;
+            background: transparent !important;
+        }
+
+    .card-modern {
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1 text-primary text-uppercase" style="font-size: 1.2rem;">
+            <i class="bi bi-people-fill me-2"></i>Thống kê Bệnh Nhân
+        </h4>
+        <small class="text-muted">Phân tích chân dung khách hàng và tình hình dịch bệnh</small>
+    </div>
+
+    <div class="d-flex gap-2 align-items-center bg-white p-2 rounded-3 shadow-sm border">
+        <div class="border-end pe-2">
+            <select id="cbKhoaKham" class="form-select form-select-sm border-0 fw-bold text-primary bg-transparent" style="width: 190px; cursor: pointer; box-shadow: none;">
+                <option value="0" selected>Tất cả các Khoa</option>
+                <option value="1">Khoa Khám bệnh</option>
+                <option value="2">Khoa Nội tổng hợp</option>
+                <option value="3">Khoa Ngoại tổng hợp</option>
+                <option value="4">Khoa Nhi</option>
+                <option value="5">Khoa Sản - Phụ khoa</option>
+                <option value="6">Khoa Tai Mũi Họng</option>
+                <option value="7">Khoa Răng Hàm Mặt</option>
+                <option value="8">Khoa Mắt</option>
+                <option value="9">Khoa Da liễu</option>
+                <option value="10">Khoa Chẩn đoán hình ảnh</option>
+                <option value="11">Khoa Xét nghiệm</option>
+                <option value="12">Khoa Dược</option>
+            </select>
+        </div>
+        <div class="input-group input-group-sm border-0" style="width: 135px;">
+            <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-calendar"></i></span>
+            <input type="text" id="bnTuNgay" class="form-control bg-transparent border-0 fw-bold text-dark px-1" readonly style="cursor: pointer;">
+        </div>
+        <div class="text-muted"><i class="bi bi-arrow-right"></i></div>
+        <div class="input-group input-group-sm border-0" style="width: 135px;">
+            <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-calendar-check"></i></span>
+            <input type="text" id="bnDenNgay" class="form-control bg-transparent border-0 fw-bold text-dark px-1" readonly style="cursor: pointer;">
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="bnHdnTuNgay" value="@ViewBag.TuNgay" />
+<input type="hidden" id="bnHdnDenNgay" value="@ViewBag.DenNgay" />
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-start border-4 border-primary">
+            <div class="card-body p-3">
+                <p class="text-muted mb-1 small fw-bold text-uppercase">Tổng lượt đến khám</p>
+                <h4 class="fw-bold mb-0 text-dark" id="kpiTongKham">@fmt(Model.TongLuotKham) <small>lượt</small></h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-start border-4 border-info">
+            <div class="card-body p-3">
+                <p class="text-muted mb-1 small fw-bold text-uppercase">Tỷ lệ dùng BHYT</p>
+                <h4 class="fw-bold mb-0 text-info" id="kpiBHYT">@Model.TyLeBHYT%</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-start border-4 border-success">
+            <div class="card-body p-3">
+                <p class="text-muted mb-1 small fw-bold text-uppercase">Đăng ký Online</p>
+                <h4 class="fw-bold mb-0 text-success" id="kpiOnline">@fmt(Model.SoDangKyOnline) <small>người</small></h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-start border-4 border-secondary">
+            <div class="card-body p-3">
+                <p class="text-muted mb-1 small fw-bold text-uppercase">Đăng ký Tại quầy</p>
+                <h4 class="fw-bold mb-0 text-secondary" id="kpiOffline">@fmt(Model.SoDangKyOffline) <small>người</small></h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card card-modern shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history text-primary me-2"></i>Lưu lượng bệnh nhân theo khung giờ đăng ký</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="chartLuuLuong"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-modern h-100 shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0 text-center">
+                <h6 class="fw-bold mb-0 text-dark">Tỷ lệ Giới tính</h6>
+            </div>
+            <div class="card-body d-flex justify-content-center align-items-center">
+                <div class="chart-container" style="height: 220px; width: 100%;">
+                    <canvas id="chartGioiTinh"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card card-modern h-100 shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0 text-center">
+                <h6 class="fw-bold mb-0 text-dark">Tuyến BHYT</h6>
+            </div>
+            <div class="card-body d-flex justify-content-center align-items-center">
+                <div class="chart-container" style="height: 220px; width: 100%;">
+                    <canvas id="chartTuyenKham"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6 col-md-12">
+        <div class="card card-modern h-100 shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold mb-0 text-dark">Phân khúc Độ tuổi</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 220px;">
+                    <canvas id="chartDoTuoi"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card card-modern h-100 shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-virus text-danger me-2"></i>Mô hình bệnh tật (Top bệnh lý phổ biến)</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="chartBenhLy"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var dataLuuLuong = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.LuuLuongTheoGio));
+    var dataGioiTinh = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.PhieuGioiTinh));
+    var dataTuyenKham = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.PhieuTuyenKham));
+    var dataDoTuoi = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.PhanKhucTuoi));
+    var dataBenhLy = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TopBenhLy));
+
+    if (typeof renderBenhNhanCharts === 'function') {
+        renderBenhNhanCharts(dataLuuLuong, dataGioiTinh, dataTuyenKham, dataDoTuoi, dataBenhLy);
+        initBenhNhanFilter();
+    }
+</script>

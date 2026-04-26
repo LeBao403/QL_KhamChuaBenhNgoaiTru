@@ -1,0 +1,171 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.DBContext.DoanhThuChiTietViewModel
+@{
+    Func<decimal, string> fmt = (m) => m.ToString("N0");
+}
+
+<style>
+    /* ÉP CSS ĐỂ HIỆN RÕ THÁNG VÀ NĂM TRÊN LỊCH FLATPICKR CHỐNG BOOTSTRAP */
+    .flatpickr-months .flatpickr-month {
+        height: 45px !important;
+    }
+
+    .flatpickr-current-month {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+    }
+
+        .flatpickr-current-month .numInputWrapper {
+            width: 70px !important;
+            display: block !important;
+        }
+
+        .flatpickr-current-month input.cur-year {
+            display: block !important;
+            font-weight: 700 !important;
+            color: #1e293b !important;
+        }
+
+        .flatpickr-current-month .flatpickr-monthDropdown-months {
+            font-weight: 700 !important;
+            background: transparent !important;
+        }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1 text-primary text-uppercase" style="font-size: 1.2rem;">
+            <i class="bi bi-graph-up-arrow me-2"></i>Phân tích Doanh Thu
+        </h4>
+        <small class="text-muted">Dữ liệu tài chính và hiệu quả dịch vụ phòng khám</small>
+    </div>
+
+    <div class="d-flex gap-2 align-items-center bg-white p-2 rounded-3 shadow-sm border">
+        <div class="border-end pe-2">
+            <select id="cbGroupBy" class="form-select form-select-sm border-0 fw-bold text-primary bg-transparent" style="width: 130px; cursor: pointer; box-shadow: none;">
+                <option value="day">Theo Ngày</option>
+                <option value="week">Theo Tuần</option>
+                <option value="month" selected>Theo Tháng</option>
+                <option value="year">Theo Năm</option>
+            </select>
+        </div>
+
+        <div class="input-group input-group-sm border-0" style="width: 135px;">
+            <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-calendar"></i></span>
+            <input type="text" id="dtTuNgay" class="form-control bg-transparent border-0 fw-bold text-dark px-1" placeholder="Từ ngày..." readonly style="cursor: pointer;">
+        </div>
+
+        <div class="text-muted"><i class="bi bi-arrow-right"></i></div>
+
+        <div class="input-group input-group-sm border-0" style="width: 135px;">
+            <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-calendar-check"></i></span>
+            <input type="text" id="dtDenNgay" class="form-control bg-transparent border-0 fw-bold text-dark px-1" placeholder="Đến ngày..." readonly style="cursor: pointer;">
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="hdnTuNgay" value="@ViewBag.TuNgay" />
+<input type="hidden" id="hdnDenNgay" value="@ViewBag.DenNgay" />
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-start border-4 border-primary">
+            <div class="card-body p-3">
+                <p class="text-muted mb-1 small fw-bold text-uppercase">Doanh thu gộp</p>
+                <h4 class="fw-bold mb-0 text-dark" id="kpiTongGoc">@fmt(Model.TongGoc) <small>đ</small></h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-start border-4 border-success">
+            <div class="card-body p-3">
+                <p class="text-muted mb-1 small fw-bold text-uppercase">Thực thu (BN trả)</p>
+                <h4 class="fw-bold mb-0 text-success" id="kpiThucThu">@fmt(Model.ThucThu) <small>đ</small></h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-start border-4 border-warning">
+            <div class="card-body p-3">
+                <p class="text-muted mb-1 small fw-bold text-uppercase">Công nợ BHYT</p>
+                <h4 class="fw-bold mb-0 text-warning" id="kpiBHYT">@fmt(Model.BHYT) <small>đ</small></h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-start border-4 border-info">
+            <div class="card-body p-3">
+                <p class="text-muted mb-1 small fw-bold text-uppercase">Trung bình hóa đơn</p>
+                <h4 class="fw-bold mb-0 text-info" id="kpiTrungBinh">@fmt(Model.TrungBinhLuot) <small>đ</small></h4>
+                <small class="text-muted" id="kpiSoLuot">Dựa trên @Model.SoLuotThanhToan lượt</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-8">
+        <div class="card card-modern h-100 shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-graph-up text-primary me-2"></i>Xu hướng thực thu</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 350px;">
+                    <canvas id="chartXuHuong"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="card card-modern h-100 shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-pie-chart-fill text-success me-2"></i>Phương thức thanh toán</h6>
+            </div>
+            <div class="card-body d-flex justify-content-center align-items-center">
+                <div class="chart-container" style="height: 250px; width: 100%;">
+                    <canvas id="chartPTTT"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="card card-modern h-100 shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-bullseye text-warning me-2"></i>Cơ cấu nguồn thu</h6>
+            </div>
+            <div class="card-body d-flex justify-content-center align-items-center">
+                <div class="chart-container" style="height: 250px; width: 100%;">
+                    <canvas id="chartNguonThu"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-8">
+        <div class="card card-modern h-100 shadow-sm border-0">
+            <div class="card-header bg-white py-3 border-0">
+                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-bar-chart-fill text-danger me-2"></i>Top dịch vụ hái ra tiền</h6>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="height: 300px;">
+                    <canvas id="chartTopDV"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var dataXuHuong = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BieuDoXuHuong));
+    var dataPTTT = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BieuDoPhuongThuc));
+    var dataNguonThu = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.BieuDoNguonThu));
+    var dataTopDV = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TopDichVu));
+
+    if (typeof renderDoanhThuCharts === 'function') {
+        renderDoanhThuCharts(dataXuHuong, dataPTTT, dataNguonThu, dataTopDV);
+        initDoanhThuFilter();
+    }
+</script>
