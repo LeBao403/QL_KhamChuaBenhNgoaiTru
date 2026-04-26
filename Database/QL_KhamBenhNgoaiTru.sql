@@ -507,55 +507,25 @@ CREATE PROCEDURE SP_XacNhanPhatThuoc
     @MaPhong INT
 
 AS
-
 BEGIN
-
     SET NOCOUNT ON;
-
     BEGIN TRY
-
         BEGIN TRANSACTION;
-
-
-
         -- 1. KIỂM TRA BẢO MẬT: Hóa đơn đã thanh toán chưa?
-
         IF NOT EXISTS (SELECT 1 FROM HOADON WHERE MaHD = @MaHD AND TrangThaiThanhToan = N'Đã thanh toán')
-
         BEGIN
-
             THROW 50001, N'Lỗi: Hóa đơn này chưa được thanh toán hoặc không tồn tại!', 1;
-
         END
-
-
-
         -- 2. TẠO PHIẾU PHÁT THUỐC TỔNG
-
         DECLARE @MaPhieuPhat INT;
-
         INSERT INTO PHIEU_PHAT_THUOC (MaDonThuoc, MaNV_Phat, MaHD, MaPhong, NgayPhat, TrangThai)
-
         VALUES (@MaDonThuoc, @MaNV_Phat, @MaHD, @MaPhong, GETDATE(), N'Hoàn thành');
-
-        
-
         SET @MaPhieuPhat = SCOPE_IDENTITY(); -- Lấy ID vừa tạo
-
-
-
         -- 3. CHUẨN BỊ DUYỆT CÁC MÓN THUỐC KHÁCH "ĐÃ ĐÓNG TIỀN"
-
         DECLARE @MaThuoc CHAR(20), @SoLuongCanPhat INT, @MaCTDonThuoc INT;
-
-        
-
-        DECLARE cur_Thuoc CURSOR FOR
-
+		DECLARE cur_Thuoc CURSOR FOR
         SELECT cdt.MaThuoc, cdt.SoLuong, cdt.MaCTDonThuoc
-
         FROM CT_DON_THUOC cdt
-
         JOIN CT_HOADON_THUOC cht ON cdt.MaCTDonThuoc = cht.MaCTDonThuoc
 
         WHERE cdt.MaDonThuoc = @MaDonThuoc 

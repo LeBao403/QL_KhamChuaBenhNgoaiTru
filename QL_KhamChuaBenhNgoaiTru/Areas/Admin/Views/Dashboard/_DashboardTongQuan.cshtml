@@ -1,0 +1,388 @@
+﻿@model QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers.DashboardViewModel
+
+@{
+    // Format số tiền và tính phần trăm
+    Func<decimal, string> formatMoney = (m) => m.ToString("N0");
+    decimal phantramTangGia = 12.5m;
+}
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Bệnh nhân</p>
+                        <h3 class="text-highlight mb-0">@Model.ThongKe.TongBenhNhan.ToString("N0")</h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <span class="stat-trend trend-up me-2">
+                                <i class="bi bi-arrow-up"></i> @phantramTangGia%
+                            </span>
+                            <small class="text-muted">so với tháng trước</small>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #dbeafe;">
+                        <i class="bi bi-people-fill" style="color: #2563eb;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Nhân viên</p>
+                        <h3 class="text-highlight mb-0">@Model.ThongKe.TongNhanVien.ToString("N0")</h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <span class="stat-trend trend-up me-2">
+                                <i class="bi bi-check-lg"></i> Đang hoạt động
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #dcfce7;">
+                        <i class="bi bi-person-badge-fill" style="color: #16a34a;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Thuốc trong kho</p>
+                        <h3 class="text-highlight mb-0">@Model.ThongKe.TongThuoc.ToString("N0")</h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <small class="text-muted">@Model.ThongKe.TongKhoa khoa • @Model.ThongKe.TongPhong phòng</small>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #fce7f3;">
+                        <i class="bi bi-capsule" style="color: #db2777;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Khám hôm nay</p>
+                        <h3 class="text-highlight mb-0">@Model.ThongKeKhamBenh.KhamHomNay.ToString("N0")</h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <span class="stat-trend trend-up me-2">
+                                <i class="bi bi-arrow-up"></i> @Model.ThongKeKhamBenh.KhamTuanNay
+                            </span>
+                            <small class="text-muted">lượt/tuần</small>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #fef3c7;">
+                        <i class="bi bi-clipboard2-pulse-fill" style="color: #d97706;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-4 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Doanh thu tháng @DateTime.Now.ToString("MM/yyyy")</p>
+                        <h3 class="text-highlight mb-0" style="color: #059669;">@formatMoney(Model.DoanhThuThang.TongDoanhThu) <small style="font-size: 14px;">đ</small></h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <span class="stat-trend trend-up me-2">
+                                <i class="bi bi-graph-up-arrow"></i> BHYT: @formatMoney(Model.DoanhThuThang.TienBHYT) đ
+                            </span>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #d1fae5;">
+                        <i class="bi bi-currency-dollar" style="color: #059669;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <p class="text-muted mb-1" style="font-size: 13px;">Thu của bệnh nhân</p>
+                        <h3 class="text-highlight mb-0" style="color: #2563eb;">@formatMoney(Model.DoanhThuThang.DoanhThuThucNhan) <small style="font-size: 14px;">đ</small></h3>
+                        <div class="d-flex align-items-center mt-2">
+                            <small class="text-muted">Tiền mặt + Chuyển khoản</small>
+                        </div>
+                    </div>
+                    <div class="stat-icon" style="background: #dbeafe;">
+                        <i class="bi bi-wallet2" style="color: #2563eb;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-12">
+        <div class="card stat-card h-100">
+            <div class="card-body p-3">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <p class="text-muted mb-1" style="font-size: 12px;">Đang khám</p>
+                        <h4 class="mb-0" style="color: #d97706; font-weight: 700;">@Model.ThongKeKhamBenh.DangKham</h4>
+                    </div>
+                    <div class="col-6">
+                        <p class="text-muted mb-1" style="font-size: 12px;">Hoàn thành</p>
+                        <h4 class="mb-0" style="color: #16a34a; font-weight: 700;">@Model.ThongKeKhamBenh.HoanThanh</h4>
+                    </div>
+                </div>
+                <hr class="my-2" />
+                <div class="d-flex justify-content-between small">
+                    <span class="text-muted">Tổng lượt khám tuần này</span>
+                    <strong>@Model.ThongKeKhamBenh.KhamTuanNay</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-8">
+        <div class="card card-modern">
+            <div class="card-header card-header-modern d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="section-title mb-0">Biểu đồ doanh thu</h6>
+                    <small class="text-muted">Theo @DateTime.Now.Year</small>
+                </div>
+                <ul class="nav nav-chart-tabs mb-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" onclick="switchChart('week', this); return false;">7 ngày</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="switchChart('month', this); return false;">12 tháng</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4">
+        <div class="card card-modern h-100">
+            <div class="card-header card-header-modern">
+                <h6 class="section-title mb-0">
+                    <i class="bi bi-exclamation-triangle text-warning me-1"></i> Cảnh báo kho
+                </h6>
+            </div>
+            <div class="card-body p-3">
+                @if (Model.ThuocSapHetHan.Count == 0 && Model.ThuocSapHetHang.Count == 0)
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 48px;"></i>
+                        <p class="mt-2 mb-0 text-muted">Kho dược hoạt động tốt</p>
+                    </div>
+                }
+                else
+                {
+                    if (Model.ThuocSapHetHan.Count > 0)
+                    {
+                        <div class="alert-warning-card mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-clock-history text-warning me-2"></i>
+                                <strong>Sắp hết hạn (@Model.ThuocSapHetHan.Count)</strong>
+                            </div>
+                            @foreach (var item in Model.ThuocSapHetHan.Take(3))
+                            {
+                                <div class="d-flex justify-content-between small py-1">
+                                    <span class="text-truncate me-2">@item.TenThuoc</span>
+                                    <span class="badge bg-warning text-dark">@item.SoNgayConLai ngày</span>
+                                </div>
+                            }
+                            @if (Model.ThuocSapHetHan.Count > 3)
+                            {
+                                <a href="@Url.Action("Index", "Kho")" class="small text-warning text-decoration-none mt-1 d-block">
+                                    Xem thêm @(Model.ThuocSapHetHan.Count - 3) thuốc...
+                                </a>
+                            }
+                        </div>
+                    }
+
+                    if (Model.ThuocSapHetHang.Count > 0)
+                    {
+                        <div class="alert-danger-card">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-box-seam text-danger me-2"></i>
+                                <strong>Sắp hết hàng (@Model.ThuocSapHetHang.Count)</strong>
+                            </div>
+                            @foreach (var item in Model.ThuocSapHetHang.Take(3))
+                            {
+                                <div class="d-flex justify-content-between small py-1">
+                                    <span class="text-truncate me-2">@item.TenThuoc</span>
+                                    <span class="badge bg-danger">@item.TongTon @item.DonViCoBan</span>
+                                </div>
+                            }
+                            @if (Model.ThuocSapHetHang.Count > 3)
+                            {
+                                <a href="@Url.Action("Index", "Kho")" class="small text-danger text-decoration-none mt-1 d-block">
+                                    Xem thêm @(Model.ThuocSapHetHang.Count - 3) thuốc...
+                                </a>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-6">
+        <div class="card card-modern">
+            <div class="card-header card-header-modern d-flex justify-content-between align-items-center">
+                <h6 class="section-title mb-0">
+                    <i class="bi bi-file-earmark-arrow-down text-primary me-1"></i> Phiếu nhập gần đây
+                </h6>
+                <a href="@Url.Action("DanhSachPhieuNhap", "Kho")" class="btn btn-sm btn-outline-primary">
+                    Xem tất cả
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-modern mb-0">
+                        <thead>
+                            <tr>
+                                <th>Mã phiếu</th>
+                                <th>Ngày lập</th>
+                                <th>Nhà cung cấp</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.PhieuNhapGanDay.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">Chưa có phiếu nhập nào</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                foreach (var item in Model.PhieuNhapGanDay)
+                                {
+                                    <tr>
+                                        <td><strong>#@item.MaPhieuNhap</strong></td>
+                                        <td>@item.NgayLapDisplay</td>
+                                        <td class="text-truncate" style="max-width: 120px;">@item.NhaCungCap</td>
+                                        <td><strong>@formatMoney(item.TongTienNhap) đ</strong></td>
+                                        <td>
+                                            @{
+                                                string badgeClass = item.TrangThai switch
+                                                {
+                                                    "Chờ duyệt" => "bg-warning text-dark",
+                                                    "Đã duyệt" => "bg-success",
+                                                    "Đã hủy" => "bg-secondary",
+                                                    _ => "bg-secondary"
+                                                };
+                                            }
+                                            <span class="badge @badgeClass">@item.TrangThai</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card card-modern">
+            <div class="card-header card-header-modern d-flex justify-content-between align-items-center">
+                <h6 class="section-title mb-0">
+                    <i class="bi bi-award text-success me-1"></i> Bác sĩ khám nhiều nhất (30 ngày)
+                </h6>
+                <a href="@Url.Action("Index", "NhanVien")" class="btn btn-sm btn-outline-success">
+                    Xem tất cả
+                </a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-modern mb-0">
+                        <thead>
+                            <tr>
+                                <th>Bác sĩ</th>
+                                <th>Chức vụ</th>
+                                <th class="text-end">Lượt khám</th>
+                                <th class="text-end">Tỷ lệ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.BacSiKhamNhieuNhat.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">Chưa có dữ liệu</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                var maxKham = Model.BacSiKhamNhieuNhat.Max(x => x.SoLuotKham);
+                                foreach (var item in Model.BacSiKhamNhieuNhat)
+                                {
+                                    var tyLe = maxKham > 0 ? (item.SoLuotKham * 100.0 / maxKham) : 0;
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(item.HoTen)&background=10b981&color=fff&size=32&rounded=true"
+                                                     class="rounded-circle me-2" alt="@item.HoTen" />
+                                                <div>
+                                                    <div class="fw-semibold">@item.HoTen</div>
+                                                    <small class="text-muted">@item.MaNV</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td><span class="badge bg-light text-dark">@item.TenChucVu</span></td>
+                                        <td class="text-end"><strong>@item.SoLuotKham</strong></td>
+                                        <td class="text-end">
+                                            <div class="progress" style="height: 6px; width: 60px;" title="@tyLe.ToString("F1")%">
+                                                <div class="progress-bar bg-success" style="width: @tyLe.ToString("F0")%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sử dụng var để tránh lỗi "Identifier has already been declared" khi load lại partial view
+    var chartLabels7 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu7Ngay.Select(x => x.NgayDisplay).ToList()));
+    var chartData7 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu7Ngay.Select(x => (double)x.DoanhThu).ToList()));
+
+    var chartLabels12 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu12Thang.Select(x => x.TenThang).ToList()));
+    var chartData12 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu12Thang.Select(x => (double)x.DoanhThu).ToList()));
+
+    // Gọi hàm initChart nằm trong file dashboard.js
+    if (typeof initChart === 'function') {
+        initChart(chartLabels7, chartData7, 'Doanh thu 7 ngày');
+    }
+</script>
