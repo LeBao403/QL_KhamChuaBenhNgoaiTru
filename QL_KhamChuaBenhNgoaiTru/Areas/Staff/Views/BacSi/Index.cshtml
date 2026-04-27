@@ -640,85 +640,85 @@
             </div>
         </div>
     </div>
+</div>
 
-    <div id="printPrescriptionArea" class="d-none app-print-sheet">
-        @{
-            Html.RenderPartial(
-                "~/Views/Shared/_PrintDocumentHeader.cshtml",
-                new ViewDataDictionary(ViewData)
-                {
+<div id="printPrescriptionArea" class="d-none app-print-sheet">
+    @{
+        Html.RenderPartial(
+            "~/Views/Shared/_PrintDocumentHeader.cshtml",
+            new ViewDataDictionary(ViewData)
+            {
                     { "PrintDocumentTitle", "PHI&#7870;U KH&#193;M B&#7878;NH" },
                     { "PrintDocumentTitleElementId", "printTitle" },
                     { "PrintDocumentMaBNElementId", "printMaBN" },
                     { "PrintDocumentCodeLabel", "M&#227; PK:" },
                     { "PrintDocumentCodeElementId", "printMaPK" }
                 });
-        }
+    }
 
-        <div class="row mb-4">
-            <div class="col-12">
-                <div style="font-size: 0.9rem; color: #64748b; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px;">THÔNG TIN BỆNH NHÂN</div>
-                <div class="row">
-                    <div class="col-7">
-                        <div class="d-flex align-items-baseline gap-2 mb-1">
-                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Họ và tên:</span>
-                            <span class="text-primary fs-5 fw-bold text-uppercase" id="printTenBN"></span>
-                        </div>
-                        <div class="d-flex align-items-baseline gap-2 mb-1">
-                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Ngày sinh:</span>
-                            <span class="fw-bold" id="printTuoi"></span>
-                        </div>
-                        <div class="d-flex align-items-baseline gap-2 mb-1">
-                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Địa chỉ:</span>
-                            <span class="fw-bold" id="printDiaChi"></span>
-                        </div>
-                        <div class="d-flex align-items-baseline gap-2 mb-1">
-                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">BHYT:</span>
-                            <span class="fw-bold text-success" id="printBHYT"></span>
-                        </div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div style="font-size: 0.9rem; color: #64748b; font-weight: bold; text-transform: uppercase; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px;">THÔNG TIN BỆNH NHÂN</div>
+            <div class="row">
+                <div class="col-7">
+                    <div class="d-flex align-items-baseline gap-2 mb-1">
+                        <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Họ và tên:</span>
+                        <span class="text-primary fs-5 fw-bold text-uppercase" id="printTenBN"></span>
                     </div>
-                    <div class="col-5">
-                        <div class="d-flex align-items-baseline gap-2 mb-1">
-                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Giới tính:</span>
-                            <span class="fw-bold" id="printGioiTinh"></span>
-                        </div>
-                        <div class="d-flex align-items-baseline gap-2 mb-1">
-                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Điện thoại:</span>
-                            <span class="fw-bold" id="printSDT"></span>
-                        </div>
-                        <div class="d-flex align-items-baseline gap-2 mb-1">
-                            <span style="font-size: 0.85rem; color: #64748b; width: 75px;">CCCD:</span>
-                            <span class="fw-bold" id="printCCCD"></span>
-                        </div>
+                    <div class="d-flex align-items-baseline gap-2 mb-1">
+                        <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Ngày sinh:</span>
+                        <span class="fw-bold" id="printTuoi"></span>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2 mb-1">
+                        <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Địa chỉ:</span>
+                        <span class="fw-bold" id="printDiaChi"></span>
+                    </div>
+                    <div class="d-flex align-items-baseline gap-2 mb-1">
+                        <span style="font-size: 0.85rem; color: #64748b; width: 75px;">BHYT:</span>
+                        <span class="fw-bold text-success" id="printBHYT"></span>
                     </div>
                 </div>
-                <div class="row mt-2 pt-2" style="border-top: 1px dashed #cbd5e1;">
-                    <div class="col-12 mb-1 d-flex align-items-baseline gap-2">
-                        <span style="font-size: 0.85rem; color: #64748b; width: 130px;">Lý do khám:</span>
-                        <span class="fw-bold" id="printLyDo"></span>
+                <div class="col-5">
+                    <div class="d-flex align-items-baseline gap-2 mb-1">
+                        <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Giới tính:</span>
+                        <span class="fw-bold" id="printGioiTinh"></span>
                     </div>
-                    <div class="col-12 d-flex align-items-baseline gap-2">
-                        <span style="font-size: 0.85rem; color: #64748b; width: 130px;">Kết luận chẩn đoán:</span>
-                        <span class="fw-bold text-danger" id="printChanDoan"></span>
+                    <div class="d-flex align-items-baseline gap-2 mb-1">
+                        <span style="font-size: 0.85rem; color: #64748b; width: 75px;">Điện thoại:</span>
+                        <span class="fw-bold" id="printSDT"></span>
                     </div>
+                    <div class="d-flex align-items-baseline gap-2 mb-1">
+                        <span style="font-size: 0.85rem; color: #64748b; width: 75px;">CCCD:</span>
+                        <span class="fw-bold" id="printCCCD"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2 pt-2" style="border-top: 1px dashed #cbd5e1;">
+                <div class="col-12 mb-1 d-flex align-items-baseline gap-2">
+                    <span style="font-size: 0.85rem; color: #64748b; width: 130px;">Lý do khám:</span>
+                    <span class="fw-bold" id="printLyDo"></span>
+                </div>
+                <div class="col-12 d-flex align-items-baseline gap-2">
+                    <span style="font-size: 0.85rem; color: #64748b; width: 130px;">Kết luận chẩn đoán:</span>
+                    <span class="fw-bold text-danger" id="printChanDoan"></span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <table class="table table-bordered w-100" style="border-color: #000;">
-            <thead id="printTableThead" style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact;">
-            </thead>
-            <tbody id="printTbBody"></tbody>
-        </table>
+    <table class="table table-bordered w-100" style="border-color: #000;">
+        <thead id="printTableThead" style="background-color: #f8fafc !important; -webkit-print-color-adjust: exact;">
+        </thead>
+        <tbody id="printTbBody"></tbody>
+    </table>
 
-        <div class="app-print-signature" style="display:flex; justify-content:space-between; text-align:center; margin-top:24px;">
-            <div style="width:40%;">
-            </div>
-            <div style="width:40%;">
-                <div id="prt-date-footer" style="font-style:italic; margin-bottom:5px;"></div>
-                <div style="font-weight:700; text-transform:uppercase;">Bác sĩ điều trị</div>
-                <div style="margin-top:70px; font-weight:bold; font-size:1.1rem;" id="printTenBS"></div>
-            </div>
+    <div class="app-print-signature" style="display:flex; justify-content:space-between; text-align:center; margin-top:24px;">
+        <div style="width:40%;">
+        </div>
+        <div style="width:40%;">
+            <div id="prt-date-footer" style="font-style:italic; margin-bottom:5px;"></div>
+            <div style="font-weight:700; text-transform:uppercase;">Bác sĩ điều trị</div>
+            <div style="margin-top:70px; font-weight:bold; font-size:1.1rem;" id="printTenBS"></div>
         </div>
     </div>
 </div>
@@ -779,6 +779,7 @@
                 </tr>`;
             $('#tbDonThuoc tbody').append(tr);
             thuocIndex++;
+            TinhNgayTaiKham();
             // Đánh dấu thuốc đã kê và làm mờ nó
             $('#cboThuoc').find(`option[value="${t.MaThuoc}"]`).addClass('in-prescription').prop('disabled', true);
         }
@@ -789,6 +790,39 @@
             $(btn).closest('tr').remove();
             $('#cboThuoc').find(`option[value="${ma}"]`).removeClass('in-prescription');
             ApplyBHYTFilter(); // Lọc lại để trả thuốc về danh sách combobox
+            TinhNgayTaiKham();
+        }
+
+        // Hàm tự động tính ngày tái khám dựa trên số ngày uống thuốc ngắn nhất
+        function TinhNgayTaiKham() {
+            // Không tính toán nếu ô nhập đang bị khóa (trường hợp xem lại bệnh nhân đã khám xong)
+            if ($('#NgayTaiKham').prop('disabled')) return;
+
+            var minDays = null;
+            // Duyệt qua tất cả các dòng thuốc trong bảng đơn thuốc
+            $('#tbDonThuoc tbody tr').each(function () {
+                // Tìm ô nhập "Số Ngày" trong dòng hiện tại
+                var days = parseInt($(this).find('input[name*=".SoNgay"]').val());
+                if (!isNaN(days) && days > 0) {
+                    if (minDays === null || days < minDays) {
+                        minDays = days;
+                    }
+                }
+            });
+
+            if (minDays !== null) {
+                var today = new Date();
+                today.setDate(today.getDate() + minDays);
+
+                // Định dạng ngày thành YYYY-MM-DD để gán vào input date
+                var yyyy = today.getFullYear();
+                var mm = String(today.getMonth() + 1).padStart(2, '0');
+                var dd = String(today.getDate()).padStart(2, '0');
+
+                $('#NgayTaiKham').val(yyyy + '-' + mm + '-' + dd);
+            } else {
+                $('#NgayTaiKham').val(''); // Xóa trắng nếu không có thuốc nào được kê
+            }
         }
 
         function ApplyBHYTFilter() {
@@ -1055,19 +1089,46 @@
                     var content = '';
                     data.forEach(function(item) {
                         var htmlNoiDung = item.NoiDungKetQua || '';
-                        if (htmlNoiDung.startsWith('[')) {
+
+                        // SỬA TẠI ĐÂY: Hỗ trợ cả Object {...} và Array [...]
+                        if (htmlNoiDung.trim().startsWith('{') || htmlNoiDung.trim().startsWith('[')) {
                             try {
-                                var ls = JSON.parse(htmlNoiDung);
-                                htmlNoiDung = '<table class="table table-sm table-bordered mt-2"><thead><tr class="table-light"><th>Chỉ số</th><th class="text-center">Kết quả</th><th class="text-center">Đơn vị</th><th class="text-center">CS Bình thường</th></tr></thead><tbody>';
-                                ls.forEach(function(i) {
-                                    var isWarn = i.Warning ? 'text-danger fw-bold' : 'fw-bold';
-                                    htmlNoiDung += '<tr><td>' + i.Ten + '</td><td class="text-center ' + isWarn + '">' + i.GiaTri + '</td><td class="text-center">' + i.DonVi + '</td><td class="text-center">' + i.ThamChieu + '</td></tr>';
-                                });
-                                htmlNoiDung += '</tbody></table>';
-                            } catch(e) {}
+                                var parsedData = JSON.parse(htmlNoiDung);
+                                var listChiSo = Array.isArray(parsedData) ? parsedData : (parsedData.data || []);
+
+                                var tableHtml = '';
+                                if (listChiSo.length > 0) {
+                                    tableHtml = '<table class="table table-sm table-bordered mt-2"><thead><tr class="table-light"><th>Chỉ số/Nội dung</th><th class="text-center">Kết quả</th><th class="text-center">Đơn vị</th><th class="text-center">CS Bình thường</th></tr></thead><tbody>';
+                                    listChiSo.forEach(function(i) {
+                                        var isWarn = i.Warning ? 'text-danger fw-bold' : 'fw-bold';
+                                        tableHtml += '<tr><td>' + (i.Ten || '') + '</td><td class="text-center ' + isWarn + '">' + (i.GiaTri || '') + '</td><td class="text-center">' + (i.DonVi || '') + '</td><td class="text-center">' + (i.ThamChieu || '') + '</td></tr>';
+                                    });
+                                    tableHtml += '</tbody></table>';
+                                }
+
+                                var ketLuanHtml = '';
+                                if (parsedData.ketluan) {
+                                    ketLuanHtml = '<div class="alert alert-warning p-2 mt-2 mb-0"><strong>Kết luận:</strong> ' + parsedData.ketluan + '</div>';
+                                }
+
+                                var imgHtml = '';
+                                if (parsedData.images && parsedData.images.length > 0) {
+                                    imgHtml = '<div class="d-flex flex-wrap gap-2 mt-2">';
+                                    parsedData.images.forEach(function(img) {
+                                        imgHtml += '<div class="text-center" style="max-width: 200px;"><img src="' + img.url + '" class="img-thumbnail" style="cursor:pointer;" onclick="window.open(this.src)" title="'+(img.title||'')+'"/><div class="small text-muted mt-1">' + (img.caption || '') + '</div></div>';
+                                    });
+                                    imgHtml += '</div>';
+                                }
+
+                                htmlNoiDung = tableHtml + imgHtml + ketLuanHtml;
+                            } catch(e) {
+                                console.error("Lỗi parse JSON kết quả CLS:", e);
+                                htmlNoiDung = '<div style="white-space:pre-wrap;">' + htmlNoiDung + '</div>';
+                            }
                         } else {
                             htmlNoiDung = '<div style="white-space:pre-wrap;">' + htmlNoiDung + '</div>';
                         }
+
                         var ngayTra = item.NgayThucHien || '';
                         content += `
                         <div class="cls-result-card mb-3">
@@ -1083,14 +1144,12 @@
         }
 
         function ToggleFormReadOnly(isReadOnly) {
-            // Khóa text area, checkbox, combobox
-            $('#TrieuChung, #KetLuan, #chkCLS, #ChieuCao, #CanNang, #NhietDo, #HuyetApTamThu, #HuyetApTamTruong, #Mach, #SpO2, #DanDo, #NgayTaiKham').prop('disabled', isReadOnly);
-            $('#cboBenh, #cboThuoc, #cboDichVu').prop('disabled', isReadOnly);
+            // SỬA: Đã bỏ #chkCLS ra khỏi danh sách để bác sĩ luôn có thể gạt công tắc đổi giao diện hiển thị
+            $('#TrieuChung, #KetLuan, #ChieuCao, #CanNang, #NhietDo, #HuyetApTamThu, #HuyetApTamTruong, #Mach, #SpO2, #DanDo, #NgayTaiKham').prop('disabled', isReadOnly);
 
-            // KHÓA THÊM 2 CHECKBOX LỌC BHYT
+            $('#cboBenh, #cboThuoc, #cboDichVu').prop('disabled', isReadOnly);
             $('#chkCoBHYT, #chkKhongBHYT').prop('disabled', isReadOnly);
 
-            // Khóa các ô số lượng, hướng dẫn bên trong bảng chỉ định
             $('#tbDonThuoc input, #tbDonThuoc select, #tbDichVu select').prop('disabled', isReadOnly);
 
             if (isReadOnly) {
@@ -1128,12 +1187,12 @@
                             <div class="col-md-4"><strong>Bác sĩ khám:</strong> ${data.TenBS}</div>
                             <div class="col-md-8"><strong>Lý do khám:</strong> ${data.LyDoDenKham}</div>
                             <div class="col-md-12 mt-2">
-                                <strong>Sinh hiệu:</strong> 
-                                Chiều cao: <span class="text-primary">${data.ChieuCao || '-'}</span> cm | 
-                                Cân nặng: <span class="text-primary">${data.CanNang || '-'}</span> kg | 
-                                Nhiệt độ: <span class="text-primary">${data.NhietDo || '-'}</span> °C | 
-                                Mạch: <span class="text-primary">${data.Mach || '-'}</span> l/p | 
-                                Huyết áp: <span class="text-primary">${data.HuyetApTamThu || '-'}/${data.HuyetApTamTruong || '-'}</span> mmHg | 
+                                <strong>Sinh hiệu:</strong>
+                                Chiều cao: <span class="text-primary">${data.ChieuCao || '-'}</span> cm |
+                                Cân nặng: <span class="text-primary">${data.CanNang || '-'}</span> kg |
+                                Nhiệt độ: <span class="text-primary">${data.NhietDo || '-'}</span> °C |
+                                Mạch: <span class="text-primary">${data.Mach || '-'}</span> l/p |
+                                Huyết áp: <span class="text-primary">${data.HuyetApTamThu || '-'}/${data.HuyetApTamTruong || '-'}</span> mmHg |
                                 SpO2: <span class="text-primary">${data.SpO2 || '-'}</span> %
                             </div>
                         </div>
@@ -1198,6 +1257,14 @@
         // 2. SỰ KIỆN GIAO DIỆN (DOCUMENT READY)
         // ==========================================
         $(document).ready(function () {
+
+            // Thiết lập ngày tối thiểu là ngày hiện tại cho input tái khám
+            var dtToday = new Date();
+            var month = String(dtToday.getMonth() + 1).padStart(2, '0');
+            var day = String(dtToday.getDate()).padStart(2, '0');
+            var year = dtToday.getFullYear();
+            var minDate = year + '-' + month + '-' + day;
+            $('#NgayTaiKham').attr('min', minDate);
 
 
             function LoadDanhSachChoKham() {
@@ -1346,7 +1413,7 @@
                 normalized.forEach(function (x) { suggestedMap[x.code] = x.score; });
 
                 var $select = $('#cboThuoc');
-                
+
                 $('#drugSuggestionBox').addClass('d-none').empty();
                 $('#drugSuggestionList').addClass('d-none').empty();
 
@@ -1559,6 +1626,7 @@
 
                 var tong1NgayCalc = sang + trua + chieu + toi;
                 row.find('.tong-sl').val(tong1NgayCalc * songay);
+                TinhNgayTaiKham();
             });
 
             // SỰ KIỆN CHỌN DỊCH VỤ CẬN LÂM SÀNG
