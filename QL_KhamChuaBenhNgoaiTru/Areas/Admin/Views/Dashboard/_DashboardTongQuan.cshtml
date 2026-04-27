@@ -374,15 +374,15 @@
 </div>
 
 <script>
-    // Sử dụng var để tránh lỗi "Identifier has already been declared" khi load lại partial view
-    var chartLabels7 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu7Ngay.Select(x => x.NgayDisplay).ToList()));
-    var chartData7 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu7Ngay.Select(x => (double)x.DoanhThu).ToList()));
+    // ÉP BIẾN THÀNH TOÀN CỤC (GLOBAL) ĐỂ JS BÊN NGOÀI ĐỌC ĐƯỢC
+    window.chartLabels7 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu7Ngay.Select(x => x.NgayDisplay).ToList()));
+    window.chartData7 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu7Ngay.Select(x => (double)x.DoanhThu).ToList()));
 
-    var chartLabels12 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu12Thang.Select(x => x.TenThang).ToList()));
-    var chartData12 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu12Thang.Select(x => (double)x.DoanhThu).ToList()));
+    window.chartLabels12 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu12Thang.Select(x => x.TenThang).ToList()));
+    window.chartData12 = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DoanhThu12Thang.Select(x => (double)x.DoanhThu).ToList()));
 
     // Gọi hàm initChart nằm trong file dashboard.js
     if (typeof initChart === 'function') {
-        initChart(chartLabels7, chartData7, 'Doanh thu 7 ngày');
+        initChart(window.chartLabels7, window.chartData7, 'Doanh thu 7 ngày');
     }
 </script>

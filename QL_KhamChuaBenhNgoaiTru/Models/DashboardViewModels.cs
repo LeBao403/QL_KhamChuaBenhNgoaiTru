@@ -70,6 +70,9 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public int SoLuotThanhToan { get; set; }
         public decimal TrungBinhLuot => SoLuotThanhToan > 0 ? ThucThu / SoLuotThanhToan : 0;
 
+        public decimal TienVonThuoc { get; set; }
+        public decimal LoiNhuanGop => (ThucThu + BHYT) - TienVonThuoc;
+
         public List<BieuDoDoanhThu> BieuDoXuHuong { get; set; } = new List<BieuDoDoanhThu>();
         public List<PhieuToThanhToan> BieuDoPhuongThuc { get; set; } = new List<PhieuToThanhToan>();
         public List<PhieuToThanhToan> BieuDoNguonThu { get; set; } = new List<PhieuToThanhToan>();
@@ -87,6 +90,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         public double TyLeBHYT { get; set; }
         public int SoDangKyOnline { get; set; }
         public int SoDangKyOffline { get; set; }
+
+        public int BenhNhanMoi { get; set; }
+        public int TaiKham { get; set; }
+        public double TyLeTaiKham => TongLuotKham > 0 ? Math.Round((TaiKham * 100.0) / TongLuotKham, 1) : 0;
 
         public List<BieuDoCot> LuuLuongTheoGio { get; set; } = new List<BieuDoCot>();
         public List<BieuDoTron> PhieuGioiTinh { get; set; } = new List<BieuDoTron>();

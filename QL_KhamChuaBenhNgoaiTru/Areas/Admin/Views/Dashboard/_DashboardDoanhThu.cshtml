@@ -70,26 +70,29 @@
 
 <div class="row g-4 mb-4">
     <div class="col-xl-3 col-md-6">
-        <div class="card stat-card h-100 border-start border-4 border-primary">
-            <div class="card-body p-3">
-                <p class="text-muted mb-1 small fw-bold text-uppercase">Doanh thu gộp</p>
-                <h4 class="fw-bold mb-0 text-dark" id="kpiTongGoc">@fmt(Model.TongGoc) <small>đ</small></h4>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
         <div class="card stat-card h-100 border-start border-4 border-success">
             <div class="card-body p-3">
-                <p class="text-muted mb-1 small fw-bold text-uppercase">Thực thu (BN trả)</p>
+                <p class="text-muted mb-1 small fw-bold text-uppercase">Doanh Thu Thuần</p>
                 <h4 class="fw-bold mb-0 text-success" id="kpiThucThu">@fmt(Model.ThucThu) <small>đ</small></h4>
+                <small class="text-muted">Bệnh nhân thanh toán</small>
             </div>
         </div>
     </div>
     <div class="col-xl-3 col-md-6">
         <div class="card stat-card h-100 border-start border-4 border-warning">
             <div class="card-body p-3">
-                <p class="text-muted mb-1 small fw-bold text-uppercase">Công nợ BHYT</p>
+                <p class="text-muted mb-1 small fw-bold text-uppercase">BHYT Chi Trả</p>
                 <h4 class="fw-bold mb-0 text-warning" id="kpiBHYT">@fmt(Model.BHYT) <small>đ</small></h4>
+                <small class="text-muted">Quỹ BHXH thanh toán</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6">
+        <div class="card stat-card h-100 border-start border-4 border-primary bg-primary text-white shadow" style="opacity: 0.95;">
+            <div class="card-body p-3">
+                <p class="text-white-50 mb-1 small fw-bold text-uppercase"><i class="bi bi-graph-up-arrow me-1"></i> Lợi Nhuận Ước Tính</p>
+                <h4 class="fw-bold mb-0 text-white" id="kpiLoiNhuan">@fmt(Model.LoiNhuanGop) <small>đ</small></h4>
+                <small class="text-white-50">Đã trừ giá vốn xuất thuốc</small>
             </div>
         </div>
     </div>

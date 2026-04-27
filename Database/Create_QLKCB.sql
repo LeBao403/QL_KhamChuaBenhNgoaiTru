@@ -727,7 +727,7 @@ BEGIN
 END
 
 GO
-GO
+
 
 -- ===== MIGRATIONS / ADJUSTMENTS =====
 

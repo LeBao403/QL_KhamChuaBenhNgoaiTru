@@ -1,13 +1,5 @@
 ﻿/** DASHBOARD MANAGER - TRÌNH ĐIỀU KHIỂN TRUNG TÂM */
 
-//$(document).ready(function () {
-//    loadDashboard('tong-quan');
-
-//    $('#dashboardType').change(function () {
-//        loadDashboard($(this).val());
-//    });
-//});
-
 $(document).ready(function () {
     // Đọc URL xem đang ở Tab nào (VD: .../Dashboard#doanh-thu)
     let hash = window.location.hash.replace('#', '');
@@ -180,11 +172,13 @@ function executeDoanhThuFilter() {
         success: function (res) {
             if (res.success) {
                 let d = res.data;
-                $('#kpiTongGoc').html(formatVND(d.TongGoc) + ' <small>đ</small>');
+                // CẬP NHẬT CÁC THẺ KPI DOANH THU MỚI
                 $('#kpiThucThu').html(formatVND(d.ThucThu) + ' <small>đ</small>');
                 $('#kpiBHYT').html(formatVND(d.BHYT) + ' <small>đ</small>');
+                $('#kpiLoiNhuan').html(formatVND(d.LoiNhuanGop) + ' <small>đ</small>');
                 $('#kpiTrungBinh').html(formatVND(d.TrungBinhLuot) + ' <small>đ</small>');
                 $('#kpiSoLuot').text('Dựa trên ' + d.SoLuotThanhToan + ' lượt');
+
                 renderDoanhThuCharts(d.BieuDoXuHuong, d.BieuDoPhuongThuc, d.BieuDoNguonThu, d.TopDichVu);
             }
         },
@@ -268,10 +262,14 @@ function executeBenhNhanFilter() {
         success: function (res) {
             if (res.success) {
                 let d = res.data;
+                // CẬP NHẬT CÁC THẺ KPI BỆNH NHÂN MỚI
                 $('#kpiTongKham').html(formatVND(d.TongLuotKham) + ' <small>lượt</small>');
+                $('#kpiTyLeTaiKham').text(d.TyLeTaiKham + '%');
+                $('#kpiMoiTaiKham').text('Khách mới: ' + d.BenhNhanMoi + ' | Tái khám: ' + d.TaiKham);
                 $('#kpiBHYT').text(d.TyLeBHYT + '%');
-                $('#kpiOnline').html(formatVND(d.SoDangKyOnline) + ' <small>người</small>');
-                $('#kpiOffline').html(formatVND(d.SoDangKyOffline) + ' <small>người</small>');
+                $('#kpiOnline').html(formatVND(d.SoDangKyOnline) + ' <small style="font-size: 14px;">Online</small>');
+                $('#kpiOffline').text('Ghi danh tại quầy: ' + d.SoDangKyOffline);
+
                 renderBenhNhanCharts(d.LuuLuongTheoGio, d.PhieuGioiTinh, d.PhieuTuyenKham, d.PhanKhucTuoi, d.TopBenhLy);
             }
         },
@@ -408,18 +406,15 @@ function initChart(labels, data, label) {
 }
 
 // Bắt sự kiện khi người dùng nhấn nút 7 ngày hoặc 12 tháng
+// Bắt sự kiện khi người dùng nhấn nút 7 ngày hoặc 12 tháng
 function switchChart(type, btnElement) {
-    // 1. Gỡ class 'active' khỏi tất cả các nút
     document.querySelectorAll('.nav-chart-tabs .nav-link').forEach(el => el.classList.remove('active'));
-
-    // 2. Gắn class 'active' cho nút vừa bấm
     if (btnElement) { btnElement.classList.add('active'); }
 
-    // 3. Đọc dữ liệu từ biến toàn cục bên View HTML và vẽ lại
-    // Lưu ý: Các biến chartLabels7, chartData7... đã được gắn ở dưới cùng file _DashboardTongQuan.cshtml
-    if (type === 'week' && typeof chartLabels7 !== 'undefined') {
-        initChart(chartLabels7, chartData7, 'Doanh thu 7 ngày');
-    } else if (type === 'month' && typeof chartLabels12 !== 'undefined') {
-        initChart(chartLabels12, chartData12, 'Doanh thu 12 tháng');
+    // Đọc biến từ window
+    if (type === 'week' && window.chartLabels7) {
+        initChart(window.chartLabels7, window.chartData7, 'Doanh thu 7 ngày');
+    } else if (type === 'month' && window.chartLabels12) {
+        initChart(window.chartLabels12, window.chartData12, 'Doanh thu 12 tháng');
     }
 }

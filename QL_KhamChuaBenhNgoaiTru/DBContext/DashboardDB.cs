@@ -197,14 +197,49 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
         private void GetKpiDoanhThu(SqlConnection conn, DateTime tuNgay, DateTime denNgay, DoanhThuChiTietViewModel result)
         {
-            string sqlKpi = @"SELECT ISNULL(SUM(TongTienGoc), 0) AS TongGoc, ISNULL(SUM(TongTienBenhNhanTra), 0) AS ThucThu, ISNULL(SUM(TongTienBHYTChiTra), 0) AS BHYT, COUNT(MaHD) AS SoLuot 
-                              FROM HOADON WHERE TrangThaiThanhToan = N'Đã thanh toán' AND NgayThanhToan >= @TuNgay AND NgayThanhToan <= @DenNgay";
+            // Tách làm 2 bước tính toán bằng biến SQL để tránh tuyệt đối lỗi lồng hàm SUM
+            string sqlKpi = @"
+                DECLARE @TienVonThuoc DECIMAL(18,2) = 0;
+
+                -- BƯỚC 1: Tính tổng tiền vốn thuốc xuất ra (Dùng OUTER APPLY thay vì Subquery lồng)
+                SELECT @TienVonThuoc = ISNULL(SUM(CT.SoLuong * ISNULL(K.GiaNhap, 0)), 0)
+                FROM CT_HOADON_THUOC CT 
+                INNER JOIN CT_DON_THUOC CTD ON CT.MaCTDonThuoc = CTD.MaCTDonThuoc
+                INNER JOIN HOADON HD ON CT.MaHD = HD.MaHD 
+                OUTER APPLY (
+                    SELECT TOP 1 GiaNhap 
+                    FROM TONKHO 
+                    WHERE MaThuoc = CTD.MaThuoc 
+                    ORDER BY NgayCapNhat DESC
+                ) K
+                WHERE HD.TrangThaiThanhToan = N'Đã thanh toán' 
+                  AND HD.NgayThanhToan >= @TuNgay AND HD.NgayThanhToan <= @DenNgay;
+
+                -- BƯỚC 2: Tính tổng doanh thu và ghép biến Tiền vốn thuốc vào
+                SELECT 
+                    ISNULL(SUM(HD.TongTienGoc), 0) AS TongGoc, 
+                    ISNULL(SUM(HD.TongTienBenhNhanTra), 0) AS ThucThu, 
+                    ISNULL(SUM(HD.TongTienBHYTChiTra), 0) AS BHYT, 
+                    COUNT(DISTINCT HD.MaHD) AS SoLuot,
+                    @TienVonThuoc AS TienVonThuoc
+                FROM HOADON HD 
+                WHERE HD.TrangThaiThanhToan = N'Đã thanh toán' 
+                  AND HD.NgayThanhToan >= @TuNgay AND HD.NgayThanhToan <= @DenNgay;";
+
             using (SqlCommand cmd = new SqlCommand(sqlKpi, conn))
             {
-                cmd.Parameters.AddWithValue("@TuNgay", tuNgay); cmd.Parameters.AddWithValue("@DenNgay", denNgay);
+                cmd.Parameters.AddWithValue("@TuNgay", tuNgay);
+                cmd.Parameters.AddWithValue("@DenNgay", denNgay);
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
-                    if (dr.Read()) { result.TongGoc = Convert.ToDecimal(dr["TongGoc"]); result.ThucThu = Convert.ToDecimal(dr["ThucThu"]); result.BHYT = Convert.ToDecimal(dr["BHYT"]); result.SoLuotThanhToan = Convert.ToInt32(dr["SoLuot"]); }
+                    if (dr.Read())
+                    {
+                        result.TongGoc = Convert.ToDecimal(dr["TongGoc"]);
+                        result.ThucThu = Convert.ToDecimal(dr["ThucThu"]);
+                        result.BHYT = Convert.ToDecimal(dr["BHYT"]);
+                        result.SoLuotThanhToan = Convert.ToInt32(dr["SoLuot"]);
+                        result.TienVonThuoc = Convert.ToDecimal(dr["TienVonThuoc"]);
+                    }
                 }
             }
         }
@@ -282,11 +317,29 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
         private void GetKpiBenhNhan(SqlConnection conn, DateTime tuNgay, DateTime denNgay, string filterKhoa, int? maKhoa, BenhNhanThongKeViewModel result)
         {
-            string sqlKpi = $@"SELECT COUNT(PKB.MaPhieuKhamBenh) AS TongLuotKham, SUM(CAST(BN.BHYT AS INT)) AS SoBHYT, SUM(CASE WHEN PDK.HinhThucDangKy = N'Online' THEN 1 ELSE 0 END) AS SoOnline, SUM(CASE WHEN PDK.HinhThucDangKy = N'Offline' THEN 1 ELSE 0 END) AS SoOffline
-                               FROM PHIEUKHAMBENH PKB INNER JOIN BENHNHAN BN ON PKB.MaBN = BN.MaBN LEFT JOIN PHIEUDANGKY PDK ON PKB.MaPhieuDK = PDK.MaPhieuDK LEFT JOIN PHONG P ON PKB.MaPhong = P.MaPhong WHERE PKB.NgayLap >= @TuNgay AND PKB.NgayLap <= @DenNgay {filterKhoa}";
+            string sqlKpi = $@"
+                SELECT 
+                    COUNT(PKB.MaPhieuKhamBenh) AS TongLuotKham, 
+                    SUM(CAST(BN.BHYT AS INT)) AS SoBHYT, 
+                    SUM(CASE WHEN PDK.HinhThucDangKy = N'Online' THEN 1 ELSE 0 END) AS SoOnline, 
+                    SUM(CASE WHEN PDK.HinhThucDangKy = N'Offline' THEN 1 ELSE 0 END) AS SoOffline,
+                    SUM(CASE WHEN ISNULL(Prev.LanKhamCu, 0) = 0 THEN 1 ELSE 0 END) AS BenhNhanMoi,
+                    SUM(CASE WHEN ISNULL(Prev.LanKhamCu, 0) > 0 THEN 1 ELSE 0 END) AS TaiKham
+                FROM PHIEUKHAMBENH PKB 
+                INNER JOIN BENHNHAN BN ON PKB.MaBN = BN.MaBN 
+                LEFT JOIN PHIEUDANGKY PDK ON PKB.MaPhieuDK = PDK.MaPhieuDK 
+                LEFT JOIN PHONG P ON PKB.MaPhong = P.MaPhong 
+                OUTER APPLY (
+                    SELECT COUNT(*) AS LanKhamCu 
+                    FROM PHIEUKHAMBENH P2 
+                    WHERE P2.MaBN = PKB.MaBN AND P2.NgayLap < PKB.NgayLap
+                ) Prev
+                WHERE PKB.NgayLap >= @TuNgay AND PKB.NgayLap <= @DenNgay {filterKhoa}";
+
             using (SqlCommand cmd = new SqlCommand(sqlKpi, conn))
             {
-                cmd.Parameters.AddWithValue("@TuNgay", tuNgay); cmd.Parameters.AddWithValue("@DenNgay", denNgay);
+                cmd.Parameters.AddWithValue("@TuNgay", tuNgay);
+                cmd.Parameters.AddWithValue("@DenNgay", denNgay);
                 if (maKhoa.HasValue && maKhoa.Value > 0) cmd.Parameters.AddWithValue("@MaKhoa", maKhoa.Value);
                 using (SqlDataReader dr = cmd.ExecuteReader())
                 {
@@ -297,6 +350,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         result.TyLeBHYT = result.TongLuotKham > 0 ? Math.Round((soBHYT * 100.0) / result.TongLuotKham, 1) : 0;
                         result.SoDangKyOnline = dr["SoOnline"] != DBNull.Value ? Convert.ToInt32(dr["SoOnline"]) : 0;
                         result.SoDangKyOffline = dr["SoOffline"] != DBNull.Value ? Convert.ToInt32(dr["SoOffline"]) : 0;
+                        result.BenhNhanMoi = dr["BenhNhanMoi"] != DBNull.Value ? Convert.ToInt32(dr["BenhNhanMoi"]) : 0;
+                        result.TaiKham = dr["TaiKham"] != DBNull.Value ? Convert.ToInt32(dr["TaiKham"]) : 0;
                     }
                 }
             }
