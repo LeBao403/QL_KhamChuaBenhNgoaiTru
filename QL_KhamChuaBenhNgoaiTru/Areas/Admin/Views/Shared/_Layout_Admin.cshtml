@@ -563,7 +563,14 @@
             applySidebarState();
         });
     </script>
+    <script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
+
+    <script src="~/signalr/hubs"></script>
+
+    <script src="~/Scripts/admin/realtime-hub.js"></script>
 
     @RenderSection("Scripts", required: false)
+
+
 </body>
 </html>
