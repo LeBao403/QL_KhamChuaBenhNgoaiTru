@@ -245,7 +245,7 @@
                                 <td>
                                     @if (item.MaDonThuoc != null)
                                     {
-                                        <button class="btn btn-view btn-sm px-3" onclick="viewDetail(@item.MaDonThuoc, @item.MaHD)">
+                                        <button class="btn btn-view btn-sm px-3" onclick="viewDetail('@item.MaDonThuoc', '@item.MaHD')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     }
@@ -368,7 +368,7 @@ function viewDetail(maDT, maHD) {
     $('#modalContent').html('<div class="text-center p-5"><div class="spinner-border text-success"></div><p class="mt-2">Đang tải hồ sơ lịch sử...</p></div>');
     new bootstrap.Modal(document.getElementById('detailModal')).show();
 
-    $.get('@Url.Action("GetChiTietDonThuoc", "PhatThuoc", new { area = "Staff" })', { maDonThuoc: maDT, maHD: maHD }, function(res) {
+    $.get('@Url.Action("GetChiTietDonThuoc", "PhatThuoc", new { area = "Staff" })', { maDonThuoc: String(maDT), maHD: String(maHD) }, function(res) {
         if (res.success) {
             let d = res.data;
 

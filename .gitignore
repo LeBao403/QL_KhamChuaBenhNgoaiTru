@@ -33,3 +33,13 @@ node_modules/
 # Các file rác của Windows
 Thumbs.db
 desktop.ini 
+
+
+## --- Python AI Recommender ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/

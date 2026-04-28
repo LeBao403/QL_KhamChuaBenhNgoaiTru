@@ -220,12 +220,12 @@
                             bool isPaid = item.TTThanhToan.Contains("Đã") || item.TTThanhToan.Contains("Hoàn");
                             <tr>
                                 <td><span class="text-muted small fw-bold">@item.NgayThanhToanStr</span></td>
-                                <td><span class="badge bg-light text-secondary border">@item.MaHD.ToString("D4")</span></td>
+                                <td><span class="badge bg-light text-secondary border">@(item.MaHD?.ToString())</span></td>
                                 <td class="text-start">
                                     <div class="fw-bold text-dark">@item.BenhNhan.Split('(')[0]</div>
                                     <div class="text-muted small">@item.BenhNhan.Substring(item.BenhNhan.IndexOf('('))</div>
                                 </td>
-                                <td><span class="text-primary fw-bold">ĐT-@item.MaDonThuoc</span></td>
+                                <td><span class="text-primary fw-bold">#@item.MaDonThuoc</span></td>
                                 <td>
                                     <span class="badge @(isPaid ? "badge-paid" : "badge-pending") px-3 py-2">
                                         <i class="fas @(isPaid ? "fa-check-circle" : "fa-clock") me-1"></i> @item.TTThanhToan
@@ -235,7 +235,7 @@
                                 <td>
                                     @if (isPaid)
                                     {
-                                        <button class="btn btn-primary btn-sm px-3 shadow-sm btn-action" onclick="openDispenseModal(@item.MaDonThuoc, @item.MaHD)">
+                                        <button class="btn btn-primary btn-sm px-3 shadow-sm btn-action" onclick="openDispenseModal('@item.MaDonThuoc', '@item.MaHD')">
                                             <i class="fas fa-hand-holding-medical"></i>
                                         </button>
                                     }
@@ -274,7 +274,7 @@
 
     <script>
         // Khai báo biến toàn cục
-        let curDT = 0, curHD = 0;
+        let curDT = '', curHD = '';
 
         // 1. LIVE SEARCH CỰC MƯỢT
         $("#liveSearch").on("keyup", function () {
@@ -399,7 +399,7 @@
 
         // 3. XỬ LÝ PHÁT THUỐC (FIX CỨNG SỰ KIỆN CLICK)
         $(document).on('click', '#btnConfirmDispense', function () {
-            if (curDT === 0 || curHD === 0) return;
+            if (curDT === '' || curHD === '') return;
 
             Swal.fire({
                 title: 'Xác nhận cấp phát?',

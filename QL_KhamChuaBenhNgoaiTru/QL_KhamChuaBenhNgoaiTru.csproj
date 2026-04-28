@@ -232,6 +232,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\TaiKhoanController.cs" />
     <Compile Include="Controllers\MockLISController.cs" />
+    <Compile Include="Controllers\MobileApiController.cs" />
     <Compile Include="Areas\Staff\Controllers\CLSController.cs" />
     <Compile Include="DBContext\BackupDB.cs" />
     <Compile Include="DBContext\BacSiDB.cs" />
@@ -256,7 +257,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\RouteValueExtensions.cs" />
+    <Compile Include="Helpers\Utilities.cs" />
     <Compile Include="Models\DanhMucBenh.cs" />
+    <Compile Include="Models\DashboardViewModels.cs" />
     <Compile Include="Models\DecimalModelBinder.cs" />
     <Compile Include="Models\DichVu.cs" />
     <Compile Include="Models\DonThuoc.cs" />
@@ -299,6 +302,7 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="favicon.ico" />
+    <Content Include="favicon.png" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Images\about-building.jpg" />
@@ -336,6 +340,8 @@
     <Content Include="Images\insurance\daiichi.png" />
     <Content Include="Images\insurance\manulife.png" />
     <Content Include="Images\insurance\prudential.png" />
+    <Content Include="Images\Logo\app_logo.png" />
+    <Content Include="Images\Logo\DigiMed_Clinic.png" />
     <Content Include="Images\news-1.jpg" />
     <Content Include="Images\news-2.jpg" />
     <Content Include="Images\news-3.jpg" />
@@ -402,6 +408,7 @@
     <Content Include="Areas\NhanVienKho\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Staff\Views\PhatThuoc\Index.cshtml" />
     <Content Include="Areas\Staff\Views\PhatThuoc\LichSu.cshtml" />
+    <Content Include="Scripts\admin\dashboard.js" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -410,6 +417,11 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Admin\Views\Backup\Index.cshtml" />
     <Content Include="Areas\Staff\Views\BacSi\InPhieu.cshtml" />
+    <Content Include="backup\QL_KhamBenhNgoaiTru_Full_20260411_173835.bak" />
+    <Content Include="Areas\Admin\Views\Dashboard\_DashboardTongQuan.cshtml" />
+    <Content Include="Areas\Admin\Views\Dashboard\_DashboardDoanhThu.cshtml" />
+    <Content Include="Areas\Admin\Views\Dashboard\_DashboardBenhNhan.cshtml" />
+    <Content Include="Areas\Admin\Views\Dashboard\_DashboardKhoDuoc.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -421,6 +433,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Styles\dashboard.css" />
     <Content Include="Views\BenhNhanPortal\ChiTietDonThuoc.cshtml" />
     <Content Include="Views\BenhNhanPortal\ChiTietHoaDon.cshtml" />
     <Content Include="Views\BenhNhanPortal\DatLichKham.cshtml" />
@@ -473,6 +486,7 @@
     <Folder Include="Areas\Staff\Models\" />
     <Folder Include="Areas\Staff\Views\BaseStaff\" />
     <Folder Include="Images\nhanvien\" />
+    <Folder Include="Views\DashboardViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

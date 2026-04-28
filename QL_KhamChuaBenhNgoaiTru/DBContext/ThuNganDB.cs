@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using QL_KhamChuaBenhNgoaiTru.Helpers;
 
 namespace QL_KhamChuaBenhNgoaiTru.DBContext
 {
@@ -19,24 +20,26 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             {
                 // LOGIC: Lấy các Hóa đơn còn nợ và CHỈ SUM(TienBenhNhanTra) ở các chi tiết chưa thanh toán
                 string sql = @"
-    SELECT * FROM (
-        SELECT hd.MaHD, hd.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.BHYT,
-               hd.NgayThanhToan, hd.GhiChu, 
-               pkb.MaPhieuKhamBenh, pkb.TrangThai,
-               (
-                   ISNULL((SELECT SUM(TienBenhNhanTra) FROM CT_HOADON_DV WHERE MaHD = hd.MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'), 0) +
-                   ISNULL((SELECT SUM(TienBenhNhanTra) FROM CT_HOADON_THUOC WHERE MaHD = hd.MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'), 0)
-               ) AS TongTienBenhNhanTra
-        FROM HOADON hd
-        JOIN BENHNHAN bn ON hd.MaBN = bn.MaBN
-        JOIN PHIEUKHAMBENH pkb ON hd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
+                SELECT * FROM (
+                    SELECT hd.MaHD, hd.MaBN, bn.HoTen, bn.NgaySinh, bn.GioiTinh, bn.BHYT,
+                           COALESCE(hd.NgayThanhToan, pkb.NgayLap, pdk.NgayDangKy) AS NgayHienThi, 
+                           hd.GhiChu, 
+                           pkb.MaPhieuKhamBenh, pkb.TrangThai,
+                           (
+                               ISNULL((SELECT SUM(TienBenhNhanTra) FROM CT_HOADON_DV WHERE MaHD = hd.MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'), 0) +
+                               ISNULL((SELECT SUM(TienBenhNhanTra) FROM CT_HOADON_THUOC WHERE MaHD = hd.MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'), 0)
+                           ) AS TongTienBenhNhanTra
+                    FROM HOADON hd
+                    JOIN BENHNHAN bn ON hd.MaBN = bn.MaBN
+                    LEFT JOIN PHIEUKHAMBENH pkb ON hd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
+                    LEFT JOIN PHIEUDANGKY pdk ON hd.MaPhieuDK = pdk.MaPhieuDK
         
-        -- SỬA Ở ĐÂY: Quét cả 2 trạng thái còn nợ tiền
-        WHERE hd.TrangThaiThanhToan IN (N'Chưa thanh toán', N'Thanh toán 1 phần') 
-          AND CAST(hd.NgayThanhToan AS DATE) = CAST(GETDATE() AS DATE)
-    ) AS DanhSachNo
-    WHERE TongTienBenhNhanTra > 0
-    ORDER BY MaHD ASC";
+                    WHERE hd.TrangThaiThanhToan IN (N'Chưa thanh toán', N'Thanh toán 1 phần') 
+                      -- SỬA Ở ĐÂY: Dùng COALESCE để lấy ngày thay thế nếu NgayThanhToan bị NULL
+                      AND CAST(COALESCE(hd.NgayThanhToan, pkb.NgayLap, pdk.NgayDangKy, GETDATE()) AS DATE) = CAST(GETDATE() AS DATE)
+                ) AS DanhSachNo
+                WHERE TongTienBenhNhanTra > 0
+                ORDER BY MaHD ASC";
 
                 SqlDataAdapter da = new SqlDataAdapter(sql, con);
                 da.Fill(dt);
@@ -45,7 +48,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         }
 
         // 2. LẤY CHI TIẾT TỔNG HỢP (Móc thêm liều lượng Sáng/Trưa/Chiều/Tối)
-        public DataTable GetChiTietHoaDon(int maHD)
+        // [ĐÃ SỬA] Đổi int maHD thành string maHD
+        public DataTable GetChiTietHoaDon(string maHD)
         {
             DataTable dt = new DataTable();
             using (SqlConnection con = new SqlConnection(connectStr))
@@ -84,7 +88,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         // 3. XÁC NHẬN THU TIỀN (Có xử lý Hủy món, Cập nhật Số lượng thuốc khách mua, Tính lại tiền)
         // Tham so moi dsThuocCapNhat: Danh sach cac mon thuoc ma khach muon doi so luong mua.
         // Moi item la 1 object chua { MaCTHD, SoLuongMoi }
-        public bool XacNhanThuTien(int maHD, int maPhieuKhamBenh, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, List<dynamic> dsThuocCapNhat, out string message)
+        // [ĐÃ SỬA] Đổi int maHD, int maPhieuKhamBenh thành string
+        public bool XacNhanThuTien(string maHD, string maPhieuKhamBenh, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, List<dynamic> dsThuocCapNhat, out string message)
         {
             message = "";
             using (SqlConnection con = new SqlConnection(connectStr))
@@ -138,7 +143,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                             foreach (var thuoc in dsThuocCapNhat)
                             {
-                                int maCTHD = Convert.ToInt32(thuoc.MaCTHD);
+                                // [ĐÃ SỬA] Đổi int maCTHD thành string
+                                string maCTHD = thuoc.MaCTHD.ToString();
                                 int soLuongMoi = Convert.ToInt32(thuoc.SoLuongMoi);
 
                                 // Lấy giá bán gốc và xem thuốc này có BHYT gánh không
@@ -223,13 +229,14 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     JOIN CT_DON_THUOC cdt ON cht.MaCTDonThuoc = cdt.MaCTDonThuoc
                     WHERE cht.MaHD = @MaHD AND cht.TrangThaiThanhToan = N'Đã thanh toán'";
 
-                        List<int> danhSachDonThuoc = new List<int>();
+                        // [ĐÃ SỬA] Đổi List<int> thành List<string>
+                        List<string> danhSachDonThuoc = new List<string>();
                         using (SqlCommand cmdKiemTraThuoc = new SqlCommand(sqlKiemTraThuoc, con, trans))
                         {
                             cmdKiemTraThuoc.Parameters.AddWithValue("@MaHD", maHD);
                             using (SqlDataReader dr = cmdKiemTraThuoc.ExecuteReader())
                             {
-                                while (dr.Read()) danhSachDonThuoc.Add(Convert.ToInt32(dr["MaDonThuoc"]));
+                                while (dr.Read()) danhSachDonThuoc.Add(dr["MaDonThuoc"].ToString());
                             }
                         }
 
@@ -244,7 +251,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                             int targetRoomId = 22 + (totalToday % 5);
 
-                            foreach (int maDT in danhSachDonThuoc)
+                            // [ĐÃ SỬA] Đổi int maDT thành string maDT
+                            foreach (string maDT in danhSachDonThuoc)
                             {
                                 string checkTonTai = "SELECT COUNT(*) FROM PHIEU_PHAT_THUOC WHERE MaHD = @MaHD AND MaDonThuoc = @MaDT";
                                 using (SqlCommand cmdCheck = new SqlCommand(checkTonTai, con, trans))
@@ -253,12 +261,18 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                     cmdCheck.Parameters.AddWithValue("@MaDT", maDT);
                                     if ((int)cmdCheck.ExecuteScalar() == 0)
                                     {
+                                        // --- GỌI HÀM TẠO MÃ SMART ID Ở ĐÂY ---
+                                        // Dùng đuôi 6 số cho an toàn với data lớn
+                                        string maPhieuPhat = Utilities.Generate(con, trans, "PT", "PHIEU_PHAT_THUOC", "MaPhieuPhat", 6);
+
+                                        // Thêm cột MaPhieuPhat vào câu lệnh INSERT
                                         string insertPhieuPhat = @"
-                                    INSERT INTO PHIEU_PHAT_THUOC (MaDonThuoc, MaHD, MaPhong, NgayPhat, TrangThai)
-                                    VALUES (@MaDT, @MaHD, @MaPhong, GETDATE(), N'Hoàn thành')";
+                                            INSERT INTO PHIEU_PHAT_THUOC (MaPhieuPhat, MaDonThuoc, MaHD, MaPhong, NgayPhat, TrangThai)
+                                            VALUES (@MaPP, @MaDT, @MaHD, @MaPhong, GETDATE(), N'Hoàn thành')";
 
                                         using (SqlCommand cmdInsertPP = new SqlCommand(insertPhieuPhat, con, trans))
                                         {
+                                            cmdInsertPP.Parameters.AddWithValue("@MaPP", maPhieuPhat); // Truyền mã PT... vào
                                             cmdInsertPP.Parameters.AddWithValue("@MaDT", maDT);
                                             cmdInsertPP.Parameters.AddWithValue("@MaHD", maHD);
                                             cmdInsertPP.Parameters.AddWithValue("@MaPhong", targetRoomId);

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Hệ thống Y tế MedicHub</title>
+    <title>@ViewBag.Title - Hệ thống Y tế DigiMed Clinic</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -12,14 +12,65 @@
 
     <link href="@Url.Content("~/Styles/_Layout_client.css")" rel="stylesheet" />
     <link href="@Url.Content("~/Styles/_HomePage.css")" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="@Url.Content("~/favicon.png")?v=2" />
+    <style>
+        .brand-logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+        }
+        .brand-icon-circle {
+            width: 74px;
+            height: 74px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #0d6efd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 3px 12px rgba(13, 110, 253, 0.25);
+            overflow: hidden;
+            padding: 4px;
+        }
+        .brand-icon-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .brand-logo-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        .brand-logo-text .brand-name {
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: #0d6efd;
+            letter-spacing: -1px;
+        }
+        .brand-logo-text .brand-sub {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+    </style>
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-client fixed-top py-3" id="mainNav">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="@Url.Action("Index", "Home")">
-                <i class="bi bi-heart-pulse-fill text-primary fs-2 me-2"></i>
-                <span class="fw-bold fs-4 text-primary mt-1">MEDIC<span class="text-dark">HUB</span></span>
+            <a class="navbar-brand brand-logo-wrap" href="@Url.Action("Index", "Home")">
+                <div class="brand-icon-circle">
+                    <img src="@Url.Content("~/Images/Logo/app_favicon.png")" alt="DigiMed" />
+                </div>
+                <div class="brand-logo-text">
+                    <span class="brand-name">DigiMed</span>
+                    <span class="brand-sub">Clinic</span>
+                </div>
             </a>
 
             <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -81,7 +132,7 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-4">
-                    <h5 class="fw-bold mb-4 text-white">MEDICHUB HOSPITAL</h5>
+                    <h5 class="fw-bold mb-4 text-white">DIGIMED CLINIC</h5>
                     <p class="small text-secondary" style="line-height: 1.8;">Hệ thống quản lý y tế thông minh, kết nối bác sĩ và bệnh nhân. Nâng tầm trải nghiệm chăm sóc sức khỏe cho người Việt.</p>
                     <div class="d-flex gap-3 mt-4">
                         <a href="#" class="text-white fs-4 hover-up"><i class="bi bi-facebook"></i></a>
@@ -93,7 +144,7 @@
                 <div class="col-lg-2 offset-lg-1">
                     <h6 class="fw-bold mb-4 text-white">Dịch vụ & Tiện ích</h6>
                     <ul class="list-unstyled">
-                        <li><a href="@Url.Action("DatLich", "Home")" class="footer-link">Đặt lịch khám bệnh</a></li>
+                        <li><a href="@Url.Action("DatLichKham", "BenhNhanPortal")" class="footer-link">Đặt lịch khám bệnh</a></li>
                         <li><a href="@Url.Action("HuongDan", "Home")" class="footer-link">Quy trình & Cẩm nang</a></li>
                         <li><a href="@Url.Action("BangGia", "Home")" class="footer-link">Bảng giá dịch vụ</a></li>
                         <li><a href="@Url.Action("LienHe", "Home")" class="footer-link">Liên hệ hỗ trợ</a></li>
@@ -127,7 +178,7 @@
             </div>
             <hr class="mt-5 border-secondary">
             <div class="text-center small text-secondary">
-                © 2026 Hệ thống Quản lý Y tế MedicHub. Thiết kế bởi LeBao403
+                © 2026 Hệ thống Quản lý Y tế DigiMed Clinic. Thiết kế bởi LeBao403
             </div>
         </div>
     </footer>

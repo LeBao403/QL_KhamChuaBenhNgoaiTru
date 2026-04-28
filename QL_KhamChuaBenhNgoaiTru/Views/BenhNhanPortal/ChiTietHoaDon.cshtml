@@ -1,8 +1,45 @@
-@model QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.HoaDonChiTiet
+﻿@model QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.HoaDonChiTiet
 @{
     ViewBag.Title = "Chi tiết hóa đơn";
     Layout = "~/Views/Shared/_Layout_Client.cshtml";
 }
+
+@{ Html.RenderPartial("~/Views/Shared/_PrintDocumentStyles.cshtml"); }
+
+<style>
+    @@media screen {
+        #portal-print-header {
+            display: none;
+        }
+    }
+
+    @@media print {
+        .page-hero,
+        .no-print,
+        .btn,
+        a.btn {
+            display: none !important;
+        }
+
+        #portal-print-header {
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .container,
+        .container.pb-5 {
+            max-width: 100% !important;
+            width: 100% !important;
+            padding: 0 !important;
+        }
+
+        .patient-card {
+            box-shadow: none !important;
+            border: 1px solid #e2e8f0 !important;
+            break-inside: avoid;
+        }
+    }
+</style>
 
 <div class="page-hero" style="background:linear-gradient(135deg,#15803d 0%,#22c55e 100%);">
     <div class="container">
@@ -36,6 +73,19 @@
     }
     else
     {
+        <div id="portal-print-header" class="app-print-sheet">
+            @{
+                Html.RenderPartial(
+                    "~/Views/Shared/_PrintDocumentHeader.cshtml",
+                    new ViewDataDictionary(ViewData)
+                    {
+                        { "PrintDocumentTitle", "H&#211;A &#272;&#416;N THANH TO&#193;N" },
+                        { "PrintDocumentCodeLabel", "M&#227; h&#243;a &#273;&#417;n" },
+                        { "PrintDocumentCodeText", "#" + Model.MaHD }
+                    });
+            }
+        </div>
+
         <div class="row g-4">
             <div class="col-lg-5">
                 <div class="patient-card h-100">
@@ -107,3 +157,4 @@
         </div>
     }
 </div>
+

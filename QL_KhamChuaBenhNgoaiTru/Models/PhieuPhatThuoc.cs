@@ -10,16 +10,16 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
     // =========================================================================
     public class PhieuPhatThuoc
     {
-        public int MaPhieuPhat { get; set; }
-        public int MaDonThuoc { get; set; }
+        public string MaPhieuPhat { get; set; } // [ĐÃ SỬA] int -> string
+        public string MaDonThuoc { get; set; }  // [ĐÃ SỬA] int -> string
 
         // Cột này trong DB là NULL được nên kiểu string (mặc định cho phép null) là OK
         public string MaNV_Phat { get; set; }
 
-        // Dùng int? vì trong DB không có NOT NULL (có thể có phiếu phát chưa map hóa đơn)
-        public int? MaHD { get; set; }
+        // [ĐÃ SỬA] int? -> string (Kiểu string bản thân nó đã cho phép null)
+        public string MaHD { get; set; }
 
-        // Dùng int? vì Quầy/Phòng có thể để trống
+        // Dùng int? vì Quầy/Phòng có thể để trống (Vẫn giữ int vì ID phòng thường là số)
         public int? MaPhong { get; set; }
 
         // Dùng DateTime? để hứng phòng trường hợp DB trả về NULL
@@ -35,8 +35,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
     // =========================================================================
     public class CT_PhieuPhat
     {
-        public int MaCTPhieuPhat { get; set; }
-        public int MaPhieuPhat { get; set; }
+        public string MaCTPhieuPhat { get; set; } // [ĐÃ SỬA] int -> string
+        public string MaPhieuPhat { get; set; }   // [ĐÃ SỬA] int -> string
 
         public string MaThuoc { get; set; }
         public string MaLo { get; set; }
@@ -46,11 +46,10 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string GhiChu { get; set; }
     }
 
-
     public class DanhSachPhatThuocVM
     {
-        public int MaHD { get; set; }
-        public int? MaDonThuoc { get; set; }
+        public string MaHD { get; set; }         // [ĐÃ SỬA] int -> string
+        public string MaDonThuoc { get; set; }   // [ĐÃ SỬA] int? -> string
         public string BenhNhan { get; set; } // Hứng Tên BN từ bảng BENHNHAN
         public string TTThanhToan { get; set; } // Hứng trạng thái từ bảng HOADON
         public string TTPhatThuoc { get; set; } // Hứng trạng thái từ bảng DON_THUOC
@@ -72,7 +71,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
 
     public class LichSuPhatThuocVM
     {
-        public int MaPhieuPhat { get; set; }
+        public string MaPhieuPhat { get; set; } // [ĐÃ SỬA] int -> string
         public DateTime? NgayPhat { get; set; }
         public string NguoiPhat { get; set; }
         public string TenThuoc { get; set; }
@@ -111,13 +110,13 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
 
         public string DiaChi { get; set; }
         public string BHYT { get; set; }
-        public int MaPhieuKhamBenh { get; set; }
+        public string MaPhieuKhamBenh { get; set; } // [ĐÃ SỬA] int -> string
         public string TrieuChung { get; set; }
         public string LoiDanBacSi { get; set; }
 
-        public int MaHD { get; set; }
-        public int? MaPhieuPhat { get; set; }
-        public int MaDonThuoc { get; set; }
+        public string MaHD { get; set; }            // [ĐÃ SỬA] int -> string
+        public string MaPhieuPhat { get; set; }     // [ĐÃ SỬA] int? -> string
+        public string MaDonThuoc { get; set; }      // [ĐÃ SỬA] int -> string
 
         // Danh sách thuốc
         public List<ChiTietDonThuocVM> DanhSachThuoc { get; set; } = new List<ChiTietDonThuocVM>();

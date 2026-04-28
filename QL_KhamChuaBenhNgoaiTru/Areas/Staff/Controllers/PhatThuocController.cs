@@ -18,17 +18,13 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             var nv = Session["NhanVien"] as NhanVien;
             if (nv == null) return RedirectToAction("Login", "Account");
 
-            // Lấy mã phòng từ Session, ép kiểu int? về int
             int maPhongTruc = nv.MaPhong ?? 22;
 
-            // Mặc định xem trong 7 ngày gần nhất
             DateTime dTu = string.IsNullOrEmpty(tuNgay) ? DateTime.Now.AddDays(-7).Date : DateTime.Parse(tuNgay);
             DateTime dDen = string.IsNullOrEmpty(denNgay) ? DateTime.Now.Date : DateTime.Parse(denNgay);
 
-            // Gọi hàm chuyên biệt lấy danh sách chờ phát theo phòng
             var allData = db.GetDanhSachChoPhat(maPhongTruc, dTu, dDen, search, sortCol, sortDir);
 
-            // Phân trang đơn giản cho Index
             int pageSize = 10;
             int totalRow = allData.Count;
             int totalPage = (int)Math.Ceiling((double)totalRow / pageSize);
@@ -49,15 +45,13 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 
         // 2. TRANG LỊCH SỬ PHÁT THUỐC
         public ActionResult LichSu(string search = "", string sortCol = "NgayThanhToan", string sortDir = "DESC",
-                          string tuNgay = "", string denNgay = "", int page = 1)
+                                  string tuNgay = "", string denNgay = "", int page = 1)
         {
-            // Mặc định lọc trong 7 ngày gần nhất nếu chưa chọn ngày
             DateTime dTu = string.IsNullOrEmpty(tuNgay) ? DateTime.Now.AddDays(-7).Date : DateTime.Parse(tuNgay);
             DateTime dDen = string.IsNullOrEmpty(denNgay) ? DateTime.Now.Date : DateTime.Parse(denNgay);
 
             int pageSize = 15;
 
-            // Gọi hàm phân trang từ DB
             var result = db.GetLichSuPhatThuoc_Pagination(search, dTu, dDen, page, pageSize, sortCol, sortDir);
 
             int totalPage = (int)Math.Ceiling((double)result.TotalRow / pageSize);
@@ -74,9 +68,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             return View();
         }
 
-        // 3. API LẤY CHI TIẾT (Cho Modal - AJAX cái này là bắt buộc)
+        // 3. API LẤY CHI TIẾT (Cho Modal)
         [HttpGet]
-        public JsonResult GetChiTietDonThuoc(int maDonThuoc, int maHD)
+        public JsonResult GetChiTietDonThuoc(string maDonThuoc, string maHD)
         {
             try
             {
@@ -91,7 +85,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 
         // 4. API XÁC NHẬN PHÁT THUỐC
         [HttpPost]
-        public JsonResult XacNhanPhat(int maDonThuoc, int maHD, int maPhong)
+        public JsonResult XacNhanPhat(string maDonThuoc, string maHD, int maPhong)
         {
             try
             {

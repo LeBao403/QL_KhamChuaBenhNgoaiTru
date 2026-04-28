@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using QL_KhamChuaBenhNgoaiTru.Helpers;
 
 namespace QL_KhamChuaBenhNgoaiTru.DBContext
 {
@@ -58,8 +59,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         {
                             list.Add(new DanhSachPhatThuocVM
                             {
-                                MaHD = Convert.ToInt32(dr["MaHD"]),
-                                MaDonThuoc = Convert.ToInt32(dr["MaDonThuoc"]),
+                                MaHD = dr["MaHD"].ToString(),
+                                MaDonThuoc = dr["MaDonThuoc"].ToString(),
                                 BenhNhan = dr["BenhNhan"].ToString(),
                                 TTThanhToan = dr["TTThanhToan"].ToString(),
                                 TTPhatThuoc = dr["TTPhatThuoc"].ToString(),
@@ -74,7 +75,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         }
 
         // 2. CHI TIẾT ĐƠN THUỐC (FIX LỖI TRẮNG BẢNG THUỐC VÀ HIỆN LÔ ĐÃ PHÁT BÊN LỊCH SỬ)
-        public ThongTinPhatThuocVM GetChiTietDonThuocVaThongTin(int maDonThuoc, int maHD)
+        public ThongTinPhatThuocVM GetChiTietDonThuocVaThongTin(string maDonThuoc, string maHD)
         {
             var result = new ThongTinPhatThuocVM { DanhSachThuoc = new List<ChiTietDonThuocVM>() };
             using (SqlConnection conn = new SqlConnection(connectStr))
@@ -160,13 +161,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             result.NgayKe = dr["NgayKe"] != DBNull.Value ? Convert.ToDateTime(dr["NgayKe"]).ToString("dd/MM/yyyy HH:mm") : "---";
                             result.KetLuan = dr["KetLuan"].ToString();
                             result.TrieuChung = dr["TrieuChung"].ToString();
-                            result.MaPhieuKhamBenh = Convert.ToInt32(dr["MaPhieuKhamBenh"]);
+                            result.MaPhieuKhamBenh = dr["MaPhieuKhamBenh"].ToString();
                             result.LoiDanBacSi = dr["LoiDanBS"].ToString();
 
                             // Lấy mã chứng từ
                             result.MaHD = maHD;
                             result.MaDonThuoc = maDonThuoc;
-                            result.MaPhieuPhat = dr["MaPhieuPhat"] != DBNull.Value ? Convert.ToInt32(dr["MaPhieuPhat"]) : (int?)null;
+                            result.MaPhieuPhat = dr["MaPhieuPhat"] != DBNull.Value ? dr["MaPhieuPhat"].ToString() : null;
                         }
                     }
                 }
@@ -239,21 +240,21 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         // ==================================================================================
         // 3. XÁC NHẬN PHÁT THUỐC (Gọi Store Procedure)
         // ==================================================================================
-        public (bool IsSuccess, string Message) XacNhanPhatThuoc(int maDonThuoc, int maHD, string maNVPhat, int maPhong)
-{
-    using (SqlConnection conn = new SqlConnection(connectStr))
-    {
-        conn.Open();
-
-        // Bắt buộc dùng Transaction: Lỗi 1 bước là Rollback trả lại nguyên trạng, không bị mất thuốc oan
-        using (SqlTransaction trans = conn.BeginTransaction(IsolationLevel.ReadCommitted))
+        public (bool IsSuccess, string Message) XacNhanPhatThuoc(string maDonThuoc, string maHD, string maNVPhat, int maPhong)
         {
-            try
+            using (SqlConnection conn = new SqlConnection(connectStr))
             {
-                // ==========================================================
-                // BƯỚC 1: LẤY DANH SÁCH THUỐC CẦN PHÁT (Đã đóng tiền & chưa phát hết)
-                // ==========================================================
-                string getThuocSql = @"
+                conn.Open();
+
+                // Bắt buộc dùng Transaction: Lỗi 1 bước là Rollback trả lại nguyên trạng, không bị mất thuốc oan
+                using (SqlTransaction trans = conn.BeginTransaction(IsolationLevel.ReadCommitted))
+                {
+                    try
+                    {
+                        // ==========================================================
+                        // BƯỚC 1: LẤY DANH SÁCH THUỐC CẦN PHÁT (Đã đóng tiền & chưa phát hết)
+                        // ==========================================================
+                        string getThuocSql = @"
                     SELECT 
                         cdt.MaCTDonThuoc,
                         cdt.MaThuoc, 
@@ -267,35 +268,35 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                       AND hd.TrangThaiThanhToan != N'Đã hủy'
                       AND ISNULL(cdt.SoLuongDaPhat, 0) < ISNULL(cht.SoLuong, 0)";
 
-                var dsThuocCanPhat = new List<(int MaCTDonThuoc, string MaThuoc, int SoLuongCanPhat)>();
+                        var dsThuocCanPhat = new List<(string MaCTDonThuoc, string MaThuoc, int SoLuongCanPhat)>();
 
-                using (SqlCommand cmd = new SqlCommand(getThuocSql, conn, trans))
-                {
-                    cmd.Parameters.AddWithValue("@MaDonThuoc", maDonThuoc);
-                    cmd.Parameters.AddWithValue("@MaHD", maHD);
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
+                        using (SqlCommand cmd = new SqlCommand(getThuocSql, conn, trans))
                         {
-                            dsThuocCanPhat.Add((
-                                Convert.ToInt32(reader["MaCTDonThuoc"]),
-                                reader["MaThuoc"].ToString(),
-                                Convert.ToInt32(reader["SoLuongCanPhat"])
-                            ));
+                            cmd.Parameters.AddWithValue("@MaDonThuoc", maDonThuoc);
+                            cmd.Parameters.AddWithValue("@MaHD", maHD);
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    dsThuocCanPhat.Add((
+                                        reader["MaCTDonThuoc"].ToString(),
+                                        reader["MaThuoc"].ToString(),
+                                        Convert.ToInt32(reader["SoLuongCanPhat"])
+                                    ));
+                                }
+                            }
                         }
-                    }
-                }
 
-                if (dsThuocCanPhat.Count == 0)
-                {
-                    return (false, "Không có thuốc nào cần phát (Có thể đã phát đủ, hóa đơn bị hủy, hoặc chưa đóng tiền).");
-                }
+                        if (dsThuocCanPhat.Count == 0)
+                        {
+                            return (false, "Không có thuốc nào cần phát (Có thể đã phát đủ, hóa đơn bị hủy, hoặc chưa đóng tiền).");
+                        }
 
-                // ==========================================================
-                // BƯỚC 2: CẬP NHẬT PHIẾU PHÁT THUỐC (Do Thu Ngân đã tạo sẵn)
-                // ==========================================================
-                string updatePhieuSql = @"
-                    DECLARE @MaPhieuPhat INT = (SELECT TOP 1 MaPhieuPhat FROM PHIEU_PHAT_THUOC WHERE MaDonThuoc = @MaDonThuoc AND MaHD = @MaHD AND TrangThai != N'Đã hủy');
+                        // ==========================================================
+                        // BƯỚC 2: CẬP NHẬT PHIẾU PHÁT THUỐC (Do Thu Ngân đã tạo sẵn)
+                        // ==========================================================
+                        string updatePhieuSql = @"
+                    DECLARE @MaPhieuPhat VARCHAR(20) = (SELECT TOP 1 MaPhieuPhat FROM PHIEU_PHAT_THUOC WHERE MaDonThuoc = @MaDonThuoc AND MaHD = @MaHD AND TrangThai != N'Đã hủy');
                     
                     IF @MaPhieuPhat IS NULL
                         THROW 50001, N'Không tìm thấy Phiếu xuất kho do Thu ngân tạo!', 1;
@@ -309,27 +310,27 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                     SELECT @MaPhieuPhat;"; // Trả về mã phiếu để dùng cho Bước 3
 
-                int maPhieuPhat = 0;
-                using (SqlCommand cmdUpdatePhieu = new SqlCommand(updatePhieuSql, conn, trans))
-                {
-                    cmdUpdatePhieu.Parameters.AddWithValue("@MaDonThuoc", maDonThuoc);
-                    cmdUpdatePhieu.Parameters.AddWithValue("@MaHD", maHD);
-                    cmdUpdatePhieu.Parameters.AddWithValue("@MaNV_Phat", string.IsNullOrEmpty(maNVPhat) ? DBNull.Value : (object)maNVPhat);
-                    cmdUpdatePhieu.Parameters.AddWithValue("@MaPhong", maPhong);
+                        string maPhieuPhat = "";
+                        using (SqlCommand cmdUpdatePhieu = new SqlCommand(updatePhieuSql, conn, trans))
+                        {
+                            cmdUpdatePhieu.Parameters.AddWithValue("@MaDonThuoc", maDonThuoc);
+                            cmdUpdatePhieu.Parameters.AddWithValue("@MaHD", maHD);
+                            cmdUpdatePhieu.Parameters.AddWithValue("@MaNV_Phat", string.IsNullOrEmpty(maNVPhat) ? DBNull.Value : (object)maNVPhat);
+                            cmdUpdatePhieu.Parameters.AddWithValue("@MaPhong", maPhong);
 
-                    maPhieuPhat = Convert.ToInt32(cmdUpdatePhieu.ExecuteScalar());
-                }
+                            maPhieuPhat = cmdUpdatePhieu.ExecuteScalar()?.ToString();
+                        }
 
-                // ==========================================================
-                // BƯỚC 3: QUÉT TRỪ KHO FEFO VÀ GHI CHI TIẾT THEO TỪNG LÔ
-                // ==========================================================
-                foreach (var thuoc in dsThuocCanPhat)
-                {
-                    int soLuongConThieu = thuoc.SoLuongCanPhat;
-                    int soLuongDaLayTong = 0; // Tổng số lượng đã lấy cho loại thuốc này
+                        // ==========================================================
+                        // BƯỚC 3: QUÉT TRỪ KHO FEFO VÀ GHI CHI TIẾT THEO TỪNG LÔ
+                        // ==========================================================
+                        foreach (var thuoc in dsThuocCanPhat)
+                        {
+                            int soLuongConThieu = thuoc.SoLuongCanPhat;
+                            int soLuongDaLayTong = 0; // Tổng số lượng đã lấy cho loại thuốc này
 
-                    // UPDLOCK, ROWLOCK để tránh đụng độ. Bổ sung lấy thêm MaLo.
-                    string getKhoSql = @"
+                            // UPDLOCK, ROWLOCK để tránh đụng độ. Bổ sung lấy thêm MaLo.
+                            string getKhoSql = @"
                         SELECT MaTonKho, MaLo, SoLuongTon 
                         FROM TONKHO WITH (UPDLOCK, ROWLOCK) 
                         WHERE MaThuoc = @MaThuoc 
@@ -337,69 +338,73 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                           AND HanSuDung >= CAST(GETDATE() AS DATE) 
                         ORDER BY HanSuDung ASC";
 
-                    var dsLoThuoc = new List<(int MaTonKho, string MaLo, int SoLuongTon)>();
-                    using (SqlCommand cmdKho = new SqlCommand(getKhoSql, conn, trans))
-                    {
-                        cmdKho.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
-                        using (SqlDataReader readerKho = cmdKho.ExecuteReader())
-                        {
-                            while (readerKho.Read())
+                            var dsLoThuoc = new List<(int MaTonKho, string MaLo, int SoLuongTon)>();
+                            using (SqlCommand cmdKho = new SqlCommand(getKhoSql, conn, trans))
                             {
-                                dsLoThuoc.Add((
-                                    Convert.ToInt32(readerKho["MaTonKho"]),
-                                    readerKho["MaLo"].ToString(),
-                                    Convert.ToInt32(readerKho["SoLuongTon"])
-                                ));
+                                cmdKho.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
+                                using (SqlDataReader readerKho = cmdKho.ExecuteReader())
+                                {
+                                    while (readerKho.Read())
+                                    {
+                                        dsLoThuoc.Add((
+                                            Convert.ToInt32(readerKho["MaTonKho"]),
+                                            readerKho["MaLo"].ToString(),
+                                            Convert.ToInt32(readerKho["SoLuongTon"])
+                                        ));
+                                    }
+                                }
+                            }
+
+                            // Vét từng lô một cho đến khi đủ số lượng
+                            foreach (var lo in dsLoThuoc)
+                            {
+                                if (soLuongConThieu <= 0) break;
+
+                                int soLuongTru = Math.Min(lo.SoLuongTon, soLuongConThieu);
+
+                                // Trừ tồn kho
+                                string updateKhoSql = "UPDATE TONKHO SET SoLuongTon = SoLuongTon - @SLTru WHERE MaTonKho = @MaTonKho";
+                                using (SqlCommand cmdUpdate = new SqlCommand(updateKhoSql, conn, trans))
+                                {
+                                    cmdUpdate.Parameters.AddWithValue("@SLTru", soLuongTru);
+                                    cmdUpdate.Parameters.AddWithValue("@MaTonKho", lo.MaTonKho);
+                                    cmdUpdate.ExecuteNonQuery();
+                                }
+
+                                // --- GỌI HÀM TẠO MÃ SMART ID Ở ĐÂY ---
+                                string maCTPhieuPhat = Utilities.Generate(conn, trans, "CTPT", "CT_PHIEU_PHAT", "MaCTPhieuPhat", 6);
+
+                                // Ghi Chi Tiết Phiếu Phát (LƯU Ý: Ghi cho từng lô để lưu đúng mã lô)
+                                string insertCTPhieuSql = "INSERT INTO CT_PHIEU_PHAT (MaCTPhieuPhat, MaPhieuPhat, MaThuoc, MaLo, SoLuongPhat) VALUES (@MaCTPhieuPhat, @MaPhieuPhat, @MaThuoc, @MaLo, @SoLuongPhat)";
+                                using (SqlCommand cmdInsertCT = new SqlCommand(insertCTPhieuSql, conn, trans))
+                                {
+                                    cmdInsertCT.Parameters.AddWithValue("@MaCTPhieuPhat", maCTPhieuPhat);
+                                    cmdInsertCT.Parameters.AddWithValue("@MaPhieuPhat", maPhieuPhat);
+                                    cmdInsertCT.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
+                                    cmdInsertCT.Parameters.AddWithValue("@MaLo", lo.MaLo);
+                                    cmdInsertCT.Parameters.AddWithValue("@SoLuongPhat", soLuongTru);
+                                    cmdInsertCT.ExecuteNonQuery();
+                                }
+
+                                soLuongDaLayTong += soLuongTru;
+                                soLuongConThieu -= soLuongTru;
+                            }
+
+                            // Nếu quét hết kho mà vẫn thiếu hàng hợp lệ
+                            if (soLuongConThieu > 0)
+                            {
+                                throw new Exception($"Thuốc [{thuoc.MaThuoc}] không đủ tồn kho hợp lệ. Cần thêm {soLuongConThieu}. Vui lòng kiểm tra HSD hoặc nhập kho!");
+                            }
+
+                            // Cập nhật tổng số lượng đã phát vào Đơn thuốc
+                            string updateCTDonSql = "UPDATE CT_DON_THUOC SET SoLuongDaPhat = ISNULL(SoLuongDaPhat, 0) + @SoLuongDaLay WHERE MaCTDonThuoc = @MaCTDonThuoc";
+                            using (SqlCommand cmdUpdateCTDon = new SqlCommand(updateCTDonSql, conn, trans))
+                            {
+                                cmdUpdateCTDon.Parameters.AddWithValue("@SoLuongDaLay", soLuongDaLayTong);
+                                cmdUpdateCTDon.Parameters.AddWithValue("@MaCTDonThuoc", thuoc.MaCTDonThuoc);
+                                cmdUpdateCTDon.ExecuteNonQuery();
                             }
                         }
-                    }
-
-                    // Vét từng lô một cho đến khi đủ số lượng
-                    foreach (var lo in dsLoThuoc)
-                    {
-                        if (soLuongConThieu <= 0) break;
-
-                        int soLuongTru = Math.Min(lo.SoLuongTon, soLuongConThieu);
-
-                        // Trừ tồn kho
-                        string updateKhoSql = "UPDATE TONKHO SET SoLuongTon = SoLuongTon - @SLTru WHERE MaTonKho = @MaTonKho";
-                        using (SqlCommand cmdUpdate = new SqlCommand(updateKhoSql, conn, trans))
-                        {
-                            cmdUpdate.Parameters.AddWithValue("@SLTru", soLuongTru);
-                            cmdUpdate.Parameters.AddWithValue("@MaTonKho", lo.MaTonKho);
-                            cmdUpdate.ExecuteNonQuery();
-                        }
-
-                        // Ghi Chi Tiết Phiếu Phát (LƯU Ý: Ghi cho từng lô để lưu đúng mã lô)
-                        string insertCTPhieuSql = "INSERT INTO CT_PHIEU_PHAT (MaPhieuPhat, MaThuoc, MaLo, SoLuongPhat) VALUES (@MaPhieuPhat, @MaThuoc, @MaLo, @SoLuongPhat)";
-                        using (SqlCommand cmdInsertCT = new SqlCommand(insertCTPhieuSql, conn, trans))
-                        {
-                            cmdInsertCT.Parameters.AddWithValue("@MaPhieuPhat", maPhieuPhat);
-                            cmdInsertCT.Parameters.AddWithValue("@MaThuoc", thuoc.MaThuoc);
-                            cmdInsertCT.Parameters.AddWithValue("@MaLo", lo.MaLo);
-                            cmdInsertCT.Parameters.AddWithValue("@SoLuongPhat", soLuongTru);
-                            cmdInsertCT.ExecuteNonQuery();
-                        }
-
-                        soLuongDaLayTong += soLuongTru;
-                        soLuongConThieu -= soLuongTru;
-                    }
-
-                    // Nếu quét hết kho mà vẫn thiếu hàng hợp lệ
-                    if (soLuongConThieu > 0)
-                    {
-                        throw new Exception($"Thuốc [{thuoc.MaThuoc}] không đủ tồn kho hợp lệ. Cần thêm {soLuongConThieu}. Vui lòng kiểm tra HSD hoặc nhập kho!");
-                    }
-
-                    // Cập nhật tổng số lượng đã phát vào Đơn thuốc
-                    string updateCTDonSql = "UPDATE CT_DON_THUOC SET SoLuongDaPhat = ISNULL(SoLuongDaPhat, 0) + @SoLuongDaLay WHERE MaCTDonThuoc = @MaCTDonThuoc";
-                    using (SqlCommand cmdUpdateCTDon = new SqlCommand(updateCTDonSql, conn, trans))
-                    {
-                        cmdUpdateCTDon.Parameters.AddWithValue("@SoLuongDaLay", soLuongDaLayTong);
-                        cmdUpdateCTDon.Parameters.AddWithValue("@MaCTDonThuoc", thuoc.MaCTDonThuoc);
-                        cmdUpdateCTDon.ExecuteNonQuery();
-                    }
-                }
 
                         // ==========================================================
                         // BƯỚC 4: CHỐT TRẠNG THÁI TỔNG CỦA ĐƠN THUỐC (Sửa công thức đếm)
@@ -425,67 +430,66 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         using (SqlCommand cmdChot = new SqlCommand(chotTrangThaiSql, conn, trans))
                         {
                             cmdChot.Parameters.AddWithValue("@MaDonThuoc", maDonThuoc);
-                            cmdChot.Parameters.AddWithValue("@MaHD", maHD);
                             cmdChot.ExecuteNonQuery();
                         }
 
                         // XONG XUÔI -> LƯU VÀO DATABASE
                         trans.Commit();
-                return (true, "Phát thuốc và trừ kho thành công!");
-            }
-            catch (SqlException ex)
-            {
-                trans.Rollback();
-                // Bắt lỗi THROW từ SQL (mã 50001)
-                if (ex.Number >= 50000) return (false, ex.Message);
-                return (false, "Lỗi hệ thống CSDL: " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                // Hụt kho hoặc các lỗi logic khác
-                trans.Rollback();
-                return (false, ex.Message);
+                        return (true, "Phát thuốc và trừ kho thành công!");
+                    }
+                    catch (SqlException ex)
+                    {
+                        trans.Rollback();
+                        // Bắt lỗi THROW từ SQL (mã 50001)
+                        if (ex.Number >= 50000) return (false, ex.Message);
+                        return (false, "Lỗi hệ thống CSDL: " + ex.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Hụt kho hoặc các lỗi logic khác
+                        trans.Rollback();
+                        return (false, ex.Message);
+                    }
+                }
             }
         }
-    }
-}
 
 
-        public (List<DanhSachPhatThuocVM> Data, int TotalRow) GetLichSuPhatThuoc_Pagination(
-    string search, DateTime tuNgay, DateTime denNgay, int page, int pageSize, string sortCol, string sortDir)
-        {
-            var list = new List<DanhSachPhatThuocVM>();
-            int totalRow = 0;
-            int offset = (page - 1) * pageSize;
-
-            using (SqlConnection conn = new SqlConnection(connectStr))
+            public (List<DanhSachPhatThuocVM> Data, int TotalRow) GetLichSuPhatThuoc_Pagination(
+        string search, DateTime tuNgay, DateTime denNgay, int page, int pageSize, string sortCol, string sortDir)
             {
-                // ==============================================================
-                // LOGIC LỊCH SỬ CHUẨN MỚI NHẤT:
-                // 1. Phải có Đơn thuốc (Xử lý bằng INNER JOIN ở dưới)
-                // 2. Nằm trong khoảng ngày lọc (TuNgay - DenNgay)
-                // 3. Thuộc 1 trong 2 nhóm: Đã phát xong trọn vẹn HOẶC Đơn cũ qua ngày hôm sau
-                // ==============================================================
-                string whereClause = @"
+                var list = new List<DanhSachPhatThuocVM>();
+                int totalRow = 0;
+                int offset = (page - 1) * pageSize;
+
+                using (SqlConnection conn = new SqlConnection(connectStr))
+                {
+                    // ==============================================================
+                    // LOGIC LỊCH SỬ CHUẨN MỚI NHẤT:
+                    // 1. Phải có Đơn thuốc (Xử lý bằng INNER JOIN ở dưới)
+                    // 2. Nằm trong khoảng ngày lọc (TuNgay - DenNgay)
+                    // 3. Thuộc 1 trong 2 nhóm: Đã phát xong trọn vẹn HOẶC Đơn cũ qua ngày hôm sau
+                    // ==============================================================
+                    string whereClause = @"
             WHERE CAST(hd.NgayThanhToan AS DATE) BETWEEN @TuNgay AND @DenNgay
             AND (
                 ISNULL(dt.TrangThai, '') IN (N'Đã phát thuốc', N'Hoàn thành', N'Đã phát 1 phần') -- Nhóm 1: Xong xuôi
                 OR CAST(hd.NgayThanhToan AS DATE) < CAST(GETDATE() AS DATE)   -- Nhóm 2: Nợ/Bỏ thuốc qua ngày hôm sau
             )";
 
-                if (!string.IsNullOrEmpty(search))
-                {
-                    // Ép kiểu cho MaHD và MaDonThuoc để dùng hàm LIKE an toàn
-                    whereClause += @" AND (
+                    if (!string.IsNullOrEmpty(search))
+                    {
+                        // Ép kiểu cho MaHD và MaDonThuoc để dùng hàm LIKE an toàn
+                        whereClause += @" AND (
                 bn.HoTen LIKE @Search 
                 OR bn.MaBN LIKE @Search 
-                OR CAST(hd.MaHD AS NVARCHAR) LIKE @Search 
-                OR CAST(dt.MaDonThuoc AS NVARCHAR) LIKE @Search
+                OR hd.MaHD LIKE @Search 
+                OR dt.MaDonThuoc LIKE @Search
             )";
-                }
+                    }
 
-                // Đếm tổng số dòng (INNER JOIN DON_THUOC để loại bỏ bọn Không có toa)
-                string sqlCount = $@"
+                    // Đếm tổng số dòng (INNER JOIN DON_THUOC để loại bỏ bọn Không có toa)
+                    string sqlCount = $@"
             SELECT COUNT(DISTINCT hd.MaHD) 
             FROM HOADON hd
             JOIN PHIEUKHAMBENH pkb ON hd.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh
@@ -493,15 +497,15 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             INNER JOIN DON_THUOC dt ON pkb.MaPhieuKhamBenh = dt.MaPhieuKhamBenh -- CHỐT CHẶN: Ép buộc phải có toa
             {whereClause}";
 
-                // Lấy dữ liệu 
-                string dir = (sortDir == "ASC" || sortDir == "asc") ? "ASC" : "DESC";
+                    // Lấy dữ liệu 
+                    string dir = (sortDir == "ASC" || sortDir == "asc") ? "ASC" : "DESC";
 
-                // Cấu hình cột sắp xếp linh hoạt
-                string orderBy = "hd.MaHD"; // Mặc định
-                if (sortCol == "BenhNhan") orderBy = "bn.HoTen";
-                else if (sortCol == "NgayThanhToan") orderBy = "ThoiGianHienThi";
+                    // Cấu hình cột sắp xếp linh hoạt
+                    string orderBy = "hd.MaHD"; // Mặc định
+                    if (sortCol == "BenhNhan") orderBy = "bn.HoTen";
+                    else if (sortCol == "NgayThanhToan") orderBy = "ThoiGianHienThi";
 
-                string sqlData = $@"
+                    string sqlData = $@"
             SELECT 
                 hd.MaHD, 
                 dt.MaDonThuoc, 
@@ -519,48 +523,48 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             ORDER BY {orderBy} {dir}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
 
-                using (SqlCommand cmd = new SqlCommand())
-                {
-                    cmd.Connection = conn;
-                    cmd.Parameters.AddWithValue("@TuNgay", tuNgay.Date);
-                    cmd.Parameters.AddWithValue("@DenNgay", denNgay.Date);
-                    cmd.Parameters.AddWithValue("@Offset", offset);
-                    cmd.Parameters.AddWithValue("@PageSize", pageSize);
-
-                    if (!string.IsNullOrEmpty(search))
+                    using (SqlCommand cmd = new SqlCommand())
                     {
-                        cmd.Parameters.AddWithValue("@Search", "%" + search.Trim() + "%");
-                    }
+                        cmd.Connection = conn;
+                        cmd.Parameters.AddWithValue("@TuNgay", tuNgay.Date);
+                        cmd.Parameters.AddWithValue("@DenNgay", denNgay.Date);
+                        cmd.Parameters.AddWithValue("@Offset", offset);
+                        cmd.Parameters.AddWithValue("@PageSize", pageSize);
 
-                    conn.Open();
-
-                    // Thực thi đếm số trang
-                    cmd.CommandText = sqlCount;
-                    totalRow = (int)cmd.ExecuteScalar();
-
-                    // Thực thi lấy danh sách
-                    cmd.CommandText = sqlData;
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
+                        if (!string.IsNullOrEmpty(search))
                         {
-                            list.Add(new DanhSachPhatThuocVM
+                            cmd.Parameters.AddWithValue("@Search", "%" + search.Trim() + "%");
+                        }
+
+                        conn.Open();
+
+                        // Thực thi đếm số trang
+                        cmd.CommandText = sqlCount;
+                        totalRow = (int)cmd.ExecuteScalar();
+
+                        // Thực thi lấy danh sách
+                        cmd.CommandText = sqlData;
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
                             {
-                                MaHD = Convert.ToInt32(reader["MaHD"]),
-                                MaDonThuoc = Convert.ToInt32(reader["MaDonThuoc"]), // Không cần check DBNull nữa
-                                BenhNhan = reader["BenhNhan"].ToString(),
-                                TTThanhToan = reader["TTThanhToan"].ToString(),
-                                TTPhatThuoc = reader["TTPhatThuoc"].ToString(),
-                                HasDonThuoc = true,
-                                NgayThanhToanStr = reader["ThoiGianHienThi"] != DBNull.Value
-                                                   ? Convert.ToDateTime(reader["ThoiGianHienThi"]).ToString("dd/MM/yyyy HH:mm")
-                                                   : "---"
-                            });
+                                list.Add(new DanhSachPhatThuocVM
+                                {
+                                    MaHD = reader["MaHD"].ToString(),
+                                    MaDonThuoc = reader["MaDonThuoc"].ToString(),
+                                    BenhNhan = reader["BenhNhan"].ToString(),
+                                    TTThanhToan = reader["TTThanhToan"].ToString(),
+                                    TTPhatThuoc = reader["TTPhatThuoc"].ToString(),
+                                    HasDonThuoc = true,
+                                    NgayThanhToanStr = reader["ThoiGianHienThi"] != DBNull.Value
+                                                       ? Convert.ToDateTime(reader["ThoiGianHienThi"]).ToString("dd/MM/yyyy HH:mm")
+                                                       : "---"
+                                });
+                            }
                         }
                     }
                 }
+                return (list, totalRow);
             }
-            return (list, totalRow);
         }
     }
-}

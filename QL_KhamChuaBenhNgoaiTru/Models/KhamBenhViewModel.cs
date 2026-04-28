@@ -1,11 +1,12 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace QL_KhamChuaBenhNgoaiTru.Models
 {
     public class KhamBenhViewModel
     {
-        public int MaPhieuKhamBenh { get; set; }
+        // [ĐÃ SỬA] Đổi int thành string
+        public string MaPhieuKhamBenh { get; set; }
         public string TrieuChung { get; set; }
         public string KetLuan { get; set; }
 
@@ -18,6 +19,22 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         // Danh sách thuốc (Kê đơn)
         public List<ChiTietDonThuocViewModel> DonThuoc { get; set; }
         public List<ChiDinhCLSViewModel> ChiDinhs { get; set; }
+
+        // THÔNG TIN KHÁM SÀNG LỌC (SINH HIỆU)
+        public decimal? ChieuCao { get; set; }
+        public decimal? CanNang { get; set; }
+        public decimal? NhietDo { get; set; }
+        public int? HuyetApTamThu { get; set; }       // Đã sửa
+        public int? HuyetApTamTruong { get; set; }    // Đã sửa
+        public int? Mach { get; set; }                // Đã đổi từ NhipTim -> Mach
+        public int? NhipTho { get; set; }
+        public decimal? SpO2 { get; set; }
+
+        // DẶN DÒ VÀ TÁI KHÁM
+        public DateTime? NgayTaiKham { get; set; }
+        // Thêm chuỗi Ngày tái khám String để đẩy xuống JS dễ dàng
+        public string NgayTaiKhamStr { get; set; }
+        public string DanDo { get; set; }
     }
 
     public class ChiTietDonThuocViewModel
@@ -31,10 +48,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string GhiChu { get; set; }
         public int SoLuong { get; set; }
     }
+
     // Thêm class này vào trong file KhamBenhViewModel.cs hoặc tạo file mới trong Models
     public class PhieuKhamBenhInfo
     {
-        public int MaPhieuKhamBenh { get; set; }
+        // [ĐÃ SỬA] Đổi int thành string
+        public string MaPhieuKhamBenh { get; set; }
         public string MaBN { get; set; }
         public string TenBN { get; set; }
         public int STT { get; set; }
@@ -43,7 +62,24 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         public string TrangThai { get; set; }
         public string GioiTinh { get; set; }
         public int Tuoi { get; set; }
+
+        // THÔNG TIN KHÁM SÀNG LỌC (SINH HIỆU)
+        public decimal? ChieuCao { get; set; }
+        public decimal? CanNang { get; set; }
+        public decimal? NhietDo { get; set; }
+        public int? HuyetApTamThu { get; set; }       // Đã sửa
+        public int? HuyetApTamTruong { get; set; }    // Đã sửa
+        public int? Mach { get; set; }                // Đã đổi từ NhipTim -> Mach
+        public int? NhipTho { get; set; }
+        public decimal? SpO2 { get; set; }
+
+        // DẶN DÒ VÀ TÁI KHÁM
+        public DateTime? NgayTaiKham { get; set; }
+        // Thêm chuỗi Ngày tái khám String để đẩy xuống JS dễ dàng
+        public string NgayTaiKhamStr { get; set; }
+        public string DanDo { get; set; }
     }
+
     public class ChiDinhCLSViewModel
     {
         public string MaDV { get; set; }

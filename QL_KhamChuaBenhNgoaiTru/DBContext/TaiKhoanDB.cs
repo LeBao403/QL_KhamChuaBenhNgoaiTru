@@ -14,13 +14,52 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         // 1. Kiểm tra đăng nhập
         public TaiKhoan CheckLogin(string username, string passwordHash)
         {
+            username = username?.Trim();
+            passwordHash = passwordHash?.Trim();
+
             TaiKhoan tk = null;
             using (SqlConnection con = new SqlConnection(connectionString))
             {
-                string sql = "SELECT * FROM TAIKHOAN WHERE Username = @Username AND PasswordHash = @PasswordHash AND IsActive = 1";
+                string sql = @"
+                    SELECT TOP 1 tk.*
+                    FROM TAIKHOAN tk
+                    LEFT JOIN BENHNHAN bn ON bn.MaTK = tk.MaTK
+                    WHERE (tk.Username = @Username OR bn.SDT = @Username)
+                      AND tk.PasswordHash = @PasswordHash
+                      AND tk.IsActive = 1";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@Username", username);
                 cmd.Parameters.AddWithValue("@PasswordHash", passwordHash); // Ở thực tế nên dùng Hash (MD5/SHA)
+
+                con.Open();
+                SqlDataReader rd = cmd.ExecuteReader();
+                if (rd.Read())
+                {
+                    tk = new TaiKhoan();
+                    tk.MaTK = Convert.ToInt32(rd["MaTK"]);
+                    tk.Username = rd["Username"].ToString();
+                    tk.PasswordHash = rd["PasswordHash"].ToString();
+                    tk.IsActive = Convert.ToBoolean(rd["IsActive"]);
+                }
+            }
+            return tk;
+        }
+
+        public TaiKhoan GetTaiKhoanByUsernameOrSdt(string username)
+        {
+            username = username?.Trim();
+            if (string.IsNullOrWhiteSpace(username)) return null;
+
+            TaiKhoan tk = null;
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                string sql = @"
+                    SELECT TOP 1 tk.*
+                    FROM TAIKHOAN tk
+                    LEFT JOIN BENHNHAN bn ON bn.MaTK = tk.MaTK
+                    WHERE tk.Username = @Username OR bn.SDT = @Username";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@Username", username);
 
                 con.Open();
                 SqlDataReader rd = cmd.ExecuteReader();
