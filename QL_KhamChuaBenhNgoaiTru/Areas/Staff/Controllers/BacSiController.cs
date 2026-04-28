@@ -151,58 +151,31 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public ActionResult GoiYThuoc(string trieuChung, string ketLuan, int? tuoi, string gioiTinh, string maPhieu)
+        [HttpGet]
+        public ActionResult GoiYThuocTheoBenh(string maBenh)
         {
             try
             {
-                var dsThuoc = db.GetDanhSachThuoc();
-                bool hasBhyt = false;
-                if (!string.IsNullOrEmpty(maPhieu))
+                if (string.IsNullOrEmpty(maBenh))
+                    return Json(new { GoiY = new object[0] }, JsonRequestBehavior.AllowGet);
+
+                // Gọi sang API của Python ở cổng 8000
+                string apiUrl = "http://127.0.0.1:8000/api/recommend?node_id=" + maBenh;
+                var request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(apiUrl);
+                request.Method = "GET";
+
+                using (var response = (System.Net.HttpWebResponse)request.GetResponse())
+                using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
                 {
-                    dynamic info = db.GetThongTinChiTiet(maPhieu);
-                    if (info != null)
-                    {
-                        hasBhyt = info.BHYT;
-                    }
+                    string jsonResponse = reader.ReadToEnd();
+                    // Trả thẳng nguyên file JSON của Python về cho View xử lý
+                    return Content(jsonResponse, "application/json");
                 }
-
-                var req = new
-                {
-                    age = tuoi ?? 30,
-                    sex = string.IsNullOrWhiteSpace(gioiTinh) ? "Nam" : gioiTinh,
-                    age_group = (tuoi ?? 30) < 13 ? "TreEm" : (tuoi ?? 30) < 18 ? "ThieuNien" : ((tuoi ?? 30) < 40 ? "NguoiLonTre" : ((tuoi ?? 30) < 60 ? "TrungNien" : "NguoiCaoTuoi")),
-                    disease = string.IsNullOrWhiteSpace(ketLuan) ? "Cảm cúm" : ketLuan,
-                    symptoms = string.IsNullOrWhiteSpace(trieuChung) ? "sốt | ho" : trieuChung,
-                    comorbidity = "None",
-                    allergy = "None",
-                    has_bhyt = hasBhyt,
-                    candidates = new List<object>()
-                };
-
-                foreach (var t in dsThuoc)
-                {
-                    req.candidates.Add(new
-                    {
-                        drug_code = t.MaThuoc,
-                        drug_name = t.TenThuoc,
-                        drug_group = t.MaLoaiThuoc ?? "Khac",
-                        route = t.DuongDung ?? t.DonViCoBan ?? "Uống",
-                        drug_family = string.Format("{0} {1}", t.TenThuoc, t.DonViCoBan),
-                        in_stock = 1,
-                        contraindication = 0,
-                        interaction_risk = 0,
-                        is_bhyt = t.CoBHYT ? 1 : 0
-                    });
-                }
-
-                var json = System.Web.Helpers.Json.Encode(req);
-                var response = PostJson(MlApiUrl, json);
-                return Content(response, "application/json");
             }
-            catch (Exception ex)
+            catch (System.Exception)
             {
-                return Json(new { success = false, message = ex.Message });
+                // Trả về mảng rỗng nếu Python bị tắt hoặc lỗi
+                return Json(new { GoiY = new object[0] }, JsonRequestBehavior.AllowGet);
             }
         }
         // --- TÍNH NĂNG TRA CỨU HỒ SƠ ---

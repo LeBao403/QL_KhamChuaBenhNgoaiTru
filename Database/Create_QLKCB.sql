@@ -726,13 +726,8 @@ BEGIN
 
 END
 
-GO
-
 
 -- ===== MIGRATIONS / ADJUSTMENTS =====
-
-﻿USE QL_KhamBenhNgoaiTru;
-GO
 
 -- =========================================================================
 -- TASK 4: BO SUNG DU LIEU CON THIEU CHO BO BANG CHI DINH CLS
