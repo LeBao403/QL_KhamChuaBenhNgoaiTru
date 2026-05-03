@@ -1525,71 +1525,73 @@
 
             $('#btnGoiYThuoc').on('click', function () {
                 var maPhieu = $('#MaPhieuKhamBenh').val();
-                var trieuChung = $('#TrieuChung').val() || $('#txtTrieuChung').val() || '';
-                var ketLuan = $('#KetLuan').val() || $('#txtKetLuan').val() || '';
-                var tuoiText = $('#lblTuoi').text() || '';
-                var tuoi = parseInt((tuoiText.match(/(\d+)/) || ['30'])[0], 10) || 30;
-                var gioiTinh = $('#lblGioiTinh').text() || 'Nam';
-
                 if (!maPhieu) {
-                    var msgNoPhieu = 'Chưa có mã phiếu khám, không thể gợi ý thuốc.';
-                    if (window.Swal && Swal.fire) Swal.fire('Thông báo', msgNoPhieu, 'info'); else alert(msgNoPhieu);
+                    if (window.Swal && Swal.fire) Swal.fire('Thông báo', 'Chưa có mã phiếu khám.', 'info');
+                    else alert('Chưa có mã phiếu khám.');
                     return;
                 }
 
-                var payload = {
-                    trieuChung: trieuChung,
-                    ketLuan: ketLuan,
-                    tuoi: tuoi,
-                    gioiTinh: gioiTinh,
-                    maPhieu: maPhieu,
-                    age: tuoi,
-                    sex: gioiTinh,
-                    age_group: (tuoi < 13 ? 'TreEm' : (tuoi < 18 ? 'ThieuNien' : (tuoi < 40 ? 'NguoiLonTre' : (tuoi < 60 ? 'TrungNien' : 'NguoiCaoTuoi')))),
-                    disease: ketLuan,
-                    symptoms: trieuChung,
-                    comorbidity: 'None',
-                    allergy: 'None'
-                };
-                console.log('GoiYThuoc payload', payload);
+                // 1. Quét lấy danh sách MÃ BỆNH đã chọn trên giao diện
+                var dsBenh = [];
+                $('#tbBenhDaChon tbody tr').each(function () {
+                    var ma = $(this).find('input[name="DanhSachMaBenh"]').val();
+                    // Cắt bỏ khoảng trắng trước khi đẩy vào mảng
+                    if (ma) dsBenh.push(ma.trim());
+                });
 
+                // 2. Quét lấy danh sách MÃ THUỐC đã kê trên giao diện
+                var dsThuoc = [];
+                $('#tbDonThuoc tbody tr').each(function () {
+                    var ma = $(this).find('input[name*=".MaThuoc"]').val();
+                    // Cắt bỏ khoảng trắng trước khi đẩy vào mảng
+                    if (ma) dsThuoc.push(ma.trim());
+                });
+
+                var trieuChung = $('#TrieuChung').val() || '';
+                var ketLuan = $('#KetLuan').val() || '';
+
+                // Hiển thị trạng thái đang tải
+                $('#drugSuggestionBox').removeClass('d-none').html('<div class="small fw-bold text-secondary"><i class="fas fa-spinner fa-spin me-1"></i> AI đang phân tích dữ liệu...</div>');
+
+                // 3. Đóng gói Payload tổng hợp (Sẵn sàng cho AI version 2.0 sau này)
+                var payload = {
+                    maPhieu: maPhieu,
+                    danhSachBenh: dsBenh,   // Gửi mảng bệnh
+                    danhSachThuoc: dsThuoc, // Gửi mảng thuốc
+                    trieuChung: trieuChung,
+                    ketLuan: ketLuan
+                };
+
+                console.log('GoiYThuoc payload:', payload);
+
+                // 4. Gọi xuống một Endpoint trung chuyển mới ở Controller
                 $.ajax({
-                    url: '@Url.Action("GoiYThuoc", "BacSi", new { area = "Staff" })',
+                    url: '@Url.Action("GoiYThuocThongMinh", "BacSi", new { area = "Staff" })',
                     method: 'POST',
                     data: payload,
                     dataType: 'json'
                 }).done(function (res) {
-                    console.log('GoiYThuoc response', res);
-                    if (!res || !res.success) {
-                        var msg = (res && res.message) ? res.message : 'Không lấy được gợi ý thuốc';
-                        if (window.Swal && Swal.fire) Swal.fire('Lỗi', msg, 'error'); else alert(msg);
-                        return;
-                    }
+                    // Đảm bảo parse JSON nếu nó vô tình bị nhận thành chuỗi
+                    while (typeof res === 'string') { try { res = JSON.parse(res); } catch (e) { break; } }
 
-                    var items = [];
-                    if (res.data && Array.isArray(res.data.items)) items = res.data.items;
-                    else if (Array.isArray(res.items)) items = res.items;
-                    else if (Array.isArray(res.data)) items = res.data;
+                    console.log("Kết quả từ AI: ", res); // In ra F12 để chắc chắn mảng GoiY có dữ liệu
 
-                    if (!items.length) {
-                        var msgEmpty = 'Không có thuốc gợi ý phù hợp từ AI. Đang hiển thị danh sách tham khảo.';
-                        if (window.Swal && Swal.fire) Swal.fire('Thông báo', msgEmpty, 'info'); else alert(msgEmpty);
+                    if (res && res.success) {
+                        // Đã fix: Trích xuất đúng mảng res.GoiY
+                        refreshThuocDropdownSuggestions(res.GoiY);
+
+                        $('#drugSuggestionBox').removeClass('d-none').html('<div class="small fw-bold text-primary"><i class="fas fa-robot me-1"></i> AI đã gợi ý dựa trên: <span class="text-danger">' + res.nguonGoiY + '</span></div>');
+
+                        // Gợi ý thành công thì mở luôn Combobox ra cho Bác sĩ chọn (Tuỳ chọn thêm cho xịn)
+                        $('#cboThuoc').select2('open');
+
+                    } else {
                         var fallbackItems = buildFallbackDrugSuggestions(trieuChung, ketLuan);
                         refreshThuocDropdownSuggestions(fallbackItems);
-                        return;
+                        $('#drugSuggestionBox').removeClass('d-none').html('<div class="small fw-bold text-warning"><i class="fas fa-info-circle me-1"></i> ' + (res.message || 'AI chưa có dữ liệu ghép nối.') + ' Đang hiển thị phác đồ tham khảo.</div>');
                     }
-
-                    refreshThuocDropdownSuggestions(items);
-                    if (res.meta && res.meta.disease_category) {
-                        $('#drugSuggestionBox').removeClass('d-none').html('<div class="small fw-bold text-primary"><i class="fas fa-robot me-1"></i> AI gợi ý nhóm bệnh: <span class="text-danger">' + res.meta.disease_category + '</span></div>');
-                    }
-                    if (window.Swal && Swal.fire) {
-                        Swal.fire('Đã gợi ý thuốc', 'Các thuốc gợi ý đã được đánh dấu ★ trong danh sách.', 'success');
-                    }
-                }).fail(function (xhr, status, err) {
-                    console.error('GoiYThuoc ajax fail', status, err, xhr && xhr.responseText);
-                    var msgFail = 'Không gọi được API gợi ý thuốc.';
-                    if (window.Swal && Swal.fire) Swal.fire('Lỗi', msgFail, 'error'); else alert(msgFail);
+                }).fail(function () {
+                    $('#drugSuggestionBox').removeClass('d-none').html('<div class="small fw-bold text-danger"><i class="fas fa-times-circle me-1"></i> Lỗi kết nối đến máy chủ AI.</div>');
                 });
             });
 
