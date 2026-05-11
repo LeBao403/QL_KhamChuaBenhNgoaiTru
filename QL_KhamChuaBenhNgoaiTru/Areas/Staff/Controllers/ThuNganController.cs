@@ -97,7 +97,55 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 
             bool result = db.XacNhanThuTien(maHD, maPKB, phuongThucTT, dsHuyDV, dsHuyThuoc, listThuoc, out errorMsg);
 
-            if (result) return Json(new { success = true });
+            if (result) 
+            {
+                // GỬI EMAIL HÓA ĐƠN NẾU BỆNH NHÂN CÓ EMAIL
+                try
+                {
+                    bool emailSent = QL_KhamChuaBenhNgoaiTru.Helpers.InvoiceEmailService.SendInvoicePdfByMaHD(maHD, phuongThucTT);
+                    System.Diagnostics.Debug.WriteLine(emailSent
+                        ? $"Da gui PDF hoa don {maHD}"
+                        : $"Khong gui duoc PDF hoa don {maHD}. Kiem tra email benh nhan hoac log_email.txt trong TEMP.");
+                    /*
+                    var patientInfo = db.GetPatientInfoByMaHD(maHD);
+                    if (patientInfo != null && !string.IsNullOrEmpty(patientInfo.Item1))
+                    {
+                        string email = patientInfo.Item1;
+                        string hoTen = patientInfo.Item2;
+                        
+                        // Lấy chi tiết hóa đơn để dựng HTML
+                        DataTable dtChiTiet = db.GetChiTietHoaDon(maHD);
+                        decimal tongTien = 0;
+                        System.Text.StringBuilder htmlBuilder = new System.Text.StringBuilder();
+
+                        foreach (DataRow row in dtChiTiet.Rows)
+                        {
+                            string tenDV = row["TenDV"].ToString();
+                            int soLuong = row["SoLuong"] != DBNull.Value ? Convert.ToInt32(row["SoLuong"]) : 1;
+                            decimal tienBenhNhan = Convert.ToDecimal(row["TienBenhNhanTra"]);
+                            tongTien += tienBenhNhan;
+
+                            htmlBuilder.Append("<tr>");
+                            htmlBuilder.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{tenDV}</td>");
+                            htmlBuilder.Append($"<td style='padding: 10px; text-align: center; border: 1px solid #ddd;'>{soLuong}</td>");
+                            htmlBuilder.Append($"<td style='padding: 10px; text-align: right; border: 1px solid #ddd;'>{tienBenhNhan:N0}</td>");
+                            htmlBuilder.Append("</tr>");
+                        }
+
+                        bool emailSent = QL_KhamChuaBenhNgoaiTru.Helpers.EmailHelper.SendInvoiceEmail(email, hoTen, maHD, htmlBuilder.ToString(), tongTien);
+                        System.Diagnostics.Debug.WriteLine(emailSent
+                            ? $"Đã gửi email hóa đơn {maHD} tới {email}"
+                            : $"Không gửi được email hóa đơn {maHD} tới {email}. Xem log_email.txt trong TEMP.");
+                    }
+                    */
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Lỗi gửi email hóa đơn: " + ex.Message);
+                }
+
+                return Json(new { success = true });
+            }
             return Json(new { success = false, message = errorMsg });
         }
 

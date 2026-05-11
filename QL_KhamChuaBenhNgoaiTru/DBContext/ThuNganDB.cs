@@ -382,5 +382,31 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             }
             return dt;
         }
+
+        // 5. LẤY THÔNG TIN BỆNH NHÂN (EMAIL VÀ TÊN) THEO MÃ HÓA ĐƠN
+        public Tuple<string, string> GetPatientInfoByMaHD(string maHD)
+        {
+            using (SqlConnection con = new SqlConnection(connectStr))
+            {
+                string sql = @"
+                    SELECT bn.Email, bn.HoTen 
+                    FROM HOADON hd
+                    JOIN BENHNHAN bn ON hd.MaBN = bn.MaBN
+                    WHERE hd.MaHD = @MaHD";
+                SqlCommand cmd = new SqlCommand(sql, con);
+                cmd.Parameters.AddWithValue("@MaHD", maHD);
+                con.Open();
+                using (SqlDataReader rd = cmd.ExecuteReader())
+                {
+                    if (rd.Read())
+                    {
+                        string email = rd["Email"] != DBNull.Value ? rd["Email"].ToString() : "";
+                        string hoTen = rd["HoTen"] != DBNull.Value ? rd["HoTen"].ToString() : "";
+                        return new Tuple<string, string>(email, hoTen);
+                    }
+                }
+            }
+            return null;
+        }
     }
 }

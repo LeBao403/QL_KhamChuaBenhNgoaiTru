@@ -284,7 +284,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                             {
                                 conn.Open();
                                 string sql = @"
-                                    UPDATE HOADON SET TrangThaiThanhToan = N'Đã thanh toán', NgayThanhToan = GETDATE() WHERE MaHD = @MaHD;
+                                    UPDATE HOADON SET TrangThaiThanhToan = N'Đã thanh toán', NgayThanhToan = GETDATE(), HinhThucThanhToan = N'Chuyển khoản' WHERE MaHD = @MaHD;
                                     UPDATE CT_HOADON_DV SET TrangThaiThanhToan = N'Đã thanh toán' WHERE MaHD = @MaHD;
                                     UPDATE PHIEUDANGKY SET TrangThai = N'Chờ xử lý' WHERE MaPhieuDK = @MaPhieuDK;";
                                 SqlCommand cmd = new SqlCommand(sql, conn);
@@ -292,6 +292,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                                 cmd.Parameters.AddWithValue("@MaPhieuDK", maPhieuDK);
                                 cmd.ExecuteNonQuery();
                             }
+                            QL_KhamChuaBenhNgoaiTru.Helpers.InvoiceEmailService.SendInvoicePdfByMaHD(maHD, "Chuyển khoản");
                             return Json(new { success = true, isPaid = true });
                         }
                     }
@@ -412,9 +413,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             return View(detail);
         }
 
-
-
-
         // ==================== HÀM PHỤ TRỢ: GIẢ LẬP THANH TOÁN THẺ THÀNH CÔNG ====================
         [HttpPost]
         public JsonResult XacNhanThanhToanTheMock(string maHD, string maPhieuDK)
@@ -443,6 +441,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                     cmd.Parameters.AddWithValue("@MaPhieuDK", maPhieuDK);
                     cmd.ExecuteNonQuery();
                 }
+                QL_KhamChuaBenhNgoaiTru.Helpers.InvoiceEmailService.SendInvoicePdfByMaHD(maHD, "Thẻ");
                 return Json(new { success = true });
             }
             catch (Exception ex)

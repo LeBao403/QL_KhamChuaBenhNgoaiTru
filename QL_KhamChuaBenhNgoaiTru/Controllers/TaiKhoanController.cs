@@ -1,3 +1,4 @@
+using System;
 using System.Web.Mvc;
 using QL_KhamChuaBenhNgoaiTru.Models;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
@@ -109,9 +110,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // Xử lý logic Đăng ký
         [HttpPost]
-        public ActionResult Register(string username, string password, string confirmPassword)
+        public ActionResult Register(string hoTen, string username, string email, string password, string confirmPassword)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(email))
             {
                 ViewBag.Error = "Vui lòng nhập đầy đủ thông tin!";
                 return View();
@@ -123,21 +124,110 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                 return View();
             }
 
-            TaiKhoan tk = new TaiKhoan()
+            // Kiểm tra trùng username hoặc email
+            var existTk = db.GetTaiKhoanByUsernameOrSdt(username);
+            if (existTk != null)
             {
-                Username = username,
-                PasswordHash = password
-            };
+                ViewBag.Error = "Tên đăng nhập (Số điện thoại) này đã có người sử dụng!";
+                return View();
+            }
 
-            bool isSuccess = db.InsertTaiKhoan(tk);
-            if (isSuccess)
+            // Sinh mã OTP 6 số
+            var existEmail = db.GetTaiKhoanByUsernameOrSdt(email);
+            if (existEmail != null)
             {
-                TempData["SuccessMessage"] = "Đăng ký thành công! Vui lòng đăng nhập.";
-                return RedirectToAction("Login");
+                ViewBag.Error = "Email này đã có người sử dụng!";
+                return View();
+            }
+
+            Random rand = new Random();
+            string otp = rand.Next(100000, 999999).ToString();
+
+            // Lưu thông tin đăng ký vào Session
+            Session["Register_HoTen"] = hoTen;
+            Session["Register_Username"] = username;
+            Session["Register_Email"] = email;
+            Session["Register_Password"] = password;
+            Session["Register_OTP"] = otp;
+            Session["Register_OTP_Time"] = DateTime.Now;
+
+            // Gửi OTP qua Email
+            bool sendOk = QL_KhamChuaBenhNgoaiTru.Helpers.EmailHelper.SendOTP(email, otp);
+            if (sendOk)
+            {
+                return RedirectToAction("VerifyOTP");
             }
             else
             {
-                ViewBag.Error = "Tên đăng nhập này đã có người sử dụng!";
+                ViewBag.Error = "Có lỗi xảy ra khi gửi email xác thực. Vui lòng kiểm tra lại địa chỉ email hoặc thử lại sau.";
+                return View();
+            }
+        }
+
+        [HttpGet]
+        public ActionResult VerifyOTP()
+        {
+            if (Session["Register_OTP"] == null)
+            {
+                return RedirectToAction("Register");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult VerifyOTP(string otp)
+        {
+            if (Session["Register_OTP"] == null || Session["Register_Username"] == null)
+            {
+                return RedirectToAction("Register");
+            }
+
+            string savedOtp = Session["Register_OTP"].ToString();
+            DateTime otpTime = (DateTime)Session["Register_OTP_Time"];
+
+            if (DateTime.Now.Subtract(otpTime).TotalMinutes > 5)
+            {
+                ViewBag.Error = "Mã OTP đã hết hạn. Vui lòng đăng ký lại.";
+                Session.Remove("Register_OTP");
+                return View();
+            }
+
+            if (otp == savedOtp)
+            {
+                // Xác nhận thành công -> Lưu vào DB
+                TaiKhoan tk = new TaiKhoan()
+                {
+                    Username = Session["Register_Username"].ToString(),
+                    PasswordHash = Session["Register_Password"].ToString()
+                };
+
+                // Ta sẽ truyền thêm Email vào InsertTaiKhoan để lưu vào Database
+                string email = Session["Register_Email"].ToString();
+                string hoTen = Session["Register_HoTen"]?.ToString() ?? "Chưa cập nhật";
+
+                bool isSuccess = db.InsertTaiKhoanWithEmail(tk, email, hoTen); // Hàm này ta sẽ cập nhật trong TaiKhoanDB
+                if (isSuccess)
+                {
+                    // Xóa session
+                    Session.Remove("Register_HoTen");
+                    Session.Remove("Register_Username");
+                    Session.Remove("Register_Email");
+                    Session.Remove("Register_Password");
+                    Session.Remove("Register_OTP");
+                    Session.Remove("Register_OTP_Time");
+
+                    TempData["SuccessMessage"] = "Đăng ký tài khoản thành công! Vui lòng đăng nhập.";
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    ViewBag.Error = "Lỗi DEBUG: InsertTaiKhoanWithEmail trả về false.";
+                    return View();
+                }
+            }
+            else
+            {
+                ViewBag.Error = "Mã OTP không chính xác!";
                 return View();
             }
         }

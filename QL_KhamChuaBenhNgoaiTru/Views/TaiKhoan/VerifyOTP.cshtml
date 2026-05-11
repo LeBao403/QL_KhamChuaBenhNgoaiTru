@@ -1,0 +1,39 @@
+@{
+    ViewBag.Title = "Xác nhận OTP";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+@section TopLeftActions {
+    <a href="@Url.Action("Register", "TaiKhoan")">
+        <i class="fas fa-arrow-left"></i>
+        <span>Quay lại</span>
+    </a>
+}
+
+<div class="auth-form-header">
+    <h2 class="form-title">Xác thực địa chỉ Email</h2>
+    <p class="form-description">Chúng tôi đã gửi một mã xác thực (OTP) đến địa chỉ email của bạn. Vui lòng nhập mã để hoàn tất đăng ký.</p>
+</div>
+
+<div class="auth-surface">
+    <form action="@Url.Action("VerifyOTP", "TaiKhoan")" method="post">
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger mb-3 text-center">@ViewBag.Error</div>
+        }
+
+        <div class="form-floating mb-4">
+            <input type="text" name="otp" class="form-control" id="otpCode" placeholder="Nhập mã OTP" required style="font-size: 24px; text-align: center; letter-spacing: 10px;" maxlength="6" />
+            <label for="otpCode" style="text-align: center; width: 100%;">Mã OTP 6 chữ số</label>
+        </div>
+
+        <button type="submit" class="btn btn-submit">
+            Xác nhận
+            <i class="fas fa-check-circle"></i>
+        </button>
+    </form>
+</div>
+
+<div class="auth-footnote">
+    Không nhận được email? Kiểm tra hộp thư rác (Spam) hoặc <a href="@Url.Action("Register", "TaiKhoan")">đăng ký lại</a>.
+</div>

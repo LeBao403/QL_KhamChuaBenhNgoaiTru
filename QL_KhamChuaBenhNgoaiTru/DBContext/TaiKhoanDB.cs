@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
 using System.Configuration;
 using QL_KhamChuaBenhNgoaiTru.Models;
@@ -24,7 +24,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     SELECT TOP 1 tk.*
                     FROM TAIKHOAN tk
                     LEFT JOIN BENHNHAN bn ON bn.MaTK = tk.MaTK
-                    WHERE (tk.Username = @Username OR bn.SDT = @Username)
+                    WHERE (tk.Username = @Username OR bn.SDT = @Username OR bn.Email = @Username)
                       AND tk.PasswordHash = @PasswordHash
                       AND tk.IsActive = 1";
                 SqlCommand cmd = new SqlCommand(sql, con);
@@ -57,7 +57,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     SELECT TOP 1 tk.*
                     FROM TAIKHOAN tk
                     LEFT JOIN BENHNHAN bn ON bn.MaTK = tk.MaTK
-                    WHERE tk.Username = @Username OR bn.SDT = @Username";
+                    WHERE tk.Username = @Username OR bn.SDT = @Username OR bn.Email = @Username";
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@Username", username);
 
@@ -96,6 +96,78 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                 int rows = cmd.ExecuteNonQuery();
                 return rows > 0;
+            }
+        }
+
+        // 3. Thêm tài khoản kèm Email và thông tin Bệnh nhân
+        public bool InsertTaiKhoanWithEmail(TaiKhoan tk, string email, string hoTen)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                using (SqlTransaction trans = con.BeginTransaction())
+                {
+                    try
+                    {
+                        // Kiểm tra trùng lặp Username hoặc Email
+                        string checkSql = @"
+                            SELECT
+                                (SELECT COUNT(*) FROM TAIKHOAN WHERE Username = @Username)
+                              + (SELECT COUNT(*) FROM BENHNHAN WHERE Email = @Email)";
+                        SqlCommand checkCmd = new SqlCommand(checkSql, con, trans);
+                        checkCmd.Parameters.AddWithValue("@Username", tk.Username);
+                        checkCmd.Parameters.AddWithValue("@Email", email);
+                        int count = (int)checkCmd.ExecuteScalar();
+                        if (count > 0) return false; // Đã tồn tại
+
+                        // Thêm mới TAIKHOAN và lấy MaTK vừa tạo
+                        string sql = "INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive, CreatedAt) OUTPUT INSERTED.MaTK VALUES (@Username, @PasswordHash, 1, GETDATE())";
+                        SqlCommand cmd = new SqlCommand(sql, con, trans);
+                        cmd.Parameters.AddWithValue("@Username", tk.Username);
+                        cmd.Parameters.AddWithValue("@PasswordHash", tk.PasswordHash);
+
+                        int maTK = (int)cmd.ExecuteScalar();
+
+                        // Tự động sinh MaBN định dạng BN0001 (để vừa với varchar(10))
+                        string sqlMaBN = @"
+                            SELECT ISNULL(MAX(TRY_CONVERT(INT, SUBSTRING(MaBN, PATINDEX('%[0-9]%', MaBN), 10))), 0) + 1
+                            FROM BENHNHAN WITH (UPDLOCK, HOLDLOCK)
+                            WHERE PATINDEX('%[0-9]%', MaBN) > 0";
+                        SqlCommand cmdMaBN = new SqlCommand(sqlMaBN, con, trans);
+                        int nextMaBNNumber = Convert.ToInt32(cmdMaBN.ExecuteScalar());
+                        string maBN = "BN" + nextMaBNNumber.ToString().PadLeft(4, '0');
+                        
+                        // Ở form đăng ký, Username thường là SĐT
+                        string sdt = "";
+                        if (tk.Username != null && tk.Username.Length >= 9 && tk.Username.Length <= 11)
+                        {
+                            bool isNum = true;
+                            foreach(char c in tk.Username) if(c < '0' || c > '9') isNum = false;
+                            if (isNum) sdt = tk.Username;
+                        }
+
+                        // Thêm vào BENHNHAN
+                        string insertBnSql = "INSERT INTO BENHNHAN (MaBN, HoTen, SDT, Email, MaTK) VALUES (@MaBN, @HoTen, @SDT, @Email, @MaTK)";
+                        SqlCommand cmdBn = new SqlCommand(insertBnSql, con, trans);
+                        cmdBn.Parameters.AddWithValue("@MaBN", maBN);
+                        cmdBn.Parameters.AddWithValue("@HoTen", hoTen);
+                        cmdBn.Parameters.AddWithValue("@SDT", sdt);
+                        cmdBn.Parameters.AddWithValue("@Email", email);
+                        cmdBn.Parameters.AddWithValue("@MaTK", maTK);
+                        
+                        cmdBn.ExecuteNonQuery();
+
+                        trans.Commit();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Lỗi insert tài khoản: " + ex.Message);
+                        try { System.IO.File.AppendAllText(System.IO.Path.Combine(System.IO.Path.GetTempPath(), "log_taikhoan.txt"), DateTime.Now.ToString() + ": " + ex.ToString() + "\n"); } catch {}
+                        trans.Rollback();
+                        return false;
+                    }
+                }
             }
         }
         // Kiểm tra xem tài khoản này có phải là nhân viên không
