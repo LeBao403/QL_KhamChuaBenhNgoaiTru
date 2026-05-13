@@ -45,25 +45,18 @@ class RecommendRequest(BaseModel):
     danh_sach_thuoc: List[str]  # Mảng chứa các mã thuốc (vd: ["TH001", "TH005"])
     top_k: int = 40  # Số lượng gợi ý muốn nhận về (mặc định là 40)
 
-@app.post("/api/recommend")
-def api_recommend_drug(request: RecommendRequest):
-    """
-    Gợi ý thuốc dựa trên mảng các loại thuốc đang có trong Đơn.
-    """
+@app.get("/api/recommend")
+def api_recommend_drug(node_id: str, top_k: int = 40):
+    """C# sẽ gọi API này lúc bác sĩ đang gõ đơn thuốc để lấy gợi ý"""
     if not ai_model.vectors:
         return {"success": False, "message": "Model chưa được train. Hãy gọi API train trước."}
     
-    if not request.danh_sach_thuoc or len(request.danh_sach_thuoc) == 0:
-        return {"success": False, "message": "Danh sách thuốc đầu vào trống."}
-    
-    # Gọi hàm xử lý mảng ta vừa viết ở bước 2
-    goi_y = ai_model.get_similar_drugs_from_list(request.danh_sach_thuoc, top_k=request.top_k)
+    # SỬA TẠI ĐÂY: Đặt node_id vào trong một list [node_id]
+    goi_y = ai_model.get_similar_drugs_from_list([node_id], top_k=top_k)
     
     if not goi_y:
-        return {"success": False, "message": "Không tìm thấy gợi ý phù hợp cho tổ hợp thuốc này."}
+        # Nếu AI không tìm thấy, trả về list rỗng để C# không bị lỗi vỡ Form
+        return {"success": True, "MaThuocGoc": node_id, "GoiY": []}
     
-    return {
-        "success": True, 
-        "ToaHienTai": request.danh_sach_thuoc, 
-        "GoiY": goi_y
-    }
+    # Trả về đúng format C# cần
+    return {"success": True, "MaThuocGoc": node_id, "GoiY": goi_y}

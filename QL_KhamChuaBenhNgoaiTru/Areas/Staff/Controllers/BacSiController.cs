@@ -189,14 +189,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             // Ưu tiên 1: Gợi ý theo Thuốc vừa kê gần nhất
             if (danhSachThuoc != null && danhSachThuoc.Count > 0)
             {
-                // Chốt chặn bằng hàm Trim()
                 nodeId = danhSachThuoc.Last().Trim();
                 tenNguon = "Thuốc đã kê";
             }
             // Ưu tiên 2: Gợi ý theo Bệnh đã chẩn đoán
             else if (danhSachBenh != null && danhSachBenh.Count > 0)
             {
-                // Chốt chặn bằng hàm Trim()
                 nodeId = danhSachBenh.First().Trim();
                 tenNguon = "Chẩn đoán bệnh";
             }
@@ -207,27 +205,42 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
 
             try
             {
-                // Yêu cầu top_k=40 để có nhiều lựa chọn
-                string apiUrl = "http://127.0.0.1:8000/api/recommend?node_id=" + nodeId + "&top_k=40";
+                // 1. Mã hóa mã thuốc an toàn
+                string encodedNodeId = Uri.EscapeDataString(nodeId);
+
+                // 2. Gọi sang cổng 8000 của Python
+                string apiUrl = "http://127.0.0.1:8000/api/recommend?node_id=" + encodedNodeId + "&top_k=40";
                 var request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(apiUrl);
+
+                // CHẮC CHẮN METHOD PHẢI LÀ "GET" ĐỂ KHỚP VỚI @app.get CỦA PYTHON
                 request.Method = "GET";
+                request.Timeout = 5000;
 
                 using (var response = (System.Net.HttpWebResponse)request.GetResponse())
                 using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
                 {
                     string jsonResponse = reader.ReadToEnd();
 
-                    // Dùng JObject để nhét thêm "nguonGoiY" vào chuỗi JSON của Python
                     var jObject = Newtonsoft.Json.Linq.JObject.Parse(jsonResponse);
                     jObject["nguonGoiY"] = tenNguon;
 
-                    // TRỌNG TÂM FIX LỖI: Trả về Content nguyên bản để không bị mất Array Thuốc
                     return Content(jObject.ToString(), "application/json");
                 }
             }
+            catch (System.Net.WebException webEx)
+            {
+                // 2. [SỬA LỖI TẠI ĐÂY] Bắt lỗi 500/404 từ Python (Thường do Thuốc chưa có trong Graph huấn luyện)
+                if (webEx.Response is System.Net.HttpWebResponse errorResponse &&
+                    (errorResponse.StatusCode == System.Net.HttpStatusCode.InternalServerError || errorResponse.StatusCode == System.Net.HttpStatusCode.NotFound))
+                {
+                    return Json(new { success = false, message = "AI chưa học được dữ liệu về loại thuốc/bệnh này." });
+                }
+
+                return Json(new { success = false, message = "Không kết nối được với Server AI." });
+            }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Lỗi kết nối AI: " + ex.Message });
+                return Json(new { success = false, message = "Lỗi xử lý: " + ex.Message });
             }
         }
 
