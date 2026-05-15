@@ -469,37 +469,38 @@
                             let hdId = String(resDatLich.maHD);
                             let pdkId = String(resDatLich.maPhieuDK);
 
-                            // XỬ LÝ NHÁNH 1: THANH TOÁN THẺ (GIẢ LẬP)
+                            // XỬ LÝ NHÁNH 1: THANH TOÁN THẺ VNPAY (THẬT)
                             if (phuongThucTT === 'THE') {
+                                // 1. Hiện thông báo đang kết nối cho chuyên nghiệp
                                 Swal.fire({
-                                    title: 'Đang kết nối cổng thẻ...',
-                                    html: 'Vui lòng chờ hệ thống xử lý giao dịch...',
-                                    timer: 2000,
-                                    timerProgressBar: true,
+                                    title: 'Đang chuyển hướng...',
+                                    html: 'Hệ thống đang kết nối an toàn với cổng VNPAY...',
+                                    allowOutsideClick: false,
                                     didOpen: () => { Swal.showLoading(); }
-                                }).then(() => {
-                                    // ĐÃ SỬA: Bắn AJAX xuống C# để cập nhật DB thành Đã thanh toán
-                                    $.ajax({
-                                        url: '@Url.Action("XacNhanThanhToanTheMock", "BenhNhanPortal")',
-                                        type: 'POST',
-                                        data: { maHD: resDatLich.maHD, maPhieuDK: resDatLich.maPhieuDK },
-                                        success: function(resMock) {
-                                            if(resMock.success) {
-                                                Swal.fire({
-                                                    title: 'Thanh toán thành công!',
-                                                    html: `Đã thu <strong>100,000 VNĐ</strong> qua thẻ.<br/>Vui lòng đến <strong class="text-primary text-uppercase">${resDatLich.tenQuay}</strong> để làm thủ tục.`,
-                                                    icon: 'success',
-                                                    confirmButtonText: 'Xem lịch khám'
-                                                }).then(() => {
-                                                    window.location.href = '@Url.Action("LichKham", "BenhNhanPortal")';
-                                                });
-                                            } else {
-                                                Swal.fire('Lỗi', 'Lỗi cập nhật CSDL: ' + resMock.message, 'error');
-                                                btn.prop('disabled', false).html(originalText);
-                                            }
-                                        }
-                                    });
                                 });
+
+                                // 2. Tạo một Form ẩn bằng Javascript để submit dữ liệu (Vì C# yêu cầu HttpPost)
+                                let form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = '@Url.Action("ThanhToanVnPay", "ThanhToan")';
+
+                                // 3. Nhét Mã hóa đơn vào form
+                                let inputMaHD = document.createElement('input');
+                                inputMaHD.type = 'hidden';
+                                inputMaHD.name = 'maHoaDon';
+                                inputMaHD.value = resDatLich.maHD;
+                                form.appendChild(inputMaHD);
+
+                                // 4. Nhét Số tiền (Cố định 100,000đ cho phí đặt lịch) vào form
+                                let inputTien = document.createElement('input');
+                                inputTien.type = 'hidden';
+                                inputTien.name = 'tongTien';
+                                inputTien.value = '100000';
+                                form.appendChild(inputTien);
+
+                                // 5. Ném form vào body và bấm nút Submit tự động
+                                document.body.appendChild(form);
+                                form.submit();
                             }
                             // XỬ LÝ NHÁNH 2: THANH TOÁN QR PAYOS
                             else {
