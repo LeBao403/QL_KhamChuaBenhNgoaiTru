@@ -135,12 +135,33 @@
         justify-content: center;
     }
 
-    /* Popup SweetAlert Styling */
+    /* Popup SweetAlert Styling (MỚI) */
     .swal2-popup.custom-swal-popup {
-        border-radius: 20px;
-        padding: 0;
+        border-radius: 24px !important;
+        padding: 0 !important;
         overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
     }
+
+    .custom-swal-popup .swal2-html-container {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .custom-swal-popup .swal2-close {
+        color: #ffffff !important;
+        background: rgba(255, 255, 255, 0.2) !important;
+        border-radius: 50% !important;
+        width: 36px !important;
+        height: 36px !important;
+        margin: 16px 16px 0 0 !important;
+        transition: all 0.2s;
+    }
+
+        .custom-swal-popup .swal2-close:hover {
+            background: rgba(255, 255, 255, 0.4) !important;
+            transform: rotate(90deg);
+        }
 </style>
 
 <div class="container-fluid px-4 mt-3">
@@ -245,7 +266,7 @@
                                     </td>
                                     <td class="text-center pe-4 text-nowrap">
                                         <button class="btn btn-sm btn-light border shadow-sm rounded-pill fw-bold text-primary px-3 text-nowrap"
-                                                onclick="xemChiTiet(@row["MaHD"], '@row["HoTen"]', '@row["MaBN"]', '@(row["MaPhieuKhamBenh"] != DBNull.Value ? row["MaPhieuKhamBenh"] : "")')"
+                                                onclick="xemChiTiet('@row["MaHD"]', '@row["HoTen"]', '@row["MaBN"]', '@(row["MaPhieuKhamBenh"] != DBNull.Value ? row["MaPhieuKhamBenh"] : "")')"
                                                 data-bs-toggle="tooltip" title="Xem chi tiết Hóa Đơn">
                                             <i class="bi bi-eye me-1"></i> Chi tiết
                                         </button>
@@ -346,7 +367,7 @@
             }
         });
 
-        // XEM CHI TIẾT ĐÃ ĐƯỢC PHÂN NHÓM VÀ SHOW FULL THÔNG TIN
+        // XEM CHI TIẾT ĐÃ ĐƯỢC PHÂN NHÓM VÀ THIẾT KẾ UI BIÊN LAI (RECEIPT)
         function xemChiTiet(maHD, tenBN, maBN, maPKB) {
             Swal.fire({
                 title: 'Đang tải dữ liệu...',
@@ -359,7 +380,7 @@
                     let total = 0;
                     let nhomKham = []; let nhomCLS = []; let nhomThuoc = [];
 
-                    // Chia nhóm dữ liệu (Ép 'phí tiện ích' vào nhóm Khám Bệnh)
+                    // Chia nhóm dữ liệu
                     res.data.forEach(item => {
                         let tenDV = item.TenDV.toLowerCase();
                         if (item.LoaiItem === "THUOC") nhomThuoc.push(item);
@@ -369,75 +390,96 @@
                         if (item.TrangThai !== "Hủy") total += item.TienBenhNhan;
                     });
 
-                    // Khung thông tin tổng quan
+                    // Khung thông tin tổng quan (Dải Header Gradient)
                     let infoHtml = `
-                        <div class="d-flex justify-content-between align-items-center mb-3 text-start bg-light p-4 rounded-4 border shadow-sm">
-                            <div>
-                                <h4 class="fw-bolder text-primary mb-1 text-uppercase" style="letter-spacing:-0.5px">${tenBN}</h4>
-                                <div class="text-muted"><i class="bi bi-person-vcard me-2"></i>Mã Bệnh Nhân: <strong class="text-dark">${maBN}</strong></div>
-                            </div>
-                            <div class="text-end">
-                                <div class="text-muted mb-1">Mã Hóa Đơn: <strong class="text-primary fs-5">#${maHD}</strong></div>
-                                <div class="text-muted">Mã Phiếu Khám: <strong class="text-dark">${maPKB ? '#' + maPKB : 'Không có'}</strong></div>
+                        <div class="receipt-header text-start">
+                            <div class="d-flex justify-content-between align-items-center px-4 py-4" style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);">
+                                <div>
+                                    <div class="text-white-50 small fw-bold mb-1 tracking-wider text-uppercase">Thông tin Bệnh nhân</div>
+                                    <h4 class="fw-bolder mb-1 text-white text-uppercase" style="letter-spacing: 0.5px">${tenBN}</h4>
+                                    <div class="text-white opacity-75"><i class="bi bi-person-vcard me-2"></i>Mã BN: <strong class="text-white">${maBN}</strong></div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="text-white-50 small fw-bold mb-1 tracking-wider text-uppercase">Mã Hóa Đơn</div>
+                                    <h3 class="fw-black mb-1 text-white">#${maHD}</h3>
+                                    <div class="text-white opacity-75 small">PKB: <strong class="text-white">${maPKB ? '#' + maPKB : 'N/A'}</strong></div>
+                                </div>
                             </div>
                         </div>
                     `;
 
                     // Bảng chi tiết
-                    let tableHtml = `<div class="table-responsive rounded-3 border"><table class="table table-borderless text-start align-middle mb-0" style="font-size: 0.95rem">
-                                     <thead class="bg-light border-bottom border-2 text-muted small text-uppercase">
-                                        <tr><th class="ps-4 py-3">Nội dung phát sinh</th><th class="text-end py-3" style="width:150px;">Tiền Khách Trả</th><th class="text-center pe-4 py-3" style="width:120px;">Trạng thái</th></tr>
-                                     </thead><tbody>`;
+                    let tableHtml = `
+                        <div class="px-4 py-4 text-start">
+                            <div class="table-responsive rounded-4 border shadow-sm">
+                                <table class="table table-hover align-middle mb-0" style="font-size: 0.95rem">
+                                    <thead class="bg-light text-muted small text-uppercase" style="border-bottom: 2px solid #e2e8f0;">
+                                        <tr>
+                                            <th class="ps-4 py-3 fw-bold">Nội dung phát sinh</th>
+                                            <th class="text-end py-3 fw-bold" style="width:160px;">Tiền khách trả</th>
+                                            <th class="text-center pe-4 py-3 fw-bold" style="width:140px;">Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
 
                     const renderRow = (item) => {
                         let isHuy = item.TrangThai === "Hủy";
-                        let rowCls = isHuy ? "text-muted text-decoration-line-through bg-light opacity-75 border-bottom" : "border-bottom";
-                        let badge = isHuy ? '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger rounded-pill px-3 py-2 shadow-sm">Khách bỏ</span>' : '<span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3 py-2 shadow-sm">Đã đóng</span>';
+                        let rowCls = isHuy ? "bg-light opacity-75" : "";
+                        let textDeco = isHuy ? "text-decoration-line-through text-muted" : "text-dark";
 
-                        let textDV = `<span class="fw-bold fs-6 text-dark">${item.TenDV}</span>`;
+                        let badge = isHuy
+                            ? '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-3 py-2 shadow-sm"><i class="bi bi-x-circle me-1"></i>Đã hủy</span>'
+                            : '<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 shadow-sm"><i class="bi bi-check-circle me-1"></i>Hoàn tất</span>';
+
+                        let textDV = `<div class="fw-bold fs-6 ${textDeco}">${item.TenDV}</div>`;
 
                         if (item.LoaiItem === 'THUOC') {
                             let slMua = item.SoLuong || 0;
                             let slGoc = item.SoLuongGoc || slMua;
 
-                            // FIX LỖI Ở ĐÂY: Chỉ xét vụ "Mua giảm/Mua đủ" khi món đó KHÔNG BỊ HỦY
                             if (!isHuy) {
                                 if (slMua < slGoc) {
-                                    textDV += `<br><span class="badge bg-warning text-dark mt-2 p-2 shadow-sm"><i class="bi bi-exclamation-triangle me-1"></i>Khách mua giảm: ${slMua} / ${slGoc}</span>`;
+                                    textDV += `<div class="mt-2"><span class="badge bg-warning bg-opacity-10 text-dark border border-warning rounded-pill px-2 py-1"><i class="bi bi-exclamation-circle text-warning me-1"></i>Mua giảm: ${slMua} / ${slGoc}</span></div>`;
                                 } else {
-                                    textDV += `<br><span class="badge bg-success bg-opacity-10 text-success border border-success mt-2 p-2"><i class="bi bi-check-circle me-1"></i>Đã mua đủ: ${slMua}</span>`;
+                                    textDV += `<div class="mt-2"><span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 rounded-pill px-2 py-1"><i class="bi bi-box-seam me-1"></i>SL: ${slMua}</span></div>`;
                                 }
                             } else {
-                                // Nếu đã hủy thì thông báo thêm hoặc bỏ trống (đã có chữ Khách bỏ ở cột Trạng thái)
-                                textDV += `<br><span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary mt-2 p-2"><i class="bi bi-dash-circle me-1"></i>Từ chối mua</span>`;
+                                textDV += `<div class="mt-2"><span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 rounded-pill px-2 py-1"><i class="bi bi-dash-circle me-1"></i>Từ chối mua</span></div>`;
                             }
                         }
 
                         return `<tr class="${rowCls}">
-                                        <td class="ps-4 py-3">${textDV}</td>
-                                        <td class="text-end fw-bolder text-danger fs-6 py-3">${isHuy ? 0 : item.TienBenhNhan.toLocaleString('vi-VN')} ₫</td>
-                                        <td class="text-center pe-4 py-3">${badge}</td>
-                                    </tr>`;
+                                    <td class="ps-4 py-3 border-bottom">${textDV}</td>
+                                    <td class="text-end fw-bolder ${isHuy ? 'text-muted' : 'text-primary'} fs-5 py-3 border-bottom ${textDeco}">${isHuy ? '0' : item.TienBenhNhan.toLocaleString('vi-VN')} ₫</td>
+                                    <td class="text-center pe-4 py-3 border-bottom">${badge}</td>
+                                </tr>`;
                     };
 
                     if (nhomKham.length > 0) {
-                        tableHtml += `<tr><td colspan="3" class="bg-light fw-bold text-primary px-4 py-2 border-bottom"><i class="bi bi-stethoscope me-2"></i>CÔNG KHÁM BỆNH</td></tr>`;
+                        tableHtml += `<tr><td colspan="3" class="bg-light fw-bold text-primary px-4 py-2 border-bottom" style="font-size: 0.85rem;"><i class="bi bi-stethoscope me-2"></i>CÔNG KHÁM BỆNH</td></tr>`;
                         nhomKham.forEach(item => tableHtml += renderRow(item));
                     }
                     if (nhomCLS.length > 0) {
-                        tableHtml += `<tr><td colspan="3" class="bg-light fw-bold px-4 py-2 border-bottom" style="color: #b45309 !important;"><i class="bi bi-activity me-2"></i>XÉT NGHIỆM & CẬN LÂM SÀNG</td></tr>`;
+                        tableHtml += `<tr><td colspan="3" class="bg-light fw-bold px-4 py-2 border-bottom" style="color: #b45309 !important; font-size: 0.85rem;"><i class="bi bi-activity me-2"></i>XÉT NGHIỆM & CẬN LÂM SÀNG</td></tr>`;
                         nhomCLS.forEach(item => tableHtml += renderRow(item));
                     }
                     if (nhomThuoc.length > 0) {
-                        tableHtml += `<tr><td colspan="3" class="bg-light fw-bold text-success px-4 py-2 border-bottom"><i class="bi bi-capsule me-2"></i>ĐƠN THUỐC NGOẠI TRÚ</td></tr>`;
+                        tableHtml += `<tr><td colspan="3" class="bg-light fw-bold text-success px-4 py-2 border-bottom" style="font-size: 0.85rem;"><i class="bi bi-capsule me-2"></i>ĐƠN THUỐC NGOẠI TRÚ</td></tr>`;
                         nhomThuoc.forEach(item => tableHtml += renderRow(item));
                     }
 
+                    // Cụm Tổng tiền phong cách dập nổi
                     tableHtml += `</tbody></table></div>
-                             <div class="text-end mt-4 p-4 rounded-4 shadow-sm d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border: 1px solid #cbd5e1;">
-                                <span class="text-muted fw-bold fs-6 text-uppercase"><i class="bi bi-wallet2 me-2"></i>Tổng số tiền đã thu:</span>
-                                <strong class="text-danger display-5 fw-bolder mb-0 text-shadow">${total.toLocaleString('vi-VN')} ₫</strong>
-                             </div>`;
+                            <div class="mt-4 p-4 rounded-4 shadow-sm d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe;">
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3 d-flex align-items-center justify-content-center" style="width: 54px; height: 54px;">
+                                        <i class="bi bi-wallet2 text-primary fs-3"></i>
+                                    </div>
+                                    <span class="text-primary fw-bold fs-6 text-uppercase" style="letter-spacing: 0.5px;">Tổng thu thực tế</span>
+                                </div>
+                                <strong class="text-primary display-5 fw-black mb-0" style="text-shadow: 1px 1px 0px rgba(255,255,255,0.5);">${total.toLocaleString('vi-VN')} ₫</strong>
+                            </div>
+                        </div>`;
 
                     Swal.fire({
                         title: false,

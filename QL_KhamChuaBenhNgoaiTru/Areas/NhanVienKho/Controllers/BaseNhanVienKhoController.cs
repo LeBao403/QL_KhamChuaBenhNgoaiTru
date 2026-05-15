@@ -19,9 +19,9 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.NhanVienKho.Controllers
                 return;
             }
 
-            // 2. Chỉ cho phép nhân viên kho (MaChucVu = 12)
+            // 2. Chỉ cho phép nhân viên kho (MaChucVu = 13)
             int chucVu = nv.MaChucVu ?? 0;
-            if (chucVu != 12)
+            if (chucVu != 13)
             {
                 // Admin -> Admin, Bác sĩ -> BacSi, Thu ngân -> ThuNgan
                 switch (chucVu)

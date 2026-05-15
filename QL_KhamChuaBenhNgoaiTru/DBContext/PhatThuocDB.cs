@@ -81,63 +81,24 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             using (SqlConnection conn = new SqlConnection(connectStr))
             {
                 conn.Open();
-
-                //    // =========================================================================
-                //    // A. THÔNG TIN HÀNH CHÍNH & LÂM SÀNG
-                //    // =========================================================================
-                //    string sqlInfo = @"
-                //SELECT TOP 1 
-                //    bn.HoTen, bn.MaBN, bn.SDT, bn.NgaySinh, bn.GioiTinh, bn.DiaChi, bn.BHYT,
-                //    (YEAR(GETDATE()) - YEAR(bn.NgaySinh)) AS Tuoi, 
-                //    nv.HoTen AS BacSiKe, dt.NgayKe, 
-                //    dt.MaDonThuoc, dt.LoiDanBS, 
-                //    pkb.MaPhieuKhamBenh, pkb.KetLuan, pkb.TrieuChung
-                //FROM DON_THUOC dt 
-                //JOIN PHIEUKHAMBENH pkb ON dt.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh 
-                //JOIN BENHNHAN bn ON pkb.MaBN = bn.MaBN 
-                //LEFT JOIN NHANVIEN nv ON pkb.MaBacSiKham = nv.MaNV 
-                //WHERE dt.MaDonThuoc = @MaDonThuoc";
-
-                //    using (SqlCommand cmd = new SqlCommand(sqlInfo, conn))
-                //    {
-                //        cmd.Parameters.AddWithValue("@MaDonThuoc", maDonThuoc);
-                //        using (SqlDataReader dr = cmd.ExecuteReader())
-                //        {
-                //            if (dr.Read())
-                //            {
-                //                result.TenBN = dr["HoTen"].ToString();
-                //                result.MaBN = dr["MaBN"].ToString();
-                //                result.GioiTinh = dr["GioiTinh"].ToString();
-                //                result.Tuoi = dr["Tuoi"] != DBNull.Value ? Convert.ToInt32(dr["Tuoi"]) : 0;
-                //                result.SDT = dr["SDT"].ToString();
-                //                result.DiaChi = dr["DiaChi"].ToString();
-                //                result.NgaySinh = dr["NgaySinh"] != DBNull.Value ? Convert.ToDateTime(dr["NgaySinh"]).ToString("dd/MM/yyyy") : "---";
-                //                result.BacSiKe = dr["BacSiKe"].ToString();
-                //                result.NgayKe = dr["NgayKe"] != DBNull.Value ? Convert.ToDateTime(dr["NgayKe"]).ToString("dd/MM/yyyy HH:mm") : "---";
-                //                result.KetLuan = dr["KetLuan"].ToString();
-                //                result.TrieuChung = dr["TrieuChung"].ToString();
-                //                result.MaPhieuKhamBenh = Convert.ToInt32(dr["MaPhieuKhamBenh"]);
-                //                result.LoiDanBacSi = dr["LoiDanBS"].ToString();
-                //            }
-                //        }
-                //    }
                 // =========================================================================
                 // A. THÔNG TIN HÀNH CHÍNH & LÂM SÀNG
                 // =========================================================================
                 string sqlInfo = @"
-    SELECT TOP 1 
-        bn.HoTen, bn.MaBN, bn.SDT, bn.CCCD, bn.Email, bn.NgaySinh, bn.GioiTinh, bn.DiaChi, bn.BHYT,
-        (YEAR(GETDATE()) - YEAR(bn.NgaySinh)) AS Tuoi, 
-        nv.HoTen AS BacSiKe, dt.NgayKe, 
-        dt.MaDonThuoc, dt.LoiDanBS, 
-        pkb.MaPhieuKhamBenh, pkb.KetLuan, pkb.TrieuChung,
-        ppt.MaPhieuPhat
-    FROM DON_THUOC dt 
-    JOIN PHIEUKHAMBENH pkb ON dt.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh 
-    JOIN BENHNHAN bn ON pkb.MaBN = bn.MaBN 
-    LEFT JOIN NHANVIEN nv ON pkb.MaBacSiKham = nv.MaNV 
-    LEFT JOIN PHIEU_PHAT_THUOC ppt ON ppt.MaDonThuoc = dt.MaDonThuoc AND ppt.MaHD = @MaHD
-    WHERE dt.MaDonThuoc = @MaDonThuoc";
+                SELECT TOP 1 
+                    bn.HoTen, bn.MaBN, bn.SDT, bn.CCCD, bn.Email, bn.NgaySinh, bn.GioiTinh, bn.DiaChi, bn.BHYT,
+                    (YEAR(GETDATE()) - YEAR(bn.NgaySinh)) AS Tuoi, 
+                    nv.HoTen AS BacSiKe, dt.NgayKe, 
+                    dt.MaDonThuoc, 
+                    ISNULL(NULLIF(CAST(dt.LoiDanBS AS NVARCHAR(MAX)), ''), pkb.DanDo) AS LoiDanBS, 
+                    pkb.MaPhieuKhamBenh, pkb.KetLuan, pkb.TrieuChung,
+                    ppt.MaPhieuPhat
+                FROM DON_THUOC dt 
+                JOIN PHIEUKHAMBENH pkb ON dt.MaPhieuKhamBenh = pkb.MaPhieuKhamBenh 
+                JOIN BENHNHAN bn ON pkb.MaBN = bn.MaBN 
+                LEFT JOIN NHANVIEN nv ON pkb.MaBacSiKham = nv.MaNV 
+                LEFT JOIN PHIEU_PHAT_THUOC ppt ON ppt.MaDonThuoc = dt.MaDonThuoc AND ppt.MaHD = @MaHD
+                WHERE dt.MaDonThuoc = @MaDonThuoc";
 
                 using (SqlCommand cmd = new SqlCommand(sqlInfo, conn))
                 {

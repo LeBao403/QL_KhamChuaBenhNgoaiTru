@@ -61,8 +61,11 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                         case 9: // Thu ngân
                             return RedirectToAction("Index", "ThuNgan", new { area = "Staff" });
 
-                        case 12: // Nhân viên kho
+                        case 12: // Nhân viên phát thuốc
                             return RedirectToAction("Index", "PhatThuoc", new { area = "Staff" });
+
+                        case 13: // Nhân viên kho
+                            return RedirectToAction("Index", "PhieuNhap", new { area = "NhanVienKho" });
 
                         case 5: // Điều dưỡng
                         case 6: // KTV CLS

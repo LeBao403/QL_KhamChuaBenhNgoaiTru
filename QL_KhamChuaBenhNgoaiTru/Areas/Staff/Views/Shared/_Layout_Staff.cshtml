@@ -3,6 +3,9 @@
     // Xử lý Active Menu bằng C#
     string ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
     string act = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    // 🟢 LẤY CHỨC VỤ TỪ SESSION ĐỂ PHÂN QUYỀN HIỂN THỊ MENU
+    int maChucVu = Session["MaChucVu"] != null ? Convert.ToInt32(Session["MaChucVu"]) : 0;
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -352,63 +355,81 @@
             </div>
 
             <ul class="sidebar-menu">
-                <div class="menu-label">Bộ phận Tiếp tân</div>
-                <li>
-                    <a href="@Url.Action("Index", "TiepTan", new { area = "Staff" })" class="@(ctrl == "TiepTan" && act == "Index" ? "active" : "")" title="Lấy số & Tiếp nhận">
-                        <i class="bi bi-person-vcard"></i> Lấy số & Tiếp nhận
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("LichSuTiepNhan", "TiepTan", new { area = "Staff" })" class="@(ctrl == "TiepTan" && act == "LichSuTiepNhan" ? "active" : "")" title="Lịch sử cấp số">
-                        <i class="bi bi-clock-history"></i> Lịch sử cấp số
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="" title="Lịch hẹn khám">
-                        <i class="bi bi-calendar2-check"></i> Lịch hẹn khám
-                    </a>
-                </li>
 
-                <div class="menu-label mt-4">Bộ phận Bác sĩ & CLS</div>
-                <li>
-                    <a href="@Url.Action("Index", "BacSi", new { area = "Staff" })" class="@(ctrl == "BacSi" ? "active" : "")" title="Khám bệnh bác sĩ">
-                        <i class="bi bi-heart-pulse"></i> Khám bệnh Bác sĩ
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("Index", "CLS", new { area = "Staff" })" class="@(ctrl == "CLS" ? "active" : "")" title="Cận lâm sàng">
-                        <i class="bi bi-clipboard2-pulse"></i> Cận lâm sàng
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("LichSu", "CLS", new { area = "Staff" })" class="@(ctrl == "CLS" && act == "LichSu" ? "active" : "")" title="Lịch sử xét nghiệm">
-                        <i class="bi bi-clock-history"></i> Lịch sử xét nghiệm
-                    </a>
-                </li>
+                @if (maChucVu == 8) // Tiếp đón
+                {
+                    <div class="menu-label">Bộ phận Tiếp tân</div>
+                    <li>
+                        <a href="@Url.Action("Index", "TiepTan", new { area = "Staff" })" class="@(ctrl == "TiepTan" && act == "Index" ? "active" : "")" title="Lấy số & Tiếp nhận">
+                            <i class="bi bi-person-vcard"></i> Lấy số & Tiếp nhận
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("LichSuTiepNhan", "TiepTan", new { area = "Staff" })" class="@(ctrl == "TiepTan" && act == "LichSuTiepNhan" ? "active" : "")" title="Lịch sử cấp số">
+                            <i class="bi bi-clock-history"></i> Lịch sử cấp số
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="" title="Lịch hẹn khám">
+                            <i class="bi bi-calendar2-check"></i> Lịch hẹn khám
+                        </a>
+                    </li>
+                }
 
-                <div class="menu-label mt-4">Bộ phận Thu Ngân</div>
-                <li>
-                    <a href="@Url.Action("Index", "ThuNgan", new { area = "Staff" })" class="@(ctrl == "ThuNgan" && act == "Index" ? "active" : "")" title="Quầy thu viện phí">
-                        <i class="bi bi-cash-coin"></i> Quầy thu viện phí
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("LichSu", "ThuNgan", new { area = "Staff" })" class="@(ctrl == "ThuNgan" && act == "LichSu" ? "active" : "")" title="Lịch sử thu tiền">
-                        <i class="bi bi-receipt-cutoff"></i> Lịch sử thu tiền
-                    </a>
-                </li>
+                @if (maChucVu == 3 || maChucVu == 4) // Bác sĩ
+                {
+                    <div class="menu-label">Bộ phận Bác sĩ & CLS</div>
+                    <li>
+                        <a href="@Url.Action("Index", "BacSi", new { area = "Staff" })" class="@(ctrl == "BacSi" ? "active" : "")" title="Khám bệnh Bác sĩ">
+                            <i class="bi bi-heart-pulse"></i> Khám bệnh Bác sĩ
+                        </a>
+                    </li>
+                }
 
-                <div class="menu-label mt-4">Bộ phận Quầy Dược</div>
-                <li>
-                    <a href="@Url.Action("Index", "PhatThuoc", new { area = "Staff" })" class="@(ctrl == "PhatThuoc" && act == "Index" ? "active" : "")" title="Chờ Phát Thuốc">
-                        <i class="bi bi-capsule"></i> Chờ Phát Thuốc
-                    </a>
-                </li>
-                <li>
-                    <a href="@Url.Action("LichSu", "PhatThuoc", new { area = "Staff" })" class="@(ctrl == "PhatThuoc" && act == "LichSu" ? "active" : "")" title="Lịch Sử Phát Thuốc">
-                        <i class="bi bi-clock-history"></i> Lịch Sử Phát Thuốc
-                    </a>
-                </li>
+                @if (maChucVu == 5 || maChucVu == 6) // Cận Lâm Sàng
+                {
+                    <div class="menu-label">Bộ phận Cận lâm sàng</div>
+                    <li>
+                        <a href="@Url.Action("Index", "CLS", new { area = "Staff" })" class="@(ctrl == "CLS" ? "active" : "")" title="Cận lâm sàng">
+                            <i class="bi bi-clipboard2-pulse"></i> Cận lâm sàng
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("LichSu", "CLS", new { area = "Staff" })" class="@(ctrl == "CLS" && act == "LichSu" ? "active" : "")" title="Lịch sử xét nghiệm">
+                            <i class="bi bi-clock-history"></i> Lịch sử xét nghiệm
+                        </a>
+                    </li>
+                }
+
+                @if (maChucVu == 9) // Thu Ngân
+                {
+                    <div class="menu-label">Bộ phận Thu Ngân</div>
+                    <li>
+                        <a href="@Url.Action("Index", "ThuNgan", new { area = "Staff" })" class="@(ctrl == "ThuNgan" && act == "Index" ? "active" : "")" title="Quầy thu viện phí">
+                            <i class="bi bi-cash-coin"></i> Quầy thu viện phí
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("LichSu", "ThuNgan", new { area = "Staff" })" class="@(ctrl == "ThuNgan" && act == "LichSu" ? "active" : "")" title="Lịch sử thu tiền">
+                            <i class="bi bi-receipt-cutoff"></i> Lịch sử thu tiền
+                        </a>
+                    </li>
+                }
+
+                @if (maChucVu == 12) // Phát thuốc
+                {
+                    <div class="menu-label">Bộ phận Quầy Dược</div>
+                    <li>
+                        <a href="@Url.Action("Index", "PhatThuoc", new { area = "Staff" })" class="@(ctrl == "PhatThuoc" && act == "Index" ? "active" : "")" title="Chờ Phát Thuốc">
+                            <i class="bi bi-capsule"></i> Chờ Phát Thuốc
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("LichSu", "PhatThuoc", new { area = "Staff" })" class="@(ctrl == "PhatThuoc" && act == "LichSu" ? "active" : "")" title="Lịch Sử Phát Thuốc">
+                            <i class="bi bi-clock-history"></i> Lịch Sử Phát Thuốc
+                        </a>
+                    </li>
+                }
             </ul>
 
             <div class="mt-auto p-3 border-top" style="border-color: rgba(255,255,255,0.05) !important;">
