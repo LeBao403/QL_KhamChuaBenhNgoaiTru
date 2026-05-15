@@ -238,7 +238,8 @@ CREATE TABLE PHIEUDANGKY (
     TrangThai NVARCHAR(20) CHECK (TrangThai IN (N'Chờ xử lý', N'Đã xác nhận', N'Hủy')),
     LyDo NVARCHAR(500),
     MaPhong INT,
-    MaKhungGio INT
+    MaKhungGio INT,
+	CreatedAt DATETIME NOT NULL DEFAULT GETDATE()
 );
 
 CREATE TABLE PHIEUKHAMBENH ( 

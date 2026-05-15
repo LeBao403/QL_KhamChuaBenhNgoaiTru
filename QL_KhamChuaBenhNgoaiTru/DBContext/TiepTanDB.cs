@@ -453,7 +453,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return dt;
         }
 
-        // 2. Lấy danh sách ONLINE (Từ Web) - CÓ THÊM LỌC NGÀY
+        // 2. Lấy danh sách ONLINE (Từ Web) - ĐÃ KHÓA VAN (CHỈ HIỂN THỊ KHI ĐÃ THANH TOÁN)
         public DataTable GetDanhSachOnline(int maPhongTiepTan, DateTime tuNgay, DateTime denNgay)
         {
             DataTable dt = new DataTable();
@@ -468,12 +468,13 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             pkb.MaPhieuKhamBenh, pkb.STT AS STT_Kham, pkb.MaPhong AS PhongKhamChiDinh
         FROM PHIEUDANGKY pdk
         JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN
+        JOIN HOADON h ON pdk.MaPhieuDK = h.MaPhieuDK -- BẮT BUỘC MÓC VÀO BẢNG HÓA ĐƠN
         LEFT JOIN PHIEUKHAMBENH pkb ON pdk.MaPhieuDK = pkb.MaPhieuDK
         WHERE pdk.MaPhong = @MaPhong
           AND pdk.HinhThucDangKy = N'Online'
-          -- ĐỔI THÀNH LỌC THEO KHOẢNG THỜI GIAN
           AND CAST(pdk.NgayDangKy AS DATE) >= CAST(@TuNgay AS DATE)
           AND CAST(pdk.NgayDangKy AS DATE) <= CAST(@DenNgay AS DATE)
+          AND h.TrangThaiThanhToan = N'Đã thanh toán' -- CHỐT CHẶN: CHỈ LẤY VÉ ĐÃ NÔN TIỀN
           AND (pdk.TrangThai = N'Chờ xử lý' OR (pdk.TrangThai = N'Đã xác nhận' AND pkb.TrangThai IN (N'Chờ thanh toán', N'Chờ cấp số')))
         ORDER BY pdk.NgayDangKy ASC, pdk.MaPhieuDK ASC";
 

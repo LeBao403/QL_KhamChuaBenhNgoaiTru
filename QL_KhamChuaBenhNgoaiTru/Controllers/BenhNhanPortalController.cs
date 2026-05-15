@@ -87,6 +87,49 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         // GET: Hiển thị form đăng ký và tải sẵn Dịch vụ
         public ActionResult DatLichKham()
         {
+            // ==========================================================
+            // 🟢 MÁY QUÉT RÁC TỰ ĐỘNG (Dọn dẹp lịch đặt ảo / tắt ngang trình duyệt)
+            // Quét mỗi khi ai đó mở trang Đặt lịch
+            // ==========================================================
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString))
+                {
+                    conn.Open();
+                    string sqlCleanup = @"
+                        -- 1. Tìm các phiếu Online 'Chờ xử lý', 'Chưa thanh toán' bị treo quá 10 phút (DÙNG CỘT CreatedAt)
+                        UPDATE p 
+                        SET p.TrangThai = N'Hủy'
+                        FROM PHIEUDANGKY p
+                        JOIN HOADON h ON p.MaPhieuDK = h.MaPhieuDK
+                        WHERE p.HinhThucDangKy = N'Online' 
+                          AND p.TrangThai = N'Chờ xử lý' 
+                          AND h.TrangThaiThanhToan = N'Chưa thanh toán'
+                          AND DATEDIFF(MINUTE, p.CreatedAt, GETDATE()) > 10;
+
+                        -- 2. Đồng bộ: Hóa đơn của các phiếu bị hủy cũng phải thành 'Đã hủy'
+                        UPDATE h
+                        SET h.TrangThaiThanhToan = N'Đã hủy'
+                        FROM HOADON h
+                        JOIN PHIEUDANGKY p ON h.MaPhieuDK = p.MaPhieuDK
+                        WHERE p.TrangThai = N'Hủy' 
+                          AND h.TrangThaiThanhToan = N'Chưa thanh toán';
+
+                        -- 3. Quét nốt Chi tiết Dịch Vụ cho sạch rác
+                        UPDATE c
+                        SET c.TrangThaiThanhToan = N'Hủy'
+                        FROM CT_HOADON_DV c
+                        JOIN HOADON h ON c.MaHD = h.MaHD
+                        WHERE h.TrangThaiThanhToan = N'Đã hủy' 
+                          AND c.TrangThaiThanhToan = N'Chưa thanh toán';
+                    ";
+                    SqlCommand cmdCleanup = new SqlCommand(sqlCleanup, conn);
+                    cmdCleanup.ExecuteNonQuery();
+                }
+            }
+            catch { /* Lỗi quét rác thì cứ bỏ qua để luồng code chính chạy tiếp */ }
+            // ==========================================================
+
             var bn = Session["BenhNhan"] as BenhNhanModel;
             if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 
@@ -308,6 +351,49 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         // ==================== 3. XEM / HỦY LỊCH KHÁM ====================
         public ActionResult LichKham(string trangThai = "")
         {
+            // ==========================================================
+            // 🟢 MÁY QUÉT RÁC TỰ ĐỘNG (Dọn dẹp lịch đặt ảo / tắt ngang trình duyệt)
+            // Quét mỗi khi ai đó vào xem danh sách lịch khám
+            // ==========================================================
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString))
+                {
+                    conn.Open();
+                    string sqlCleanup = @"
+                        -- 1. Tìm các phiếu Online 'Chờ xử lý', 'Chưa thanh toán' bị treo quá 10 phút (DÙNG CỘT CreatedAt)
+                        UPDATE p 
+                        SET p.TrangThai = N'Hủy'
+                        FROM PHIEUDANGKY p
+                        JOIN HOADON h ON p.MaPhieuDK = h.MaPhieuDK
+                        WHERE p.HinhThucDangKy = N'Online' 
+                          AND p.TrangThai = N'Chờ xử lý' 
+                          AND h.TrangThaiThanhToan = N'Chưa thanh toán'
+                          AND DATEDIFF(MINUTE, p.CreatedAt, GETDATE()) > 10;
+
+                        -- 2. Đồng bộ: Hóa đơn của các phiếu bị hủy cũng phải thành 'Đã hủy'
+                        UPDATE h
+                        SET h.TrangThaiThanhToan = N'Đã hủy'
+                        FROM HOADON h
+                        JOIN PHIEUDANGKY p ON h.MaPhieuDK = p.MaPhieuDK
+                        WHERE p.TrangThai = N'Hủy' 
+                          AND h.TrangThaiThanhToan = N'Chưa thanh toán';
+
+                        -- 3. Quét nốt Chi tiết Dịch Vụ cho sạch rác
+                        UPDATE c
+                        SET c.TrangThaiThanhToan = N'Hủy'
+                        FROM CT_HOADON_DV c
+                        JOIN HOADON h ON c.MaHD = h.MaHD
+                        WHERE h.TrangThaiThanhToan = N'Đã hủy' 
+                          AND c.TrangThaiThanhToan = N'Chưa thanh toán';
+                    ";
+                    SqlCommand cmdCleanup = new SqlCommand(sqlCleanup, conn);
+                    cmdCleanup.ExecuteNonQuery();
+                }
+            }
+            catch { /* Lỗi quét rác thì cứ bỏ qua để luồng code chính chạy tiếp */ }
+            // ==========================================================
+
             var bn = Session["BenhNhan"] as BenhNhanModel;
             if (bn == null) return RedirectToAction("Login", "TaiKhoan");
 

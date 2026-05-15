@@ -96,7 +96,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                                 conn.Open();
                                 string sql = @"
                                     DECLARE @MaPhieuDK VARCHAR(20) = (SELECT MaPhieuDK FROM HOADON WHERE MaHD = @MaHD);
-                                    UPDATE HOADON SET TrangThaiThanhToan = N'Đã thanh toán', NgayThanhToan = GETDATE(), HinhThucThanhToan = N'Thẻ VNPAY' WHERE MaHD = @MaHD;
+                                    UPDATE HOADON SET TrangThaiThanhToan = N'Đã thanh toán', NgayThanhToan = GETDATE(), HinhThucThanhToan = N'Thẻ' WHERE MaHD = @MaHD;
                                     UPDATE CT_HOADON_DV SET TrangThaiThanhToan = N'Đã thanh toán' WHERE MaHD = @MaHD;
                                     UPDATE CT_HOADON_THUOC SET TrangThaiThanhToan = N'Đã thanh toán' WHERE MaHD = @MaHD;
                                     IF @MaPhieuDK IS NOT NULL BEGIN
@@ -118,7 +118,33 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                     }
                     else
                     {
-                        ViewBag.Message = "Giao dịch không thành công. Khách hủy hoặc thẻ lỗi (Mã: " + vnp_ResponseCode + ")";
+                        // ==========================================================
+                        // FIX LỖI GHOST BOOKING: KHÁCH BẤM HỦY HOẶC THẺ LỖI
+                        // ==========================================================
+                        try
+                        {
+                            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString))
+                            {
+                                conn.Open();
+                                string sql = @"
+                                    DECLARE @MaPhieuDK VARCHAR(20) = (SELECT MaPhieuDK FROM HOADON WHERE MaHD = @MaHD);
+                                    
+                                    -- Cập nhật Hóa đơn và Chi tiết dịch vụ thành Đã hủy
+                                    UPDATE HOADON SET TrangThaiThanhToan = N'Đã hủy' WHERE MaHD = @MaHD;
+                                    UPDATE CT_HOADON_DV SET TrangThaiThanhToan = N'Hủy' WHERE MaHD = @MaHD;
+                                    
+                                    -- Rất Quan Trọng: Cập nhật Phiếu đăng ký thành Hủy để nhả lại Slot
+                                    IF @MaPhieuDK IS NOT NULL BEGIN
+                                        UPDATE PHIEUDANGKY SET TrangThai = N'Hủy' WHERE MaPhieuDK = @MaPhieuDK;
+                                    END";
+                                SqlCommand cmd = new SqlCommand(sql, conn);
+                                cmd.Parameters.AddWithValue("@MaHD", maHoaDon);
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        catch { /* Bỏ qua lỗi nếu việc cập nhật thất bại */ }
+
+                        ViewBag.Message = "Giao dịch không thành công. Bạn đã hủy thanh toán hoặc thẻ bị lỗi. Hệ thống đã tự động hủy lịch đặt của bạn để nhường chỗ cho người khác.";
                         ViewBag.Status = "error";
                     }
                 }

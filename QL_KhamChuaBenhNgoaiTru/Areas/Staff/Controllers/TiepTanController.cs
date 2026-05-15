@@ -80,28 +80,38 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
         [HttpPost]
         public JsonResult XacNhanDichVu(string maPhieuDK, string maDV, int maPhong, string lyDo)
         {
-            // Đổi điều kiện check rỗng
+            // Kiểm tra rỗng
             if (string.IsNullOrEmpty(maPhieuDK) || string.IsNullOrEmpty(maDV) || maPhong <= 0)
                 return Json(new { success = false, message = "Vui lòng chọn đầy đủ Dịch vụ và Phòng khám!" });
 
             string tenPhong, tenKhoa;
             bool requirePayment;
 
-            // Gọi hàm DB đã update
-            PhieuDangKyResult result = db.XacNhanDichVuKham(maPhieuDK, maDV, maPhong, lyDo, out tenPhong, out tenKhoa, out requirePayment);
-
-            if (result.Success)
+            try
             {
-                return Json(new
+                // Gọi hàm DB đã update (Đã gài bẫy kiểm tra Hóa đơn Đã thanh toán)
+                PhieuDangKyResult result = db.XacNhanDichVuKham(maPhieuDK, maDV, maPhong, lyDo, out tenPhong, out tenKhoa, out requirePayment);
+
+                if (result.Success)
                 {
-                    success = true,
-                    stt = result.STT,
-                    phong = tenPhong,
-                    khoa = tenKhoa,
-                    requirePayment = requirePayment
-                });
+                    return Json(new
+                    {
+                        success = true,
+                        stt = result.STT,
+                        phong = tenPhong,
+                        khoa = tenKhoa,
+                        requirePayment = requirePayment
+                    });
+                }
+
+                // Trả về chuỗi lỗi nếu DB xử lý thất bại (Ví dụ lỗi kết nối)
+                return Json(new { success = false, message = result.ErrorMessage });
             }
-            return Json(new { success = false, message = result.ErrorMessage });
+            catch (Exception ex)
+            {
+                // Bắt trúng ngay cái Exception báo "Chưa thanh toán" ném ra từ file TiepTanDB.cs
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
         [HttpPost]
