@@ -739,6 +739,20 @@
         var currentTrangThai = '';
         var currentAISuggestions = [];
 
+        var activeMaPhieuKham = null;
+
+        // Tự động gán biến nếu load lại trang mà vẫn đang có người "Đang khám"
+        @if (ViewBag.DangKham != null)
+        {
+            foreach (var item in ViewBag.DangKham)
+            {
+                if (item.TrangThai == "Đang khám")
+                {
+                    <text>activeMaPhieuKham = '@item.MaPhieuKhamBenh';</text>
+                }
+            }
+        }
+
         // Hàm thêm Dòng Bệnh
         function AddBenhRow(maBenh, tenBenh) {
             var tr = `
@@ -977,14 +991,29 @@
         }
 
         // Logic Phân Trang cho 3 bảng
+        // Logic Phân Trang cho 3 bảng (Đã nâng cấp giữ nguyên trang khi Auto Refresh)
         function setupPagination(tbodyId, navId, itemsPerPage) {
             let rows = $('#' + tbodyId + ' tr.paginate-row');
             let totalRows = rows.length;
             let totalPages = Math.ceil(totalRows / itemsPerPage);
-            if (totalPages <= 1) { $('#' + navId).empty(); return; }
+
+            if (totalPages <= 1) {
+                $('#' + navId).empty();
+                rows.show(); // Đảm bảo luôn hiện dữ liệu nếu rớt xuống còn 1 trang
+                return;
+            }
+
+            // --- BƯỚC QUAN TRỌNG: Nhớ vị trí trang hiện tại ---
+            let currentPage = 1;
+            let activeLink = $('#' + navId).find('li.active a.page-link'); // Tìm nút trang đang được bôi xanh
+            if (activeLink.length > 0) {
+                currentPage = parseInt(activeLink.attr('data-page'));
+                if (isNaN(currentPage)) currentPage = 1;
+            }
 
             function showPage(page) {
                 if (page < 1) page = 1;
+                // Xử lý thông minh: Nếu đang ở trang 3 mà 1 bệnh nhân bị xóa đi làm tụt xuống còn 2 trang -> Tự lùi về trang 2
                 if (page > totalPages) page = totalPages;
 
                 rows.hide();
@@ -1001,13 +1030,16 @@
                 html += '</ul></nav>';
 
                 $('#' + navId).html(html);
+
                 $('#' + navId + ' .page-link').off('click').on('click', function (e) {
                     e.preventDefault();
                     let targetPage = parseInt($(this).attr('data-page'));
                     if (!isNaN(targetPage)) showPage(targetPage);
                 });
             }
-            showPage(1);
+
+            // Gọi hiển thị với trang vừa ghi nhớ được (thay vì cố định là 1)
+            showPage(currentPage);
         }
 
         // Cập nhật giao diện khi chọn/tiếp nhận bệnh nhân
@@ -1109,11 +1141,25 @@
         }
 
         function TiepNhanBN(maPhieu) {
+            if (activeMaPhieuKham != null && activeMaPhieuKham !== maPhieu) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Phòng khám đang bận!',
+                    text: 'Bạn đang khám cho 1 bệnh nhân khác. Vui lòng hoàn tất khám hoặc cho người đó đi Cận lâm sàng trước khi tiếp nhận người mới!',
+                    confirmButtonColor: '#0d6efd'
+                });
+                return;
+            }
+
             $.post('@Url.Action("TiepNhan", "BacSi", new { area = "Staff" })', { maPhieu: maPhieu }, function (res) {
                 if (res.success) {
+                    // Đánh dấu là đang có người trong phòng
+                    activeMaPhieuKham = maPhieu;
+
                     $('#row-wait-' + maPhieu).fadeOut(300, function() { $(this).remove(); setupPagination('body-cho-kham', 'page-cho-kham', 5); });
+
                     var rowDangKham = `<tr style="cursor:pointer;" class="paginate-row" onclick="LoadDangKham('${res.Data.MaPhieuKhamBenh}')" id="row-dang-${res.Data.MaPhieuKhamBenh}">
-                        <td class="text-primary fw-bold">${res.Data.TenBN}</td><td>${res.Data.LyDoDenKham}</td>
+                        <td class="text-primary fw-bold">${res.Data.TenBN} <div class="mt-1"><span class="badge bg-primary text-white"><i class="fas fa-user-md me-1"></i>Đang khám</span></div></td><td>${res.Data.LyDoDenKham}</td>
                    </tr>`;
                     $('#table-dangkham tbody').append(rowDangKham);
                     setupPagination('body-dang-kham', 'page-dang-kham', 5);
@@ -1125,11 +1171,32 @@
         }
 
         function LoadDangKham(maPhieu) {
+            if (activeMaPhieuKham != null && activeMaPhieuKham !== maPhieu) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Đang thao tác hồ sơ khác!',
+                    text: 'Bạn đang khám dở một bệnh nhân. Không thể xem/khám hồ sơ của bệnh nhân khác (kể cả bệnh nhân vừa có kết quả CLS) cho tới khi hoàn tất người hiện tại!',
+                    confirmButtonColor: '#dc3545'
+                });
+                return;
+            }
+
             $.post('@Url.Action("ChiTietDangKham", "BacSi", new { area = "Staff" })', { maPhieu: maPhieu }, function (res) {
                 if (res.success) {
                     $('.queue-table tr').removeClass('table-active');
                     $('#row-dang-' + maPhieu).addClass('table-active');
-                    $('#row-dakham-' + maPhieu).addClass('table-active'); // Áp dụng highlight cho cả bảng Đã khám
+                    $('#row-dakham-' + maPhieu).addClass('table-active');
+
+                    // Khi gọi lại bệnh nhân (có kết quả CLS hoặc đang khám dở)
+                    if (res.Data.TrangThai === 'Đã có kết quả CLS' || res.Data.TrangThai === 'Đang khám') {
+                        activeMaPhieuKham = maPhieu; // Giữ cờ khóa thao tác
+
+                        // Đổi giao diện badge tạm thời thành đang khám để bác sĩ thấy
+                        let td = $('#row-dang-' + maPhieu + ' td:first');
+                        td.find('.badge').removeClass('bg-warning text-dark').addClass('bg-primary text-white').html('<i class="fas fa-user-md me-1"></i>Đang khám lại');
+
+                        // (Lưu ý: Bạn nên gọi 1 Ajax nhỏ báo cho C# biết để Update CSDL về trạng thái "Đang khám")
+                    }
 
                     ResetFormAndBindData(res.Data);
                     LoadKetQuaCLS(maPhieu);
@@ -1333,9 +1400,15 @@
                     }
                     setupPagination('body-cho-kham', 'page-cho-kham', 5);
 
-                    // --- THÊM 2 DÒNG NÀY ĐỂ CẬP NHẬT LUÔN BẢNG ĐANG KHÁM ---
+                    // 2. Cập nhật bảng Đang Khám
                     $('#body-dang-kham').html($html.find('#body-dang-kham').html());
                     setupPagination('body-dang-kham', 'page-dang-kham', 5);
+
+                    // --- THÊM DÒNG NÀY ---
+                    // Highlight lại dòng của người đang khám (nếu có)
+                    if (activeMaPhieuKham) {
+                        $('#row-dang-' + activeMaPhieuKham).addClass('table-active');
+                    }
                 });
             }
 
