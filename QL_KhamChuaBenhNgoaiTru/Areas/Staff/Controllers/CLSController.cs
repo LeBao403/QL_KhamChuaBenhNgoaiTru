@@ -13,6 +13,8 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             try
             {
                 string maNV = Session["MaNV"]?.ToString() ?? "NV001";
+                string tenPhong = db.GetTenPhongByMaNV(maNV);
+                ViewBag.TenPhong = tenPhong;
                 // Danh sách chờ thực hiện (Code cũ của bạn)
                 var danhSachCho = db.GetDanhSachChoThucHien(maNV);
 

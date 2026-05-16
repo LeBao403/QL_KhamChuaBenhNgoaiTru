@@ -712,11 +712,15 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                             string maDonThuoc = Utilities.Generate(conn, tran, "DT", "DON_THUOC", "MaDonThuoc", 6);
 
-                            string sqlTaoDon = "INSERT INTO DON_THUOC (MaDonThuoc, MaPhieuKhamBenh, NgayKe, TrangThai) VALUES (@MaDT, @MaPhieu, GETDATE(), N'Chưa phát')";
+                            // Thêm trường LoiDanBS vào câu lệnh INSERT
+                            string sqlTaoDon = "INSERT INTO DON_THUOC (MaDonThuoc, MaPhieuKhamBenh, NgayKe, LoiDanBS, TrangThai) VALUES (@MaDT, @MaPhieu, GETDATE(), @LoiDanBS, N'Chưa phát')";
                             using (SqlCommand cmdDT = new SqlCommand(sqlTaoDon, conn, tran))
                             {
                                 cmdDT.Parameters.AddWithValue("@MaDT", maDonThuoc);
                                 cmdDT.Parameters.AddWithValue("@MaPhieu", model.MaPhieuKhamBenh);
+                                // Gán giá trị Dặn dò từ model vào tham số @LoiDanBS, nếu trống thì lưu NULL
+                                cmdDT.Parameters.AddWithValue("@LoiDanBS", string.IsNullOrEmpty(model.DanDo) ? (object)DBNull.Value : model.DanDo);
+
                                 cmdDT.ExecuteNonQuery();
                             }
 

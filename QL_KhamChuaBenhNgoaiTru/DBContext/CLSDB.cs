@@ -456,6 +456,33 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             return list;
         }
 
+        // Thêm hàm này vào trong class CLSDB
+        public string GetTenPhongByMaNV(string maNV)
+        {
+            string tenPhong = "";
+            string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString;
+
+            using (System.Data.SqlClient.SqlConnection con = new System.Data.SqlClient.SqlConnection(connectionString))
+            {
+                // Câu truy vấn JOIN bảng NHANVIEN và PHONG
+                string sql = @"SELECT p.TenPhong 
+                       FROM NHANVIEN nv 
+                       JOIN PHONG p ON nv.MaPhong = p.MaPhong 
+                       WHERE nv.MaNV = @MaNV";
+                using (System.Data.SqlClient.SqlCommand cmd = new System.Data.SqlClient.SqlCommand(sql, con))
+                {
+                    cmd.Parameters.AddWithValue("@MaNV", maNV);
+                    con.Open();
+                    var result = cmd.ExecuteScalar();
+                    if (result != null && result != DBNull.Value)
+                    {
+                        tenPhong = result.ToString();
+                    }
+                }
+            }
+            return tenPhong;
+        }
+
         // Đổi int thành string
         public ThongTinInDTO GetThongTinIn(string maKetQua)
         {
