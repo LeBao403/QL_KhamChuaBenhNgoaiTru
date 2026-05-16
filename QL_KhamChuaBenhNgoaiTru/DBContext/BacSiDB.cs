@@ -91,7 +91,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             {
                 conn.Open();
                 string sql = @"
-        SELECT PKB.MaPhieuKhamBenh, PKB.LyDoDenKham, PKB.TrieuChung, PKB.KetLuan, PKB.TrangThai, PKB.DanDo, PKB.NgayTaiKham,
+        SELECT PKB.MaPhieuKhamBenh, PKB.MaBN, PKB.LyDoDenKham, PKB.TrieuChung, PKB.KetLuan, PKB.TrangThai, PKB.DanDo, PKB.NgayTaiKham,
                BN.HoTen, BN.GioiTinh, BN.NgaySinh, BN.DiaChi, BN.SDT, BN.CCCD, BN.BHYT, BN.SoTheBHYT, BN.HanSuDungBHYT, BN.MucHuongBHYT,
                SL.ChieuCao, SL.CanNang, SL.NhietDo, SL.HuyetApTamThu, SL.HuyetApTamTruong, SL.Mach, SL.NhipTho, SL.SpO2,
                (SELECT TOP 1 HoTen FROM NHANVIEN WHERE MaNV = PKB.MaBacSiKham) AS TenBS,
@@ -105,6 +105,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                 var info = new
                 {
                     MaPhieuKhamBenh = "",
+                    MaBN = "",
                     TenBN = "",
                     GioiTinh = "",
                     NgaySinhStr = "",
@@ -154,6 +155,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                             info = new
                             {
                                 MaPhieuKhamBenh = dr["MaPhieuKhamBenh"].ToString(),
+                                MaBN = dr["MaBN"].ToString(),
                                 TenBN = dr["HoTen"].ToString(),
                                 GioiTinh = dr["GioiTinh"].ToString(),
                                 NgaySinhStr = ns.HasValue ? ns.Value.ToString("dd/MM/yyyy") : "Chưa cập nhật",

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
@@ -129,5 +129,53 @@ namespace QL_KhamChuaBenhNgoaiTru.Models
         [Required]
         [DisplayFormat(DataFormatString = "{0:N0}")]
         public decimal ThanhTien { get; set; }
+    }
+
+    public class KhoThongKe
+    {
+        public int MaKho { get; set; }
+        public string TenKho { get; set; }
+        public int SoMatHang { get; set; }
+        public int TongSoLuong { get; set; }
+        public decimal TongGiaTri { get; set; }
+    }
+
+    public class PhieuChuyenKhoViewModel
+    {
+        public int MaPhieuChuyen { get; set; }
+        public int MaKhoNguon { get; set; }
+        public string TenKhoNguon { get; set; }
+        public int MaKhoDich { get; set; }
+        public string TenKhoDich { get; set; }
+        public DateTime? NgayChuyen { get; set; }
+        public string MaNV_LapPhieu { get; set; }
+        public string TenNguoiLap { get; set; }
+        public string MaNV_Duyet { get; set; }
+        public string TenNguoiDuyet { get; set; }
+        public DateTime? NgayDuyet { get; set; }
+        public string TrangThai { get; set; }
+        public string GhiChu { get; set; }
+    }
+
+    public class CT_PhieuChuyenKhoViewModel
+    {
+        public int MaCTPC { get; set; }
+        public int MaPhieuChuyen { get; set; }
+        public string MaThuoc { get; set; }
+        public string TenThuoc { get; set; }
+        public string DonViCoBan { get; set; }
+        public string MaLo { get; set; }
+        public DateTime? NgaySanXuat { get; set; }
+        public DateTime HanSuDung { get; set; }
+        public int SoLuongChuyen { get; set; }
+    }
+
+    public class CT_PhieuChuyenInput
+    {
+        public string MaThuoc { get; set; }
+        public string MaLo { get; set; }
+        public DateTime? NgaySanXuat { get; set; }
+        public DateTime HanSuDung { get; set; }
+        public int SoLuongChuyen { get; set; }
     }
 }

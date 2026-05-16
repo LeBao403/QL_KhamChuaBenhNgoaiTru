@@ -1,4 +1,4 @@
-﻿@model QL_KhamChuaBenhNgoaiTru.Models.KhamBenhViewModel
+@model QL_KhamChuaBenhNgoaiTru.Models.KhamBenhViewModel
 @{
     Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
     ViewBag.Title = "Phòng Khám Bác Sĩ";
@@ -627,6 +627,12 @@
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Ngày hẹn tái khám:</label>
                                 <input type="date" name="NgayTaiKham" id="NgayTaiKham" class="form-control" />
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="KhongCanTaiKham">
+                                    <label class="form-check-label small fw-bold text-success" for="KhongCanTaiKham">
+                                        Bệnh nhân đã khỏi, không cần tái khám
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
@@ -873,6 +879,11 @@
 
         // Hàm tự động tính ngày tái khám dựa trên số ngày uống thuốc ngắn nhất
         function TinhNgayTaiKham() {
+            if ($('#KhongCanTaiKham').is(':checked')) {
+                $('#NgayTaiKham').val('').prop('disabled', true);
+                return;
+            }
+
             // Không tính toán nếu ô nhập đang bị khóa (trường hợp xem lại bệnh nhân đã khám xong)
             if ($('#NgayTaiKham').prop('disabled')) return;
 
@@ -900,6 +911,18 @@
                 $('#NgayTaiKham').val(yyyy + '-' + mm + '-' + dd);
             } else {
                 $('#NgayTaiKham').val(''); // Xóa trắng nếu không có thuốc nào được kê
+            }
+        }
+
+        function CapNhatTrangThaiTaiKham() {
+            var khongCanTaiKham = $('#KhongCanTaiKham').is(':checked');
+            var isHoanThanh = (currentTrangThai === 'Hoàn thành');
+
+            if (khongCanTaiKham) {
+                $('#NgayTaiKham').val('').prop('disabled', true);
+            } else {
+                $('#NgayTaiKham').prop('disabled', isHoanThanh);
+                if (!isHoanThanh) TinhNgayTaiKham();
             }
         }
 
@@ -1046,6 +1069,7 @@
         // Cập nhật giao diện khi chọn/tiếp nhận bệnh nhân
         function ResetFormAndBindData(resData) {
             $('#MaPhieuKhamBenh').val(resData.MaPhieuKhamBenh);
+            $('#printMaBN').text(resData.MaBN || '');
             $('#lblTenBN').text(resData.TenBN);
             $('#lblTuoi').text(resData.NgaySinhStr + ' (' + resData.Tuoi + ' tuổi)');
             $('#lblGioiTinh').text(resData.GioiTinh);
@@ -1067,8 +1091,10 @@
 
             if (resData.NgayTaiKhamStr) {
                 $('#NgayTaiKham').val(resData.NgayTaiKhamStr.split('T')[0].split(' ')[0]);
+                $('#KhongCanTaiKham').prop('checked', false);
             } else {
                 $('#NgayTaiKham').val('');
+                $('#KhongCanTaiKham').prop('checked', resData.TrangThai === 'Hoàn thành');
             }
 
             var cccd = resData.CCCD || 'Chưa cập nhật';
@@ -1105,7 +1131,7 @@
             currentAISuggestions = [];
             $('#drugSuggestionBox').addClass('d-none').empty();
             // Kích hoạt lại option trong combobox và bỏ đánh dấu đang kê
-            $('#cboBenh option, #cboThuoc option').removeClass('in-prescription').prop('disabled', false);
+            $('#cboBenh option, #cboThuoc option, #cboDichVu option').removeClass('in-prescription').prop('disabled', false);
 
             // Nạp dữ liệu cũ (Nếu bệnh nhân Đã Khám)
             if (resData.DanhSachBenh) resData.DanhSachBenh.forEach(b => AddBenhRow(b.MaBenh, b.TenBenh));
@@ -1119,6 +1145,7 @@
             }
 
             $('#chkCLS').trigger('change');
+            CapNhatTrangThaiTaiKham();
             $('.select2').trigger('change');
 
             var isDangDiCLS = (currentTrangThai === 'Chờ thanh toán' || currentTrangThai === 'Chờ cận lâm sàng');
@@ -1216,28 +1243,54 @@
                         if (htmlNoiDung.trim().startsWith('{') || htmlNoiDung.trim().startsWith('[')) {
                             try {
                                 var parsedData = JSON.parse(htmlNoiDung);
-                                var listChiSo = Array.isArray(parsedData) ? parsedData : (parsedData.data || []);
+                                var listChiSoRaw = Array.isArray(parsedData)
+                                    ? parsedData
+                                    : (parsedData.data || parsedData.Data || []);
+                                if (!Array.isArray(listChiSoRaw)) listChiSoRaw = [];
+                                var listChiSo = listChiSoRaw.filter(function (i) {
+                                    if (!i) return false;
+                                    var ten = (i.Ten || i.ten || '').toString().trim();
+                                    var giaTri = (i.GiaTri || i.giaTri || i.KetQua || i.ketQua || '').toString().trim();
+                                    var donVi = (i.DonVi || i.donVi || '').toString().trim();
+                                    var thamChieu = (i.ThamChieu || i.thamChieu || '').toString().trim();
+                                    return ten || giaTri || donVi || thamChieu;
+                                });
+                                var hasMetaColumns = listChiSo.some(function (i) {
+                                    var donVi = (i.DonVi || i.donVi || '').toString().trim();
+                                    var thamChieu = (i.ThamChieu || i.thamChieu || '').toString().trim();
+                                    return (donVi && donVi !== '-') || (thamChieu && thamChieu !== '-');
+                                });
 
                                 var tableHtml = '';
                                 if (listChiSo.length > 0) {
-                                    tableHtml = '<table class="table table-sm table-bordered mt-2"><thead><tr class="table-light"><th>Chỉ số/Nội dung</th><th class="text-center">Kết quả</th><th class="text-center">Đơn vị</th><th class="text-center">CS Bình thường</th></tr></thead><tbody>';
+                                    tableHtml = hasMetaColumns
+                                        ? '<table class="table table-sm table-bordered mt-2"><thead><tr class="table-light"><th>Chỉ số/Nội dung</th><th class="text-center">Kết quả</th><th class="text-center">Đơn vị</th><th class="text-center">CS Bình thường</th></tr></thead><tbody>'
+                                        : '<table class="table table-sm table-bordered mt-2"><thead><tr class="table-light"><th>Chỉ số/Nội dung</th><th class="text-center">Kết quả</th></tr></thead><tbody>';
                                     listChiSo.forEach(function(i) {
-                                        var isWarn = i.Warning ? 'text-danger fw-bold' : 'fw-bold';
-                                        tableHtml += '<tr><td>' + (i.Ten || '') + '</td><td class="text-center ' + isWarn + '">' + (i.GiaTri || '') + '</td><td class="text-center">' + (i.DonVi || '') + '</td><td class="text-center">' + (i.ThamChieu || '') + '</td></tr>';
+                                        var isWarn = (i.Warning || i.warning) ? 'text-danger fw-bold' : 'fw-bold';
+                                        var ten = i.Ten || i.ten || '';
+                                        var giaTri = i.GiaTri || i.giaTri || i.KetQua || i.ketQua || '';
+                                        if (hasMetaColumns) {
+                                            tableHtml += '<tr><td>' + ten + '</td><td class="text-center ' + isWarn + '">' + giaTri + '</td><td class="text-center">' + (i.DonVi || i.donVi || '-') + '</td><td class="text-center">' + (i.ThamChieu || i.thamChieu || '-') + '</td></tr>';
+                                        } else {
+                                            tableHtml += '<tr><td>' + ten + '</td><td class="text-center ' + isWarn + '">' + giaTri + '</td></tr>';
+                                        }
                                     });
                                     tableHtml += '</tbody></table>';
                                 }
 
                                 var ketLuanHtml = '';
-                                if (parsedData.ketluan) {
-                                    ketLuanHtml = '<div class="alert alert-warning p-2 mt-2 mb-0"><strong>Kết luận:</strong> ' + parsedData.ketluan + '</div>';
+                                var ketLuan = parsedData.ketluan || parsedData.KetLuan || '';
+                                if (ketLuan) {
+                                    ketLuanHtml = '<div class="alert alert-warning p-2 mt-2 mb-0"><strong>Kết luận:</strong> ' + ketLuan + '</div>';
                                 }
 
                                 var imgHtml = '';
-                                if (parsedData.images && parsedData.images.length > 0) {
+                                var images = parsedData.images || parsedData.Images || [];
+                                if (images && images.length > 0) {
                                     imgHtml = '<div class="d-flex flex-wrap gap-2 mt-2">';
-                                    parsedData.images.forEach(function(img) {
-                                        imgHtml += '<div class="text-center" style="max-width: 200px;"><img src="' + img.url + '" class="img-thumbnail" style="cursor:pointer;" onclick="window.open(this.src)" title="'+(img.title||'')+'"/><div class="small text-muted mt-1">' + (img.caption || '') + '</div></div>';
+                                    images.forEach(function(img) {
+                                        imgHtml += '<div class="text-center" style="max-width: 200px;"><img src="' + (img.url || img.Url || '') + '" class="img-thumbnail" style="cursor:pointer;" onclick="window.open(this.src)" title="'+(img.title || img.Title || '')+'"/><div class="small text-muted mt-1">' + (img.caption || img.Caption || '') + '</div></div>';
                                     });
                                     imgHtml += '</div>';
                                 }
@@ -1268,6 +1321,7 @@
         function ToggleFormReadOnly(isReadOnly) {
             // SỬA: Đã bỏ #chkCLS ra khỏi danh sách để bác sĩ luôn có thể gạt công tắc đổi giao diện hiển thị
             $('#TrieuChung, #KetLuan, #ChieuCao, #CanNang, #NhietDo, #HuyetApTamThu, #HuyetApTamTruong, #Mach, #SpO2, #DanDo, #NgayTaiKham').prop('disabled', isReadOnly);
+            $('#KhongCanTaiKham').prop('disabled', isReadOnly);
 
             $('#cboBenh, #cboThuoc, #cboDichVu').prop('disabled', isReadOnly);
             $('#chkCoBHYT, #chkKhongBHYT').prop('disabled', isReadOnly);
@@ -1388,6 +1442,9 @@
             var minDate = year + '-' + month + '-' + day;
             $('#NgayTaiKham').attr('min', minDate);
 
+            $('#KhongCanTaiKham').on('change', function () {
+                CapNhatTrangThaiTaiKham();
+            });
 
             function LoadDanhSachChoKham() {
                 $.get(window.location.href, function (data) {
@@ -1468,6 +1525,7 @@
                     // [CODE THÊM VÀO]: Hiện lại mục Dặn dò và Ngày tái khám
                     $('#DanDo').closest('.row').slideDown();
                     $('#NgayTaiKham').closest('.row').slideDown();
+                    CapNhatTrangThaiTaiKham();
 
                     if (!isDangDiCLS && !isHoanThanh) {
                         $('#btnHoanThanh').html('<i class="fas fa-print me-2"></i> In Đơn Thuốc & Lưu').removeClass('btn-danger btn-secondary').addClass('btn-success').prop('disabled', false);
@@ -1623,56 +1681,51 @@
                 var maDV = data.id; var tenDV = data.text;
                 if (!maDV) return;
 
-                // --- SỬA Ở ĐÂY: Lấy giá ngay lập tức từ option vừa click, xóa sạch dấu phẩy ---
+                // --- SỬA Ở ĐÂY: Vô hiệu hóa option vừa chọn để ẩn khỏi danh sách ---
                 var optionElement = $(data.element);
                 var rawGia = optionElement.attr('data-gia') || "0";
                 // Chuyển "120,000.00" thành "120000.00" để hàm parseFloat hiểu được chính xác
                 var giaDV = parseFloat(rawGia.replace(/,/g, ''));
 
-                var exists = false;
-                $('input[name$=".MaDV"]').each(function() { if($(this).val() == maDV) exists = true; });
+                optionElement.prop('disabled', true); // Vô hiệu hóa option vừa chọn
 
-                if(exists) {
-                    alert('Dịch vụ này đã được chỉ định!');
-                } else {
-                    $.post('@Url.Action("GetPhongDichVu", "BacSi", new { area = "Staff" })', { maDV: maDV }, function(phongs) {
-                        var options = '';
-                        if (phongs && phongs.length > 0) {
-                            phongs.forEach(function(p, i) {
-                                var isSelected = (i === 0) ? 'selected' : '';
-                                options += `<option value="${p.MaPhong}" ${isSelected}>${p.TenPhong} (Đang chờ: ${p.SoNguoiCho} người)</option>`;
-                            });
-                        } else {
-                            options = '<option value="">-- Không có phòng phù hợp --</option>';
-                        }
+                $.post('@Url.Action("GetPhongDichVu", "BacSi", new { area = "Staff" })', { maDV: maDV }, function(phongs) {
+                    var options = '';
+                    if (phongs && phongs.length > 0) {
+                        phongs.forEach(function(p, i) {
+                            var isSelected = (i === 0) ? 'selected' : '';
+                            options += `<option value="${p.MaPhong}" ${isSelected}>${p.TenPhong} (Đang chờ: ${p.SoNguoiCho} người)</option>`;
+                        });
+                    } else {
+                        options = '<option value="">-- Không có phòng phù hợp --</option>';
+                    }
 
-                        var tenHienThi = tenDV.split('] ')[1] || tenDV;
-                        var rawGia = $('#cboDichVu option:selected').attr('data-gia') || "0";
-                        var giaDV = parseFloat(rawGia.replace(',', '.')); // Thay dấu phẩy thành chấm đề phòng format C# tiếng Việt
+                    var tenHienThi = tenDV.split('] ')[1] || tenDV;
+                    var rawGia = optionElement.attr('data-gia') || "0";
+                    var giaDV = parseFloat(rawGia.replace(',', '.')); // Thay dấu phẩy thành chấm đề phòng format C# tiếng Việt
 
-                        var tr = `
-                            <tr>
-                                <td>
-                                    <input type="hidden" name="ChiDinhs.Index" value="${dvIndex}" />
-                                    <input type="hidden" name="ChiDinhs[${dvIndex}].MaDV" value="${maDV}" />
-                                    <input type="hidden" class="dv-gia" value="${giaDV}" />
+                    var tr = `
+                        <tr>
+                            <td>
+                                <input type="hidden" name="ChiDinhs.Index" value="${dvIndex}" />
+                                <input type="hidden" name="ChiDinhs[${dvIndex}].MaDV" value="${maDV}" />
+                                <input type="hidden" class="dv-gia" value="${giaDV}" />
 
-                                    <strong class="text-primary">${tenHienThi}</strong>
-                                </td>
-                                <td>
-                                    <select name="ChiDinhs[${dvIndex}].MaPhong" class="form-select form-select-sm border-danger text-danger fw-bold bg-light">
-                                        ${options}
-                                    </select>
-                                </td>
-                                <td class="text-center">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" onclick="$(this).closest('tr').remove()"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        `;
-                        $('#tbDichVu tbody').append(tr);
-                        dvIndex++;
-                    });
-                }
+                                <strong class="text-primary">${tenHienThi}</strong>
+                            </td>
+                            <td>
+                                <select name="ChiDinhs[${dvIndex}].MaPhong" class="form-select form-select-sm border-danger text-danger fw-bold bg-light">
+                                    ${options}
+                                </select>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="XoaDichVuCLS(this, '${maDV}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                    $('#tbDichVu tbody').append(tr);
+                    dvIndex++;
+                });
                 $(this).val(null).trigger('change');
             });
 
@@ -1779,7 +1832,7 @@
 
                     // THÊM LỜI DẶN VÀ TÁI KHÁM VÀO ĐƠN THUỐC
                     var danDo = $('#DanDo').val();
-                    var ngayHẹn = $('#NgayTaiKham').val();
+                    var ngayHẹn = $('#KhongCanTaiKham').is(':checked') ? '' : $('#NgayTaiKham').val();
 
                     if (danDo || ngayHẹn) {
                         tbodyHtml += `<tr><td colspan="9" class="text-start pb-3 pt-3">`;
@@ -1806,5 +1859,13 @@
                 setTimeout(function () { $('#frmKhamBenh').submit(); }, 500);
             });
         });
+
+        // Hàm xóa dịch vụ và enable lại option trong dropdown
+        function XoaDichVuCLS(btn, maDV) {
+            $(btn).closest('tr').remove();
+            $('#cboDichVu').find('option[value="' + maDV + '"]').prop('disabled', false);
+            // Dùng đoạn dưới nếu Select2 không tự cập nhật giao diện
+            // $('#cboDichVu').select2();
+        }
     </script>
 }

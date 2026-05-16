@@ -95,14 +95,15 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
                 }
             }
 
-            bool result = db.XacNhanThuTien(maHD, maPKB, phuongThucTT, dsHuyDV, dsHuyThuoc, listThuoc, out errorMsg);
+            DataTable dtThanhToanNow;
+            bool result = db.XacNhanThuTien(maHD, maPKB, phuongThucTT, dsHuyDV, dsHuyThuoc, listThuoc, out errorMsg, out dtThanhToanNow);
 
             if (result) 
             {
                 // GỬI EMAIL HÓA ĐƠN NẾU BỆNH NHÂN CÓ EMAIL
                 try
                 {
-                    bool emailSent = QL_KhamChuaBenhNgoaiTru.Helpers.InvoiceEmailService.SendInvoicePdfByMaHD(maHD, phuongThucTT);
+                    bool emailSent = QL_KhamChuaBenhNgoaiTru.Helpers.InvoiceEmailService.SendInvoicePdfByMaHD(maHD, phuongThucTT, dtThanhToanNow);
                     System.Diagnostics.Debug.WriteLine(emailSent
                         ? $"Da gui PDF hoa don {maHD}"
                         : $"Khong gui duoc PDF hoa don {maHD}. Kiem tra email benh nhan hoac log_email.txt trong TEMP.");

@@ -6,7 +6,6 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
-using System.Data.SqlClient;
 
 namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
 {
@@ -39,6 +38,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
                 var dsTonKho = db.GetTonKho(page, pageSize, keyword, maKho, trangThaiTon);
                 int totalCount = db.GetTonKhoCount(keyword, maKho, trangThaiTon);
 
+                ViewBag.ThongKeCacKho = db.GetThongKeCacKho();
                 ViewBag.DsTonKho = dsTonKho;
                 ViewBag.Page = page;
                 ViewBag.PageSize = pageSize;
@@ -137,7 +137,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
 
                 foreach (var key in thuocKeys)
                 {
-                    var idx = key.Replace("MaThuoc_", "");
+                    var idx = key.Replace("MaThuoc", ""); // Sẽ trả về "_1"
                     var maThuoc = form[key];
                     var maLo = form["MaLo" + idx];
                     var soLuongStr = form["SoLuong" + idx];
@@ -261,6 +261,24 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             return View(phieu);
         }
 
+        // ===================== XÓA CHI TIẾT PHIẾU NHẬP =====================
+        [HttpPost]
+        public ActionResult XoaChiTietPhieuNhap(int id)
+        {
+            try
+            {
+                bool result = db.XoaChiTietPhieuNhap(id);
+                if (result)
+                    return Json(new { success = true, message = "Đã loại bỏ chi tiết thành công!" });
+                else
+                    return Json(new { success = false, message = "Không thể xóa. Phiếu có thể không ở trạng thái Chờ duyệt hoặc dữ liệu không tồn tại." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi: " + ex.Message });
+            }
+        }
+
         // ===================== DUYỆT PHIẾU NHẬP =====================
         [HttpPost]
         public ActionResult DuyetPhieuNhap(int id)
@@ -352,6 +370,192 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
                     return Json(new { success = true, giaNhap = Convert.ToDecimal(result) }, JsonRequestBehavior.AllowGet);
             }
             return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+        }
+        // ===================== PHIẾU CHUYỂN KHO =====================
+        public ActionResult DanhSachPhieuChuyen(int page = 1, string keyword = "", string trangThai = "")
+        {
+            int pageSize = 10;
+            var phieuChuyens = db.GetPhieuChuyen(page, pageSize, keyword, trangThai);
+            int totalRecords = db.GetPhieuChuyenCount(keyword, trangThai);
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+            ViewBag.Keyword = keyword;
+            ViewBag.TrangThai = trangThai;
+
+            return View(phieuChuyens);
+        }
+
+        [HttpGet]
+        public JsonResult GetThuocTrongKho(int maKho)
+        {
+            try
+            {
+                var dsThuoc = db.GetThuocTonKhoByMaKho(maKho);
+                var result = dsThuoc.Select(t => new {
+                    MaThuoc = t.MaThuoc,
+                    TenThuoc = t.TenThuoc,
+                    DonViCoBan = t.DonViCoBan,
+                    MaLo = t.MaLo,
+                    NgaySanXuat = t.NgaySanXuat.HasValue ? t.NgaySanXuat.Value.ToString("yyyy-MM-dd") : "",
+                    HanSuDung = t.HanSuDung.ToString("yyyy-MM-dd"),
+                    SoLuongTon = t.SoLuongTon
+                }).ToList();
+                return Json(new { success = true, data = result }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult CreatePhieuChuyen()
+        {
+            ViewBag.DsKho = db.GetAllKho();
+            ViewBag.DsThuoc = db.GetAllThuoc();
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreatePhieuChuyen(FormCollection form)
+        {
+            try
+            {
+                int maKhoNguon = int.Parse(form["MaKhoNguon"]);
+                int maKhoDich = int.Parse(form["MaKhoDich"]);
+                string ghiChu = form["GhiChu"];
+                string maNV = Session["MaNV"].ToString();
+
+                var chiTiets = new List<CT_PhieuChuyenInput>();
+                var thuocKeys = form.AllKeys.Where(k => k.StartsWith("MaThuoc"));
+
+                foreach (var key in thuocKeys)
+                {
+                    var idx = key.Replace("MaThuoc", "");
+                    var maThuoc = form[key];
+                    var maLo = form["MaLo" + idx];
+                    var soLuongStr = form["SoLuong" + idx];
+                    var ngaySXStr = form["NgaySanXuat" + idx];
+                    var hanSDStr = form["HanSuDung" + idx];
+
+                    if (!string.IsNullOrEmpty(maThuoc) && !string.IsNullOrEmpty(soLuongStr))
+                    {
+                        var ct = new CT_PhieuChuyenInput
+                        {
+                            MaThuoc = maThuoc,
+                            MaLo = maLo,
+                            SoLuongChuyen = int.Parse(soLuongStr),
+                            HanSuDung = DateTime.Parse(hanSDStr)
+                        };
+                        if (!string.IsNullOrEmpty(ngaySXStr))
+                        {
+                            ct.NgaySanXuat = DateTime.Parse(ngaySXStr);
+                        }
+                        chiTiets.Add(ct);
+                    }
+                }
+
+                if (chiTiets.Count > 0)
+                {
+                    db.TaoPhieuChuyen(maNV, maKhoNguon, maKhoDich, ghiChu, chiTiets);
+                    TempData["SuccessMsg"] = "Tạo phiếu chuyển kho thành công!";
+                    return RedirectToAction("DanhSachPhieuChuyen");
+                }
+
+                ViewBag.DsKho = db.GetAllKho();
+                ViewBag.DsThuoc = db.GetAllThuoc();
+                ViewBag.ErrorMsg = "Vui lòng thêm ít nhất một mặt hàng!";
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.DsKho = db.GetAllKho();
+                ViewBag.DsThuoc = db.GetAllThuoc();
+                ViewBag.ErrorMsg = "Lỗi: " + ex.Message;
+                return View();
+            }
+        }
+
+        public ActionResult ChiTietPhieuChuyen(int id)
+        {
+            var phieu = db.GetPhieuChuyenById(id);
+            if (phieu == null) return HttpNotFound();
+
+            ViewBag.ChiTiet = db.GetCTPhieuChuyen(id);
+            return View(phieu);
+        }
+
+        [HttpPost]
+        public ActionResult DuyetPhieuChuyen(int id)
+        {
+            try
+            {
+                string maNV = Session["MaNV"].ToString();
+                bool result = db.DuyetPhieuChuyen(id, maNV);
+                if (result)
+                    return Json(new { success = true, message = "Đã duyệt phiếu chuyển kho!" });
+                else
+                    return Json(new { success = false, message = "Không thể duyệt. Kiểm tra lại tồn kho nguồn." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult HuyPhieuChuyen(int id)
+        {
+            try
+            {
+                string maNV = Session["MaNV"].ToString();
+                bool result = db.HuyPhieuChuyen(id, maNV);
+                if (result)
+                    return Json(new { success = true, message = "Đã hủy phiếu chuyển kho!" });
+                else
+                    return Json(new { success = false, message = "Không thể hủy phiếu này." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public ActionResult XoaChiTietPhieuChuyen(int id)
+        {
+            try
+            {
+                bool result = db.XoaChiTietPhieuChuyen(id);
+                if (result)
+                    return Json(new { success = true, message = "Đã xóa chi tiết!" });
+                else
+                    return Json(new { success = false, message = "Không thể xóa chi tiết này." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi: " + ex.Message });
+            }
+        }
+
+        // ===================== IN PHIẾU NHẬP =====================
+        public ActionResult PrintPhieuNhap(int id)
+        {
+            var phieu = db.GetPhieuNhapById(id);
+            if (phieu == null) return HttpNotFound();
+
+            ViewBag.ChiTiet = db.GetCTPhieuNhap(id);
+            return View(phieu);
+        }
+
+        // ===================== IN PHIẾU CHUYỂN KHO =====================
+        public ActionResult PrintPhieuChuyen(int id)
+        {
+            var phieu = db.GetPhieuChuyenById(id);
+            if (phieu == null) return HttpNotFound();
+
+            ViewBag.ChiTiet = db.GetCTPhieuChuyen(id);
+            return View(phieu);
         }
     }
 }

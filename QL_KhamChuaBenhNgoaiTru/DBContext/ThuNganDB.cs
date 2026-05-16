@@ -89,9 +89,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         // Tham so moi dsThuocCapNhat: Danh sach cac mon thuoc ma khach muon doi so luong mua.
         // Moi item la 1 object chua { MaCTHD, SoLuongMoi }
         // [ĐÃ SỬA] Đổi int maHD, int maPhieuKhamBenh thành string
-        public bool XacNhanThuTien(string maHD, string maPhieuKhamBenh, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, List<dynamic> dsThuocCapNhat, out string message)
+        public bool XacNhanThuTien(string maHD, string maPhieuKhamBenh, string phuongThucTT, string dsHuyDV, string dsHuyThuoc, List<dynamic> dsThuocCapNhat, out string message, out DataTable dtThanhToanNow)
         {
             message = "";
+            dtThanhToanNow = null;
             using (SqlConnection con = new SqlConnection(connectStr))
             {
                 con.Open();
@@ -193,6 +194,9 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                                 cmdUpdateThuoc.ExecuteNonQuery();
                             }
                         }
+
+                        // LẤY DANH SÁCH CÁC MÓN CHƯA THANH TOÁN (SẼ ĐƯỢC THANH TOÁN TRONG GIAO DỊCH NÀY) ĐỂ GỬI MAIL
+                        dtThanhToanNow = GetChiTietChuaThanhToan(maHD, con, trans);
 
                         // 3.4. Xác nhận "Đã thanh toán"
                         SqlCommand cmdThanhToanDV = new SqlCommand("UPDATE CT_HOADON_DV SET TrangThaiThanhToan = N'Đã thanh toán' WHERE MaHD = @MaHD AND TrangThaiThanhToan = N'Chưa thanh toán'", con, trans);
@@ -354,6 +358,37 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                     }
                 }
             }
+        }
+
+        public DataTable GetChiTietChuaThanhToan(string maHD, SqlConnection con, SqlTransaction trans)
+        {
+            DataTable dt = new DataTable();
+            string sql = @"
+                SELECT ct.MaCTHD, 'DV' AS LoaiItem, ct.MaDV AS MaItem, dv.TenDV, 
+                       ct.DonGia, ct.TongTienGoc, ct.TienBHYTChiTra, ct.TienBenhNhanTra, ct.TrangThaiThanhToan, 
+                       1 AS SoNgayDung, 1 AS SoLuong, 1 AS SoLuongGoc,
+                       CAST(0 AS DECIMAL(5,2)) AS SoLuongSang, CAST(0 AS DECIMAL(5,2)) AS SoLuongTrua, 
+                       CAST(0 AS DECIMAL(5,2)) AS SoLuongChieu, CAST(0 AS DECIMAL(5,2)) AS SoLuongToi
+                FROM CT_HOADON_DV ct
+                JOIN DICHVU dv ON ct.MaDV = dv.MaDV
+                WHERE ct.MaHD = @MaHD AND ct.TrangThaiThanhToan = N'Chưa thanh toán'
+
+                UNION ALL
+
+                SELECT ctt.MaCTHD, 'THUOC' AS LoaiItem, t.MaThuoc AS MaItem, t.TenThuoc AS TenDV, 
+                       t.GiaBan AS DonGia, ctt.TongTienGoc, ctt.TienBHYTChiTra, ctt.TienBenhNhanTra, ctt.TrangThaiThanhToan, 
+                       ctdt.SoNgayDung, ctt.SoLuong, ctdt.SoLuong AS SoLuongGoc,
+                       ctdt.SoLuongSang, ctdt.SoLuongTrua, ctdt.SoLuongChieu, ctdt.SoLuongToi
+                FROM CT_HOADON_THUOC ctt
+                JOIN CT_DON_THUOC ctdt ON ctt.MaCTDonThuoc = ctdt.MaCTDonThuoc
+                JOIN THUOC t ON ctdt.MaThuoc = t.MaThuoc
+                WHERE ctt.MaHD = @MaHD AND ctt.TrangThaiThanhToan = N'Chưa thanh toán'";
+
+            SqlCommand cmd = new SqlCommand(sql, con, trans);
+            cmd.Parameters.AddWithValue("@MaHD", maHD);
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+            return dt;
         }
 
         // 4. LẤY LỊCH SỬ THU TIỀN (Đã thanh toán / Đã hủy)

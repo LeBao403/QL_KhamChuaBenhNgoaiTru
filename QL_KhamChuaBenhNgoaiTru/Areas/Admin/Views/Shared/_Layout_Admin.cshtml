@@ -372,7 +372,8 @@
                 string ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
                 string act = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
                 bool isBenhVien = ctrl == "Thuoc" || ctrl == "LoaiThuoc" || ctrl == "BenhNhan" || ctrl == "Khoa" || ctrl == "Phong";
-                bool isVatTu = ctrl == "Kho" || ctrl == "HoaDon" || ctrl == "DichVu";
+                bool isVatTu = ctrl == "HoaDon" || ctrl == "DichVu";
+                bool isKho = ctrl == "Kho";
                 bool isHeThong = ctrl == "NhanVien" || ctrl == "Backup";
             }
 
@@ -402,13 +403,13 @@
             </div>
 
             <div class="nav-item">
-                <a class="nav-link sidebar-dropdown-toggle @(isVatTu ? "active" : "")" data-bs-toggle="collapse" href="#submenuVatTu" aria-expanded="@isVatTu.ToString().ToLower()">
-                    <i class="bi bi-wallet2"></i> <span>Vật tư & Tài chính</span>
+                <a class="nav-link sidebar-dropdown-toggle @(isKho ? "active" : "")" data-bs-toggle="collapse" href="#submenuKho" aria-expanded="@isKho.ToString().ToLower()">
+                    <i class="bi bi-box-seam"></i> <span>Quản lý Kho</span>
                     <i class="bi bi-chevron-down submenu-arrow"></i>
                 </a>
-                <div class="collapse sidebar-submenu @(isVatTu ? "show" : "")" id="submenuVatTu">
-                    <a class="nav-link sub-nav-link @(ctrl == "Kho" && act != "DanhSachPhieuNhap" ? "active" : "")" href="@Url.Action("Index", "Kho", new { area = "Admin" })">
-                        Kho Dược - Vật tư
+                <div class="collapse sidebar-submenu @(isKho ? "show" : "")" id="submenuKho">
+                    <a class="nav-link sub-nav-link @(ctrl == "Kho" && act != "DanhSachPhieuNhap" && act != "DanhSachPhieuChuyen" ? "active" : "")" href="@Url.Action("Index", "Kho", new { area = "Admin" })">
+                        Tổng quan Kho Dược
                     </a>
                     <a class="nav-link sub-nav-link d-flex justify-content-between @(ctrl == "Kho" && act == "DanhSachPhieuNhap" ? "active" : "")" href="@Url.Action("DanhSachPhieuNhap", "Kho", new { area = "Admin" })">
                         <span>Phiếu nhập kho</span>
@@ -417,6 +418,18 @@
                             <span class="badge bg-danger rounded-pill">@ViewBag.PhieuChoDuyet</span>
                         }
                     </a>
+                    <a class="nav-link sub-nav-link @(ctrl == "Kho" && act == "DanhSachPhieuChuyen" ? "active" : "")" href="@Url.Action("DanhSachPhieuChuyen", "Kho", new { area = "Admin" })">
+                        <span>Phiếu chuyển kho</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="nav-item">
+                <a class="nav-link sidebar-dropdown-toggle @(isVatTu ? "active" : "")" data-bs-toggle="collapse" href="#submenuVatTu" aria-expanded="@isVatTu.ToString().ToLower()">
+                    <i class="bi bi-wallet2"></i> <span>Tài chính & Thu ngân</span>
+                    <i class="bi bi-chevron-down submenu-arrow"></i>
+                </a>
+                <div class="collapse sidebar-submenu @(isVatTu ? "show" : "")" id="submenuVatTu">
                     <a class="nav-link sub-nav-link @(ctrl == "HoaDon" ? "active" : "")" href="@Url.Action("Index", "HoaDon", new { area = "Admin" })">
                         Thu ngân - Viện phí
                     </a>

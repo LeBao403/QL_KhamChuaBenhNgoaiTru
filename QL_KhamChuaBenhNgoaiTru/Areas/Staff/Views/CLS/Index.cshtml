@@ -1,4 +1,4 @@
-﻿@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.KetQuaCLS>
+@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.KetQuaCLS>
 @using QL_KhamChuaBenhNgoaiTru.Models
 @{
     // Nối thêm tên phòng nếu lấy được từ DB
@@ -527,7 +527,7 @@
         </div>
         <div style="width:40%;">
             <div id="prt-date-footer" style="font-style:italic; margin-bottom:5px;"></div>
-            <div style="font-weight:700;">NGƯỜI THỰC HIỆN</div>
+            <div style="font-weight:700;">BÁC SĨ THỰC HIỆN</div>
             <div style="margin-top:70px; font-weight:bold;" id="prt-sign-thuchien"></div>
         </div>
     </div>
@@ -735,7 +735,8 @@
                 $('#prt-bhyt').text(data.SoTheBHYT || 'Không có');
                 $('#prt-bschidinh').text(data.TenBacSiChiDinh || '');
                 $('#prt-sign-bschidinh').text(data.TenBacSiChiDinh || '');
-                $('#prt-sign-thuchien').text(data.TenNguoiThucHien || data.MaBacSiThucHien || '');
+                var currentStaff = '@Html.Raw(Session["HoTenNV"] ?? "")';
+                $('#prt-sign-thuchien').text(data.TenNguoiThucHien || data.MaBacSiThucHien || currentStaff);
 
                 $('#print-section .print-table thead').html(
                     hasMetaColumns
@@ -839,7 +840,7 @@
                     var d = res.Data;
                     var profile = getServiceProfile(d.TenDV || d.TenDichVu || '');
                     var parsed = parseStoredResult(d.NoiDungKetQua || '');
-                    var currentStaff = '@(Session["HoTenNV"] ?? "Nhân viên")';
+                    var currentStaff = '@Html.Raw(Session["HoTenNV"] ?? "Nhân viên")';
                     var bsThucHien = d.TenNguoiThucHien || d.MaBacSiThucHien;
 
                     $('#hdnMaKetQua').val(d.MaKetQua);

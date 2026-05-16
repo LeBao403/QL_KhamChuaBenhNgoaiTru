@@ -510,7 +510,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         });
                     }
                 }
-                return new DonThuocChiTiet { ChiTiet = chiTietList };
+                return new DonThuocChiTiet { MaDonThuoc = maDonThuoc, ChiTiet = chiTietList };
             }
         }
 
@@ -576,8 +576,8 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
                         ketQua.MaHD = dr["MaHD"].ToString(); // [ĐÃ SỬA]
                         ketQua.NgayThanhToan = Convert.IsDBNull(dr["NgayThanhToan"]) ? (DateTime?)null : Convert.ToDateTime(dr["NgayThanhToan"]);
                         ketQua.TongTien = Convert.IsDBNull(dr["TongTien"]) ? 0 : Convert.ToDecimal(dr["TongTien"]);
-                        ketQua.TienBHYTChiTra = Convert.IsDBNull(dr["TienBHYTChiTra"]) ? 0 : Convert.ToDecimal(dr["TienBHYTChiTra"]);
-                        ketQua.TienBenhNhanTra = Convert.IsDBNull(dr["TienBenhNhanTra"]) ? 0 : Convert.ToDecimal(dr["TienBenhNhanTra"]);
+                        ketQua.TienBHYTChiTra = Convert.IsDBNull(dr["TongTienBHYTChiTra"]) ? 0 : Convert.ToDecimal(dr["TongTienBHYTChiTra"]);
+                        ketQua.TienBenhNhanTra = Convert.IsDBNull(dr["TongTienBenhNhanTra"]) ? 0 : Convert.ToDecimal(dr["TongTienBenhNhanTra"]);
                         ketQua.TrangThaiThanhToan = Convert.IsDBNull(dr["TrangThaiThanhToan"]) ? "" : dr["TrangThaiThanhToan"].ToString();
                         ketQua.HinhThucThanhToan = Convert.IsDBNull(dr["HinhThucThanhToan"]) ? "" : dr["HinhThucThanhToan"].ToString();
                     }
@@ -720,6 +720,7 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
         public class DonThuocChiTiet
         {
+            public string MaDonThuoc { get; set; } // [ĐÃ SỬA]
             public List<ChiTietThuocItem> ChiTiet { get; set; } = new List<ChiTietThuocItem>();
         }
 

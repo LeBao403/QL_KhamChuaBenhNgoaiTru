@@ -1,4 +1,4 @@
-﻿@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.KetQuaCLS>
+@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.KetQuaCLS>
 @{
     ViewBag.Title = "Lịch Sử Xét Nghiệm";
     Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
@@ -132,7 +132,7 @@
         </div>
         <div style="width:40%;">
             <div id="prt-date-footer" style="font-style:italic; margin-bottom:5px;"></div>
-            <div style="font-weight:700;">NGƯỜI THỰC HIỆN</div>
+            <div style="font-weight:700;">BÁC SĨ THỰC HIỆN</div>
             <div style="margin-top:70px; font-weight:bold;" id="prt-sign-thuchien"></div>
         </div>
     </div>
@@ -161,6 +161,11 @@
         $('#prt-tenxn').text(data.TenDV || '');
         $('#prt-mauxn').text(data.MauXetNghiem || 'Huyết thanh');
         $('#prt-chatluong').text(data.ChatLuongMau || 'Đạt');
+        $('#prt-diachi').text(data.DiaChi || 'Chưa cập nhật');
+        $('#prt-bhyt').text(data.SoTheBHYT || 'Không có');
+        $('#prt-bschidinh').text(data.TenBacSiChiDinh || '');
+        $('#prt-sign-bschidinh').text(data.TenBacSiChiDinh || '');
+        $('#prt-sign-thuchien').text(data.TenNguoiThucHien || data.MaBacSiThucHien || '');
         
         var tbody = '';
         if (lisData && lisData.length > 0) {
@@ -317,6 +322,12 @@
             $('#prt-tenxn').text(data.TenDV || '');
             $('#prt-mauxn').text(data.MauXetNghiem || 'Huyết thanh');
             $('#prt-chatluong').text(data.ChatLuongMau || 'Đạt');
+            $('#prt-diachi').text(data.DiaChi || 'Chưa cập nhật');
+            $('#prt-bhyt').text(data.SoTheBHYT || 'Không có');
+            $('#prt-bschidinh').text(data.TenBacSiChiDinh || '');
+            $('#prt-sign-bschidinh').text(data.TenBacSiChiDinh || '');
+            $('#prt-sign-thuchien').text(data.TenNguoiThucHien || data.MaBacSiThucHien || '');
+            $('#prt-ketluan').text(parsed.ketluan || '');
 
             $('#print-section .print-table thead').html(
                 hasMetaColumns

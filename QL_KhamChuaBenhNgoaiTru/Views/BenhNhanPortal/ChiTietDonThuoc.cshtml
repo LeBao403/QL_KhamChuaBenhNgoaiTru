@@ -11,7 +11,7 @@
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div>
                 <div class="hero-title"><i class="bi bi-prescription2 me-2"></i>Chi tiết đơn thuốc</div>
-                <div class="hero-subtitle">Mã đơn: #@(Model?.MaDonThuoc ?? 0)</div>
+                <div class="hero-subtitle">Mã đơn: #@(Model?.MaDonThuoc ?? "N/A")</div>
             </div>
             <a href="@Url.Action("DonThuoc", "BenhNhanPortal")" class="btn btn-light rounded-pill fw-bold">
                 <i class="bi bi-arrow-left me-1"></i> Quay lại

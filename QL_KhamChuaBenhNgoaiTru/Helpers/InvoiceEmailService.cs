@@ -8,15 +8,19 @@ namespace QL_KhamChuaBenhNgoaiTru.Helpers
 {
     public static class InvoiceEmailService
     {
-        public static bool SendInvoicePdfByMaHD(string maHD, string hinhThucThanhToan)
+        public static bool SendInvoicePdfByMaHD(string maHD, string hinhThucThanhToan, DataTable chiTiet = null)
         {
             if (string.IsNullOrWhiteSpace(maHD)) return false;
 
             var patient = GetInvoicePatient(maHD);
             if (patient == null || string.IsNullOrWhiteSpace(patient.Email)) return false;
 
-            var thuNganDb = new ThuNganDB();
-            DataTable chiTiet = thuNganDb.GetChiTietHoaDon(maHD);
+            if (chiTiet == null)
+            {
+                var thuNganDb = new ThuNganDB();
+                chiTiet = thuNganDb.GetChiTietHoaDon(maHD);
+            }
+
             var pdfData = InvoicePdfHelper.FromDataTable(
                 maHD,
                 patient.MaBN,

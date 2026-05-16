@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/models/user_model.dart';
 import '../../core/services/booking_service.dart';
 import '../../core/theme/app_theme.dart';
@@ -185,68 +186,21 @@ class _BookingScreenState extends State<BookingScreen>
   void _showCardPaymentDialog() {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
-          children: [
-            Icon(Icons.credit_card_rounded, color: AppTheme.primary),
-            SizedBox(width: 8),
-            Text('Thanh toán thẻ', style: TextStyle(fontSize: 18)),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: AppTheme.heroGradient,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Column(
-                children: [
-                  const Icon(Icons.credit_card_rounded,
-                      color: Colors.white, size: 48),
-                  const SizedBox(height: 12),
-                  const Text('Phí đặt lịch',
-                      style: TextStyle(color: Colors.white70, fontSize: 13)),
-                  const Text('100.000 VNĐ',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800)),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Xác nhận thanh toán phí đặt lịch 100.000 VNĐ qua thẻ ATM/Visa?',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppTheme.textBody, height: 1.5),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              _bookingService.huyDatLichKhiKhongThanhToan(_maPhieuDK!);
-              Navigator.pop(context);
-            },
-            child: const Text('Hủy', style: TextStyle(color: AppTheme.danger)),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              final r = await _bookingService.xacNhanThanhToanThe(
-                  _maHD!, _maPhieuDK!);
-              if (r.success) {
-                setState(() => _bookingDone = true);
-                _loadAppointments();
-              }
-            },
-            child: const Text('Xác nhận thanh toán'),
-          ),
-        ],
+      barrierDismissible: false,
+      builder: (_) => _VnPayPaymentDialog(
+        maHD: _maHD!,
+        maPhieuDK: _maPhieuDK!,
+        tenQuay: _tenQuay,
+        bookingService: _bookingService,
+        onPaid: () {
+          Navigator.pop(context);
+          setState(() => _bookingDone = true);
+          _loadAppointments();
+        },
+        onCancel: () {
+          _bookingService.huyDatLichKhiKhongThanhToan(_maPhieuDK!);
+          Navigator.pop(context);
+        },
       ),
     );
   }
@@ -842,13 +796,15 @@ class _BookingScreenState extends State<BookingScreen>
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: const Color(0xFFFEF08A)),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(Icons.shield_outlined, color: AppTheme.accent, size: 18),
-              SizedBox(width: 8),
+              const Icon(Icons.shield_outlined, color: AppTheme.accent, size: 18),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Kết nối thanh toán được mã hóa an toàn qua PayOS.',
+                  _phuongThucTT == 'THE'
+                      ? 'Thanh toán thẻ được xử lý qua cổng VNPAY giống phiên bản web.'
+                      : 'Kết nối thanh toán được mã hóa an toàn qua PayOS.',
                   style: TextStyle(
                       color: Color(0xFF854D0E), fontSize: 12, height: 1.4),
                 ),
@@ -1322,6 +1278,273 @@ class _BookingScreenState extends State<BookingScreen>
           ),
         ],
       ),
+    );
+  }
+}
+
+// ─── VNPAY Payment Dialog ────────────────────────────────────────────────────
+class _VnPayPaymentDialog extends StatefulWidget {
+  final String maHD;
+  final String maPhieuDK;
+  final String tenQuay;
+  final BookingService bookingService;
+  final VoidCallback onPaid;
+  final VoidCallback onCancel;
+
+  const _VnPayPaymentDialog({
+    required this.maHD,
+    required this.maPhieuDK,
+    required this.tenQuay,
+    required this.bookingService,
+    required this.onPaid,
+    required this.onCancel,
+  });
+
+  @override
+  State<_VnPayPaymentDialog> createState() => _VnPayPaymentDialogState();
+}
+
+class _VnPayPaymentDialogState extends State<_VnPayPaymentDialog> {
+  bool _loading = true;
+  bool _opening = false;
+  bool _opened = false;
+  bool _canceled = false;
+  String? _paymentUrl;
+  String? _error;
+  Timer? _pollTimer;
+  int _remainSeconds = 300;
+
+  @override
+  void initState() {
+    super.initState();
+    _preparePayment();
+  }
+
+  Future<void> _preparePayment() async {
+    final result = await widget.bookingService
+        .taoThanhToanTheUrl(widget.maHD, widget.maPhieuDK);
+    if (!mounted) return;
+
+    if (!result.success || (result.data ?? '').isEmpty) {
+      setState(() {
+        _loading = false;
+        _error = result.message ?? 'Không tạo được liên kết VNPAY.';
+      });
+      return;
+    }
+
+    setState(() {
+      _loading = false;
+      _paymentUrl = result.data;
+    });
+    await _openPaymentUrl();
+  }
+
+  Future<void> _openPaymentUrl() async {
+    final url = _paymentUrl;
+    if (url == null || url.isEmpty) return;
+
+    setState(() => _opening = true);
+    final uri = Uri.parse(url);
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!mounted) return;
+
+    setState(() {
+      _opening = false;
+      _opened = launched;
+      if (!launched) _error = 'Không mở được cổng thanh toán VNPAY.';
+    });
+
+    if (launched) _startPolling();
+  }
+
+  void _startPolling() {
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      final result = await widget.bookingService
+          .kiemTraThanhToanTheOnline(widget.maHD, widget.maPhieuDK);
+
+      if (!mounted) return;
+      if (result.success) {
+        final data = result.data ?? {};
+        if (data['isPaid'] == true) {
+          timer.cancel();
+          widget.onPaid();
+          return;
+        }
+        if (data['isCanceled'] == true) {
+          timer.cancel();
+          setState(() {
+            _canceled = true;
+            _error =
+                'Giao dịch không thành công hoặc đã bị hủy. Lịch đặt đã được hủy để nhường chỗ.';
+          });
+          return;
+        }
+      }
+
+      setState(() {
+        _remainSeconds -= 3;
+        if (_remainSeconds <= 0) {
+          timer.cancel();
+          widget.onCancel();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  String get _remainStr {
+    final m = _remainSeconds ~/ 60;
+    final s = _remainSeconds % 60;
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      titlePadding: EdgeInsets.zero,
+      title: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: const BoxDecoration(
+          gradient: AppTheme.heroGradient,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            const Row(
+              children: [
+                Icon(Icons.credit_card_rounded, color: Colors.white, size: 24),
+                SizedBox(width: 10),
+                Text('Thanh toán VNPAY',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text('Quầy: ${widget.tenQuay}',
+                style: const TextStyle(color: Colors.white70, fontSize: 13)),
+          ],
+        ),
+      ),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_loading || _opening)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 36),
+                child: CircularProgressIndicator(),
+              )
+            else if (_error != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                child: Column(
+                  children: [
+                    Icon(
+                      _canceled
+                          ? Icons.cancel_outlined
+                          : Icons.error_outline_rounded,
+                      color: AppTheme.danger,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(_error!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: AppTheme.danger)),
+                  ],
+                ),
+              )
+            else ...[
+              const Icon(Icons.open_in_new_rounded,
+                  color: AppTheme.primary, size: 54),
+              const SizedBox(height: 12),
+              Text(
+                _opened
+                    ? 'Cổng VNPAY đã được mở trong trình duyệt. Sau khi thanh toán, quay lại ứng dụng để hệ thống tự cập nhật.'
+                    : 'Nhấn nút bên dưới để mở cổng thanh toán VNPAY.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: AppTheme.textMuted,
+                  fontSize: 13,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppTheme.bgLight,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  children: [
+                    const Text('Số tiền',
+                        style:
+                            TextStyle(color: AppTheme.textMuted, fontSize: 12)),
+                    const Text('100.000 VNĐ',
+                        style: TextStyle(
+                            color: AppTheme.danger,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800)),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.timer_rounded,
+                            size: 14, color: AppTheme.textMuted),
+                        const SizedBox(width: 4),
+                        Text('Hết hạn sau: $_remainStr',
+                            style: const TextStyle(
+                                color: AppTheme.textMuted, fontSize: 12)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Đang kiểm tra thanh toán tự động...',
+                style: TextStyle(
+                    color: AppTheme.primary,
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic),
+              ),
+            ],
+          ],
+        ),
+      ),
+      actions: [
+        if (_paymentUrl != null && !_loading && !_opening && !_canceled)
+          TextButton.icon(
+            onPressed: _openPaymentUrl,
+            icon: const Icon(Icons.open_in_new_rounded, size: 16),
+            label: const Text('Mở lại VNPAY'),
+          ),
+        TextButton(
+          onPressed: () {
+            _pollTimer?.cancel();
+            widget.onCancel();
+          },
+          child: Text(_canceled ? 'Đóng' : 'Hủy thanh toán',
+              style: const TextStyle(color: AppTheme.danger)),
+        ),
+      ],
     );
   }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using QL_KhamChuaBenhNgoaiTru.Models;
 
 namespace QL_KhamChuaBenhNgoaiTru.DBContext
 {
@@ -677,6 +678,75 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
             }
         }
 
+        // ==================== DUYỆT/HỦY/XÓA CHI TIẾT PHIẾU NHẬP ====================
+        public bool XoaChiTietPhieuNhap(int maCTPN)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+
+                try
+                {
+                    // Lấy MaPhieuNhap và ThanhTien của chi tiết sắp xóa
+                    string sqlGetInfo = "SELECT MaPhieuNhap, ThanhTien FROM CT_PHIEUNHAP WHERE MaCTPN = @MaCTPN";
+                    SqlCommand cmdGet = new SqlCommand(sqlGetInfo, conn, tran);
+                    cmdGet.Parameters.AddWithValue("@MaCTPN", maCTPN);
+                    
+                    int maPhieuNhap = 0;
+                    decimal thanhTienXoa = 0;
+
+                    using (SqlDataReader dr = cmdGet.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            maPhieuNhap = Convert.ToInt32(dr["MaPhieuNhap"]);
+                            thanhTienXoa = Convert.ToDecimal(dr["ThanhTien"]);
+                        }
+                    }
+
+                    if (maPhieuNhap == 0)
+                    {
+                        tran.Rollback();
+                        return false;
+                    }
+
+                    // Kiểm tra trạng thái phiếu
+                    string sqlCheckTrangThai = "SELECT TrangThai FROM PHIEUNHAP WHERE MaPhieuNhap = @MaPhieuNhap";
+                    SqlCommand cmdCheck = new SqlCommand(sqlCheckTrangThai, conn, tran);
+                    cmdCheck.Parameters.AddWithValue("@MaPhieuNhap", maPhieuNhap);
+                    var trangThai = cmdCheck.ExecuteScalar()?.ToString();
+
+                    if (trangThai != "Chờ duyệt")
+                    {
+                        tran.Rollback();
+                        return false;
+                    }
+
+                    // Xóa chi tiết
+                    string sqlDelete = "DELETE FROM CT_PHIEUNHAP WHERE MaCTPN = @MaCTPN";
+                    SqlCommand cmdDel = new SqlCommand(sqlDelete, conn, tran);
+                    cmdDel.Parameters.AddWithValue("@MaCTPN", maCTPN);
+                    cmdDel.ExecuteNonQuery();
+
+                    // Cập nhật lại tổng tiền phiếu nhập
+                    string sqlUpdate = "UPDATE PHIEUNHAP SET TongTienNhap = TongTienNhap - @ThanhTienXoa WHERE MaPhieuNhap = @MaPhieuNhap";
+                    SqlCommand cmdUpd = new SqlCommand(sqlUpdate, conn, tran);
+                    cmdUpd.Parameters.AddWithValue("@ThanhTienXoa", thanhTienXoa);
+                    cmdUpd.Parameters.AddWithValue("@MaPhieuNhap", maPhieuNhap);
+                    cmdUpd.ExecuteNonQuery();
+
+                    tran.Commit();
+                    return true;
+                }
+                catch
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
+        }
+
         // ==================== DUYỆT/HỦY PHIẾU NHẬP ====================
         public bool DuyetPhieuNhap(int maPhieuNhap, string maNVDuyet)
         {
@@ -795,6 +865,544 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
 
                     tran.Commit();
                     return rows > 0;
+                }
+                catch
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
+        }
+        // ==================== THUỐC TỒN KHO THEO KHO ====================
+        public List<TonKhoViewModel> GetThuocTonKhoByMaKho(int maKho)
+        {
+            var list = new List<TonKhoViewModel>();
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                string sql = @"
+                    SELECT 
+                        TK.MaTonKho, TK.MaKho, TK.MaThuoc, TK.MaLo, TK.HanSuDung, TK.NgaySanXuat, TK.GiaNhap, TK.SoLuongTon,
+                        T.TenThuoc, T.DonViCoBan
+                    FROM TONKHO TK
+                    INNER JOIN THUOC T ON TK.MaThuoc = T.MaThuoc
+                    WHERE TK.MaKho = @MaKho AND TK.SoLuongTon > 0
+                    ORDER BY T.TenThuoc, TK.HanSuDung";
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@MaKho", maKho);
+
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(new TonKhoViewModel
+                        {
+                            MaTonKho = Convert.ToInt32(dr["MaTonKho"]),
+                            MaKho = Convert.ToInt32(dr["MaKho"]),
+                            MaThuoc = dr["MaThuoc"].ToString(),
+                            MaLo = dr["MaLo"].ToString(),
+                            HanSuDung = Convert.ToDateTime(dr["HanSuDung"]),
+                            NgaySanXuat = dr["NgaySanXuat"] != DBNull.Value ? Convert.ToDateTime(dr["NgaySanXuat"]) : (DateTime?)null,
+                            GiaNhap = Convert.ToDecimal(dr["GiaNhap"]),
+                            SoLuongTon = Convert.ToInt32(dr["SoLuongTon"]),
+                            TenThuoc = dr["TenThuoc"].ToString(),
+                            DonViCoBan = dr["DonViCoBan"].ToString()
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        // ==================== THỐNG KÊ KHO ====================
+        public List<KhoThongKe> GetThongKeCacKho()
+        {
+            var list = new List<KhoThongKe>();
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                string sql = @"
+                    SELECT 
+                        K.MaKho, 
+                        K.TenKho,
+                        COUNT(DISTINCT TK.MaThuoc) as SoMatHang,
+                        ISNULL(SUM(TK.SoLuongTon), 0) as TongSoLuong,
+                        ISNULL(SUM(TK.SoLuongTon * ISNULL(T.GiaBan, 0)), 0) as TongGiaTri
+                    FROM KHO K
+                    LEFT JOIN TONKHO TK ON K.MaKho = TK.MaKho AND TK.SoLuongTon > 0
+                    LEFT JOIN THUOC T ON TK.MaThuoc = T.MaThuoc
+                    WHERE K.TrangThai = 1
+                    GROUP BY K.MaKho, K.TenKho
+                    ORDER BY K.TenKho";
+
+                SqlCommand cmd = new SqlCommand(sql, conn);
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(new KhoThongKe
+                        {
+                            MaKho = Convert.ToInt32(dr["MaKho"]),
+                            TenKho = dr["TenKho"].ToString(),
+                            SoMatHang = Convert.ToInt32(dr["SoMatHang"]),
+                            TongSoLuong = Convert.ToInt32(dr["TongSoLuong"]),
+                            TongGiaTri = Convert.ToDecimal(dr["TongGiaTri"])
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        // ==================== PHIẾU CHUYỂN KHO ====================
+        public int TaoPhieuChuyen(string maNV, int maKhoNguon, int maKhoDich, string ghiChu, List<CT_PhieuChuyenInput> chiTiets)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+
+                try
+                {
+                    string sqlPC = @"
+                        INSERT INTO PHIEUCHUYENKHO (MaKhoNguon, MaKhoDich, MaNV_LapPhieu, TrangThai, GhiChu)
+                        VALUES (@MaKhoNguon, @MaKhoDich, @MaNV, N'Chờ duyệt', @GhiChu);
+                        SELECT SCOPE_IDENTITY();";
+
+                    SqlCommand cmdPC = new SqlCommand(sqlPC, conn, tran);
+                    cmdPC.Parameters.AddWithValue("@MaKhoNguon", maKhoNguon);
+                    cmdPC.Parameters.AddWithValue("@MaKhoDich", maKhoDich);
+                    cmdPC.Parameters.AddWithValue("@MaNV", maNV);
+                    cmdPC.Parameters.AddWithValue("@GhiChu", (object)ghiChu ?? DBNull.Value);
+
+                    int maPhieuChuyen = Convert.ToInt32(cmdPC.ExecuteScalar());
+
+                    foreach (var ct in chiTiets)
+                    {
+                        string sqlCT = @"
+                            INSERT INTO CT_PHIEUCHUYENKHO (MaPhieuChuyen, MaThuoc, MaLo, NgaySanXuat, HanSuDung, SoLuongChuyen)
+                            VALUES (@MaPhieuChuyen, @MaThuoc, @MaLo, @NgaySanXuat, @HanSuDung, @SoLuongChuyen)";
+
+                        SqlCommand cmdCT = new SqlCommand(sqlCT, conn, tran);
+                        cmdCT.Parameters.AddWithValue("@MaPhieuChuyen", maPhieuChuyen);
+                        cmdCT.Parameters.AddWithValue("@MaThuoc", ct.MaThuoc);
+                        cmdCT.Parameters.AddWithValue("@MaLo", ct.MaLo);
+                        cmdCT.Parameters.AddWithValue("@NgaySanXuat", (object)ct.NgaySanXuat ?? DBNull.Value);
+                        cmdCT.Parameters.AddWithValue("@HanSuDung", ct.HanSuDung);
+                        cmdCT.Parameters.AddWithValue("@SoLuongChuyen", ct.SoLuongChuyen);
+                        cmdCT.ExecuteNonQuery();
+                    }
+
+                    tran.Commit();
+                    return maPhieuChuyen;
+                }
+                catch
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        public List<PhieuChuyenKhoViewModel> GetPhieuChuyen(int page, int pageSize, string keyword, string trangThai)
+        {
+            var list = new List<PhieuChuyenKhoViewModel>();
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                var query = @"
+                    SELECT
+                        PC.MaPhieuChuyen,
+                        PC.MaKhoNguon, KN.TenKho AS TenKhoNguon,
+                        PC.MaKhoDich, KD.TenKho AS TenKhoDich,
+                        PC.NgayChuyen,
+                        PC.TrangThai,
+                        PC.GhiChu,
+                        PC.MaNV_LapPhieu, NV1.HoTen AS TenNguoiLap,
+                        PC.MaNV_Duyet, NV2.HoTen AS TenNguoiDuyet,
+                        PC.NgayDuyet
+                    FROM PHIEUCHUYENKHO PC
+                    INNER JOIN KHO KN ON PC.MaKhoNguon = KN.MaKho
+                    INNER JOIN KHO KD ON PC.MaKhoDich = KD.MaKho
+                    INNER JOIN NHANVIEN NV1 ON PC.MaNV_LapPhieu = NV1.MaNV
+                    LEFT JOIN NHANVIEN NV2 ON PC.MaNV_Duyet = NV2.MaNV
+                    WHERE 1=1";
+
+                var cmd = new SqlCommand();
+                cmd.Connection = conn;
+
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    query += " AND (PC.MaPhieuChuyen LIKE @Keyword OR KN.TenKho LIKE @Keyword OR KD.TenKho LIKE @Keyword)";
+                    cmd.Parameters.AddWithValue("@Keyword", "%" + keyword.Trim() + "%");
+                }
+                if (!string.IsNullOrEmpty(trangThai))
+                {
+                    query += " AND PC.TrangThai = @TrangThai";
+                    cmd.Parameters.AddWithValue("@TrangThai", trangThai);
+                }
+
+                query += " ORDER BY PC.NgayChuyen DESC OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY";
+
+                cmd.CommandText = query;
+                cmd.Parameters.AddWithValue("@Offset", (page - 1) * pageSize);
+                cmd.Parameters.AddWithValue("@PageSize", pageSize);
+
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(new PhieuChuyenKhoViewModel
+                        {
+                            MaPhieuChuyen = Convert.ToInt32(dr["MaPhieuChuyen"]),
+                            MaKhoNguon = Convert.ToInt32(dr["MaKhoNguon"]),
+                            TenKhoNguon = dr["TenKhoNguon"].ToString(),
+                            MaKhoDich = Convert.ToInt32(dr["MaKhoDich"]),
+                            TenKhoDich = dr["TenKhoDich"].ToString(),
+                            NgayChuyen = dr["NgayChuyen"] != DBNull.Value ? Convert.ToDateTime(dr["NgayChuyen"]) : (DateTime?)null,
+                            TrangThai = dr["TrangThai"] != DBNull.Value ? dr["TrangThai"].ToString() : "",
+                            GhiChu = dr["GhiChu"] != DBNull.Value ? dr["GhiChu"].ToString() : "",
+                            MaNV_LapPhieu = dr["MaNV_LapPhieu"].ToString(),
+                            TenNguoiLap = dr["TenNguoiLap"].ToString(),
+                            MaNV_Duyet = dr["MaNV_Duyet"] != DBNull.Value ? dr["MaNV_Duyet"].ToString() : "",
+                            TenNguoiDuyet = dr["TenNguoiDuyet"] != DBNull.Value ? dr["TenNguoiDuyet"].ToString() : "",
+                            NgayDuyet = dr["NgayDuyet"] != DBNull.Value ? Convert.ToDateTime(dr["NgayDuyet"]) : (DateTime?)null
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public int GetPhieuChuyenCount(string keyword, string trangThai)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                var query = @"
+                    SELECT COUNT(*) 
+                    FROM PHIEUCHUYENKHO PC
+                    INNER JOIN KHO KN ON PC.MaKhoNguon = KN.MaKho
+                    INNER JOIN KHO KD ON PC.MaKhoDich = KD.MaKho
+                    WHERE 1=1";
+
+                var cmd = new SqlCommand();
+                cmd.Connection = conn;
+
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    query += " AND (PC.MaPhieuChuyen LIKE @Keyword OR KN.TenKho LIKE @Keyword OR KD.TenKho LIKE @Keyword)";
+                    cmd.Parameters.AddWithValue("@Keyword", "%" + keyword.Trim() + "%");
+                }
+                if (!string.IsNullOrEmpty(trangThai))
+                {
+                    query += " AND PC.TrangThai = @TrangThai";
+                    cmd.Parameters.AddWithValue("@TrangThai", trangThai);
+                }
+
+                cmd.CommandText = query;
+                return (int)cmd.ExecuteScalar();
+            }
+        }
+
+        public PhieuChuyenKhoViewModel GetPhieuChuyenById(int maPhieuChuyen)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                string query = @"
+                    SELECT
+                        PC.MaPhieuChuyen,
+                        PC.MaKhoNguon, KN.TenKho AS TenKhoNguon,
+                        PC.MaKhoDich, KD.TenKho AS TenKhoDich,
+                        PC.NgayChuyen,
+                        PC.TrangThai,
+                        PC.GhiChu,
+                        PC.MaNV_LapPhieu, NV1.HoTen AS TenNguoiLap,
+                        PC.MaNV_Duyet, NV2.HoTen AS TenNguoiDuyet,
+                        PC.NgayDuyet
+                    FROM PHIEUCHUYENKHO PC
+                    INNER JOIN KHO KN ON PC.MaKhoNguon = KN.MaKho
+                    INNER JOIN KHO KD ON PC.MaKhoDich = KD.MaKho
+                    INNER JOIN NHANVIEN NV1 ON PC.MaNV_LapPhieu = NV1.MaNV
+                    LEFT JOIN NHANVIEN NV2 ON PC.MaNV_Duyet = NV2.MaNV
+                    WHERE PC.MaPhieuChuyen = @MaPhieuChuyen";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@MaPhieuChuyen", maPhieuChuyen);
+
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        return new PhieuChuyenKhoViewModel
+                        {
+                            MaPhieuChuyen = Convert.ToInt32(dr["MaPhieuChuyen"]),
+                            MaKhoNguon = Convert.ToInt32(dr["MaKhoNguon"]),
+                            TenKhoNguon = dr["TenKhoNguon"].ToString(),
+                            MaKhoDich = Convert.ToInt32(dr["MaKhoDich"]),
+                            TenKhoDich = dr["TenKhoDich"].ToString(),
+                            NgayChuyen = dr["NgayChuyen"] != DBNull.Value ? Convert.ToDateTime(dr["NgayChuyen"]) : (DateTime?)null,
+                            TrangThai = dr["TrangThai"] != DBNull.Value ? dr["TrangThai"].ToString() : "",
+                            GhiChu = dr["GhiChu"] != DBNull.Value ? dr["GhiChu"].ToString() : "",
+                            MaNV_LapPhieu = dr["MaNV_LapPhieu"].ToString(),
+                            TenNguoiLap = dr["TenNguoiLap"].ToString(),
+                            MaNV_Duyet = dr["MaNV_Duyet"] != DBNull.Value ? dr["MaNV_Duyet"].ToString() : "",
+                            TenNguoiDuyet = dr["TenNguoiDuyet"] != DBNull.Value ? dr["TenNguoiDuyet"].ToString() : "",
+                            NgayDuyet = dr["NgayDuyet"] != DBNull.Value ? Convert.ToDateTime(dr["NgayDuyet"]) : (DateTime?)null
+                        };
+                    }
+                }
+            }
+            return null;
+        }
+
+        public List<CT_PhieuChuyenKhoViewModel> GetCTPhieuChuyen(int maPhieuChuyen)
+        {
+            var list = new List<CT_PhieuChuyenKhoViewModel>();
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                string query = @"
+                    SELECT
+                        CTP.*,
+                        T.TenThuoc,
+                        T.DonViCoBan
+                    FROM CT_PHIEUCHUYENKHO CTP
+                    INNER JOIN THUOC T ON CTP.MaThuoc = T.MaThuoc
+                    WHERE CTP.MaPhieuChuyen = @MaPhieuChuyen
+                    ORDER BY CTP.MaCTPC";
+
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@MaPhieuChuyen", maPhieuChuyen);
+
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(new CT_PhieuChuyenKhoViewModel
+                        {
+                            MaCTPC = Convert.ToInt32(dr["MaCTPC"]),
+                            MaPhieuChuyen = Convert.ToInt32(dr["MaPhieuChuyen"]),
+                            MaThuoc = dr["MaThuoc"].ToString(),
+                            MaLo = dr["MaLo"].ToString(),
+                            NgaySanXuat = dr["NgaySanXuat"] != DBNull.Value ? Convert.ToDateTime(dr["NgaySanXuat"]) : (DateTime?)null,
+                            HanSuDung = dr["HanSuDung"] != DBNull.Value ? Convert.ToDateTime(dr["HanSuDung"]) : DateTime.Now,
+                            SoLuongChuyen = dr["SoLuongChuyen"] != DBNull.Value ? Convert.ToInt32(dr["SoLuongChuyen"]) : 0,
+                            TenThuoc = dr["TenThuoc"] != DBNull.Value ? dr["TenThuoc"].ToString() : "",
+                            DonViCoBan = dr["DonViCoBan"] != DBNull.Value ? dr["DonViCoBan"].ToString() : ""
+                        });
+                    }
+                }
+            }
+            return list;
+        }
+
+        public bool DuyetPhieuChuyen(int maPhieuChuyen, string maNVDuyet)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+
+                try
+                {
+                    SqlCommand cmdPC = new SqlCommand(
+                        "SELECT MaKhoNguon, MaKhoDich FROM PHIEUCHUYENKHO WHERE MaPhieuChuyen = @MaPhieuChuyen AND TrangThai = N'Chờ duyệt'", conn, tran);
+                    cmdPC.Parameters.AddWithValue("@MaPhieuChuyen", maPhieuChuyen);
+                    int maKhoNguon = 0, maKhoDich = 0;
+
+                    using (SqlDataReader dr = cmdPC.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            maKhoNguon = Convert.ToInt32(dr["MaKhoNguon"]);
+                            maKhoDich = Convert.ToInt32(dr["MaKhoDich"]);
+                        }
+                    }
+
+                    if (maKhoNguon == 0 || maKhoDich == 0)
+                    {
+                        tran.Rollback();
+                        return false;
+                    }
+
+                    var chiTiets = new List<CT_PhieuChuyenKhoViewModel>();
+                    string sqlGetCT = "SELECT * FROM CT_PHIEUCHUYENKHO WHERE MaPhieuChuyen = @MaPhieuChuyen";
+                    using (SqlCommand cmdCT = new SqlCommand(sqlGetCT, conn, tran))
+                    {
+                        cmdCT.Parameters.AddWithValue("@MaPhieuChuyen", maPhieuChuyen);
+                        using (SqlDataReader dr = cmdCT.ExecuteReader())
+                        {
+                            while (dr.Read())
+                            {
+                                chiTiets.Add(new CT_PhieuChuyenKhoViewModel
+                                {
+                                    MaThuoc = dr["MaThuoc"].ToString(),
+                                    MaLo = dr["MaLo"].ToString(),
+                                    NgaySanXuat = dr["NgaySanXuat"] != DBNull.Value ? Convert.ToDateTime(dr["NgaySanXuat"]) : (DateTime?)null,
+                                    HanSuDung = dr["HanSuDung"] != DBNull.Value ? Convert.ToDateTime(dr["HanSuDung"]) : DateTime.Now,
+                                    SoLuongChuyen = Convert.ToInt32(dr["SoLuongChuyen"])
+                                });
+                            }
+                        }
+                    }
+
+                    foreach (var ct in chiTiets)
+                    {
+                        // 1. Trừ tồn kho nguồn
+                        string sqlUpdateNguon = @"
+                            UPDATE TONKHO 
+                            SET SoLuongTon = SoLuongTon - @SoLuong, NgayCapNhat = GETDATE() 
+                            WHERE MaKho = @MaKhoNguon AND MaThuoc = @MaThuoc AND MaLo = @MaLo AND SoLuongTon >= @SoLuong";
+                        SqlCommand cmdUNguon = new SqlCommand(sqlUpdateNguon, conn, tran);
+                        cmdUNguon.Parameters.AddWithValue("@SoLuong", ct.SoLuongChuyen);
+                        cmdUNguon.Parameters.AddWithValue("@MaKhoNguon", maKhoNguon);
+                        cmdUNguon.Parameters.AddWithValue("@MaThuoc", ct.MaThuoc);
+                        cmdUNguon.Parameters.AddWithValue("@MaLo", ct.MaLo);
+                        
+                        int rowsNguon = cmdUNguon.ExecuteNonQuery();
+                        if (rowsNguon == 0)
+                        {
+                            // Không đủ tồn kho nguồn, huỷ bỏ
+                            tran.Rollback();
+                            return false;
+                        }
+
+                        // Lấy Giá Nhập từ lô nguồn
+                        decimal giaNhap = 0;
+                        string sqlGiaNhap = "SELECT TOP 1 GiaNhap FROM TONKHO WHERE MaKho = @MaKhoNguon AND MaThuoc = @MaThuoc AND MaLo = @MaLo";
+                        SqlCommand cmdGN = new SqlCommand(sqlGiaNhap, conn, tran);
+                        cmdGN.Parameters.AddWithValue("@MaKhoNguon", maKhoNguon);
+                        cmdGN.Parameters.AddWithValue("@MaThuoc", ct.MaThuoc);
+                        cmdGN.Parameters.AddWithValue("@MaLo", ct.MaLo);
+                        var giaNhapObj = cmdGN.ExecuteScalar();
+                        if (giaNhapObj != null && giaNhapObj != DBNull.Value) giaNhap = Convert.ToDecimal(giaNhapObj);
+
+                        // 2. Cộng tồn kho đích
+                        string sqlCheckDich = "SELECT MaTonKho FROM TONKHO WHERE MaKho = @MaKhoDich AND MaThuoc = @MaThuoc AND MaLo = @MaLo";
+                        SqlCommand cmdCheckD = new SqlCommand(sqlCheckDich, conn, tran);
+                        cmdCheckD.Parameters.AddWithValue("@MaKhoDich", maKhoDich);
+                        cmdCheckD.Parameters.AddWithValue("@MaThuoc", ct.MaThuoc);
+                        cmdCheckD.Parameters.AddWithValue("@MaLo", ct.MaLo);
+                        var existing = cmdCheckD.ExecuteScalar();
+
+                        if (existing != null)
+                        {
+                            string sqlUpdateDich = @"
+                                UPDATE TONKHO
+                                SET SoLuongTon = SoLuongTon + @SoLuong, NgayCapNhat = GETDATE()
+                                WHERE MaKho = @MaKhoDich AND MaThuoc = @MaThuoc AND MaLo = @MaLo";
+                            SqlCommand cmdUDich = new SqlCommand(sqlUpdateDich, conn, tran);
+                            cmdUDich.Parameters.AddWithValue("@SoLuong", ct.SoLuongChuyen);
+                            cmdUDich.Parameters.AddWithValue("@MaKhoDich", maKhoDich);
+                            cmdUDich.Parameters.AddWithValue("@MaThuoc", ct.MaThuoc);
+                            cmdUDich.Parameters.AddWithValue("@MaLo", ct.MaLo);
+                            cmdUDich.ExecuteNonQuery();
+                        }
+                        else
+                        {
+                            string sqlInsertDich = @"
+                                INSERT INTO TONKHO (MaKho, MaThuoc, MaLo, HanSuDung, NgaySanXuat, GiaNhap, SoLuongTon)
+                                VALUES (@MaKhoDich, @MaThuoc, @MaLo, @HanSuDung, @NgaySanXuat, @GiaNhap, @SoLuong)";
+                            SqlCommand cmdIDich = new SqlCommand(sqlInsertDich, conn, tran);
+                            cmdIDich.Parameters.AddWithValue("@MaKhoDich", maKhoDich);
+                            cmdIDich.Parameters.AddWithValue("@MaThuoc", ct.MaThuoc);
+                            cmdIDich.Parameters.AddWithValue("@MaLo", ct.MaLo);
+                            cmdIDich.Parameters.AddWithValue("@HanSuDung", ct.HanSuDung);
+                            cmdIDich.Parameters.AddWithValue("@NgaySanXuat", (object)ct.NgaySanXuat ?? DBNull.Value);
+                            cmdIDich.Parameters.AddWithValue("@GiaNhap", giaNhap);
+                            cmdIDich.Parameters.AddWithValue("@SoLuong", ct.SoLuongChuyen);
+                            cmdIDich.ExecuteNonQuery();
+                        }
+                    }
+
+                    string sqlPN = @"
+                        UPDATE PHIEUCHUYENKHO
+                        SET TrangThai = N'Đã duyệt', MaNV_Duyet = @MaNVDuyet, NgayDuyet = GETDATE()
+                        WHERE MaPhieuChuyen = @MaPhieuChuyen";
+
+                    SqlCommand cmdUPN = new SqlCommand(sqlPN, conn, tran);
+                    cmdUPN.Parameters.AddWithValue("@MaNVDuyet", maNVDuyet);
+                    cmdUPN.Parameters.AddWithValue("@MaPhieuChuyen", maPhieuChuyen);
+                    cmdUPN.ExecuteNonQuery();
+
+                    tran.Commit();
+                    return true;
+                }
+                catch
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        public bool HuyPhieuChuyen(int maPhieuChuyen, string maNVHuy)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+                try
+                {
+                    string sql = @"
+                        UPDATE PHIEUCHUYENKHO 
+                        SET TrangThai = N'Đã hủy'
+                        WHERE MaPhieuChuyen = @MaPhieuChuyen AND TrangThai = N'Chờ duyệt'";
+
+                    SqlCommand cmd = new SqlCommand(sql, conn, tran);
+                    cmd.Parameters.AddWithValue("@MaPhieuChuyen", maPhieuChuyen);
+                    int rows = cmd.ExecuteNonQuery();
+                    tran.Commit();
+                    return rows > 0;
+                }
+                catch
+                {
+                    tran.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        public bool XoaChiTietPhieuChuyen(int maCTPC)
+        {
+            using (SqlConnection conn = new SqlConnection(connectStr))
+            {
+                conn.Open();
+                SqlTransaction tran = conn.BeginTransaction();
+                try
+                {
+                    string sqlGet = "SELECT MaPhieuChuyen FROM CT_PHIEUCHUYENKHO WHERE MaCTPC = @MaCTPC";
+                    SqlCommand cmdGet = new SqlCommand(sqlGet, conn, tran);
+                    cmdGet.Parameters.AddWithValue("@MaCTPC", maCTPC);
+                    var maPhieuChuyen = cmdGet.ExecuteScalar();
+
+                    if (maPhieuChuyen == null)
+                    {
+                        tran.Rollback();
+                        return false;
+                    }
+
+                    string sqlCheck = "SELECT TrangThai FROM PHIEUCHUYENKHO WHERE MaPhieuChuyen = @MaPhieuChuyen";
+                    SqlCommand cmdCheck = new SqlCommand(sqlCheck, conn, tran);
+                    cmdCheck.Parameters.AddWithValue("@MaPhieuChuyen", maPhieuChuyen);
+                    var trangThai = cmdCheck.ExecuteScalar()?.ToString();
+
+                    if (trangThai != "Chờ duyệt")
+                    {
+                        tran.Rollback();
+                        return false;
+                    }
+
+                    string sqlDelete = "DELETE FROM CT_PHIEUCHUYENKHO WHERE MaCTPC = @MaCTPC";
+                    SqlCommand cmdDel = new SqlCommand(sqlDelete, conn, tran);
+                    cmdDel.Parameters.AddWithValue("@MaCTPC", maCTPC);
+                    cmdDel.ExecuteNonQuery();
+
+                    tran.Commit();
+                    return true;
                 }
                 catch
                 {

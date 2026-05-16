@@ -129,10 +129,16 @@
                 }
                 else
                 {
-                    <div class="alert alert-secondary mb-0 text-center">
+                    <div class="alert alert-secondary mb-3 text-center">
                         <i class="bi bi-info-circle me-1"></i>
                         Phiếu này đã được xử lý
                     </div>
+                    if (phieu.TrangThai == "Đã duyệt")
+                    {
+                        <a href="@Url.Action("PrintPhieuNhap", new { id = phieu.MaPhieuNhap })" target="_blank" class="btn btn-primary w-100 mb-3">
+                            <i class="bi bi-printer me-1"></i>In phiếu nhập
+                        </a>
+                    }
                 }
                 <hr />
                 <a href="@Url.Action("DanhSachPhieuNhap", "Kho")" class="btn btn-outline-secondary w-100">
@@ -164,6 +170,10 @@
                         <th class="text-end">Số lượng</th>
                         <th class="text-end">Đơn giá</th>
                         <th class="text-end">Thành tiền</th>
+                        @if (phieu.TrangThai == "Chờ duyệt")
+                        {
+                            <th class="text-center" style="width: 50px;"></th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -193,12 +203,24 @@
                                 <td class="text-end">@ct.SoLuongNhap.ToString("N0") @ct.DonViCoBan</td>
                                 <td class="text-end">@ct.DonGiaNhap.ToString("N0") đ</td>
                                 <td class="text-end fw-bold">@ct.ThanhTien.ToString("N0") đ</td>
+                                @if (phieu.TrangThai == "Chờ duyệt")
+                                {
+                                    <td class="text-center">
+                                        <button class="btn btn-sm btn-outline-danger" onclick="xoaChiTiet(@ct.MaCTPN)" title="Loại bỏ chi tiết này">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </td>
+                                }
                             </tr>
                             stt++;
                         }
                         <tr class="table-primary fw-bold">
                             <td colspan="8" class="text-end">Tổng cộng:</td>
                             <td class="text-end">@phieu.TongTienNhap.ToString("N0") đ</td>
+                            @if (phieu.TrangThai == "Chờ duyệt")
+                            {
+                                <td></td>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -208,45 +230,101 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function duyetPhieu() {
-            if (!confirm('Xác nhận duyệt phiếu nhập #@phieu.MaPhieuNhap? Thuốc sẽ được cập nhật vào kho tồn.')) return;
-
-            $.ajax({
-                url: '@Url.Action("DuyetPhieuNhap", "Kho")',
-                type: 'POST',
-                data: { id: @phieu.MaPhieuNhap },
-                success: function (res) {
-                    if (res.success) {
-                        alert('Duyệt thành công!');
-                        location.reload();
-                    } else {
-                        alert('Lỗi: ' + res.message);
-                    }
-                },
-                error: function () {
-                    alert('Đã xảy ra lỗi!');
+            Swal.fire({
+                title: 'Xác nhận duyệt phiếu?',
+                text: 'Thuốc sẽ được cập nhật vào kho tồn đối với phiếu nhập #@phieu.MaPhieuNhap.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Có, duyệt phiếu!',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '@Url.Action("DuyetPhieuNhap", "Kho")',
+                        type: 'POST',
+                        data: { id: @phieu.MaPhieuNhap },
+                        success: function (res) {
+                            if (res.success) {
+                                Swal.fire('Thành công!', 'Duyệt thành công!', 'success').then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire('Lỗi', res.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Lỗi', 'Đã xảy ra lỗi!', 'error');
+                        }
+                    });
                 }
             });
         }
 
         function huyPhieu() {
-            if (!confirm('Bạn có chắc muốn hủy phiếu nhập này?')) return;
+            Swal.fire({
+                title: 'Xác nhận hủy phiếu?',
+                text: 'Bạn có chắc chắn muốn hủy phiếu nhập này?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Có, hủy phiếu!',
+                cancelButtonText: 'Đóng'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '@Url.Action("HuyPhieuNhap", "Kho")',
+                        type: 'POST',
+                        data: { id: @phieu.MaPhieuNhap },
+                        success: function (res) {
+                            if (res.success) {
+                                Swal.fire('Thành công!', 'Đã hủy phiếu nhập!', 'success').then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire('Lỗi', res.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Lỗi', 'Đã xảy ra lỗi!', 'error');
+                        }
+                    });
+                }
+            });
+        }
 
-            $.ajax({
-                url: '@Url.Action("HuyPhieuNhap", "Kho")',
-                type: 'POST',
-                data: { id: @phieu.MaPhieuNhap },
-                success: function (res) {
-                    if (res.success) {
-                        alert('Đã hủy phiếu nhập!');
-                        location.reload();
-                    } else {
-                        alert('Lỗi: ' + res.message);
-                    }
-                },
-                error: function () {
-                    alert('Đã xảy ra lỗi!');
+        function xoaChiTiet(maCTPN) {
+            Swal.fire({
+                title: 'Xóa chi tiết?',
+                text: 'Bạn có chắc muốn loại bỏ mặt hàng này khỏi phiếu nhập?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Có, xóa!',
+                cancelButtonText: 'Đóng'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '@Url.Action("XoaChiTietPhieuNhap", "Kho")',
+                        type: 'POST',
+                        data: { id: maCTPN },
+                        success: function (res) {
+                            if (res.success) {
+                                location.reload();
+                            } else {
+                                Swal.fire('Lỗi', res.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Lỗi', 'Đã xảy ra lỗi khi xóa chi tiết!', 'error');
+                        }
+                    });
                 }
             });
         }

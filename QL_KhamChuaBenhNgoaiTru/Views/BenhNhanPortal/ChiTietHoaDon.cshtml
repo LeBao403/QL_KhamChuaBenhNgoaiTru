@@ -1,4 +1,4 @@
-﻿@model QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.HoaDonChiTiet
+@model QL_KhamChuaBenhNgoaiTru.DBContext.BenhNhanPortalDB.HoaDonChiTiet
 @{
     ViewBag.Title = "Chi tiết hóa đơn";
     Layout = "~/Views/Shared/_Layout_Client.cshtml";
@@ -46,7 +46,7 @@
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div>
                 <div class="hero-title"><i class="bi bi-receipt-cutoff me-2"></i>Chi tiết hóa đơn</div>
-                <div class="hero-subtitle">Mã hóa đơn: #@(Model?.MaHD ?? 0)</div>
+                <div class="hero-subtitle">Mã hóa đơn: #@(Model?.MaHD ?? "")</div>
             </div>
             <div class="d-flex gap-2">
                 <button onclick="window.print()" class="btn btn-light rounded-pill fw-bold no-print">

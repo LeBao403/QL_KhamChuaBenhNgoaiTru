@@ -1,0 +1,171 @@
+@model QL_KhamChuaBenhNgoaiTru.Models.PhieuChuyenKhoViewModel
+@{
+    ViewBag.Title = "In Phiếu Chuyển Kho";
+    Layout = null; // Bỏ layout chung để in ấn độc lập
+    var chiTiet = ViewBag.ChiTiet as List<QL_KhamChuaBenhNgoaiTru.Models.CT_PhieuChuyenKhoViewModel>;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>In Phiếu Chuyển Kho</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    @{ Html.RenderPartial("~/Views/Shared/_PrintDocumentStyles.cshtml"); }
+    <style>
+        body { background-color: #fff; font-family: 'Inter', sans-serif; }
+        .invoice-wrapper {
+            background-color: #ffffff;
+            padding: 2rem 3rem;
+            margin: 0 auto;
+            max-width: 900px;
+        }
+        .invoice-header { border-bottom: 2px solid #1e293b; padding-bottom: 1.5rem; margin-bottom: 2rem; }
+        .info-label { font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase; margin-bottom: 0.2rem; }
+        .info-value { font-size: 1rem; color: #0f172a; font-weight: 600; margin-bottom: 1rem; }
+        .table-invoice th {
+            background-color: #f8fafc !important;
+            color: #475569;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            padding: 1rem;
+            border-bottom: 2px solid #cbd5e1;
+        }
+        .table-invoice td { padding: 1rem; vertical-align: middle; border-bottom: 1px dashed #e2e8f0; }
+        .signature-area { margin-top: 4rem; text-align: center; }
+        .signature-title { font-weight: 700; color: #334155; margin-bottom: 4rem; }
+        
+        @@media print {
+            body { background-color: #fff; }
+            .d-print-none { display: none !important; }
+            .invoice-wrapper { max-width: 100% !important; padding: 0 !important; }
+            .table-invoice td { border-bottom: 1px solid #000; }
+        }
+    </style>
+</head>
+<body>
+    <div class="action-bar d-flex justify-content-center p-3 bg-light d-print-none">
+        <button type="button" class="btn btn-primary shadow-sm me-2" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> In Phiếu
+        </button>
+        <button type="button" class="btn btn-secondary shadow-sm" onclick="window.close()">
+            Đóng
+        </button>
+    </div>
+
+    <div class="invoice-wrapper app-print-sheet">
+        <div class="invoice-header">
+            @{
+                Html.RenderPartial(
+                    "~/Views/Shared/_PrintDocumentHeader.cshtml",
+                    new ViewDataDictionary(ViewData)
+                    {
+                        { "PrintDocumentTitle", "PHIẾU CHUYỂN KHO" },
+                        { "PrintDocumentMaBNText", "" },
+                        { "PrintDocumentCodeLabel", "Mã phiếu" },
+                        { "PrintDocumentCodeText", "#" + Model.MaPhieuChuyen }
+                    });
+            }
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-6">
+                <div class="info-label">Kho nguồn (Xuất đi)</div>
+                <div class="info-value text-primary fs-5">@Model.TenKhoNguon</div>
+                
+                <div class="info-label">Kho đích (Nhập vào)</div>
+                <div class="info-value text-info fs-5">@Model.TenKhoDich</div>
+            </div>
+            <div class="col-6 text-end">
+                <div class="info-label">Ngày lập phiếu</div>
+                <div class="info-value">@(Model.NgayChuyen.HasValue ? Model.NgayChuyen.Value.ToString("dd/MM/yyyy HH:mm") : "")</div>
+                
+                <div class="info-label">Nhân viên lập phiếu</div>
+                <div class="info-value">@Model.TenNguoiLap</div>
+                
+                @if (Model.NgayDuyet.HasValue)
+                {
+                    <div class="info-label">Ngày duyệt</div>
+                    <div class="info-value">@Model.NgayDuyet.Value.ToString("dd/MM/yyyy HH:mm")</div>
+                    
+                    <div class="info-label">Người duyệt (Thủ kho đích)</div>
+                    <div class="info-value">@Model.TenNguoiDuyet</div>
+                }
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.GhiChu))
+        {
+            <div class="row mt-2">
+                <div class="col-12">
+                    <div class="info-label">Ghi chú</div>
+                    <div class="info-value fst-italic fw-normal">@Model.GhiChu</div>
+                </div>
+            </div>
+        }
+
+        <div class="table-responsive table-invoice mt-4">
+            <table class="table mb-0 app-print-table">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width: 50px;">STT</th>
+                        <th>Tên thuốc/Vật tư</th>
+                        <th>Số lô</th>
+                        <th>Ngày sản xuất</th>
+                        <th>Hạn dùng</th>
+                        <th class="text-end">Đơn vị</th>
+                        <th class="text-end" style="width: 150px;">Số lượng chuyển</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (chiTiet != null && chiTiet.Any())
+                    {
+                        int stt = 1;
+                        foreach (var item in chiTiet)
+                        {
+                            <tr>
+                                <td class="text-center text-muted fw-bold">@stt</td>
+                                <td class="fw-bold">@item.TenThuoc</td>
+                                <td>@item.MaLo</td>
+                                <td>@(item.NgaySanXuat.HasValue ? item.NgaySanXuat.Value.ToString("dd/MM/yyyy") : "")</td>
+                                <td>@item.HanSuDung.ToString("dd/MM/yyyy")</td>
+                                <td class="text-end text-muted">@item.DonViCoBan</td>
+                                <td class="text-end fw-bold text-dark fs-5">@item.SoLuongChuyen.ToString("N0")</td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <table class="w-100 mt-5 text-center signature-area" style="page-break-inside: avoid;">
+            <tr>
+                <td style="width: 33.33%; vertical-align: top;">
+                    <div class="signature-title text-uppercase mt-4">Người lập phiếu</div>
+                    <div class="text-muted fst-italic mb-5" style="font-size: 0.85rem;">(Ký, ghi rõ họ tên)</div>
+                    <div class="fw-bold mt-5 pt-4 text-dark">@Model.TenNguoiLap</div>
+                </td>
+                <td style="width: 33.33%; vertical-align: top;">
+                    <div class="signature-title text-uppercase mt-4">Thủ kho Nguồn (Giao)</div>
+                    <div class="text-muted fst-italic mb-5" style="font-size: 0.85rem;">(Ký, ghi rõ họ tên)</div>
+                </td>
+                <td style="width: 33.33%; vertical-align: top;">
+                    <div style="font-style:italic; margin-bottom: 2px;">Ngày ..... tháng ..... năm ........</div>
+                    <div class="signature-title text-uppercase">Thủ kho Đích (Nhận)</div>
+                    <div class="text-muted fst-italic mb-5" style="font-size: 0.85rem;">(Ký, ghi rõ họ tên)</div>
+                    <div class="fw-bold mt-5 pt-4 text-dark">@Model.TenNguoiDuyet</div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 500);
+        };
+    </script>
+</body>
+</html>

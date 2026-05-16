@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web.Mvc;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
+using QL_KhamChuaBenhNgoaiTru.Libraries;
 using QL_KhamChuaBenhNgoaiTru.Models;
 
 using BenhNhanModel = QL_KhamChuaBenhNgoaiTru.Models.BenhNhan;
@@ -590,6 +593,136 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             {
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        // POST /MobileApi/TaoThanhToanTheUrl
+        [HttpPost]
+        public JsonResult TaoThanhToanTheUrl(string maHD, string maPhieuDK, string returnUrl = null)
+        {
+            var bn = Session["BenhNhan"] as BenhNhanModel;
+            if (bn == null) return Json(new { success = false, message = "Vui lòng đăng nhập lại!" });
+
+            try
+            {
+                if (!HoaDonDatLichThuocBenhNhan(maHD, maPhieuDK, bn.MaBN))
+                    return Json(new { success = false, message = "Không tìm thấy hóa đơn đặt lịch hợp lệ!" });
+
+                string paymentUrl = TaoUrlVnPay(maHD, 100000m, returnUrl);
+                return Json(new { success = true, paymentUrl = paymentUrl });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // POST /MobileApi/KiemTraThanhToanThe
+        [HttpPost]
+        public JsonResult KiemTraThanhToanThe(string maHD, string maPhieuDK)
+        {
+            var bn = Session["BenhNhan"] as BenhNhanModel;
+            if (bn == null) return Json(new { success = false, message = "Vui lòng đăng nhập lại!" });
+
+            try
+            {
+                using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString))
+                {
+                    conn.Open();
+                    const string sql = @"
+                        SELECT TOP 1 hd.TrangThaiThanhToan, pdk.TrangThai AS TrangThaiPhieu
+                        FROM HOADON hd
+                        LEFT JOIN PHIEUDANGKY pdk ON hd.MaPhieuDK = pdk.MaPhieuDK
+                        WHERE hd.MaHD = @MaHD
+                          AND hd.MaPhieuDK = @MaPhieuDK
+                          AND hd.MaBN = @MaBN";
+                    using (var cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@MaHD", maHD ?? "");
+                        cmd.Parameters.AddWithValue("@MaPhieuDK", maPhieuDK ?? "");
+                        cmd.Parameters.AddWithValue("@MaBN", bn.MaBN);
+
+                        using (var dr = cmd.ExecuteReader())
+                        {
+                            if (!dr.Read())
+                                return Json(new { success = false, message = "Không tìm thấy hóa đơn đặt lịch!" });
+
+                            string trangThaiHD = dr["TrangThaiThanhToan"]?.ToString() ?? "";
+                            string trangThaiPhieu = dr["TrangThaiPhieu"]?.ToString() ?? "";
+
+                            return Json(new
+                            {
+                                success = true,
+                                isPaid = trangThaiHD == "Đã thanh toán",
+                                isCanceled = trangThaiHD == "Đã hủy" || trangThaiPhieu == "Hủy",
+                                trangThaiThanhToan = trangThaiHD,
+                                trangThaiPhieu = trangThaiPhieu
+                            });
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        private bool HoaDonDatLichThuocBenhNhan(string maHD, string maPhieuDK, string maBN)
+        {
+            using (var conn = new SqlConnection(ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString))
+            {
+                conn.Open();
+                const string sql = @"
+                    SELECT COUNT(*)
+                    FROM HOADON
+                    WHERE MaHD = @MaHD
+                      AND MaPhieuDK = @MaPhieuDK
+                      AND MaBN = @MaBN
+                      AND TrangThaiThanhToan <> N'Đã hủy'";
+                using (var cmd = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@MaHD", maHD ?? "");
+                    cmd.Parameters.AddWithValue("@MaPhieuDK", maPhieuDK ?? "");
+                    cmd.Parameters.AddWithValue("@MaBN", maBN ?? "");
+                    return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+                }
+            }
+        }
+
+        private string TaoUrlVnPay(string maHoaDon, decimal tongTien, string returnUrlOverride = null)
+        {
+            string vnpReturnUrl = !string.IsNullOrWhiteSpace(returnUrlOverride) &&
+                                  (returnUrlOverride.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+                                   returnUrlOverride.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                ? returnUrlOverride.Trim()
+                : ConfigurationManager.AppSettings["vnp_Returnurl"];
+            string vnpUrl = ConfigurationManager.AppSettings["vnp_Url"];
+            string vnpTmnCode = ConfigurationManager.AppSettings["vnp_TmnCode"];
+            string vnpHashSecret = ConfigurationManager.AppSettings["vnp_HashSecret"];
+
+            if (string.IsNullOrEmpty(vnpTmnCode) || string.IsNullOrEmpty(vnpHashSecret))
+                throw new Exception("Không đọc được cấu hình VNPAY. Hãy kiểm tra lại file Secrets.");
+
+            var vnpay = new VnPayLibrary();
+            vnpay.AddRequestData("vnp_Version", VnPayLibrary.VERSION);
+            vnpay.AddRequestData("vnp_Command", "pay");
+            vnpay.AddRequestData("vnp_TmnCode", vnpTmnCode);
+            vnpay.AddRequestData("vnp_Amount", ((long)(tongTien * 100)).ToString());
+            vnpay.AddRequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"));
+            vnpay.AddRequestData("vnp_CurrCode", "VND");
+
+            string ipAddr = Utils.GetIpAddress();
+            if (string.IsNullOrEmpty(ipAddr) || ipAddr == "::1") ipAddr = "127.0.0.1";
+            vnpay.AddRequestData("vnp_IpAddr", ipAddr);
+
+            vnpay.AddRequestData("vnp_Locale", "vn");
+            string cleanMaHD = (maHoaDon ?? "HD").Trim();
+            vnpay.AddRequestData("vnp_OrderInfo", "ThanhToanHoaDon_" + cleanMaHD);
+            vnpay.AddRequestData("vnp_OrderType", "other");
+            vnpay.AddRequestData("vnp_ReturnUrl", vnpReturnUrl);
+            vnpay.AddRequestData("vnp_TxnRef", cleanMaHD + "_" + DateTime.Now.Ticks);
+
+            return vnpay.CreateRequestUrl(vnpUrl, vnpHashSecret);
         }
 
         // POST /MobileApi/HuyLich

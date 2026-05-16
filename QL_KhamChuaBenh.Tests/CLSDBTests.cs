@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
 using QL_KhamChuaBenhNgoaiTru.Models;
 using System;
@@ -14,19 +14,19 @@ namespace QL_KhamChuaBenh.Tests
         private CLSDB _db;
         private string _connectStr;
 
-        // Mã mồi giả định
+        // M� m?i gi? d?nh
         private const string _testMaBN = "BN_CLS99";
         private const string _testMaDV = "DV_CLS99";
         private const string _testMaLoaiDV = "L_TEST99";
         private const string _testMaBS = "BS_TEST99";
 
-        // Lưu lại ID tự tăng để dọn dẹp
-        private int _testMaPKB;
-        private int _testMaPCD;
-        private int _testMaKetQua;
+        // Luu l?i ID t? tang d? d?n d?p
+        private string _testMaPKB;
+        private string _testMaPCD;
+        private string _testMaKetQua;
 
         // =========================================================
-        // BƯỚC 1: DỌN CỖ (Tạo chuỗi Data mồi liên hoàn)
+        // BU?C 1: D?N C? (T?o chu?i Data m?i li�n ho�n)
         // =========================================================
         [TestInitialize]
         public void Setup()
@@ -34,53 +34,53 @@ namespace QL_KhamChuaBenh.Tests
             _db = new CLSDB();
             _connectStr = ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString;
 
-            CleanupData(); // Dọn rác đề phòng chạy lỗi lần trước
+            CleanupData(); // D?n r�c d? ph�ng ch?y l?i l?n tru?c
 
             using (SqlConnection conn = new SqlConnection(_connectStr))
             {
                 conn.Open();
 
-                // 1. Tạo Bác sĩ mồi (Tránh lỗi FK khi cập nhật kết quả)
-                new SqlCommand($"INSERT INTO NHANVIEN (MaNV, HoTen) VALUES ('{_testMaBS}', N'Bác Sĩ Test')", conn).ExecuteNonQuery();
+                // 1. T?o B�c si m?i (Tr�nh l?i FK khi c?p nh?t k?t qu?)
+                new SqlCommand($"INSERT INTO NHANVIEN (MaNV, HoTen) VALUES ('{_testMaBS}', N'B�c Si Test')", conn).ExecuteNonQuery();
 
-                // 2. Tạo Bệnh nhân mồi
-                new SqlCommand($"INSERT INTO BENHNHAN (MaBN, HoTen, BHYT) VALUES ('{_testMaBN}', N'Bệnh Nhân CLS', 0)", conn).ExecuteNonQuery();
+                // 2. T?o B?nh nh�n m?i
+                new SqlCommand($"INSERT INTO BENHNHAN (MaBN, HoTen, BHYT) VALUES ('{_testMaBN}', N'B?nh Nh�n CLS', 0)", conn).ExecuteNonQuery();
 
-                // 3. Tạo Loại Dịch Vụ mồi
-                try { new SqlCommand($"INSERT INTO LOAI_DICHVU (MaLoaiDV, TenLoaiDV) VALUES ('{_testMaLoaiDV}', N'Loại Test')", conn).ExecuteNonQuery(); } catch { }
+                // 3. T?o Lo?i D?ch V? m?i
+                try { new SqlCommand($"INSERT INTO LOAI_DICHVU (MaLoaiDV, TenLoaiDV) VALUES ('{_testMaLoaiDV}', N'Lo?i Test')", conn).ExecuteNonQuery(); } catch { }
 
-                // 4. Tạo Dịch vụ mồi (Bắt buộc có MaLoaiDV)
-                new SqlCommand($"INSERT INTO DICHVU (MaDV, TenDV, GiaDichVu, TrangThai, MaLoaiDV) VALUES ('{_testMaDV}', N'Siêu âm Test', 100000, 1, '{_testMaLoaiDV}')", conn).ExecuteNonQuery();
+                // 4. T?o D?ch v? m?i (B?t bu?c c� MaLoaiDV)
+                new SqlCommand($"INSERT INTO DICHVU (MaDV, TenDV, GiaDichVu, TrangThai, MaLoaiDV) VALUES ('{_testMaDV}', N'Si�u �m Test', 100000, 1, '{_testMaLoaiDV}')", conn).ExecuteNonQuery();
 
-                // 5. Tạo Phiếu Khám Bệnh (Trạng thái: Chờ cận lâm sàng)
+                // 5. T?o Phi?u Kh�m B?nh (Tr?ng th�i: Ch? c?n l�m s�ng)
                 string sqlPKB = @"INSERT INTO PHIEUKHAMBENH (MaBN, NgayLap, TrangThai) 
                                   OUTPUT INSERTED.MaPhieuKhamBenh 
-                                  VALUES (@MaBN, GETDATE(), N'Chờ cận lâm sàng')";
+                                  VALUES (@MaBN, GETDATE(), N'Ch? c?n l�m s�ng')";
                 SqlCommand cmdPKB = new SqlCommand(sqlPKB, conn);
                 cmdPKB.Parameters.AddWithValue("@MaBN", _testMaBN);
-                _testMaPKB = (int)cmdPKB.ExecuteScalar();
+                _testMaPKB = cmdPKB.ExecuteScalar().ToString();
 
-                // 6. Tạo Phiếu Chỉ Định
+                // 6. T?o Phi?u Ch? �?nh
                 string sqlPCD = @"INSERT INTO PHIEU_CHIDINH (MaPhieuKhamBenh, NgayChiDinh, TrangThai, TongTien) 
                                   OUTPUT INSERTED.MaPhieuChiDinh 
-                                  VALUES (@MaPKB, GETDATE(), N'Đã thanh toán', 100000)";
+                                  VALUES (@MaPKB, GETDATE(), N'�� thanh to�n', 100000)";
                 SqlCommand cmdPCD = new SqlCommand(sqlPCD, conn);
                 cmdPCD.Parameters.AddWithValue("@MaPKB", _testMaPKB);
-                _testMaPCD = (int)cmdPCD.ExecuteScalar();
+                _testMaPCD = cmdPCD.ExecuteScalar().ToString();
 
-                // 7. Tạo Chi Tiết Chỉ Định (Dòng kết quả mục tiêu)
+                // 7. T?o Chi Ti?t Ch? �?nh (D�ng k?t qu? m?c ti�u)
                 string sqlCT = @"INSERT INTO CHITIET_CHIDINH (MaPhieuChiDinh, MaDV, DonGia, TrangThai) 
                                  OUTPUT INSERTED.MaCTChiDinh 
-                                 VALUES (@MaPCD, @MaDV, 100000, N'Chưa thực hiện')";
+                                 VALUES (@MaPCD, @MaDV, 100000, N'Chua th?c hi?n')";
                 SqlCommand cmdCT = new SqlCommand(sqlCT, conn);
                 cmdCT.Parameters.AddWithValue("@MaPCD", _testMaPCD);
                 cmdCT.Parameters.AddWithValue("@MaDV", _testMaDV);
-                _testMaKetQua = (int)cmdCT.ExecuteScalar();
+                _testMaKetQua = cmdCT.ExecuteScalar().ToString();
             }
         }
 
         // =========================================================
-        // BƯỚC 3: RỬA BÁT (Xóa ngược từ trong ra ngoài)
+        // BU?C 3: R?A B�T (X�a ngu?c t? trong ra ngo�i)
         // =========================================================
         [TestCleanup]
         public void Teardown()
@@ -93,7 +93,7 @@ namespace QL_KhamChuaBenh.Tests
             using (SqlConnection conn = new SqlConnection(_connectStr))
             {
                 conn.Open();
-                // Xóa theo thứ tự ngược lại để không dính ràng buộc khóa ngoại
+                // X�a theo th? t? ngu?c l?i d? kh�ng d�nh r�ng bu?c kh�a ngo?i
                 try { new SqlCommand($"DELETE FROM CHITIET_CHIDINH WHERE MaDV = '{_testMaDV}'", conn).ExecuteNonQuery(); } catch { }
                 try { new SqlCommand($"DELETE FROM PHIEU_CHIDINH WHERE MaPhieuKhamBenh IN (SELECT MaPhieuKhamBenh FROM PHIEUKHAMBENH WHERE MaBN = '{_testMaBN}')", conn).ExecuteNonQuery(); } catch { }
                 try { new SqlCommand($"DELETE FROM PHIEUKHAMBENH WHERE MaBN = '{_testMaBN}'", conn).ExecuteNonQuery(); } catch { }
@@ -105,29 +105,29 @@ namespace QL_KhamChuaBenh.Tests
         }
 
         // =========================================================
-        // BƯỚC 2: XƠI CỖ - CÁC KỊCH BẢN KIỂM THỬ
+        // BU?C 2: XOI C? - C�C K?CH B?N KI?M TH?
         // =========================================================
 
         [TestMethod]
         public void GetDanhSachChoThucHien_ShouldReturnPendingItems()
         {
-            var ds = _db.GetDanhSachChoThucHien();
+            var ds = _db.GetDanhSachChoThucHien("");
             Assert.IsNotNull(ds);
 
             var itemMoi = ds.FirstOrDefault(x => x.MaKetQua == _testMaKetQua);
-            Assert.IsNotNull(itemMoi, "Lỗi: Không tìm thấy ca CLS mồi trong hàng đợi!");
-            Assert.AreEqual("Bệnh Nhân CLS", itemMoi.TenBenhNhan);
+            Assert.IsNotNull(itemMoi, "L?i: Kh�ng t�m th?y ca CLS m?i trong h�ng d?i!");
+            Assert.AreEqual("B?nh Nh�n CLS", itemMoi.TenBenhNhan);
         }
 
         [TestMethod]
         public void GetThongTinChiTietCLS_ShouldReturnDynamicObject()
         {
-            // Sử dụng dynamic và ép kiểu tường minh để tránh lỗi RuntimeBinder
+            // S? d?ng dynamic v� �p ki?u tu?ng minh d? tr�nh l?i RuntimeBinder
             dynamic chiTiet = _db.GetThongTinChiTietCLS(_testMaKetQua);
 
             Assert.IsNotNull(chiTiet);
             string tenBenhNhan = (string)chiTiet.TenBenhNhan;
-            Assert.AreEqual("Bệnh Nhân CLS", tenBenhNhan);
+            Assert.AreEqual("B?nh Nh�n CLS", tenBenhNhan);
         }
 
         [TestMethod]
@@ -136,15 +136,15 @@ namespace QL_KhamChuaBenh.Tests
             var kq = _db.GetKetQuaById(_testMaKetQua);
 
             Assert.IsNotNull(kq);
-            // .Trim() để xử lý kiểu dữ liệu CHAR(10) trong SQL
+            // .Trim() d? x? l� ki?u d? li?u CHAR(10) trong SQL
             Assert.AreEqual(_testMaDV, kq.MaDV.Trim());
-            Assert.AreEqual("Chưa thực hiện", kq.TrangThai);
+            Assert.AreEqual("Chua th?c hi?n", kq.TrangThai);
         }
 
         [TestMethod]
         public void GetKetQuaById_ShouldReturnNull_WhenIdIsInvalid()
         {
-            var kq = _db.GetKetQuaById(-1);
+            var kq = _db.GetKetQuaById("-1");
             Assert.IsNull(kq);
         }
 
@@ -156,7 +156,7 @@ namespace QL_KhamChuaBenh.Tests
 
             Assert.IsTrue(isUpdated);
             var check = _db.GetKetQuaById(_testMaKetQua);
-            Assert.AreEqual("Đã có kết quả", check.TrangThai);
+            Assert.AreEqual("�� c� k?t qu?", check.TrangThai);
             Assert.AreEqual(kqNoiDung, check.NoiDungKetQua);
             Assert.AreEqual(_testMaBS, check.MaBacSiThucHien.Trim());
         }
@@ -164,18 +164,18 @@ namespace QL_KhamChuaBenh.Tests
         [TestMethod]
         public void CapNhatKetQuaTuLIS_ShortParams_ShouldUpdateSuccessfully()
         {
-            // Test hàm nạp chồng (overload) 3 tham số
+            // Test h�m n?p ch?ng (overload) 3 tham s?
             bool isUpdated = _db.CapNhatKetQuaTuLIS(_testMaKetQua, "KQ Rut Gon", _testMaPKB);
 
             Assert.IsTrue(isUpdated);
             var check = _db.GetKetQuaById(_testMaKetQua);
-            Assert.AreEqual("Đã có kết quả", check.TrangThai);
+            Assert.AreEqual("�� c� k?t qu?", check.TrangThai);
         }
 
         [TestMethod]
         public void GetLichSuXetNghiem_ShouldReturnData()
         {
-            // Arrange: Đưa trạng thái về "Đã có kết quả" mới lôi lên lịch sử được
+            // Arrange: �ua tr?ng th�i v? "�� c� k?t qu?" m?i l�i l�n l?ch s? du?c
             _db.CapNhatKetQuaTuLIS(_testMaKetQua, "Test History", _testMaPKB);
 
             // Act

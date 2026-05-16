@@ -94,20 +94,20 @@ class BookingService {
       final dateStr =
           '${ngayKham.year}-${ngayKham.month.toString().padLeft(2, '0')}-${ngayKham.day.toString().padLeft(2, '0')}';
 
-      final webResp = await _api.post('/BenhNhanPortal/LoadKhungGio', {
-        'ngayKham': dateStr,
-      });
-      final webResult = _parseTimeSlotResponse(webResp);
-      if (webResult.success) {
-        return webResult;
-      }
-
       final mobileResp = await _api.post('/MobileApi/LoadKhungGio', {
         'ngayKham': dateStr,
       });
+      final mobileResult = _parseTimeSlotResponse(mobileResp);
+      if (mobileResult.success) {
+        return mobileResult;
+      }
+
+      final webResp = await _api.post('/BenhNhanPortal/LoadKhungGio', {
+        'ngayKham': dateStr,
+      });
       return _parseTimeSlotResponse(
-        mobileResp,
-        fallbackMessage: webResult.message,
+        webResp,
+        fallbackMessage: mobileResult.message,
       );
     } catch (e) {
       return ApiResult.fail('Lỗi kết nối: $e');
@@ -121,10 +121,22 @@ class BookingService {
     required String lyDo,
   }) async {
     try {
-      await _loadBookingForm(forceRefresh: true);
-
       final dateStr =
           '${ngayKham.year}-${ngayKham.month.toString().padLeft(2, '0')}-${ngayKham.day.toString().padLeft(2, '0')}';
+
+      final mobileResp = await _api.post('/MobileApi/DatLichKham', {
+        'ngayKham': dateStr,
+        'maKhungGio': maKhungGio.toString(),
+        'maDV': maDV,
+        'lyDo': lyDo,
+      });
+
+      final mobileResult = _parseBookingResponse(mobileResp);
+      if (mobileResult.success) {
+        return mobileResult;
+      }
+
+      await _loadBookingForm(forceRefresh: true);
 
       if ((_bookingFormToken ?? '').isNotEmpty) {
         final webResp = await _api.post('/BenhNhanPortal/DatLichKham', {
@@ -141,14 +153,7 @@ class BookingService {
         }
       }
 
-      final mobileResp = await _api.post('/MobileApi/DatLichKham', {
-        'ngayKham': dateStr,
-        'maKhungGio': maKhungGio.toString(),
-        'maDV': maDV,
-        'lyDo': lyDo,
-      });
-
-      return _parseBookingResponse(mobileResp);
+      return mobileResult;
     } catch (e) {
       return ApiResult.fail('Lỗi kết nối: $e');
     }
@@ -198,22 +203,56 @@ class BookingService {
     return false;
   }
 
-  Future<ApiResult<void>> xacNhanThanhToanThe(String maHD, String maPhieuDK) async {
+  Future<ApiResult<String>> taoThanhToanTheUrl(
+    String maHD,
+    String maPhieuDK,
+  ) async {
     try {
-      final resp = await _api.post('/BenhNhanPortal/XacNhanThanhToanTheMock', {
+      final resp = await _api.post('/MobileApi/TaoThanhToanTheUrl', {
+        'maHD': maHD,
+        'maPhieuDK': maPhieuDK,
+        'returnUrl': ApiService.resolveUrl('/ThanhToan/KetQua'),
+      });
+      if (resp.statusCode == 200) {
+        final json = _api.parseJson(resp);
+        if (json != null && json['success'] == true) {
+          final paymentUrl = json['paymentUrl']?.toString() ?? '';
+          if (paymentUrl.isNotEmpty) return ApiResult.ok(paymentUrl);
+        }
+        return ApiResult.fail(
+          json?['message']?.toString() ?? 'Không tạo được liên kết VNPAY!',
+        );
+      }
+      return ApiResult.fail('Không tạo được liên kết VNPAY!');
+    } catch (e) {
+      return ApiResult.fail('Lỗi kết nối: $e');
+    }
+  }
+
+  Future<ApiResult<Map<String, dynamic>>> kiemTraThanhToanTheOnline(
+    String maHD,
+    String maPhieuDK,
+  ) async {
+    try {
+      final resp = await _api.post('/MobileApi/KiemTraThanhToanThe', {
         'maHD': maHD,
         'maPhieuDK': maPhieuDK,
       });
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
-          return const ApiResult(success: true);
+          return ApiResult.ok({
+            'isPaid': json['isPaid'] == true,
+            'isCanceled': json['isCanceled'] == true,
+            'trangThaiThanhToan': json['trangThaiThanhToan']?.toString() ?? '',
+            'trangThaiPhieu': json['trangThaiPhieu']?.toString() ?? '',
+          });
         }
         return ApiResult.fail(
-          json?['message']?.toString() ?? 'Xác nhận thanh toán thất bại!',
+          json?['message']?.toString() ?? 'Không kiểm tra được thanh toán!',
         );
       }
-      return ApiResult.fail('Xác nhận thanh toán thất bại!');
+      return ApiResult.fail('Không kiểm tra được thanh toán!');
     } catch (e) {
       return ApiResult.fail('Lỗi kết nối: $e');
     }
