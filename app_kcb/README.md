@@ -1,17 +1,45 @@
-# app_kcb
+# MedicHub Flutter App
 
-A new Flutter project.
+Flutter client cho hệ thống khám chữa bệnh ngoại trú.
 
-## Getting Started
+## Chạy ở môi trường dev
 
-This project is a starting point for a Flutter application.
+Backend mặc định:
 
-A few resources to get you started if this is your first Flutter project:
+- Android Emulator: `http://10.0.2.2:8080`
+- Desktop/iOS Simulator: `http://localhost:8080`
+- Header dev IIS Express mặc định: `Host: localhost`
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Chạy app:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```powershell
+flutter pub get
+flutter run
+```
+
+## Cấu hình API theo môi trường
+
+Không sửa trực tiếp `ApiService.baseUrl` khi đổi môi trường. Dùng `dart-define`:
+
+```powershell
+flutter run --dart-define=API_BASE_URL=https://your-api.example.com --dart-define=API_HOST_HEADER=
+```
+
+Với IIS Express local trên Android Emulator, có thể giữ mặc định hoặc truyền rõ:
+
+```powershell
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080 --dart-define=API_HOST_HEADER=localhost
+```
+
+## Ghi chú bảo mật
+
+- Cookie phiên và thông tin người dùng hiện được lưu bằng `flutter_secure_storage`.
+- QR thanh toán được render nội bộ bằng `qr_flutter`, không gửi nội dung QR sang dịch vụ tạo ảnh bên ngoài.
+- Khi build production, nên dùng HTTPS và tắt `API_HOST_HEADER`.
+
+## Kiểm tra
+
+```powershell
+flutter analyze
+flutter test
+```

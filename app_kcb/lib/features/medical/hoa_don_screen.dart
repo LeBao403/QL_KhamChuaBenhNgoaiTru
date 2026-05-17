@@ -49,7 +49,8 @@ class _HoaDonScreenState extends State<HoaDonScreen>
     });
   }
 
-  List<HoaDonModel> get _datLichList => _list.where((h) => h.isDatLich).toList();
+  List<HoaDonModel> get _datLichList =>
+      _list.where((h) => h.isDatLich).toList();
   List<HoaDonModel> get _khamBenh => _list.where((h) => !h.isDatLich).toList();
 
   String _fmtMoney(double v) =>
@@ -168,7 +169,9 @@ class _HoaDonScreenState extends State<HoaDonScreen>
                         ),
                       ),
                       Text(
-                        item.ghiChu.isNotEmpty ? item.ghiChu : 'Hóa đơn khám bệnh',
+                        item.ghiChu.isNotEmpty
+                            ? item.ghiChu
+                            : 'Hóa đơn khám bệnh',
                         style: const TextStyle(
                           color: AppTheme.textMuted,
                           fontSize: 12,
@@ -185,7 +188,8 @@ class _HoaDonScreenState extends State<HoaDonScreen>
                   decoration: BoxDecoration(
                     color: item.statusColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(50),
-                    border: Border.all(color: item.statusColor.withOpacity(0.3)),
+                    border:
+                        Border.all(color: item.statusColor.withOpacity(0.3)),
                   ),
                   child: Text(
                     item.trangThaiThanhToan,

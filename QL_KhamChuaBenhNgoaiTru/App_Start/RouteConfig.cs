@@ -14,6 +14,27 @@ namespace QL_KhamChuaBenhNgoaiTru
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                name: "MobileApiRegisterRequestOtp",
+                url: "MobileApi/RegisterRequestOtp",
+                defaults: new { controller = "MobileApi", action = "RegisterRequestOtp" },
+                namespaces: new[] { "QL_KhamChuaBenhNgoaiTru.Controllers" }
+            );
+
+            routes.MapRoute(
+                name: "MobileApiRegisterVerifyOtp",
+                url: "MobileApi/RegisterVerifyOtp",
+                defaults: new { controller = "MobileApi", action = "RegisterVerifyOtp" },
+                namespaces: new[] { "QL_KhamChuaBenhNgoaiTru.Controllers" }
+            );
+
+            routes.MapRoute(
+                name: "MobileApiRegister",
+                url: "MobileApi/Register",
+                defaults: new { controller = "MobileApi", action = "Register" },
+                namespaces: new[] { "QL_KhamChuaBenhNgoaiTru.Controllers" }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional },

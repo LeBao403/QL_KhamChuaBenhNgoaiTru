@@ -87,6 +87,10 @@ class DoctorAvatar extends StatelessWidget {
     final resolvedImage = imagePath == null || imagePath!.trim().isEmpty
         ? ''
         : ApiService.resolveUrl(imagePath!);
+    final cacheSize = (radius * 2 * MediaQuery.devicePixelRatioOf(context))
+        .round()
+        .clamp(64, 240)
+        .toInt();
 
     return Container(
       width: radius * 2,
@@ -110,6 +114,12 @@ class DoctorAvatar extends StatelessWidget {
                 imageUrl: resolvedImage,
                 fit: BoxFit.cover,
                 httpHeaders: const {'Host': 'localhost'},
+                memCacheWidth: cacheSize,
+                memCacheHeight: cacheSize,
+                maxWidthDiskCache: cacheSize,
+                maxHeightDiskCache: cacheSize,
+                fadeInDuration: Duration.zero,
+                fadeOutDuration: Duration.zero,
                 placeholder: (context, url) => _buildFallback(),
                 errorWidget: (context, url, error) => _buildFallback(),
               ),
@@ -181,8 +191,9 @@ class SectionTitle extends StatelessWidget {
             fontSize: 22,
             fontWeight: FontWeight.w700,
           ),
-          textAlign:
-              alignment == CrossAxisAlignment.center ? TextAlign.center : TextAlign.start,
+          textAlign: alignment == CrossAxisAlignment.center
+              ? TextAlign.center
+              : TextAlign.start,
         ),
         if (alignment == CrossAxisAlignment.center) ...[
           const SizedBox(height: 10),
@@ -269,8 +280,7 @@ class GradientButton extends StatelessWidget {
           onTap: isLoading ? null : onPressed,
           borderRadius: BorderRadius.circular(12),
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             child: isLoading
                 ? const SizedBox(
                     height: 20,
@@ -341,6 +351,7 @@ class TimeSlotChip extends StatelessWidget {
   final bool isSelected;
   final bool isDisabled;
   final String status;
+  final String? subtitle;
   final VoidCallback? onTap;
   const TimeSlotChip({
     super.key,
@@ -348,6 +359,7 @@ class TimeSlotChip extends StatelessWidget {
     required this.isSelected,
     required this.isDisabled,
     required this.status,
+    this.subtitle,
     this.onTap,
   });
 
@@ -368,8 +380,7 @@ class TimeSlotChip extends StatelessWidget {
       onTap: isDisabled ? null : onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
           color: bg,
           border: Border.all(
@@ -401,6 +412,16 @@ class TimeSlotChip extends StatelessWidget {
                         : AppTheme.textDark,
               ),
             ),
+            if (subtitle != null && subtitle!.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                subtitle!,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDisabled ? AppTheme.textLight : AppTheme.textMuted,
+                ),
+              ),
+            ],
             const SizedBox(height: 4),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),

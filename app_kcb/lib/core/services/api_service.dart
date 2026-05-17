@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,9 @@ class ApiService {
   //
   // IIS Express HTTP port: 8080 (dùng HTTP để tránh SSL cert tự ký trong dev)
   static String get baseUrl {
+    const configured = String.fromEnvironment('API_BASE_URL');
+    if (configured.isNotEmpty) return configured;
+
     if (Platform.isAndroid) {
       return 'http://10.0.2.2:8080';
     }
@@ -34,48 +38,64 @@ class ApiService {
     return '$baseUrl$normalized';
   }
 
-  // IIS Express chỉ chấp nhận Host: localhost → ép header này vào mọi request
-  // để tránh bị từ chối khi chạy từ Android Emulator (Host: 10.0.2.2)
-  static const String _iisHostHeader = 'localhost';
+  // Dev với IIS Express có thể cần ép Host: localhost khi chạy Android Emulator.
+  // Khi build môi trường thật, truyền --dart-define=API_HOST_HEADER= để tắt.
+  static const String _iisHostHeader = String.fromEnvironment(
+    'API_HOST_HEADER',
+    defaultValue: 'localhost',
+  );
 
   static const String _cookieKey = 'session_cookies';
+  static const _secureStorage = FlutterSecureStorage();
 
   // Singleton
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
   ApiService._internal();
 
+  final http.Client _client = http.Client();
+  bool _cookiesLoaded = false;
+
   // Lưu cookie nhận từ server
   Map<String, String> _cookies = {};
 
   // ── Cookie persistence ─────────────────────────────────────────────────────
   Future<void> loadCookies() async {
+    if (_cookiesLoaded) return;
     final prefs = await SharedPreferences.getInstance();
-    final cookieStr = prefs.getString(_cookieKey) ?? '{}';
+    var cookieStr = await _secureStorage.read(key: _cookieKey);
+    final legacyCookieStr = prefs.getString(_cookieKey);
+    if ((cookieStr == null || cookieStr.isEmpty) && legacyCookieStr != null) {
+      cookieStr = legacyCookieStr;
+      await _secureStorage.write(key: _cookieKey, value: legacyCookieStr);
+      await prefs.remove(_cookieKey);
+    }
+    cookieStr ??= '{}';
     try {
       final map = jsonDecode(cookieStr) as Map<String, dynamic>;
       _cookies = map.cast<String, String>();
     } catch (_) {
       _cookies = {};
     }
+    _cookiesLoaded = true;
   }
 
   Future<void> _saveCookies() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_cookieKey, jsonEncode(_cookies));
+    await _secureStorage.write(key: _cookieKey, value: jsonEncode(_cookies));
   }
 
   Future<void> clearCookies() async {
     _cookies = {};
+    _cookiesLoaded = false;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_cookieKey);
+    await _secureStorage.delete(key: _cookieKey);
   }
 
-  void _updateCookies(http.Response response) {
+  Future<void> _updateCookies(http.Response response) async {
     final setCookie = response.headers['set-cookie'];
     if (setCookie != null) {
-      // Giải phân tích cookie đơn giản – lấy mỗi name=value
-      for (final part in setCookie.split(',')) {
+      for (final part in _splitSetCookieHeader(setCookie)) {
         final segments = part.trim().split(';');
         if (segments.isNotEmpty) {
           final kv = segments[0].trim().split('=');
@@ -84,7 +104,7 @@ class ApiService {
           }
         }
       }
-      _saveCookies();
+      await _saveCookies();
     }
   }
 
@@ -96,21 +116,15 @@ class ApiService {
     final h = <String, String>{
       'Content-Type': 'application/x-www-form-urlencoded',
       'Accept': 'application/json, text/html',
-      // IIS Express chỉ chấp nhận Host: localhost.
-      // Android Emulator gửi Host: 10.0.2.2 → bị từ chối.
-      // Header này ép IIS Express nhận request như từ trình duyệt.
-      'Host': _iisHostHeader,
     };
+    if (_iisHostHeader.isNotEmpty) {
+      h['Host'] = _iisHostHeader;
+    }
     if (_cookies.isNotEmpty) {
       h['Cookie'] = _buildCookieHeader();
     }
     if (extra != null) h.addAll(extra);
     return h;
-  }
-
-  // Dùng http.Client bình thường (HTTP không cần SSL bypass)
-  http.Client _buildClient() {
-    return http.Client();
   }
 
   // ── HTTP methods ───────────────────────────────────────────────────────────
@@ -128,11 +142,10 @@ class ApiService {
 
     Object? lastError;
     for (var attempt = 0; attempt <= retries; attempt++) {
-      final client = _buildClient();
       try {
         final response =
-            await client.get(uri, headers: _headers()).timeout(timeout);
-        _updateCookies(response);
+            await _client.get(uri, headers: _headers()).timeout(timeout);
+        await _updateCookies(response);
         return response;
       } on SocketException catch (e) {
         lastError = e;
@@ -140,8 +153,6 @@ class ApiService {
       } on TimeoutException catch (e) {
         lastError = e;
         if (attempt >= retries) rethrow;
-      } finally {
-        client.close();
       }
 
       await Future<void>.delayed(Duration(milliseconds: 400 * (attempt + 1)));
@@ -161,12 +172,11 @@ class ApiService {
 
     Object? lastError;
     for (var attempt = 0; attempt <= retries; attempt++) {
-      final client = _buildClient();
       try {
-        final response = await client
+        final response = await _client
             .post(uri, headers: _headers(), body: body)
             .timeout(timeout);
-        _updateCookies(response);
+        await _updateCookies(response);
         return response;
       } on SocketException catch (e) {
         lastError = e;
@@ -174,8 +184,6 @@ class ApiService {
       } on TimeoutException catch (e) {
         lastError = e;
         if (attempt >= retries) rethrow;
-      } finally {
-        client.close();
       }
 
       await Future<void>.delayed(Duration(milliseconds: 400 * (attempt + 1)));
@@ -197,37 +205,22 @@ class ApiService {
       return null;
     }
   }
-}
 
-// ── Minimal IOClient wrapper để dùng HttpClient tùy chỉnh ─────────────────────
-class _IOClient extends http.BaseClient {
-  final HttpClient _inner;
-  _IOClient(this._inner);
+  List<String> _splitSetCookieHeader(String header) {
+    final cookies = <String>[];
+    var start = 0;
 
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    final ioRequest = await _inner.openUrl(
-      request.method,
-      request.url,
-    );
-    request.headers.forEach((name, value) {
-      ioRequest.headers.set(name, value);
-    });
-    ioRequest.contentLength = request.contentLength ?? -1;
-    await ioRequest.addStream(request.finalize());
-    final response = await ioRequest.close();
-    final headers = <String, String>{};
-    response.headers.forEach((name, values) {
-      headers[name] = values.join(',');
-    });
-    return http.StreamedResponse(
-      response.cast<List<int>>(),
-      response.statusCode,
-      headers: headers,
-      request: request,
-    );
+    for (var i = 0; i < header.length; i++) {
+      if (header.codeUnitAt(i) != 44) continue;
+
+      final rest = header.substring(i + 1);
+      if (RegExp(r'^\s*[^=;,\s]+=.+').hasMatch(rest)) {
+        cookies.add(header.substring(start, i).trim());
+        start = i + 1;
+      }
+    }
+
+    cookies.add(header.substring(start).trim());
+    return cookies.where((cookie) => cookie.isNotEmpty).toList();
   }
-
-  @override
-  void close() => _inner.close(force: true);
 }

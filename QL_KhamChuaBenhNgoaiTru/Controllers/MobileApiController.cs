@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Mail;
 using System.Web.Mvc;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
+using QL_KhamChuaBenhNgoaiTru.Helpers;
 using QL_KhamChuaBenhNgoaiTru.Libraries;
 using QL_KhamChuaBenhNgoaiTru.Models;
 
@@ -102,6 +104,100 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
             if (ok) return Json(new { success = true, message = "Đăng ký thành công!" });
             return Json(new { success = false, message = "Tên đăng nhập đã được sử dụng!" });
+        }
+
+        // POST /MobileApi/RegisterRequestOtp
+        [HttpPost]
+        public JsonResult RegisterRequestOtp(string username, string email, string password, string confirmPassword, string hoTen)
+        {
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(confirmPassword))
+                return Json(new { success = false, message = "Vui lòng nhập đầy đủ thông tin đăng ký!" });
+
+            username = username.Trim();
+            email = email.Trim();
+            password = password.Trim();
+            confirmPassword = confirmPassword.Trim();
+            hoTen = hoTen?.Trim() ?? "";
+
+            if (password != confirmPassword)
+                return Json(new { success = false, message = "Mật khẩu xác nhận không khớp!" });
+
+            if (username.Length < 4)
+                return Json(new { success = false, message = "Tên đăng nhập ít nhất 4 ký tự!" });
+
+            try
+            {
+                var mailAddress = new MailAddress(email);
+            }
+            catch
+            {
+                return Json(new { success = false, message = "Email không hợp lệ!" });
+            }
+
+            if (_tkDb.GetTaiKhoanByUsernameOrSdt(username) != null)
+                return Json(new { success = false, message = "Tên đăng nhập đã tồn tại!" });
+
+            if (_tkDb.GetTaiKhoanByUsernameOrSdt(email) != null)
+                return Json(new { success = false, message = "Email đã được sử dụng!" });
+
+            string otp = new Random().Next(100000, 999999).ToString();
+            Session["Register_HoTen"] = hoTen;
+            Session["Register_Username"] = username;
+            Session["Register_Email"] = email;
+            Session["Register_Password"] = password;
+            Session["Register_OTP"] = otp;
+            Session["Register_OTP_Time"] = DateTime.Now;
+
+            bool sendOk = EmailHelper.SendOTP(email, otp);
+            if (!sendOk)
+                return Json(new { success = false, message = "Không gửi được email xác thực. Vui lòng kiểm tra lại." });
+
+            return Json(new { success = true, message = "Mã OTP đã được gửi đến email của bạn. Vui lòng kiểm tra hộp thư." });
+        }
+
+        // POST /MobileApi/RegisterVerifyOtp
+        [HttpPost]
+        public JsonResult RegisterVerifyOtp(string otp)
+        {
+            if (string.IsNullOrWhiteSpace(otp))
+                return Json(new { success = false, message = "Vui lòng nhập mã OTP!" });
+
+            if (Session["Register_OTP"] == null || Session["Register_Username"] == null || Session["Register_Email"] == null || Session["Register_Password"] == null)
+                return Json(new { success = false, message = "Phiên đăng ký không hợp lệ. Vui lòng thử lại." });
+
+            string savedOtp = Session["Register_OTP"].ToString();
+            DateTime otpTime = (DateTime)Session["Register_OTP_Time"];
+
+            if (DateTime.Now.Subtract(otpTime).TotalMinutes > 5)
+            {
+                Session.Remove("Register_OTP");
+                Session.Remove("Register_OTP_Time");
+                return Json(new { success = false, message = "Mã OTP đã hết hạn. Vui lòng đăng ký lại." });
+            }
+
+            if (otp != savedOtp)
+                return Json(new { success = false, message = "Mã OTP không chính xác!" });
+
+            var tk = new TaiKhoan
+            {
+                Username = Session["Register_Username"].ToString(),
+                PasswordHash = Session["Register_Password"].ToString()
+            };
+            string email = Session["Register_Email"].ToString();
+            string hoTen = Session["Register_HoTen"]?.ToString() ?? "Bệnh nhân";
+
+            bool ok = _tkDb.InsertTaiKhoanWithEmail(tk, email, hoTen);
+            if (!ok)
+                return Json(new { success = false, message = "Đăng ký thất bại. Tài khoản hoặc email đã tồn tại." });
+
+            Session.Remove("Register_HoTen");
+            Session.Remove("Register_Username");
+            Session.Remove("Register_Email");
+            Session.Remove("Register_Password");
+            Session.Remove("Register_OTP");
+            Session.Remove("Register_OTP_Time");
+
+            return Json(new { success = true, message = "Đăng ký thành công. Vui lòng đăng nhập." });
         }
 
         // GET /MobileApi/GetCurrentUser

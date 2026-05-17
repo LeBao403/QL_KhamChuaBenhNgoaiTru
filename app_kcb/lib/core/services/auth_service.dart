@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import 'api_service.dart';
@@ -11,6 +12,7 @@ class AuthService {
   final ApiService _api = ApiService();
 
   static const String _userKey = 'current_user';
+  static const _secureStorage = FlutterSecureStorage();
   UserModel? _currentUser;
 
   UserModel? get currentUser => _currentUser;
@@ -23,7 +25,13 @@ class AuthService {
 
   Future<void> _loadUserFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    final userJson = prefs.getString(_userKey);
+    var userJson = await _secureStorage.read(key: _userKey);
+    final legacyUserJson = prefs.getString(_userKey);
+    if ((userJson == null || userJson.isEmpty) && legacyUserJson != null) {
+      userJson = legacyUserJson;
+      await _secureStorage.write(key: _userKey, value: legacyUserJson);
+      await prefs.remove(_userKey);
+    }
     if (userJson != null) {
       try {
         _currentUser = UserModel.fromJson(jsonDecode(userJson));
@@ -34,13 +42,13 @@ class AuthService {
   }
 
   Future<void> _saveUserToPrefs(UserModel user) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_userKey, jsonEncode(user.toJson()));
+    await _secureStorage.write(key: _userKey, value: jsonEncode(user.toJson()));
   }
 
   Future<void> _clearUserFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userKey);
+    await _secureStorage.delete(key: _userKey);
   }
 
   Future<ApiResult<UserModel>> login(String username, String password) async {
@@ -80,18 +88,22 @@ class AuthService {
 
   Future<ApiResult<void>> register(
     String username,
+    String email,
     String password,
     String confirmPassword,
+    String hoTen,
   ) async {
     if (password != confirmPassword) {
       return ApiResult.fail('Mật khẩu xác nhận không khớp!');
     }
 
     try {
-      final response = await _api.post('/MobileApi/Register', {
+      final response = await _api.post('/MobileApi/RegisterRequestOtp', {
         'username': username,
+        'email': email,
         'password': password,
         'confirmPassword': confirmPassword,
+        'hoTen': hoTen,
       });
 
       if (response.statusCode != 200) {
@@ -113,6 +125,37 @@ class AuthService {
 
       return ApiResult.fail(
         json['message']?.toString() ?? 'Đăng ký thất bại!',
+      );
+    } catch (e) {
+      return ApiResult.fail('Lỗi kết nối máy chủ: ${e.toString()}');
+    }
+  }
+
+  Future<ApiResult<void>> verifyRegisterOtp(String otp) async {
+    try {
+      final response = await _api.post('/MobileApi/RegisterVerifyOtp', {
+        'otp': otp,
+      });
+
+      if (response.statusCode != 200) {
+        return ApiResult.fail(
+          'Xác thực OTP thất bại. Mã phản hồi: ${response.statusCode}',
+        );
+      }
+
+      final json = _api.parseJson(response);
+      if (json == null) {
+        return ApiResult.fail(
+          'Máy chủ trả về dữ liệu không hợp lệ khi xác thực OTP.',
+        );
+      }
+
+      if (json['success'] == true) {
+        return const ApiResult(success: true);
+      }
+
+      return ApiResult.fail(
+        json['message']?.toString() ?? 'Xác thực OTP thất bại!',
       );
     } catch (e) {
       return ApiResult.fail('Lỗi kết nối máy chủ: ${e.toString()}');

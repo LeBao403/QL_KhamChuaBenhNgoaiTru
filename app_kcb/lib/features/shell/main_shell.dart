@@ -17,12 +17,26 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = const [
-    HomeTab(),
-    BookingScreen(),
-    ProfileScreen(),
-    SettingsScreen(),
+  late final List<Widget?> _screens = <Widget?>[
+    const HomeTab(),
+    null,
+    null,
+    null,
   ];
+
+  Widget _buildScreen(int index) {
+    final existing = _screens[index];
+    if (existing != null) return existing;
+
+    final screen = switch (index) {
+      1 => const BookingScreen(),
+      2 => const ProfileScreen(),
+      3 => const SettingsScreen(),
+      _ => const HomeTab(),
+    };
+    _screens[index] = screen;
+    return screen;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +45,12 @@ class _MainShellState extends State<MainShell> {
       child: Scaffold(
         body: IndexedStack(
           index: _currentIndex,
-          children: _screens,
+          children: List.generate(
+            _screens.length,
+            (index) => index == _currentIndex || _screens[index] != null
+                ? _buildScreen(index)
+                : const SizedBox.shrink(),
+          ),
         ),
         bottomNavigationBar: _buildBottomNav(),
       ),
@@ -93,7 +112,10 @@ class _MainShellState extends State<MainShell> {
     final isActive = _currentIndex == index;
 
     return GestureDetector(
-      onTap: () => setState(() => _currentIndex = index),
+      onTap: () => setState(() {
+        _buildScreen(index);
+        _currentIndex = index;
+      }),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 220),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),

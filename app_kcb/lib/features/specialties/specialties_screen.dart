@@ -102,8 +102,7 @@ class _SpecialtiesScreenState extends State<SpecialtiesScreen> {
               controller: _searchController,
               onChanged: (_) => setState(() {}),
               decoration: const InputDecoration(
-                hintText:
-                    'Tìm chuyên khoa, ví dụ: Nội, Nhi, Răng Hàm Mặt...',
+                hintText: 'Tìm chuyên khoa, ví dụ: Nội, Nhi, Răng Hàm Mặt...',
                 prefixIcon: Icon(Icons.search_rounded),
               ),
             ),

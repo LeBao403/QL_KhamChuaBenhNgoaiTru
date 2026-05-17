@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // ── Color Palette ──────────────────────────────────────────────
@@ -43,59 +42,55 @@ class AppTheme {
   );
 
   // ── Typography ─────────────────────────────────────────────────
-  static TextTheme get textTheme => GoogleFonts.beVietnamProTextTheme(
-        const TextTheme(
-          displayLarge: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.w700,
-            color: textDark,
-            letterSpacing: -0.5,
-          ),
-          displayMedium: TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.w700,
-            color: textDark,
-            letterSpacing: -0.3,
-          ),
-          headlineLarge: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-            color: textDark,
-          ),
-          headlineMedium: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: textDark,
-          ),
-          headlineSmall: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: textDark,
-          ),
-          bodyLarge: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w400,
-            color: textBody,
-            height: 1.6,
-          ),
-          bodyMedium: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            color: textBody,
-            height: 1.5,
-          ),
-          bodySmall: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            color: textMuted,
-          ),
-          labelLarge: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: textDark,
-          ),
-        ),
-      );
+  static const TextTheme textTheme = TextTheme(
+    displayLarge: TextStyle(
+      fontSize: 32,
+      fontWeight: FontWeight.w700,
+      color: textDark,
+    ),
+    displayMedium: TextStyle(
+      fontSize: 26,
+      fontWeight: FontWeight.w700,
+      color: textDark,
+    ),
+    headlineLarge: TextStyle(
+      fontSize: 22,
+      fontWeight: FontWeight.w700,
+      color: textDark,
+    ),
+    headlineMedium: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.w600,
+      color: textDark,
+    ),
+    headlineSmall: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: textDark,
+    ),
+    bodyLarge: TextStyle(
+      fontSize: 15,
+      fontWeight: FontWeight.w400,
+      color: textBody,
+      height: 1.6,
+    ),
+    bodyMedium: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      color: textBody,
+      height: 1.5,
+    ),
+    bodySmall: TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w400,
+      color: textMuted,
+    ),
+    labelLarge: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: textDark,
+    ),
+  );
 
   // ── ThemeData ──────────────────────────────────────────────────
   static ThemeData get theme => ThemeData(
@@ -118,7 +113,6 @@ class AppTheme {
           shadowColor: Color(0x18000000),
           centerTitle: false,
           titleTextStyle: TextStyle(
-            fontFamily: 'Be Vietnam Pro',
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: textDark,

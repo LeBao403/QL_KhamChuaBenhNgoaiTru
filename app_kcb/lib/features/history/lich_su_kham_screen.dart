@@ -66,8 +66,7 @@ class _LichSuKhamScreenState extends State<LichSuKhamScreen> {
                       child: ListView.separated(
                         padding: const EdgeInsets.all(16),
                         itemCount: _list.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: 12),
+                        separatorBuilder: (_, __) => const SizedBox(height: 12),
                         itemBuilder: (_, i) => _buildCard(_list[i]),
                       ),
                     ),
@@ -95,7 +94,10 @@ class _LichSuKhamScreenState extends State<LichSuKhamScreen> {
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppTheme.primary.withOpacity(0.06), Colors.transparent],
+                colors: [
+                  AppTheme.primary.withOpacity(0.06),
+                  Colors.transparent
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

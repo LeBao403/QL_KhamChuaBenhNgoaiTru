@@ -229,7 +229,7 @@ class _LoginScreenState extends State<LoginScreen>
             const SizedBox(height: 20),
           ],
           const Text(
-            'Tên đăng nhập',
+            'Email / Tên đăng nhập / SĐT',
             style: TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 14,
@@ -239,10 +239,10 @@ class _LoginScreenState extends State<LoginScreen>
           const SizedBox(height: 8),
           TextFormField(
             controller: _usernameCtrl,
-            keyboardType: TextInputType.text,
+            keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             decoration: const InputDecoration(
-              hintText: 'Nhập tên đăng nhập',
+              hintText: 'Nhập email, username hoặc số điện thoại',
               prefixIcon: Icon(
                 Icons.person_outline_rounded,
                 color: AppTheme.primary,
@@ -280,8 +280,7 @@ class _LoginScreenState extends State<LoginScreen>
                       : Icons.visibility_rounded,
                   color: AppTheme.textMuted,
                 ),
-                onPressed: () =>
-                    setState(() => _obscurePass = !_obscurePass),
+                onPressed: () => setState(() => _obscurePass = !_obscurePass),
               ),
             ),
             validator: (v) =>
@@ -333,7 +332,8 @@ class _LoginScreenState extends State<LoginScreen>
                   : const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.login_rounded, color: Colors.white, size: 20),
+                        Icon(Icons.login_rounded,
+                            color: Colors.white, size: 20),
                         SizedBox(width: 8),
                         Text(
                           'Đăng nhập',

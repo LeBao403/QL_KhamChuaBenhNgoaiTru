@@ -63,9 +63,7 @@ class BookingService {
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
-          final list = (json['data'] as List)
-              .map((e) => ServiceModel.fromJson(e as Map<String, dynamic>))
-              .toList();
+          final list = _parseList(json['data'], ServiceModel.fromJson);
           if (list.isNotEmpty) {
             _cachedServices = list;
             return ApiResult.ok(list);
@@ -186,7 +184,8 @@ class BookingService {
     }
   }
 
-  Future<bool> kiemTraThanhToan(int orderCode, String maPhieuDK, String maHD) async {
+  Future<bool> kiemTraThanhToan(
+      int orderCode, String maPhieuDK, String maHD) async {
     try {
       final resp = await _api.post('/BenhNhanPortal/KiemTraThanhToanOnline', {
         'orderCode': orderCode.toString(),
@@ -286,9 +285,7 @@ class BookingService {
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
-          final list = (json['data'] as List)
-              .map((e) => LichKhamModel.fromJson(e as Map<String, dynamic>))
-              .toList();
+          final list = _parseList(json['data'], LichKhamModel.fromJson);
           return ApiResult.ok(list);
         }
       }
@@ -329,9 +326,7 @@ class BookingService {
     if (resp.statusCode == 200) {
       final json = _api.parseJson(resp);
       if (json != null && json['success'] == true) {
-        final list = (json['data'] as List)
-            .map((e) => TimeSlotModel.fromJson(e as Map<String, dynamic>))
-            .toList();
+        final list = _parseList(json['data'], TimeSlotModel.fromJson);
         return ApiResult.ok(list);
       }
 
@@ -366,5 +361,17 @@ class BookingService {
     }
 
     return ApiResult.fail('Lỗi máy chủ! Vui lòng thử lại.');
+  }
+
+  List<T> _parseList<T>(
+    dynamic value,
+    T Function(Map<String, dynamic> json) fromJson,
+  ) {
+    if (value is! List) return <T>[];
+
+    return value
+        .whereType<Map>()
+        .map((item) => fromJson(Map<String, dynamic>.from(item)))
+        .toList();
   }
 }

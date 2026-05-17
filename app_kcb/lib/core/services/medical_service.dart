@@ -21,9 +21,7 @@ class MedicalService {
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
-          final list = (json['data'] as List)
-              .map((e) => LichSuKhamModel.fromJson(e as Map<String, dynamic>))
-              .toList();
+          final list = _parseList(json['data'], LichSuKhamModel.fromJson);
           return ApiResult.ok(list);
         }
         return ApiResult.fail(
@@ -50,9 +48,7 @@ class MedicalService {
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
-          final list = (json['data'] as List)
-              .map((e) => DonThuocModel.fromJson(e as Map<String, dynamic>))
-              .toList();
+          final list = _parseList(json['data'], DonThuocModel.fromJson);
           return ApiResult.ok(list);
         }
         return ApiResult.fail(
@@ -82,11 +78,7 @@ class MedicalService {
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
-          final list = (json['data'] as List)
-              .map(
-                (e) => ChiTietThuocModel.fromJson(e as Map<String, dynamic>),
-              )
-              .toList();
+          final list = _parseList(json['data'], ChiTietThuocModel.fromJson);
           return ApiResult.ok(list);
         }
         return ApiResult.fail(
@@ -113,9 +105,7 @@ class MedicalService {
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
-          final list = (json['data'] as List)
-              .map((e) => HoaDonModel.fromJson(e as Map<String, dynamic>))
-              .toList();
+          final list = _parseList(json['data'], HoaDonModel.fromJson);
           return ApiResult.ok(list);
         }
         return ApiResult.fail(
@@ -130,5 +120,17 @@ class MedicalService {
     } catch (e) {
       return ApiResult.fail('Lỗi kết nối: ${e.toString()}');
     }
+  }
+
+  List<T> _parseList<T>(
+    dynamic value,
+    T Function(Map<String, dynamic> json) fromJson,
+  ) {
+    if (value is! List) return <T>[];
+
+    return value
+        .whereType<Map>()
+        .map((item) => fromJson(Map<String, dynamic>.from(item)))
+        .toList();
   }
 }

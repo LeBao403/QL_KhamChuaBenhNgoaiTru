@@ -50,9 +50,8 @@ class UserModel {
       cccd: json['CCCD'],
       sdt: json['SDT'],
       email: json['Email'],
-      ngaySinh: json['NgaySinh'] != null
-          ? DateTime.tryParse(json['NgaySinh'])
-          : null,
+      ngaySinh:
+          json['NgaySinh'] != null ? DateTime.tryParse(json['NgaySinh']) : null,
       gioiTinh: json['GioiTinh'],
       diaChi: json['DiaChi'],
       bhyt: json['BHYT'] ?? false,
@@ -215,12 +214,16 @@ class ServiceModel {
 
     output = output.replaceAllMapped(RegExp(r'&#(\d+);'), (match) {
       final codePoint = int.tryParse(match.group(1)!);
-      return codePoint == null ? match.group(0)! : String.fromCharCode(codePoint);
+      return codePoint == null
+          ? match.group(0)!
+          : String.fromCharCode(codePoint);
     });
 
     output = output.replaceAllMapped(RegExp(r'&#x([0-9a-fA-F]+);'), (match) {
       final codePoint = int.tryParse(match.group(1)!, radix: 16);
-      return codePoint == null ? match.group(0)! : String.fromCharCode(codePoint);
+      return codePoint == null
+          ? match.group(0)!
+          : String.fromCharCode(codePoint);
     });
 
     return output;
@@ -492,7 +495,8 @@ class HoaDonModel {
     }
   }
 
-  bool get isDatLich => ghiChu.contains('đặt lịch') || ghiChu.contains('tiện ích');
+  bool get isDatLich =>
+      ghiChu.contains('đặt lịch') || ghiChu.contains('tiện ích');
 }
 
 // ─── API Response wrapper ─────────────────────────────────────────────────────

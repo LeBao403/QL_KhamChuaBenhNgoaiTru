@@ -89,10 +89,13 @@ class _HomeTabState extends State<HomeTab> {
       });
     }
 
-    await _loadHome(showLoader: cached == null);
+    await _loadHome(showLoader: cached == null, cachedFallback: cached);
   }
 
-  Future<void> _loadHome({bool showLoader = true}) async {
+  Future<void> _loadHome({
+    bool showLoader = true,
+    HomeLandingModel? cachedFallback,
+  }) async {
     if (showLoader) {
       setState(() {
         _isLoading = true;
@@ -102,7 +105,7 @@ class _HomeTabState extends State<HomeTab> {
       setState(() => _error = null);
     }
 
-    final result = await _service.getHomeData();
+    final result = await _service.getHomeData(cachedFallback: cachedFallback);
     if (!mounted) return;
 
     setState(() {
@@ -152,7 +155,7 @@ class _HomeTabState extends State<HomeTab> {
     return Scaffold(
       backgroundColor: AppTheme.bgLight,
       body: RefreshIndicator(
-        onRefresh: _loadHome,
+        onRefresh: () => _loadHome(),
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
@@ -199,19 +202,32 @@ class _HomeTabState extends State<HomeTab> {
                 ),
               ],
             ),
-            SliverToBoxAdapter(
-              child: Padding(
+            if (_isLoading)
+              const SliverFillRemaining(
+                hasScrollBody: false,
+                child: Center(child: CircularProgressIndicator()),
+              )
+            else if (_error != null)
+              SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-                child: _isLoading
-                    ? const Padding(
-                        padding: EdgeInsets.only(top: 120),
-                        child: Center(child: CircularProgressIndicator()),
-                      )
-                    : _error != null
-                        ? _buildErrorState()
-                        : _buildContent(),
+                sliver: SliverToBoxAdapter(child: _buildErrorState()),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+                sliver: SliverList.builder(
+                  itemCount: _homeSectionCount,
+                  itemBuilder: (context, index) {
+                    final homeData = _homeData!;
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: index == _homeSectionCount - 1 ? 0 : 24,
+                      ),
+                      child: _buildHomeSection(index, homeData),
+                    );
+                  },
+                ),
               ),
-            ),
           ],
         ),
       ),
@@ -244,38 +260,44 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  Widget _buildContent() {
-    final homeData = _homeData!;
+  static const int _homeSectionCount = 8;
 
+  Widget _buildHomeSection(int index, HomeLandingModel homeData) {
+    return switch (index) {
+      0 => _buildHeroCarousel(),
+      1 => _buildQuickActions(),
+      2 => _buildInfoBanner(),
+      3 => _sectionWithHeader(
+          'ChuyÃªn khoa ná»•i báº­t',
+          'KhÃ¡m phÃ¡ cÃ¡c chuyÃªn khoa Ä‘ang hoáº¡t Ä‘á»™ng',
+          _buildSpecialties(homeData.specialties),
+        ),
+      4 => _sectionWithHeader(
+          'Thá»‘ng kÃª bá»‡nh viá»‡n',
+          'Dá»¯ liá»‡u tá»•ng quan tá»« há»‡ thá»‘ng',
+          _buildStats(homeData.stats),
+        ),
+      5 => _sectionWithHeader(
+          'BÃ¡c sÄ© tiÃªu biá»ƒu',
+          'Äá»™i ngÅ© chuyÃªn gia Ä‘ang Ä‘á»“ng hÃ nh cÃ¹ng ngÆ°á»i bá»‡nh',
+          _buildDoctors(homeData.doctors),
+        ),
+      6 => _sectionWithHeader(
+          'Tin tá»©c & cáº©m nang',
+          'ThÃ´ng tin má»›i vÃ  ná»™i dung há»¯u Ã­ch trÆ°á»›c khi Ä‘i khÃ¡m',
+          _buildNews(homeData.news),
+        ),
+      _ => _buildBottomCta(),
+    };
+  }
+
+  Widget _sectionWithHeader(String title, String subtitle, Widget child) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildHeroCarousel(),
-        const SizedBox(height: 18),
-        _buildQuickActions(),
-        const SizedBox(height: 24),
-        _buildInfoBanner(),
-        const SizedBox(height: 24),
-        _sectionHeader(
-            'Chuyên khoa nổi bật', 'Khám phá các chuyên khoa đang hoạt động'),
+        _sectionHeader(title, subtitle),
         const SizedBox(height: 12),
-        _buildSpecialties(homeData.specialties),
-        const SizedBox(height: 24),
-        _sectionHeader('Thống kê bệnh viện', 'Dữ liệu tổng quan từ hệ thống'),
-        const SizedBox(height: 12),
-        _buildStats(homeData.stats),
-        const SizedBox(height: 24),
-        _sectionHeader('Bác sĩ tiêu biểu',
-            'Đội ngũ chuyên gia đang đồng hành cùng người bệnh'),
-        const SizedBox(height: 12),
-        _buildDoctors(homeData.doctors),
-        const SizedBox(height: 24),
-        _sectionHeader('Tin tức & cẩm nang',
-            'Thông tin mới và nội dung hữu ích trước khi đi khám'),
-        const SizedBox(height: 12),
-        _buildNews(homeData.news),
-        const SizedBox(height: 24),
-        _buildBottomCta(),
+        child,
       ],
     );
   }

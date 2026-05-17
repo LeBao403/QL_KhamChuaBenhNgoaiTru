@@ -132,7 +132,22 @@ namespace QL_KhamChuaBenhNgoaiTru.Helpers
                 DrawSectionTitle(g, "CHI TIẾT THANH TOÁN", tableHeaderFont, muted, y);
                 y += 32;
 
-                int[] widths = { 55, 455, 90, 140, 140, 150, 170 };
+                // Base column widths (design-time proportions). We'll scale these
+                // to fit the printable area (PageWidth - Margin*2) so the table never
+                // overflows the PDF page.
+                int[] baseWidths = { 55, 455, 90, 140, 140, 150, 170 };
+                int availableWidth = PageWidth - Margin * 2;
+                int totalBase = baseWidths.Sum();
+                int[] widths = new int[baseWidths.Length];
+                double scale = (double)availableWidth / totalBase;
+                int acc = 0;
+                for (int i = 0; i < baseWidths.Length; i++)
+                {
+                    widths[i] = (int)Math.Floor(baseWidths[i] * scale);
+                    acc += widths[i];
+                }
+                // Correct rounding discrepancy by adding remaining pixels to last column
+                widths[baseWidths.Length - 1] += availableWidth - acc;
                 string[] headers = { "STT", "Dịch vụ/Thuốc", "SL", "Đơn giá", "Tổng gốc", "BHYT trả", "BN trả" };
                 int x = Margin;
                 int rowH = 38;

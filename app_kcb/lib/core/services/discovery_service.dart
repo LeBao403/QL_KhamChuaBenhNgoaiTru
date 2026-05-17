@@ -33,8 +33,10 @@ class DiscoveryService {
     await prefs.setString(_homeCacheKey, jsonEncode(model.toJson()));
   }
 
-  Future<ApiResult<HomeLandingModel>> getHomeData() async {
-    final cached = await getCachedHomeData();
+  Future<ApiResult<HomeLandingModel>> getHomeData({
+    HomeLandingModel? cachedFallback,
+  }) async {
+    final cached = cachedFallback ?? await getCachedHomeData();
 
     try {
       final response = await _api

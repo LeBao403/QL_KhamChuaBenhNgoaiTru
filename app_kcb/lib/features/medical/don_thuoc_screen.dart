@@ -40,8 +40,7 @@ class _DonThuocScreenState extends State<DonThuocScreen> {
     });
   }
 
-  String _fmtDate(DateTime d) =>
-      DateFormat('dd/MM/yyyy', 'vi_VN').format(d);
+  String _fmtDate(DateTime d) => DateFormat('dd/MM/yyyy', 'vi_VN').format(d);
 
   @override
   Widget build(BuildContext context) {
@@ -66,8 +65,7 @@ class _DonThuocScreenState extends State<DonThuocScreen> {
                       child: ListView.separated(
                         padding: const EdgeInsets.all(16),
                         itemCount: _list.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: 12),
+                        separatorBuilder: (_, __) => const SizedBox(height: 12),
                         itemBuilder: (_, i) => _buildCard(_list[i]),
                       ),
                     ),
@@ -244,12 +242,10 @@ class _ChiTietDonThuocSheet extends StatefulWidget {
   final DonThuocModel don;
   final MedicalService service;
 
-  const _ChiTietDonThuocSheet(
-      {required this.don, required this.service});
+  const _ChiTietDonThuocSheet({required this.don, required this.service});
 
   @override
-  State<_ChiTietDonThuocSheet> createState() =>
-      _ChiTietDonThuocSheetState();
+  State<_ChiTietDonThuocSheet> createState() => _ChiTietDonThuocSheetState();
 }
 
 class _ChiTietDonThuocSheetState extends State<_ChiTietDonThuocSheet> {
@@ -337,8 +333,7 @@ class _ChiTietDonThuocSheetState extends State<_ChiTietDonThuocSheet> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : _chiTiet.isEmpty
-                      ? const Center(
-                          child: Text('Không có dữ liệu chi tiết'))
+                      ? const Center(child: Text('Không có dữ liệu chi tiết'))
                       : ListView.separated(
                           controller: ctrl,
                           padding: const EdgeInsets.all(16),
@@ -401,8 +396,7 @@ class _ChiTietDonThuocSheetState extends State<_ChiTietDonThuocSheet> {
           const SizedBox(height: 10),
           // Cách dùng chip
           Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
               color: AppTheme.primary.withOpacity(0.08),
               borderRadius: BorderRadius.circular(8),
@@ -428,12 +422,13 @@ class _ChiTietDonThuocSheetState extends State<_ChiTietDonThuocSheet> {
             children: [
               _miniTag('${ct.soNgayDung} ngày', Icons.calendar_today_outlined),
               const SizedBox(width: 8),
-              _miniTag('${ct.soLuong} ${ct.donViCoBan.isNotEmpty ? ct.donViCoBan : ct.donViTinh}',
+              _miniTag(
+                  '${ct.soLuong} ${ct.donViCoBan.isNotEmpty ? ct.donViCoBan : ct.donViTinh}',
                   Icons.inventory_2_outlined),
               if (ct.donGia > 0) ...[
                 const SizedBox(width: 8),
-                _miniTag(_fmtMoney(ct.donGia * ct.soLuong),
-                    Icons.payments_outlined),
+                _miniTag(
+                    _fmtMoney(ct.donGia * ct.soLuong), Icons.payments_outlined),
               ],
             ],
           ),

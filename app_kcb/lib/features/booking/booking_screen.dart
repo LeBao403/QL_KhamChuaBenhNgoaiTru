@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/models/user_model.dart';
 import '../../core/services/booking_service.dart';
@@ -34,6 +35,18 @@ class _BookingScreenState extends State<BookingScreen>
 
   List<ServiceModel> _services = [];
   bool _loadingServices = false;
+  String _serviceSearch = '';
+
+  List<ServiceModel> get _filteredServices {
+    final query = _serviceSearch.trim().toLowerCase();
+    final list = query.isEmpty
+        ? List<ServiceModel>.from(_services)
+        : _services
+            .where((sv) => sv.tenDV.toLowerCase().contains(query))
+            .toList();
+    list.sort((a, b) => a.giaDichVu.compareTo(b.giaDichVu));
+    return list;
+  }
 
   String _phuongThucTT = 'QR';
   bool _isSubmitting = false;
@@ -60,7 +73,6 @@ class _BookingScreenState extends State<BookingScreen>
         _loadAppointments();
       }
     });
-    _loadServiceList();
   }
 
   @override
@@ -566,34 +578,75 @@ class _BookingScreenState extends State<BookingScreen>
         _backRow('Chọn khung giờ', 0),
         const SizedBox(height: 4),
         if (_selectedDate != null) _dateChip(_selectedDate!),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
+        if (!_loadingSlots && _slots.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              '${_slots.where((slot) => !slot.isDisabledForDate(_selectedDate!)).length} khung giờ khả dụng',
+              style: const TextStyle(
+                  color: AppTheme.textMuted,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500),
+            ),
+          ),
+        const SizedBox(height: 8),
         if (_loadingSlots)
           const Center(child: CircularProgressIndicator())
         else if (_slotError != null)
-          _emptyState(Icons.error_outline_rounded, _slotError!)
+          Column(
+            children: [
+              _emptyState(Icons.error_outline_rounded, _slotError!),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: _loadTimeSlots,
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Tải lại khung giờ'),
+              ),
+            ],
+          )
         else if (_slots.isEmpty)
-          _emptyState(Icons.access_time_rounded,
-              'Không có khung giờ nào khả dụng cho ngày này.')
+          Column(
+            children: [
+              _emptyState(Icons.access_time_rounded,
+                  'Không có khung giờ nào khả dụng cho ngày này.'),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: _loadTimeSlots,
+                icon: const Icon(Icons.autorenew_rounded),
+                label: const Text('Kiểm tra lại'),
+              ),
+            ],
+          )
         else
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 2.4,
-            ),
-            itemCount: _slots.length,
-            itemBuilder: (_, i) {
-              final slot = _slots[i];
-              final disabled = slot.isDisabledForDate(_selectedDate!);
-              return TimeSlotChip(
-                time: slot.tenKhungGio,
-                isSelected: _selectedSlot?.maKhungGio == slot.maKhungGio,
-                isDisabled: disabled,
-                status: slot.statusForDate(_selectedDate!),
-                onTap: () => setState(() => _selectedSlot = slot),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final crossAxisCount = constraints.maxWidth >= 520 ? 3 : 2;
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: _slots.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  mainAxisExtent: 88,
+                ),
+                itemBuilder: (_, i) {
+                  final slot = _slots[i];
+                  final disabled = slot.isDisabledForDate(_selectedDate!);
+                  return TimeSlotChip(
+                    time: slot.tenKhungGio,
+                    subtitle: !disabled && slot.conTrong > 0
+                        ? 'Còn ${slot.conTrong} chỗ'
+                        : null,
+                    isSelected: _selectedSlot?.maKhungGio == slot.maKhungGio,
+                    isDisabled: disabled,
+                    status: slot.statusForDate(_selectedDate!),
+                    onTap: () => setState(() => _selectedSlot = slot),
+                  );
+                },
               );
             },
           ),
@@ -603,8 +656,14 @@ class _BookingScreenState extends State<BookingScreen>
           child: GradientButton(
             label: 'Chọn dịch vụ',
             icon: Icons.medical_services_rounded,
-            onPressed:
-                _selectedSlot != null ? () => setState(() => _step = 2) : null,
+            onPressed: _selectedSlot != null
+                ? () {
+                    setState(() => _step = 2);
+                    if (!_loadingServices && _services.isEmpty) {
+                      _loadServiceList();
+                    }
+                  }
+                : null,
           ),
         ),
       ],
@@ -622,84 +681,129 @@ class _BookingScreenState extends State<BookingScreen>
         if (_loadingServices)
           const Center(child: CircularProgressIndicator())
         else if (_services.isEmpty)
-          _emptyState(Icons.medical_services_rounded,
-              'Không tải được danh sách dịch vụ.')
+          Column(
+            children: [
+              _emptyState(Icons.medical_services_rounded,
+                  'Không tải được danh sách dịch vụ.'),
+              const SizedBox(height: 16),
+              Center(
+                child: OutlinedButton.icon(
+                  onPressed: _loadServiceList,
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Thử lại'),
+                ),
+              ),
+            ],
+          )
         else
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _services.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
-            itemBuilder: (_, i) {
-              final sv = _services[i];
-              final isSelected = _selectedService?.maDV == sv.maDV;
-              return GestureDetector(
-                onTap: () => setState(() => _selectedService = sv),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Có ${_filteredServices.length} dịch vụ phù hợp${_serviceSearch.isNotEmpty ? ' trong ${_services.length} tổng' : ''}',
+                      style: const TextStyle(
+                          color: AppTheme.textMuted,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                  if (_serviceSearch.isNotEmpty)
+                    GestureDetector(
+                      onTap: () => setState(() {
+                        _serviceSearch = '';
+                      }),
+                      child: const Text('Xóa bộ lọc',
+                          style: TextStyle(
+                              color: AppTheme.primary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600)),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                onChanged: (value) => setState(() => _serviceSearch = value),
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.search_rounded),
+                  hintText: 'Tìm dịch vụ khám...',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              if (_filteredServices.isEmpty)
+                _emptyState(Icons.search_off_rounded,
+                    'Không tìm thấy dịch vụ phù hợp với từ khóa.')
+              else
+                DropdownButtonFormField<ServiceModel>(
+                  value: _filteredServices.contains(_selectedService)
+                      ? _selectedService
+                      : null,
+                  decoration: const InputDecoration(
+                    labelText: 'Chọn dịch vụ khám',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: _filteredServices.map((sv) {
+                    return DropdownMenuItem<ServiceModel>(
+                      value: sv,
+                      child: Text(
+                        '${sv.tenDV}${sv.giaDichVu > 0 ? ' — ${_fmtCurrency(sv.giaDichVu)}' : ''}',
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (sv) => setState(() => _selectedService = sv),
+                  hint: const Text('Chọn dịch vụ khám'),
+                ),
+              if (_selectedService != null) ...[
+                const SizedBox(height: 16),
+                Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: isSelected ? const Color(0xFFEFF6FF) : Colors.white,
+                    color: const Color(0xFFEFF6FF),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color:
-                          isSelected ? AppTheme.primary : AppTheme.borderLight,
-                      width: isSelected ? 2 : 1,
-                    ),
+                    border:
+                        Border.all(color: AppTheme.primary.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 44,
+                        height: 44,
                         decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppTheme.primary.withOpacity(0.1)
-                              : AppTheme.bgLight,
-                          borderRadius: BorderRadius.circular(8),
+                          color: AppTheme.primary.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(Icons.medical_services_rounded,
-                            color: isSelected
-                                ? AppTheme.primary
-                                : AppTheme.textMuted,
-                            size: 20),
+                        child: const Icon(Icons.medical_services_rounded,
+                            color: AppTheme.primary, size: 24),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(sv.tenDV,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: isSelected
-                                      ? AppTheme.primary
-                                      : AppTheme.textDark,
-                                )),
-                            if (sv.giaDichVu > 0)
-                              Text(_fmtCurrency(sv.giaDichVu),
-                                  style: const TextStyle(
-                                      color: AppTheme.secondary,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600)),
+                            Text(_selectedService!.tenDV,
+                                style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppTheme.textDark)),
+                            const SizedBox(height: 4),
+                            Text(
+                              _selectedService!.giaDichVu > 0
+                                  ? 'Giá: ${_fmtCurrency(_selectedService!.giaDichVu)}'
+                                  : 'Miễn phí dịch vụ',
+                              style: const TextStyle(
+                                  fontSize: 13, color: AppTheme.textMuted),
+                            ),
                           ],
                         ),
                       ),
-                      if (isSelected)
-                        Container(
-                          width: 20,
-                          height: 20,
-                          decoration: const BoxDecoration(
-                              color: AppTheme.primary, shape: BoxShape.circle),
-                          child: const Icon(Icons.check_rounded,
-                              color: Colors.white, size: 14),
-                        ),
                     ],
                   ),
                 ),
-              );
-            },
+              ],
+            ],
           ),
         const SizedBox(height: 20),
 
@@ -756,6 +860,16 @@ class _BookingScreenState extends State<BookingScreen>
               const Divider(height: 20),
               _summaryRow(Icons.medical_services_rounded, 'Dịch vụ',
                   _selectedService?.tenDV ?? ''),
+              if (_selectedService != null) ...[
+                const Divider(height: 20),
+                _summaryRow(
+                  Icons.price_check_rounded,
+                  'Phí dịch vụ',
+                  _selectedService!.giaDichVu > 0
+                      ? _fmtCurrency(_selectedService!.giaDichVu)
+                      : 'Miễn phí',
+                ),
+              ],
               const Divider(height: 20),
               _summaryRow(
                   Icons.notes_rounded, 'Lý do khám', _lyDoCtrl.text.trim()),
@@ -798,7 +912,8 @@ class _BookingScreenState extends State<BookingScreen>
           ),
           child: Row(
             children: [
-              const Icon(Icons.shield_outlined, color: AppTheme.accent, size: 18),
+              const Icon(Icons.shield_outlined,
+                  color: AppTheme.accent, size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -1613,6 +1728,7 @@ class _QRPaymentDialogState extends State<_QRPaymentDialog> {
       if (paid) {
         t.cancel();
         widget.onPaid();
+        return;
       }
       setState(() {
         _remainSeconds -= 3;
@@ -1691,7 +1807,6 @@ class _QRPaymentDialogState extends State<_QRPaymentDialog> {
                 ),
               )
             else ...[
-              // QR Code (dùng text thay thế vì không có qr_flutter)
               Container(
                 width: 250,
                 height: 250,
@@ -1701,21 +1816,15 @@ class _QRPaymentDialogState extends State<_QRPaymentDialog> {
                   border: Border.all(color: AppTheme.borderLight, width: 2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Image.network(
-                  'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${Uri.encodeComponent(_qrString ?? '')}',
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.qr_code_2_rounded,
-                            size: 80, color: AppTheme.textDark),
-                        SizedBox(height: 8),
-                        Text('Quét bằng app ngân hàng',
-                            style: TextStyle(
-                                fontSize: 12, color: AppTheme.textMuted),
-                            textAlign: TextAlign.center),
-                      ],
+                child: QrImageView(
+                  data: _qrString ?? '',
+                  version: QrVersions.auto,
+                  backgroundColor: Colors.white,
+                  errorStateBuilder: (_, __) => const Center(
+                    child: Text(
+                      'Không tạo được mã QR',
+                      style: TextStyle(color: AppTheme.danger),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),

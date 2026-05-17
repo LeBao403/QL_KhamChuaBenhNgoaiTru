@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../../core/services/auth_service.dart';
 import '../../core/theme/app_theme.dart';
 import '../../shared/widgets/common_widgets.dart';
+import 'verify_otp_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -14,7 +15,9 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
+  final _fullNameCtrl = TextEditingController();
   final _usernameCtrl = TextEditingController();
+  final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   final _confirmCtrl = TextEditingController();
 
@@ -43,7 +46,9 @@ class _RegisterScreenState extends State<RegisterScreen>
   @override
   void dispose() {
     _animCtrl.dispose();
+    _fullNameCtrl.dispose();
     _usernameCtrl.dispose();
+    _emailCtrl.dispose();
     _passwordCtrl.dispose();
     _confirmCtrl.dispose();
     super.dispose();
@@ -58,35 +63,23 @@ class _RegisterScreenState extends State<RegisterScreen>
 
     final result = await AuthService().register(
       _usernameCtrl.text.trim(),
+      _emailCtrl.text.trim(),
       _passwordCtrl.text.trim(),
       _confirmCtrl.text.trim(),
+      _fullNameCtrl.text.trim(),
     );
 
     if (!mounted) return;
     setState(() => _isLoading = false);
 
     if (result.success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Row(
-            children: [
-              Icon(Icons.check_circle_rounded, color: Colors.white),
-              SizedBox(width: 8),
-              Text(
-                'Đăng ký thành công! Vui lòng đăng nhập.',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ],
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => const VerifyOtpScreen(),
           ),
-          backgroundColor: AppTheme.secondary,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          duration: const Duration(seconds: 3),
-        ),
-      );
-      if (mounted) Navigator.pop(context);
+        );
+      }
     } else {
       setState(() => _errorMsg = result.message);
     }
@@ -227,13 +220,57 @@ class _RegisterScreenState extends State<RegisterScreen>
             ),
             const SizedBox(height: 20),
           ],
+          _buildLabel('Họ và tên *'),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _fullNameCtrl,
+            textInputAction: TextInputAction.next,
+            decoration: const InputDecoration(
+              hintText: 'Nhập họ và tên đầy đủ',
+              prefixIcon: Icon(
+                Icons.badge_rounded,
+                color: AppTheme.primary,
+              ),
+            ),
+            validator: (v) {
+              if (v == null || v.trim().isEmpty) {
+                return 'Vui lòng nhập họ và tên';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildLabel('Email *'),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _emailCtrl,
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            decoration: const InputDecoration(
+              hintText: 'Nhập email để nhận mã OTP',
+              prefixIcon: Icon(
+                Icons.email_outlined,
+                color: AppTheme.primary,
+              ),
+            ),
+            validator: (v) {
+              if (v == null || v.trim().isEmpty) {
+                return 'Vui lòng nhập email';
+              }
+              if (!RegExp(r"^[^@\s]+@[^@\s]+\.[^@\s]+").hasMatch(v.trim())) {
+                return 'Email không hợp lệ';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
           _buildLabel('Tên đăng nhập *'),
           const SizedBox(height: 8),
           TextFormField(
             controller: _usernameCtrl,
             textInputAction: TextInputAction.next,
             decoration: const InputDecoration(
-              hintText: 'Ít nhất 4 ký tự, không dấu',
+              hintText: 'Nhập tên đăng nhập',
               prefixIcon: Icon(
                 Icons.person_outline_rounded,
                 color: AppTheme.primary,
@@ -242,9 +279,6 @@ class _RegisterScreenState extends State<RegisterScreen>
             validator: (v) {
               if (v == null || v.trim().isEmpty) {
                 return 'Vui lòng nhập tên đăng nhập';
-              }
-              if (v.trim().length < 4) {
-                return 'Tên đăng nhập ít nhất 4 ký tự';
               }
               return null;
             },
@@ -269,8 +303,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       : Icons.visibility_rounded,
                   color: AppTheme.textMuted,
                 ),
-                onPressed: () =>
-                    setState(() => _obscurePass = !_obscurePass),
+                onPressed: () => setState(() => _obscurePass = !_obscurePass),
               ),
             ),
             validator: (v) {
@@ -397,6 +430,9 @@ class _RegisterScreenState extends State<RegisterScreen>
                   ],
                 ),
                 const SizedBox(height: 8),
+                _noteItem(
+                  'Email đăng ký sẽ nhận mã OTP để xác thực tài khoản.',
+                ),
                 _noteItem(
                   'Liên kết tài khoản với hồ sơ bệnh nhân tại quầy tiếp tân',
                 ),

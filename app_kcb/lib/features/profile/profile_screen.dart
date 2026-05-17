@@ -156,16 +156,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         backgroundColor: AppTheme.secondary,
         behavior: SnackBarBehavior.floating,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(result.message ?? 'Cập nhật thất bại!'),
         backgroundColor: AppTheme.danger,
         behavior: SnackBarBehavior.floating,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ));
     }
   }
@@ -181,9 +179,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final now = DateTime.now();
     final picked = await showDatePicker(
       context: context,
-      initialDate: isBirthday
-          ? (_ngaySinh ?? DateTime(1990))
-          : (_hanSuDungBHYT ?? now),
+      initialDate:
+          isBirthday ? (_ngaySinh ?? DateTime(1990)) : (_hanSuDungBHYT ?? now),
       firstDate: isBirthday ? DateTime(1940) : now,
       lastDate: isBirthday ? now : DateTime(now.year + 10),
       builder: (ctx, child) => Theme(
@@ -211,8 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Đăng xuất',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
         content: const Text(
@@ -233,8 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 );
               }
             },
-            style:
-                ElevatedButton.styleFrom(backgroundColor: AppTheme.danger),
+            style: ElevatedButton.styleFrom(backgroundColor: AppTheme.danger),
             child: const Text('Đăng xuất'),
           ),
         ],
@@ -286,15 +281,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: AppTheme.bgLight,
-      body: CustomScrollView(
-        slivers: [
-          _buildSliverHeader(),
-          SliverToBoxAdapter(
-            child: _isEditing && _user != null
-                ? _buildEditForm()
-                : _buildViewMode(),
-          ),
-        ],
+      body: RefreshIndicator(
+        onRefresh: _loadProfile,
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            _buildSliverHeader(),
+            SliverToBoxAdapter(
+              child: _isEditing && _user != null
+                  ? _buildEditForm()
+                  : _buildViewMode(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -322,8 +321,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: AppTheme.statsGradient,
-                        border:
-                            Border.all(color: Colors.white, width: 3),
+                        border: Border.all(color: Colors.white, width: 3),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withOpacity(0.2),
@@ -353,8 +351,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             width: 28,
                             height: 28,
                             decoration: const BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle),
+                                color: Colors.white, shape: BoxShape.circle),
                             child: const Icon(Icons.camera_alt_rounded,
                                 size: 16, color: AppTheme.primary),
                           ),
@@ -374,8 +371,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SizedBox(height: 4),
                 if (user?.username.isNotEmpty == true)
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(50),
@@ -391,8 +388,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (user?.maBN.isNotEmpty == true)
                   Text(
                     'Mã BN: ${user!.maBN}',
-                    style: const TextStyle(
-                        color: Colors.white70, fontSize: 11),
+                    style: const TextStyle(color: Colors.white70, fontSize: 11),
                   ),
               ],
             ),
@@ -435,9 +431,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: _statCard(
                   Icons.percent_rounded,
                   'Mức hưởng',
-                  user.mucHuongBHYT != null
-                      ? '${user.mucHuongBHYT}%'
-                      : '—',
+                  user.mucHuongBHYT != null ? '${user.mucHuongBHYT}%' : '—',
                   AppTheme.primary,
                 ),
               ),
@@ -505,30 +499,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         const SizedBox(height: 12),
 
-      // Quick activities grid
+        // Quick activities grid
         _buildActivitiesSection(),
 
         const SizedBox(height: 12),
-
-        // Settings
-        _infoSection(
-          'Cài đặt',
-          Icons.settings_rounded,
-          [
-            _settingRow(Icons.edit_rounded, 'Chỉnh sửa thông tin',
-                onTap: () => setState(() => _isEditing = true)),
-            _settingRow(Icons.lock_outline_rounded, 'Đổi mật khẩu'),
-            _settingRow(
-                Icons.notifications_outlined, 'Thông báo'),
-            _settingRow(Icons.help_outline_rounded,
-                'Trợ giúp & Hỗ trợ'),
-            _settingRow(Icons.logout_rounded, 'Đăng xuất',
-                color: AppTheme.danger,
-                onTap: _logout,
-                isLast: true),
-          ],
-          iconColor: AppTheme.textMuted,
-        ),
 
         const SizedBox(height: 32),
       ],
@@ -656,8 +630,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _statCard(
-      IconData icon, String label, String value, Color color) {
+  Widget _statCard(IconData icon, String label, String value, Color color) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -671,12 +644,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: 6),
           Text(value,
               style: TextStyle(
-                  color: color,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700)),
+                  color: color, fontSize: 13, fontWeight: FontWeight.w700)),
           Text(label,
-              style: const TextStyle(
-                  color: AppTheme.textMuted, fontSize: 10)),
+              style: const TextStyle(color: AppTheme.textMuted, fontSize: 10)),
         ],
       ),
     );
@@ -698,8 +668,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
               child: Row(
                 children: [
-                  Icon(icon,
-                      color: iconColor ?? AppTheme.primary, size: 18),
+                  Icon(icon, color: iconColor ?? AppTheme.primary, size: 18),
                   const SizedBox(width: 8),
                   Text(title,
                       style: const TextStyle(
@@ -721,8 +690,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -752,8 +720,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-              horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(
             children: [
               SizedBox(
@@ -778,8 +745,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         InkWell(
           onTap: onTap ?? () {},
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
                 Icon(icon, size: 18, color: color ?? AppTheme.textBody),
@@ -798,8 +764,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
         ),
-        if (!isLast)
-          const Divider(height: 0, indent: 16 + 18 + 14),
+        if (!isLast) const Divider(height: 0, indent: 16 + 18 + 14),
       ],
     );
   }
@@ -915,9 +880,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 20),
 
             // ── BHYT ───────────────────────────────────────────────────
-            _sectionHeader(
-                'Thông tin BHYT',
-                Icons.health_and_safety_rounded,
+            _sectionHeader('Thông tin BHYT', Icons.health_and_safety_rounded,
                 color: AppTheme.secondary),
             const SizedBox(height: 14),
 
@@ -1072,11 +1035,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         labelText: label,
         prefixIcon: Icon(icon, size: 18, color: AppTheme.textMuted),
       ),
-      items: items
-          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-          .toList(),
-      style:
-          const TextStyle(color: AppTheme.textDark, fontSize: 14),
+      items:
+          items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+      style: const TextStyle(color: AppTheme.textDark, fontSize: 14),
     );
   }
 
@@ -1088,18 +1049,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: AbsorbPointer(
-        child: TextFormField(
-          readOnly: true,
-          decoration: InputDecoration(
-            labelText: label,
-            hintText: 'Chọn ngày',
-            prefixIcon: Icon(icon, size: 18, color: AppTheme.textMuted),
-            suffixIcon: const Icon(Icons.arrow_drop_down_rounded,
-                color: AppTheme.textMuted),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon, size: 18, color: AppTheme.textMuted),
+          suffixIcon: const Icon(
+            Icons.arrow_drop_down_rounded,
+            color: AppTheme.textMuted,
           ),
-          controller: TextEditingController(
-              text: value != null ? _fmtDate(value) : ''),
+        ),
+        child: Text(
+          value != null ? _fmtDate(value) : 'Chọn ngày',
+          style: TextStyle(
+            color: value != null ? AppTheme.textDark : AppTheme.textLight,
+            fontSize: 14,
+          ),
         ),
       ),
     );

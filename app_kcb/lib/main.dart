@@ -8,7 +8,6 @@ import 'features/shell/main_shell.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('vi_VN', null);
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -21,19 +20,26 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // Khởi tạo AuthService (load cookie + user từ SharedPreferences)
-  await AuthService().init();
-
   runApp(const MedicHubApp());
 }
 
-class MedicHubApp extends StatelessWidget {
+class MedicHubApp extends StatefulWidget {
   const MedicHubApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final isLoggedIn = AuthService().isLoggedIn;
+  State<MedicHubApp> createState() => _MedicHubAppState();
+}
 
+class _MedicHubAppState extends State<MedicHubApp> {
+  late final Future<void> _bootstrap = _initApp();
+
+  Future<void> _initApp() async {
+    await initializeDateFormatting('vi_VN', null);
+    await AuthService().init().timeout(const Duration(seconds: 4));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MaterialApp(
       title: 'DigiMed Clinic',
       debugShowCheckedModeBanner: false,
@@ -42,8 +48,32 @@ class MedicHubApp extends StatelessWidget {
         '/home': (_) => const MainShell(),
         '/login': (_) => const LoginScreen(),
       },
-      // Nếu đã đăng nhập → vào MainShell, chưa → LoginScreen
-      home: isLoggedIn ? const MainShell() : const LoginScreen(),
+      home: FutureBuilder<void>(
+        future: _bootstrap,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const _AppStartupScreen();
+          }
+
+          return AuthService().isLoggedIn
+              ? const MainShell()
+              : const LoginScreen();
+        },
+      ),
+    );
+  }
+}
+
+class _AppStartupScreen extends StatelessWidget {
+  const _AppStartupScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: AppTheme.bgLight,
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }
