@@ -263,33 +263,33 @@ class _HomeTabState extends State<HomeTab> {
   static const int _homeSectionCount = 8;
 
   Widget _buildHomeSection(int index, HomeLandingModel homeData) {
-    return switch (index) {
-      0 => _buildHeroCarousel(),
-      1 => _buildQuickActions(),
-      2 => _buildInfoBanner(),
-      3 => _sectionWithHeader(
-          'ChuyÃªn khoa ná»•i báº­t',
-          'KhÃ¡m phÃ¡ cÃ¡c chuyÃªn khoa Ä‘ang hoáº¡t Ä‘á»™ng',
-          _buildSpecialties(homeData.specialties),
-        ),
-      4 => _sectionWithHeader(
-          'Thá»‘ng kÃª bá»‡nh viá»‡n',
-          'Dá»¯ liá»‡u tá»•ng quan tá»« há»‡ thá»‘ng',
-          _buildStats(homeData.stats),
-        ),
-      5 => _sectionWithHeader(
-          'BÃ¡c sÄ© tiÃªu biá»ƒu',
-          'Äá»™i ngÅ© chuyÃªn gia Ä‘ang Ä‘á»“ng hÃ nh cÃ¹ng ngÆ°á»i bá»‡nh',
-          _buildDoctors(homeData.doctors),
-        ),
-      6 => _sectionWithHeader(
-          'Tin tá»©c & cáº©m nang',
-          'ThÃ´ng tin má»›i vÃ  ná»™i dung há»¯u Ã­ch trÆ°á»›c khi Ä‘i khÃ¡m',
-          _buildNews(homeData.news),
-        ),
-      _ => _buildBottomCta(),
-    };
-  }
+  return switch (index) {
+    0 => _buildHeroCarousel(),
+    1 => _buildQuickActions(),
+    2 => _buildInfoBanner(),
+    3 => _sectionWithHeader(
+        'Chuyên khoa nổi bật',
+        'Khám phá các chuyên khoa đang hoạt động',
+        _buildSpecialties(homeData.specialties),
+      ),
+    4 => _sectionWithHeader(
+        'Thống kê bệnh viện',
+        'Dữ liệu tổng quan từ hệ thống',
+        _buildStats(homeData.stats),
+      ),
+    5 => _sectionWithHeader(
+        'Bác sĩ tiêu biểu',
+        'Đội ngũ chuyên gia đang đồng hành cùng người bệnh',
+        _buildDoctors(homeData.doctors),
+      ),
+    6 => _sectionWithHeader(
+        'Tin tức & cẩm nang',
+        'Thông tin mới và nội dung hữu ích trước khi đi khám',
+        _buildNews(homeData.news),
+      ),
+    _ => _buildBottomCta(),
+  };
+}
 
   Widget _sectionWithHeader(String title, String subtitle, Widget child) {
     return Column(

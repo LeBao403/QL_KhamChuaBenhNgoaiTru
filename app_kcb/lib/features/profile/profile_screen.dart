@@ -1028,8 +1028,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required ValueChanged<String?> onChanged,
     required IconData icon,
   }) {
+    // XỬ LÝ LỖI CRASH: 
+    // Làm sạch chuỗi và kiểm tra xem giá trị hiện tại có nằm trong danh sách items không.
+    // Nếu không có (do data API khác biệt), set về null để Dropdown hiển thị rỗng thay vì bị crash.
+    final cleanValue = value?.trim();
+    final safeValue = (cleanValue != null && items.contains(cleanValue)) ? cleanValue : null;
+
     return DropdownButtonFormField<String>(
-      value: value,
+      value: safeValue,
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,

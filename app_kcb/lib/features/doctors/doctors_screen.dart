@@ -154,9 +154,9 @@ class _DoctorsScreenState extends State<DoctorsScreen> {
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
             key: ValueKey(_selectedSpecialty),
-            initialValue: specialties.contains(_selectedSpecialty)
+            value: specialties.contains(_selectedSpecialty)
                 ? _selectedSpecialty
-                : '',
+                : null,
             decoration: const InputDecoration(
               labelText: 'Chuyên khoa',
               prefixIcon: Icon(Icons.medical_services_outlined),
