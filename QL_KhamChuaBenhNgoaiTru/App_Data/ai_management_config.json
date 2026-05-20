@@ -1,0 +1,9 @@
+{
+  "IsAutoTrainEnabled": false,
+  "TrainTime": "23:57",
+  "ScheduleCycle": "Daily",
+  "LastTrainDate": null,
+  "AutoActivateAfterTrain": true,
+  "LastError": null,
+  "LastErrorAt": null
+}

@@ -46,9 +46,6 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                     Session["MaChucVu"] = nv.MaChucVu;
                     Session["JwtToken"] = JwtTokenHelper.GenerateToken(tk, null, nv);
 
-                    if (DateTime.Now.Ticks >= 0)
-                        return RedirectToAction("Index", "Home", new { area = "" });
-
                     int chucVu = nv.MaChucVu.Value;
                     switch (chucVu)
                     {

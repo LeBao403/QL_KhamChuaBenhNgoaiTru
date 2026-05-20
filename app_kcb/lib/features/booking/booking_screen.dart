@@ -234,6 +234,28 @@ class _BookingScreenState extends State<BookingScreen>
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
+  void _selectDate(DateTime date) {
+    final selected = _selectedDate;
+    if (selected != null &&
+        selected.year == date.year &&
+        selected.month == date.month &&
+        selected.day == date.day) {
+      return;
+    }
+
+    setState(() {
+      _selectedDate = date;
+      _selectedSlot = null;
+      _slots = [];
+      _slotError = null;
+    });
+  }
+
+  void _selectSlot(TimeSlotModel slot) {
+    if (_selectedSlot?.maKhungGio == slot.maKhungGio) return;
+    setState(() => _selectedSlot = slot);
+  }
+
   String _fmtCurrency(double amount) =>
       NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ').format(amount);
 
@@ -281,14 +303,9 @@ class _BookingScreenState extends State<BookingScreen>
           const SizedBox(height: 20),
           _buildStepIndicator(),
           const SizedBox(height: 24),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 250),
-            transitionBuilder: (child, anim) =>
-                FadeTransition(opacity: anim, child: child),
-            child: KeyedSubtree(
-              key: ValueKey(_step),
-              child: _buildStep(),
-            ),
+          KeyedSubtree(
+            key: ValueKey(_step),
+            child: _buildStep(),
           ),
           if (_submitError != null) ...[
             const SizedBox(height: 16),
@@ -365,8 +382,7 @@ class _BookingScreenState extends State<BookingScreen>
               Expanded(
                 child: Column(
                   children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
+                    Container(
                       width: 32,
                       height: 32,
                       decoration: BoxDecoration(
@@ -374,14 +390,6 @@ class _BookingScreenState extends State<BookingScreen>
                             isActive || isDone ? AppTheme.heroGradient : null,
                         color: isActive || isDone ? null : AppTheme.borderLight,
                         shape: BoxShape.circle,
-                        boxShadow: isActive
-                            ? [
-                                BoxShadow(
-                                  color: AppTheme.primary.withOpacity(0.4),
-                                  blurRadius: 8,
-                                )
-                              ]
-                            : null,
                       ),
                       child: Center(
                         child: isDone
@@ -481,10 +489,8 @@ class _BookingScreenState extends State<BookingScreen>
                 _selectedDate!.month == date.month;
 
             return GestureDetector(
-              onTap:
-                  isWeekend ? null : () => setState(() => _selectedDate = date),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
+              onTap: isWeekend ? null : () => _selectDate(date),
+              child: Container(
                 decoration: BoxDecoration(
                   gradient: isSelected ? AppTheme.heroGradient : null,
                   color: isWeekend
@@ -497,15 +503,6 @@ class _BookingScreenState extends State<BookingScreen>
                     color: isSelected ? AppTheme.primary : AppTheme.borderLight,
                     width: isSelected ? 2 : 1,
                   ),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: AppTheme.primary.withOpacity(0.3),
-                            blurRadius: 10,
-                            offset: const Offset(0, 3),
-                          )
-                        ]
-                      : null,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -561,7 +558,9 @@ class _BookingScreenState extends State<BookingScreen>
             onPressed: _selectedDate != null
                 ? () {
                     setState(() => _step = 1);
-                    _loadTimeSlots();
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) _loadTimeSlots();
+                    });
                   }
                 : null,
           ),
@@ -644,7 +643,7 @@ class _BookingScreenState extends State<BookingScreen>
                     isSelected: _selectedSlot?.maKhungGio == slot.maKhungGio,
                     isDisabled: disabled,
                     status: slot.statusForDate(_selectedDate!),
-                    onTap: () => setState(() => _selectedSlot = slot),
+                    onTap: () => _selectSlot(slot),
                   );
                 },
               );
@@ -660,7 +659,9 @@ class _BookingScreenState extends State<BookingScreen>
                 ? () {
                     setState(() => _step = 2);
                     if (!_loadingServices && _services.isEmpty) {
-                      _loadServiceList();
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) _loadServiceList();
+                      });
                     }
                   }
                 : null,
@@ -1427,6 +1428,7 @@ class _VnPayPaymentDialogState extends State<_VnPayPaymentDialog> {
   String? _paymentUrl;
   String? _error;
   Timer? _pollTimer;
+  bool _isPolling = false;
   int _remainSeconds = 300;
 
   @override
@@ -1480,6 +1482,8 @@ class _VnPayPaymentDialogState extends State<_VnPayPaymentDialog> {
         timer.cancel();
         return;
       }
+      if (_isPolling) return;
+      _isPolling = true;
 
       final result = await widget.bookingService
           .kiemTraThanhToanTheOnline(widget.maHD, widget.maPhieuDK);
@@ -1510,6 +1514,7 @@ class _VnPayPaymentDialogState extends State<_VnPayPaymentDialog> {
           widget.onCancel();
         }
       });
+      _isPolling = false;
     });
   }
 
@@ -1692,6 +1697,7 @@ class _QRPaymentDialogState extends State<_QRPaymentDialog> {
   String? _qrError;
   int? _orderCode;
   Timer? _pollTimer;
+  bool _isPolling = false;
   int _remainSeconds = 300; // 5 phút
 
   @override
@@ -1718,11 +1724,15 @@ class _QRPaymentDialogState extends State<_QRPaymentDialog> {
   }
 
   void _startPolling() {
+    _pollTimer?.cancel();
     _pollTimer = Timer.periodic(const Duration(seconds: 3), (t) async {
       if (!mounted) {
         t.cancel();
         return;
       }
+      if (_isPolling) return;
+      _isPolling = true;
+
       final paid = await widget.bookingService
           .kiemTraThanhToan(_orderCode!, widget.maPhieuDK, widget.maHD);
       if (paid) {
@@ -1737,6 +1747,7 @@ class _QRPaymentDialogState extends State<_QRPaymentDialog> {
           widget.onCancel();
         }
       });
+      _isPolling = false;
     });
   }
 

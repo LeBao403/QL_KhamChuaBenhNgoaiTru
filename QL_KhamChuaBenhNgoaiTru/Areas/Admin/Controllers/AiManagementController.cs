@@ -80,13 +80,19 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveSchedule(bool isAutoTrainEnabled, string trainTime, bool autoActivateAfterTrain)
+        public JsonResult SaveSchedule(bool isAutoTrainEnabled, string trainTime, string trainCycle, bool autoActivateAfterTrain)
         {
             try
             {
                 var config = AiTrainingScheduler.GetConfig();
+                var normalizedTime = string.IsNullOrWhiteSpace(trainTime) ? "01:00" : trainTime;
+                var normalizedCycle = NormalizeCycle(trainCycle);
+                var scheduleChanged = config.TrainTime != normalizedTime || config.ScheduleCycle != normalizedCycle;
+
                 config.IsAutoTrainEnabled = isAutoTrainEnabled;
-                config.TrainTime = string.IsNullOrWhiteSpace(trainTime) ? "01:00" : trainTime;
+                config.TrainTime = normalizedTime;
+                config.ScheduleCycle = normalizedCycle;
+                if (scheduleChanged) config.LastTrainDate = null;
                 config.AutoActivateAfterTrain = autoActivateAfterTrain;
                 AiTrainingScheduler.SaveConfig(config);
 
@@ -96,6 +102,14 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             {
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        private static string NormalizeCycle(string cycle)
+        {
+            cycle = (cycle ?? "").Trim();
+            if (string.Equals(cycle, "Weekly", StringComparison.OrdinalIgnoreCase)) return "Weekly";
+            if (string.Equals(cycle, "Monthly", StringComparison.OrdinalIgnoreCase)) return "Monthly";
+            return "Daily";
         }
 
         private static string CallAiApi(string path, string method, string jsonBody = null, int timeoutMs = 10000)

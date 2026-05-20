@@ -183,6 +183,14 @@
                                     <label class="form-label fw-semibold text-secondary">Giờ chạy nền (HH:mm)</label>
                                     <input type="time" class="form-control bg-white" id="timeFull" value="@config.FullBackup.BackupTime" />
                                 </div>
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold text-secondary">Chu kỳ sao lưu</label>
+                                    <select class="form-select bg-white" id="cycleFull">
+                                        <option value="Daily" @(config.FullBackup.ScheduleCycle == "Daily" ? "selected" : "")>Mỗi ngày</option>
+                                        <option value="Weekly" @(config.FullBackup.ScheduleCycle == "Weekly" ? "selected" : "")>Mỗi tuần</option>
+                                        <option value="Monthly" @(config.FullBackup.ScheduleCycle == "Monthly" ? "selected" : "")>Mỗi tháng</option>
+                                    </select>
+                                </div>
                                 
                                 <div class="text-muted small">
                                     Lần tự động gần nhất: <strong class="text-dark">@(config.FullBackup.LastBackupDate.HasValue ? config.FullBackup.LastBackupDate.Value.ToString("dd/MM/yyyy HH:mm:ss") : "Chưa từng kích hoạt")</strong>
@@ -204,6 +212,14 @@
                                 <div class="mb-4">
                                     <label class="form-label fw-semibold text-secondary">Giờ chạy nền (HH:mm)</label>
                                     <input type="time" class="form-control bg-white" id="timeDiff" value="@config.DiffBackup.BackupTime" />
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold text-secondary">Chu kỳ sao lưu</label>
+                                    <select class="form-select bg-white" id="cycleDiff">
+                                        <option value="Daily" @(config.DiffBackup.ScheduleCycle == "Daily" ? "selected" : "")>Mỗi ngày</option>
+                                        <option value="Weekly" @(config.DiffBackup.ScheduleCycle == "Weekly" ? "selected" : "")>Mỗi tuần</option>
+                                        <option value="Monthly" @(config.DiffBackup.ScheduleCycle == "Monthly" ? "selected" : "")>Mỗi tháng</option>
+                                    </select>
                                 </div>
                                 
                                 <div class="text-muted small">
@@ -236,13 +252,15 @@
             $('#btnSaveSchedule').click(function() {
                 var isFullAuto = $('#chkAutoFull').is(':checked');
                 var timeFull = $('#timeFull').val();
+                var cycleFull = $('#cycleFull').val();
                 
                 var isDiffAuto = $('#chkAutoDiff').is(':checked');
                 var timeDiff = $('#timeDiff').val();
+                var cycleDiff = $('#cycleDiff').val();
                 
                 $.post('@Url.Action("SaveSchedule", "Backup", new { area = "Admin" })', { 
-                    isFullAuto: isFullAuto, backupFullTime: timeFull,
-                    isDiffAuto: isDiffAuto, backupDiffTime: timeDiff
+                    isFullAuto: isFullAuto, backupFullTime: timeFull, backupFullCycle: cycleFull,
+                    isDiffAuto: isDiffAuto, backupDiffTime: timeDiff, backupDiffCycle: cycleDiff
                 }, function(res) {
                     if (res.success) {
                         Swal.fire({ icon: 'success', title: 'Máy chủ đã ghi nhận!', text: res.message, timer: 2000, showConfirmButton: false }).then(() => location.reload());

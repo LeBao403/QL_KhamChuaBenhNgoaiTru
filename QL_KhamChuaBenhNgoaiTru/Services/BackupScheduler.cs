@@ -11,6 +11,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Services
     {
         public bool IsEnabled { get; set; } = false;
         public string BackupTime { get; set; } = "00:00"; 
+        public string ScheduleCycle { get; set; } = "Daily";
         public DateTime? LastBackupDate { get; set; } = null;
     }
 
@@ -68,14 +69,11 @@ namespace QL_KhamChuaBenhNgoaiTru.Services
                     TimeSpan fTime;
                     if (TimeSpan.TryParse(config.FullBackup.BackupTime, out fTime))
                     {
-                        if (now.TimeOfDay >= fTime)
+                        if (IsScheduleDue(config.FullBackup.LastBackupDate, now, fTime, config.FullBackup.ScheduleCycle))
                         {
-                            if (!config.FullBackup.LastBackupDate.HasValue || config.FullBackup.LastBackupDate.Value.Date < now.Date)
-                            {
-                                PerformBackup(false);
-                                config.FullBackup.LastBackupDate = now;
-                                configChanged = true;
-                            }
+                            PerformBackup(false);
+                            config.FullBackup.LastBackupDate = now;
+                            configChanged = true;
                         }
                     }
                 }
@@ -86,14 +84,11 @@ namespace QL_KhamChuaBenhNgoaiTru.Services
                     TimeSpan dTime;
                     if (TimeSpan.TryParse(config.DiffBackup.BackupTime, out dTime))
                     {
-                        if (now.TimeOfDay >= dTime)
+                        if (IsScheduleDue(config.DiffBackup.LastBackupDate, now, dTime, config.DiffBackup.ScheduleCycle))
                         {
-                            if (!config.DiffBackup.LastBackupDate.HasValue || config.DiffBackup.LastBackupDate.Value.Date < now.Date)
-                            {
-                                PerformBackup(true);
-                                config.DiffBackup.LastBackupDate = now;
-                                configChanged = true;
-                            }
+                            PerformBackup(true);
+                            config.DiffBackup.LastBackupDate = now;
+                            configChanged = true;
                         }
                     }
                 }
@@ -119,6 +114,25 @@ namespace QL_KhamChuaBenhNgoaiTru.Services
                 db.CreateBackup(fullPath, isDifferential);
             }
             catch (Exception) { }
+        }
+
+        private static bool IsScheduleDue(DateTime? lastRunAt, DateTime now, TimeSpan scheduleTime, string cycle)
+        {
+            if (now.TimeOfDay < scheduleTime) return false;
+            if (!lastRunAt.HasValue) return true;
+            if (lastRunAt.Value > now) return true;
+
+            var lastDate = lastRunAt.Value.Date;
+            var today = now.Date;
+            switch ((cycle ?? "Daily").Trim().ToLowerInvariant())
+            {
+                case "weekly":
+                    return lastDate.AddDays(7) <= today;
+                case "monthly":
+                    return lastDate.AddMonths(1) <= today;
+                default:
+                    return lastDate < today;
+            }
         }
 
         public static BackupConfig GetConfig()

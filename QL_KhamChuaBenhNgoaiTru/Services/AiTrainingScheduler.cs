@@ -12,6 +12,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Services
     {
         public bool IsAutoTrainEnabled { get; set; } = false;
         public string TrainTime { get; set; } = "01:00";
+        public string ScheduleCycle { get; set; } = "Daily";
         public DateTime? LastTrainDate { get; set; } = null;
         public bool AutoActivateAfterTrain { get; set; } = true;
         public string LastError { get; set; }
@@ -56,8 +57,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Services
                 if (!TimeSpan.TryParse(config.TrainTime, out trainTime)) return;
 
                 var now = DateTime.Now;
-                if (now.TimeOfDay < trainTime) return;
-                if (config.LastTrainDate.HasValue && config.LastTrainDate.Value.Date >= now.Date) return;
+                if (!IsScheduleDue(config.LastTrainDate, now, trainTime, config.ScheduleCycle)) return;
 
                 CallAiTrain(config.AutoActivateAfterTrain);
                 config.LastTrainDate = now;
@@ -126,6 +126,25 @@ namespace QL_KhamChuaBenhNgoaiTru.Services
         public static string GetAiServiceUrl()
         {
             return ConfigurationManager.AppSettings["AiServiceUrl"] ?? "http://127.0.0.1:8000";
+        }
+
+        private static bool IsScheduleDue(DateTime? lastRunAt, DateTime now, TimeSpan scheduleTime, string cycle)
+        {
+            if (now.TimeOfDay < scheduleTime) return false;
+            if (!lastRunAt.HasValue) return true;
+            if (lastRunAt.Value > now) return true;
+
+            var lastDate = lastRunAt.Value.Date;
+            var today = now.Date;
+            switch ((cycle ?? "Daily").Trim().ToLowerInvariant())
+            {
+                case "weekly":
+                    return lastDate.AddDays(7) <= today;
+                case "monthly":
+                    return lastDate.AddMonths(1) <= today;
+                default:
+                    return lastDate < today;
+            }
         }
 
         private static string GetConfigPath()

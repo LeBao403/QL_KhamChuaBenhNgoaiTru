@@ -11,6 +11,9 @@ class BookingService {
   final ApiService _api = ApiService();
 
   static const String _bookingPagePath = '/BenhNhanPortal/DatLichKham';
+  static const Duration _bookingTimeout = Duration(seconds: 15);
+  static const Duration _paymentTimeout = Duration(seconds: 12);
+  static const Duration _pollTimeout = Duration(seconds: 8);
 
   String? _bookingFormToken;
   List<ServiceModel>? _cachedServices;
@@ -92,17 +95,21 @@ class BookingService {
       final dateStr =
           '${ngayKham.year}-${ngayKham.month.toString().padLeft(2, '0')}-${ngayKham.day.toString().padLeft(2, '0')}';
 
-      final mobileResp = await _api.post('/MobileApi/LoadKhungGio', {
-        'ngayKham': dateStr,
-      });
+      final mobileResp = await _api.post(
+        '/MobileApi/LoadKhungGio',
+        {'ngayKham': dateStr},
+        timeout: _bookingTimeout,
+      );
       final mobileResult = _parseTimeSlotResponse(mobileResp);
       if (mobileResult.success) {
         return mobileResult;
       }
 
-      final webResp = await _api.post('/BenhNhanPortal/LoadKhungGio', {
-        'ngayKham': dateStr,
-      });
+      final webResp = await _api.post(
+        '/BenhNhanPortal/LoadKhungGio',
+        {'ngayKham': dateStr},
+        timeout: _bookingTimeout,
+      );
       return _parseTimeSlotResponse(
         webResp,
         fallbackMessage: mobileResult.message,
@@ -122,28 +129,36 @@ class BookingService {
       final dateStr =
           '${ngayKham.year}-${ngayKham.month.toString().padLeft(2, '0')}-${ngayKham.day.toString().padLeft(2, '0')}';
 
-      final mobileResp = await _api.post('/MobileApi/DatLichKham', {
-        'ngayKham': dateStr,
-        'maKhungGio': maKhungGio.toString(),
-        'maDV': maDV,
-        'lyDo': lyDo,
-      });
+      final mobileResp = await _api.post(
+        '/MobileApi/DatLichKham',
+        {
+          'ngayKham': dateStr,
+          'maKhungGio': maKhungGio.toString(),
+          'maDV': maDV,
+          'lyDo': lyDo,
+        },
+        timeout: _bookingTimeout,
+      );
 
       final mobileResult = _parseBookingResponse(mobileResp);
-      if (mobileResult.success) {
+      if (mobileResp.statusCode == 200 && _api.parseJson(mobileResp) != null) {
         return mobileResult;
       }
 
       await _loadBookingForm(forceRefresh: true);
 
       if ((_bookingFormToken ?? '').isNotEmpty) {
-        final webResp = await _api.post('/BenhNhanPortal/DatLichKham', {
-          '__RequestVerificationToken': _bookingFormToken!,
-          'ngayKham': dateStr,
-          'maKhungGio': maKhungGio.toString(),
-          'maDV': maDV,
-          'lyDo': lyDo,
-        });
+        final webResp = await _api.post(
+          '/BenhNhanPortal/DatLichKham',
+          {
+            '__RequestVerificationToken': _bookingFormToken!,
+            'ngayKham': dateStr,
+            'maKhungGio': maKhungGio.toString(),
+            'maDV': maDV,
+            'lyDo': lyDo,
+          },
+          timeout: _bookingTimeout,
+        );
 
         final webResult = _parseBookingResponse(webResp);
         if (webResult.success) {
@@ -152,6 +167,8 @@ class BookingService {
       }
 
       return mobileResult;
+    } on TimeoutException {
+      return ApiResult.fail('Request dat lich qua lau. Vui long thu lai.');
     } catch (e) {
       return ApiResult.fail('Lỗi kết nối: $e');
     }
@@ -162,10 +179,14 @@ class BookingService {
     String maPhieuDK,
   ) async {
     try {
-      final resp = await _api.post('/BenhNhanPortal/TaoMaQROnline', {
-        'maHD': maHD,
-        'maPhieuDK': maPhieuDK,
-      });
+      final resp = await _api.post(
+        '/BenhNhanPortal/TaoMaQROnline',
+        {
+          'maHD': maHD,
+          'maPhieuDK': maPhieuDK,
+        },
+        timeout: _paymentTimeout,
+      );
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null) {
@@ -179,6 +200,8 @@ class BookingService {
         }
       }
       return ApiResult.fail('Loi tao ma QR!');
+    } on TimeoutException {
+      return ApiResult.fail('Tao ma QR qua lau. Vui long thu lai.');
     } catch (e) {
       return ApiResult.fail('Lỗi kết nối: $e');
     }
@@ -187,11 +210,15 @@ class BookingService {
   Future<bool> kiemTraThanhToan(
       int orderCode, String maPhieuDK, String maHD) async {
     try {
-      final resp = await _api.post('/BenhNhanPortal/KiemTraThanhToanOnline', {
-        'orderCode': orderCode.toString(),
-        'maPhieuDK': maPhieuDK,
-        'maHD': maHD,
-      });
+      final resp = await _api.post(
+        '/BenhNhanPortal/KiemTraThanhToanOnline',
+        {
+          'orderCode': orderCode.toString(),
+          'maPhieuDK': maPhieuDK,
+          'maHD': maHD,
+        },
+        timeout: _pollTimeout,
+      );
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         return json != null &&
@@ -207,11 +234,15 @@ class BookingService {
     String maPhieuDK,
   ) async {
     try {
-      final resp = await _api.post('/MobileApi/TaoThanhToanTheUrl', {
-        'maHD': maHD,
-        'maPhieuDK': maPhieuDK,
-        'returnUrl': ApiService.resolveUrl('/ThanhToan/KetQua'),
-      });
+      final resp = await _api.post(
+        '/MobileApi/TaoThanhToanTheUrl',
+        {
+          'maHD': maHD,
+          'maPhieuDK': maPhieuDK,
+          'returnUrl': ApiService.resolveUrl('/ThanhToan/KetQua'),
+        },
+        timeout: _paymentTimeout,
+      );
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
@@ -233,10 +264,14 @@ class BookingService {
     String maPhieuDK,
   ) async {
     try {
-      final resp = await _api.post('/MobileApi/KiemTraThanhToanThe', {
-        'maHD': maHD,
-        'maPhieuDK': maPhieuDK,
-      });
+      final resp = await _api.post(
+        '/MobileApi/KiemTraThanhToanThe',
+        {
+          'maHD': maHD,
+          'maPhieuDK': maPhieuDK,
+        },
+        timeout: _pollTimeout,
+      );
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
@@ -259,9 +294,11 @@ class BookingService {
 
   Future<ApiResult<void>> huyDatLichKhiKhongThanhToan(String maPhieuDK) async {
     try {
-      final resp = await _api.post('/BenhNhanPortal/HuyDatLichOnline', {
-        'maPhieuDK': maPhieuDK,
-      });
+      final resp = await _api.post(
+        '/BenhNhanPortal/HuyDatLichOnline',
+        {'maPhieuDK': maPhieuDK},
+        timeout: _bookingTimeout,
+      );
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {
@@ -279,8 +316,7 @@ class BookingService {
     try {
       final resp = await _api.get(
         '/MobileApi/GetLichKham',
-        timeout: const Duration(seconds: 60),
-        retries: 1,
+        timeout: _bookingTimeout,
       );
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
@@ -301,9 +337,11 @@ class BookingService {
 
   Future<ApiResult<void>> huyLich(String maPhieuDK) async {
     try {
-      final resp = await _api.post('/MobileApi/HuyLich', {
-        'maPhieuDK': maPhieuDK,
-      });
+      final resp = await _api.post(
+        '/MobileApi/HuyLich',
+        {'maPhieuDK': maPhieuDK},
+        timeout: _bookingTimeout,
+      );
       if (resp.statusCode == 200) {
         final json = _api.parseJson(resp);
         if (json != null && json['success'] == true) {

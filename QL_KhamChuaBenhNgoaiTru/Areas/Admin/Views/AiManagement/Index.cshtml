@@ -111,6 +111,14 @@
                         <label class="form-label fw-semibold text-secondary">Giờ train</label>
                         <input id="timeTrain" type="time" class="form-control" value="@(config != null ? config.TrainTime : "01:00")" />
                     </div>
+                    <div class="col-sm-6">
+                        <label class="form-label fw-semibold text-secondary">Chu kỳ train</label>
+                        <select id="cycleTrain" class="form-select">
+                            <option value="Daily" @(config == null || config.ScheduleCycle == "Daily" ? "selected" : "")>Mỗi ngày</option>
+                            <option value="Weekly" @(config != null && config.ScheduleCycle == "Weekly" ? "selected" : "")>Mỗi tuần</option>
+                            <option value="Monthly" @(config != null && config.ScheduleCycle == "Monthly" ? "selected" : "")>Mỗi tháng</option>
+                        </select>
+                    </div>
                     <div class="col-sm-6 d-flex align-items-end">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="chkAutoActivate" @(config == null || config.AutoActivateAfterTrain ? "checked" : "")>
@@ -337,6 +345,7 @@
             $.post('@Url.Action("SaveSchedule", "AiManagement", new { area = "Admin" })', {
                 isAutoTrainEnabled: $('#chkAutoTrain').is(':checked'),
                 trainTime: $('#timeTrain').val(),
+                trainCycle: $('#cycleTrain').val(),
                 autoActivateAfterTrain: $('#chkAutoActivate').is(':checked')
             }, function (res) {
                 if (res.success) {

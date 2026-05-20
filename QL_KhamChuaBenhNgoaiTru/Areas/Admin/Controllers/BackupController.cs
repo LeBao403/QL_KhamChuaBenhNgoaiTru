@@ -146,17 +146,25 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveSchedule(bool isFullAuto, string backupFullTime, bool isDiffAuto, string backupDiffTime)
+        public JsonResult SaveSchedule(bool isFullAuto, string backupFullTime, string backupFullCycle, bool isDiffAuto, string backupDiffTime, string backupDiffCycle)
         {
             try
             {
                 var config = BackupScheduler.GetConfig();
+                var normalizedFullCycle = NormalizeCycle(backupFullCycle);
+                var normalizedDiffCycle = NormalizeCycle(backupDiffCycle);
+                var fullChanged = config.FullBackup.BackupTime != backupFullTime || config.FullBackup.ScheduleCycle != normalizedFullCycle;
+                var diffChanged = config.DiffBackup.BackupTime != backupDiffTime || config.DiffBackup.ScheduleCycle != normalizedDiffCycle;
                 
                 config.FullBackup.IsEnabled = isFullAuto;
                 config.FullBackup.BackupTime = backupFullTime;
+                config.FullBackup.ScheduleCycle = normalizedFullCycle;
+                if (fullChanged) config.FullBackup.LastBackupDate = null;
                 
                 config.DiffBackup.IsEnabled = isDiffAuto;
                 config.DiffBackup.BackupTime = backupDiffTime;
+                config.DiffBackup.ScheduleCycle = normalizedDiffCycle;
+                if (diffChanged) config.DiffBackup.LastBackupDate = null;
                 
                 BackupScheduler.SaveConfig(config);
                 return Json(new { success = true, message = "Đã cập nhật hệ thống lịch trình sao lưu phức hợp!" });
@@ -165,6 +173,14 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Admin.Controllers
             {
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        private static string NormalizeCycle(string cycle)
+        {
+            cycle = (cycle ?? "").Trim();
+            if (string.Equals(cycle, "Weekly", StringComparison.OrdinalIgnoreCase)) return "Weekly";
+            if (string.Equals(cycle, "Monthly", StringComparison.OrdinalIgnoreCase)) return "Monthly";
+            return "Daily";
         }
     }
 }

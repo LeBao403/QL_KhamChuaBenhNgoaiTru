@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' as developer;
 import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -9,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Backend ASP.NET MVC dùng Session qua cookie "ASP.NET_SessionId".
 class ApiService {
   static const Duration defaultTimeout = Duration(seconds: 30);
+  static const bool _logHttp =
+      bool.fromEnvironment('API_LOG_HTTP', defaultValue: true);
 
   // ── Cấu hình base URL ──────────────────────────────────────────────────────
   // Thay đổi IP/port cho phù hợp với môi trường của bạn:
@@ -142,15 +145,22 @@ class ApiService {
 
     Object? lastError;
     for (var attempt = 0; attempt <= retries; attempt++) {
+      final sw = Stopwatch()..start();
       try {
         final response =
             await _client.get(uri, headers: _headers()).timeout(timeout);
+        sw.stop();
+        _logRequest('GET', path, response.statusCode, sw.elapsed, attempt);
         await _updateCookies(response);
         return response;
       } on SocketException catch (e) {
+        sw.stop();
+        _logRequest('GET', path, null, sw.elapsed, attempt, error: e);
         lastError = e;
         if (attempt >= retries) rethrow;
       } on TimeoutException catch (e) {
+        sw.stop();
+        _logRequest('GET', path, null, sw.elapsed, attempt, error: e);
         lastError = e;
         if (attempt >= retries) rethrow;
       }
@@ -172,16 +182,23 @@ class ApiService {
 
     Object? lastError;
     for (var attempt = 0; attempt <= retries; attempt++) {
+      final sw = Stopwatch()..start();
       try {
         final response = await _client
             .post(uri, headers: _headers(), body: body)
             .timeout(timeout);
+        sw.stop();
+        _logRequest('POST', path, response.statusCode, sw.elapsed, attempt);
         await _updateCookies(response);
         return response;
       } on SocketException catch (e) {
+        sw.stop();
+        _logRequest('POST', path, null, sw.elapsed, attempt, error: e);
         lastError = e;
         if (attempt >= retries) rethrow;
       } on TimeoutException catch (e) {
+        sw.stop();
+        _logRequest('POST', path, null, sw.elapsed, attempt, error: e);
         lastError = e;
         if (attempt >= retries) rethrow;
       }
@@ -190,6 +207,24 @@ class ApiService {
     }
 
     throw lastError ?? Exception('Request failed');
+  }
+
+  void _logRequest(
+    String method,
+    String path,
+    int? statusCode,
+    Duration elapsed,
+    int attempt, {
+    Object? error,
+  }) {
+    if (!_logHttp) return;
+    final status = statusCode == null ? 'ERR' : statusCode.toString();
+    final retry = attempt == 0 ? '' : ' retry=$attempt';
+    final suffix = error == null ? '' : ' ${error.runtimeType}';
+    developer.log(
+      '$method $path -> $status in ${elapsed.inMilliseconds}ms$retry$suffix',
+      name: 'ApiService',
+    );
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
