@@ -79,7 +79,7 @@ class CustomNode2Vec:
         # Càng xuất hiện nhiều, trọng số (weight) càng giảm
         return math.log(total_prescriptions / tf) 
 
-    def train_and_evaluate(self, danh_sach_toa_thuoc, test_ratio=0.2):
+    def train_and_evaluate(self, danh_sach_toa_thuoc, test_ratio=0.2, output_dir="models"):
         print(f"\n--- BẮT ĐẦU QUY TRÌNH HUẤN LUYỆN & ĐÁNH GIÁ THỰC TẾ ---")
         
         random.shuffle(danh_sach_toa_thuoc)
@@ -148,14 +148,22 @@ class CustomNode2Vec:
             print(f"   -> Epoch {epoch:02d}/{self.epochs} | Loss: {total_loss:12.4f} | Tốc độ học (LR): {self.lr:.4f}")
 
         print("\n5. ĐÁNH GIÁ CHẤT LƯỢNG MÔ HÌNH TRÊN TẬP TEST (20% Dữ liệu lạ)...")
-        self.evaluate_multiple_hit_rates(test_data)
+        metrics = self.evaluate_multiple_hit_rates(test_data)
 
-        self.save_model()
-        self.export_features_to_csv()
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        self.save_model(os.path.join(output_dir, "model_weights.json"))
+        self.export_features_to_csv(os.path.join(output_dir, "drug_features.csv"))
         
         # MỚI: XUẤT CẢ 2 ĐỊNH DẠNG HÌNH ẢNH CÙNG LÚC
-        self.visualize_embeddings_static() 
-        self.visualize_embeddings_interactive()
+        self.visualize_embeddings_static(os.path.join(output_dir, "drug_graph_3d.png")) 
+        self.visualize_embeddings_interactive(os.path.join(output_dir, "drug_graph_3d.html"))
+
+        metrics["total_prescriptions"] = len(danh_sach_toa_thuoc)
+        metrics["train_count"] = len(train_data)
+        metrics["test_count"] = len(test_data)
+        return metrics
 
     def evaluate_multiple_hit_rates(self, test_data):
         """Hàm đánh giá in chi tiết số lượng trúng/trượt"""
@@ -195,11 +203,18 @@ class CustomNode2Vec:
 
         print("-" * 50)
         print(f"BÁO CÁO KẾT QUẢ DỰ ĐOÁN (Tổng số toa đã test: {valid_tests} toa):")
+        metrics = {"valid_tests": valid_tests, "hit_rates": {}}
         for k in sorted(hits.keys()):
             rate = (hits[k] / valid_tests) * 100 if valid_tests > 0 else 0
             # MỚI: In rõ số lượng trúng / tổng số
             print(f" - Top {k:2d}: Trúng {hits[k]:3d} / {valid_tests} toa \t| Tỷ lệ (Hit@{k}): {rate:5.2f}%")
+            metrics["hit_rates"][str(k)] = {
+                "hits": hits[k],
+                "total": valid_tests,
+                "rate": round(rate, 2)
+            }
         print("-" * 50)
+        return metrics
 
     def export_features_to_csv(self, filename="models/drug_features.csv"):
         import pandas as pd
@@ -299,5 +314,6 @@ class CustomNode2Vec:
         if os.path.exists(filepath):
             with open(filepath, 'r') as f: loaded_vectors = json.load(f)
             self.vectors = {drug: np.array(vec) for drug, vec in loaded_vectors.items()}
+            self.vocab = list(self.vectors.keys())
             return True
         return False

@@ -374,11 +374,16 @@
                 bool isBenhVien = ctrl == "Thuoc" || ctrl == "LoaiThuoc" || ctrl == "BenhNhan" || ctrl == "Khoa" || ctrl == "Phong";
                 bool isVatTu = ctrl == "HoaDon" || ctrl == "DichVu";
                 bool isKho = ctrl == "Kho";
+                bool isAI = ctrl == "AiManagement";
                 bool isHeThong = ctrl == "NhanVien" || ctrl == "Backup";
             }
 
             <a class="nav-link @(ctrl == "Dashboard" ? "active" : "")" href="@Url.Action("Index", "Dashboard", new { area = "Admin" })">
                 <i class="bi bi-grid-1x2-fill"></i> <span>Tổng quan</span>
+            </a>
+
+            <a class="nav-link @(isAI ? "active" : "")" href="@Url.Action("Index", "AiManagement", new { area = "Admin" })">
+                <i class="bi bi-cpu-fill"></i> <span>Quản lý AI</span>
             </a>
 
             <div class="nav-item">

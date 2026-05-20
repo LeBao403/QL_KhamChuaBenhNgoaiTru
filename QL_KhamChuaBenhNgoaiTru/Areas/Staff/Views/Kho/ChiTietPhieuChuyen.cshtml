@@ -1,0 +1,199 @@
+@model QL_KhamChuaBenhNgoaiTru.Models.PhieuChuyenKhoViewModel
+@{
+    ViewBag.Title = "Chi tiết phiếu chuyển kho";
+    Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
+    var phieu = Model;
+    var chiTiet = ViewBag.ChiTiet as List<QL_KhamChuaBenhNgoaiTru.Models.CT_PhieuChuyenKhoViewModel>;
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 text-primary fw-bold">Chi Tiết Phiếu Chuyển Kho #@phieu.MaPhieuChuyen</h4>
+        <div>
+            @if (phieu.TrangThai == "Đã duyệt")
+            {
+                <a href="@Url.Action("PrintPhieuChuyen", new { id = phieu.MaPhieuChuyen })" target="_blank" class="btn btn-outline-info me-2">
+                    <i class="bi bi-printer me-1"></i> In phiếu
+                </a>
+            }
+            <a href="@Url.Action("DanhSachPhieuChuyen")" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Thông tin phiếu -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="mb-0 fw-bold text-uppercase text-muted"><i class="bi bi-info-circle me-2"></i>Thông tin chung</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-sm table-borderless mb-0">
+                        <tbody>
+                            <tr>
+                                <td class="text-muted" style="width: 120px;">Trạng thái:</td>
+                                <td>
+                                    @if (phieu.TrangThai == "Chờ duyệt")
+                                    {
+                                        <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i> Chờ duyệt</span>
+                                    }
+                                    else if (phieu.TrangThai == "Đã duyệt")
+                                    {
+                                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Đã duyệt</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i> Đã hủy</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Ngày chuyển:</td>
+                                <td class="fw-bold">@(phieu.NgayChuyen.HasValue ? phieu.NgayChuyen.Value.ToString("dd/MM/yyyy HH:mm") : "")</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Kho nguồn:</td>
+                                <td class="fw-bold text-primary">@phieu.TenKhoNguon</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Kho đích:</td>
+                                <td class="fw-bold text-info">@phieu.TenKhoDich</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Người lập:</td>
+                                <td>@phieu.TenNguoiLap</td>
+                            </tr>
+                            @if (!string.IsNullOrEmpty(phieu.TenNguoiDuyet))
+                            {
+                                <tr>
+                                    <td class="text-muted">Người duyệt:</td>
+                                    <td>@phieu.TenNguoiDuyet</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Ngày duyệt:</td>
+                                    <td>@(phieu.NgayDuyet.HasValue ? phieu.NgayDuyet.Value.ToString("dd/MM/yyyy HH:mm") : "")</td>
+                                </tr>
+                            }
+                            @if (!string.IsNullOrEmpty(phieu.GhiChu))
+                            {
+                                <tr>
+                                    <td class="text-muted">Ghi chú:</td>
+                                    <td class="fst-italic">@phieu.GhiChu</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    @if (phieu.TrangThai == "Chờ duyệt")
+                    {
+                        <hr />
+                        <div class="alert alert-info mb-0 text-center">
+                            <i class="bi bi-hourglass-split me-1"></i> Phiếu đang chờ Admin duyệt
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Chi tiết mặt hàng -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="mb-0 fw-bold text-uppercase text-muted"><i class="bi bi-box-seam me-2"></i>Chi tiết mặt hàng chuyển kho</h6>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3" style="width: 50px;">#</th>
+                                    <th>Tên thuốc</th>
+                                    <th>Mã lô</th>
+                                    <th>Ngày SX</th>
+                                    <th>Hạn SD</th>
+                                    <th class="text-end pe-3">Số lượng chuyển</th>
+                                    @if (phieu.TrangThai == "Chờ duyệt")
+                                    {
+                                        <th class="text-center" style="width: 50px;"></th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (chiTiet != null && chiTiet.Any())
+                                {
+                                    int stt = 1;
+                                    foreach (var ct in chiTiet)
+                                    {
+                                        <tr>
+                                            <td class="ps-3 text-muted">@stt</td>
+                                            <td class="fw-bold">@ct.TenThuoc</td>
+                                            <td><span class="badge bg-secondary">@ct.MaLo</span></td>
+                                            <td>@(ct.NgaySanXuat.HasValue ? ct.NgaySanXuat.Value.ToString("dd/MM/yyyy") : "")</td>
+                                            <td>@ct.HanSuDung.ToString("dd/MM/yyyy")</td>
+                                            <td class="text-end pe-3 fw-bold text-primary">@ct.SoLuongChuyen.ToString("N0") @ct.DonViCoBan</td>
+                                            @if (phieu.TrangThai == "Chờ duyệt")
+                                            {
+                                                <td class="text-center">
+                                                    <button class="btn btn-sm btn-outline-danger" onclick="xoaChiTiet(@ct.MaCTPC)" title="Loại bỏ chi tiết này">
+                                                        <i class="bi bi-x"></i>
+                                                    </button>
+                                                </td>
+                                            }
+                                        </tr>
+                                        stt++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4 text-muted">Không có chi tiết mặt hàng.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+
+        function xoaChiTiet(maCTPC) {
+            Swal.fire({
+                title: 'Xóa chi tiết?',
+                text: 'Bạn có chắc muốn loại bỏ mặt hàng này khỏi phiếu chuyển?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Có, xóa!',
+                cancelButtonText: 'Đóng'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '@Url.Action("XoaChiTietPhieuChuyen", "Kho")',
+                        type: 'POST',
+                        data: { id: maCTPC },
+                        success: function (res) {
+                            if (res.success) {
+                                location.reload();
+                            } else {
+                                Swal.fire('Lỗi', res.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Lỗi', 'Đã xảy ra lỗi khi xóa chi tiết!', 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

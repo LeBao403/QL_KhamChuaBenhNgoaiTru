@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Web.Mvc;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
+using QL_KhamChuaBenhNgoaiTru.Filters;
 using QL_KhamChuaBenhNgoaiTru.Helpers;
 using QL_KhamChuaBenhNgoaiTru.Libraries;
 using QL_KhamChuaBenhNgoaiTru.Models;
@@ -39,15 +40,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             username = username.Trim();
             password = password.Trim();
 
-            var tk = _tkDb.GetTaiKhoanByUsernameOrSdt(username);
+            var tk = _tkDb.CheckLogin(username, password);
             if (tk == null)
                 return Json(new { success = false, message = "Tài khoản không tồn tại!" });
 
             if (!tk.IsActive)
                 return Json(new { success = false, message = "Tài khoản đã bị khóa!" });
-
-            if (!string.Equals(tk.PasswordHash, password, StringComparison.Ordinal))
-                return Json(new { success = false, message = "Mật khẩu tài khoản chưa chính xác!" });
 
             var nv = _tkDb.GetNhanVienByMaTK(tk.MaTK);
             if (nv != null)
@@ -65,9 +63,15 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                 Session["MaBN"] = bn.MaBN;
             }
 
+            var token = JwtTokenHelper.GenerateToken(tk, bn);
+            Session["JwtToken"] = token;
+
             return Json(new
             {
                 success = true,
+                token,
+                tokenType = "Bearer",
+                expiresInMinutes = JwtTokenHelper.GetExpireMinutes(),
                 user = new
                 {
                     MaTK = tk.MaTK,
@@ -99,6 +103,10 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             if (username.Length < 4)
                 return Json(new { success = false, message = "Tên đăng nhập ít nhất 4 ký tự!" });
 
+            var passwordErrors = PasswordSecurityHelper.ValidatePassword(password, username);
+            if (passwordErrors.Count > 0)
+                return Json(new { success = false, message = string.Join("\n", passwordErrors) });
+
             var tk = new TaiKhoan { Username = username, PasswordHash = password };
             bool ok = _tkDb.InsertTaiKhoan(tk);
 
@@ -124,6 +132,10 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
             if (username.Length < 4)
                 return Json(new { success = false, message = "Tên đăng nhập ít nhất 4 ký tự!" });
+
+            var passwordErrors = PasswordSecurityHelper.ValidatePassword(password, username, email);
+            if (passwordErrors.Count > 0)
+                return Json(new { success = false, message = string.Join("\n", passwordErrors) });
 
             try
             {
@@ -201,6 +213,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         }
 
         // GET /MobileApi/GetCurrentUser
+        [JwtAuthorize]
         public JsonResult GetCurrentUser()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -229,6 +242,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         // ─────────────────────────────────────────────────────────────────────
 
         // GET /MobileApi/GetProfile
+        [JwtAuthorize]
         public JsonResult GetProfile()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -272,6 +286,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // POST /MobileApi/UpdateProfile
         [HttpPost]
+        [JwtAuthorize]
         public JsonResult UpdateProfile(BenhNhanPortalDB.BenhNhanProfile model)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -492,6 +507,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         }
 
         // GET /MobileApi/GetLichKham
+        [JwtAuthorize]
         public JsonResult GetLichKham()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -524,6 +540,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         }
 
         // GET /MobileApi/GetLichSuKham
+        [JwtAuthorize]
         public JsonResult GetLichSuKham()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -553,6 +570,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         }
 
         // GET /MobileApi/GetDonThuoc
+        [JwtAuthorize]
         public JsonResult GetDonThuoc()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -580,6 +598,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         }
 
         // GET /MobileApi/GetChiTietDonThuoc?id=DT2604110001
+        [JwtAuthorize]
         public JsonResult GetChiTietDonThuoc(string id)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -616,6 +635,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         }
 
         // GET /MobileApi/GetHoaDon
+        [JwtAuthorize]
         public JsonResult GetHoaDon()
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -645,6 +665,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // POST /MobileApi/LoadKhungGio
         [HttpPost]
+        [JwtAuthorize]
         public JsonResult LoadKhungGio(DateTime ngayKham)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -663,6 +684,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // POST /MobileApi/DatLichKham
         [HttpPost]
+        [JwtAuthorize]
         public JsonResult DatLichKham(DateTime ngayKham, int maKhungGio, string maDV, string lyDo)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -693,6 +715,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // POST /MobileApi/TaoThanhToanTheUrl
         [HttpPost]
+        [JwtAuthorize]
         public JsonResult TaoThanhToanTheUrl(string maHD, string maPhieuDK, string returnUrl = null)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -714,6 +737,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // POST /MobileApi/KiemTraThanhToanThe
         [HttpPost]
+        [JwtAuthorize]
         public JsonResult KiemTraThanhToanThe(string maHD, string maPhieuDK)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;
@@ -823,6 +847,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
         // POST /MobileApi/HuyLich
         [HttpPost]
+        [JwtAuthorize]
         public JsonResult HuyLich(string maPhieuDK)
         {
             var bn = Session["BenhNhan"] as BenhNhanModel;

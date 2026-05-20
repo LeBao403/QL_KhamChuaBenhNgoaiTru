@@ -221,10 +221,14 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\ThanhToanController.cs" />
+    <Compile Include="Filters\JwtAuthorizeAttribute.cs" />
     <Compile Include="Helpers\EmailHelper.cs" />
     <Compile Include="Helpers\InvoiceEmailService.cs" />
     <Compile Include="Helpers\InvoicePdfHelper.cs" />
+    <Compile Include="Helpers\JwtTokenHelper.cs" />
+    <Compile Include="Helpers\PasswordSecurityHelper.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
+    <Compile Include="Areas\Admin\Controllers\AiManagementController.cs" />
     <Compile Include="Areas\Admin\Controllers\BackupController.cs" />
     <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\Admin\Controllers\BenhNhanController.cs" />
@@ -240,16 +244,10 @@
     <Compile Include="Areas\Staff\Controllers\PhatThuocController.cs" />
     <Compile Include="Areas\Staff\Controllers\ThuNganController.cs" />
     <Compile Include="Controllers\BenhNhanPortalController.cs" />
-    <Compile Include="Areas\NhanVienKho\Controllers\BaseNhanVienKhoController.cs" />
-    <Compile Include="Areas\NhanVienKho\Controllers\DashboardController.cs" />
-    <Compile Include="Areas\NhanVienKho\Controllers\PhieuNhapController.cs" />
-    <Compile Include="Areas\NhanVienKho\Controllers\TonKhoController.cs" />
-    <Compile Include="Areas\NhanVienKho\Controllers\ThuocController.cs" />
-    <Compile Include="Areas\NhanVienKho\Controllers\NhaCungCapController.cs" />
-    <Compile Include="Areas\NhanVienKho\NhanVienKhoAreaRegistration.cs" />
     <Compile Include="Areas\Staff\Controllers\BacSiController.cs" />
     <Compile Include="Areas\Staff\Controllers\BaseStaffController.cs" />
     <Compile Include="Areas\Staff\Controllers\TiepTanController.cs" />
+    <Compile Include="Areas\Staff\Controllers\KhoController.cs" />
     <Compile Include="Areas\Staff\StaffAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\DichVuController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -305,6 +303,7 @@
     <Compile Include="Models\KetQuaCLS.cs" />
     <Compile Include="Models\BienLaiThuTien.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\AiTrainingScheduler.cs" />
     <Compile Include="Services\BackupScheduler.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -420,18 +419,6 @@
     <Content Include="Areas\Admin\Views\Kho\Create.cshtml" />
     <Content Include="Areas\Admin\Views\Kho\DanhSachPhieuNhap.cshtml" />
     <Content Include="Areas\Admin\Views\Kho\Index.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\Dashboard\Index.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\PhieuNhap\Create.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\PhieuNhap\Details.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\PhieuNhap\Index.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\Shared\_Layout_NhanVienKho.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\TonKho\Index.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\TonKho\Details.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\TonKho\Edit.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\Thuoc\Index.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\NhaCungCap\Index.cshtml" />
-    <Content Include="Areas\NhanVienKho\Views\web.config" />
-    <Content Include="Areas\NhanVienKho\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Staff\Views\PhatThuoc\Index.cshtml" />
     <Content Include="Areas\Staff\Views\PhatThuoc\LichSu.cshtml" />
     <Content Include="Scripts\admin\dashboard.js" />
@@ -442,6 +429,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Areas\Admin\Views\Backup\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\AiManagement\Index.cshtml" />
     <Content Include="Areas\Staff\Views\BacSi\InPhieu.cshtml" />
     <Content Include="backup\QL_KhamBenhNgoaiTru_Full_20260411_173835.bak" />
     <Content Include="Areas\Admin\Views\Dashboard\_DashboardTongQuan.cshtml" />

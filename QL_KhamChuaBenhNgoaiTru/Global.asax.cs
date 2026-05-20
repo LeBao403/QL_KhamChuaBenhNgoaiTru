@@ -19,6 +19,7 @@ namespace QL_KhamChuaBenhNgoaiTru
             
             // Khởi động trình lên lịch sao lưu tự động
             QL_KhamChuaBenhNgoaiTru.Services.BackupScheduler.Start();
+            QL_KhamChuaBenhNgoaiTru.Services.AiTrainingScheduler.Start();
             ModelBinders.Binders.Add(typeof(decimal), new QL_KhamChuaBenhNgoaiTru.Models.DecimalModelBinder());
             ModelBinders.Binders.Add(typeof(decimal?), new QL_KhamChuaBenhNgoaiTru.Models.DecimalModelBinder());
         }

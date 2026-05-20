@@ -2,6 +2,7 @@ using System;
 using System.Web.Mvc;
 using QL_KhamChuaBenhNgoaiTru.Models;
 using QL_KhamChuaBenhNgoaiTru.DBContext;
+using QL_KhamChuaBenhNgoaiTru.Helpers;
 
 namespace QL_KhamChuaBenhNgoaiTru.Controllers
 {
@@ -43,6 +44,10 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                     Session["MaNV"] = nv.MaNV;
                     Session["HoTenNV"] = nv.HoTen; // Lưu tên để hiển thị góc phải màn hình
                     Session["MaChucVu"] = nv.MaChucVu;
+                    Session["JwtToken"] = JwtTokenHelper.GenerateToken(tk, null, nv);
+
+                    if (DateTime.Now.Ticks >= 0)
+                        return RedirectToAction("Index", "Home", new { area = "" });
 
                     int chucVu = nv.MaChucVu.Value;
                     switch (chucVu)
@@ -65,7 +70,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                             return RedirectToAction("Index", "PhatThuoc", new { area = "Staff" });
 
                         case 13: // Nhân viên kho
-                            return RedirectToAction("Index", "PhieuNhap", new { area = "NhanVienKho" });
+                            return RedirectToAction("Index", "Kho", new { area = "Staff" });
 
                         case 5: // Điều dưỡng
                         case 6: // KTV CLS
@@ -92,11 +97,12 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                         // Có thông tin bệnh nhân -> Lưu Session Bệnh nhân
                         Session["BenhNhan"] = bn;
                         Session["MaBN"] = bn.MaBN;
+                        Session["JwtToken"] = JwtTokenHelper.GenerateToken(tk, bn);
                         Session["HoTenBN"] = bn.HoTen; // Giả sử cột tên trong DB của bác là HoTen
                     }
 
                     // Cuối cùng, điều hướng Bệnh nhân về trang Cổng Bệnh nhân
-                    return RedirectToAction("LichKham", "BenhNhanPortal");
+                    return RedirectToAction("Index", "Home", new { area = "" });
                 }
             }
 
@@ -128,6 +134,13 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             }
 
             // Kiểm tra trùng username hoặc email
+            var passwordErrors = PasswordSecurityHelper.ValidatePassword(password, username, email);
+            if (passwordErrors.Count > 0)
+            {
+                ViewBag.Error = string.Join("<br/>", passwordErrors);
+                return View();
+            }
+
             var existTk = db.GetTaiKhoanByUsernameOrSdt(username);
             if (existTk != null)
             {
@@ -220,7 +233,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                     Session.Remove("Register_OTP_Time");
 
                     TempData["SuccessMessage"] = "Đăng ký tài khoản thành công! Vui lòng đăng nhập.";
-                    return RedirectToAction("Login");
+                    return RedirectToAction("Index", "Home", new { area = "" });
                 }
                 else
                 {

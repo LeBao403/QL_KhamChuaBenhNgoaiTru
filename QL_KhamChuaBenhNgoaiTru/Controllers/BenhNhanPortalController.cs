@@ -270,6 +270,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
                 using (HttpClient client = new HttpClient())
                 {
+                    client.Timeout = TimeSpan.FromSeconds(10);
                     client.DefaultRequestHeaders.Add("x-client-id", clientId);
                     client.DefaultRequestHeaders.Add("x-api-key", apiKey);
 
@@ -309,6 +310,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
 
                 using (HttpClient client = new HttpClient())
                 {
+                    client.Timeout = TimeSpan.FromSeconds(8);
                     client.DefaultRequestHeaders.Add("x-client-id", clientId);
                     client.DefaultRequestHeaders.Add("x-api-key", apiKey);
 

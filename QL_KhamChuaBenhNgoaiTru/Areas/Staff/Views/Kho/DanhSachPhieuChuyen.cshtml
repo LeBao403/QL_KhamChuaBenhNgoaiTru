@@ -1,0 +1,135 @@
+@model IEnumerable<QL_KhamChuaBenhNgoaiTru.Models.PhieuChuyenKhoViewModel>
+@{
+    ViewBag.Title = "Danh sách phiếu chuyển kho";
+    Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 text-primary fw-bold">Danh Sách Phiếu Chuyển Kho</h4>
+        <a href="@Url.Action("CreatePhieuChuyen")" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i> Tạo Phiếu Chuyển
+        </a>
+    </div>
+
+    @if (TempData["SuccessMsg"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMsg"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" action="@Url.Action("DanhSachPhieuChuyen")" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm mã phiếu, kho..." value="@ViewBag.Keyword" />
+                </div>
+                <div class="col-md-3">
+                    <select name="trangThai" class="form-select">
+                        <option value="">-- Tất cả trạng thái --</option>
+                        <option value="Chờ duyệt" @(ViewBag.TrangThai == "Chờ duyệt" ? "selected" : "")>Chờ duyệt</option>
+                        <option value="Đã duyệt" @(ViewBag.TrangThai == "Đã duyệt" ? "selected" : "")>Đã duyệt</option>
+                        <option value="Đã hủy" @(ViewBag.TrangThai == "Đã hủy" ? "selected" : "")>Đã hủy</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-1"></i> Tìm kiếm
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="@Url.Action("DanhSachPhieuChuyen")" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-counterclockwise"></i> Đặt lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Mã Phiếu</th>
+                            <th>Kho Nguồn</th>
+                            <th>Kho Đích</th>
+                            <th>Ngày Tạo</th>
+                            <th>Người Lập</th>
+                            <th>Trạng Thái</th>
+                            <th class="text-end pe-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="ps-4 fw-bold text-primary">#@item.MaPhieuChuyen</td>
+                                    <td><span class="badge bg-secondary">@item.TenKhoNguon</span></td>
+                                    <td><span class="badge bg-info text-dark">@item.TenKhoDich</span></td>
+                                    <td>@(item.NgayChuyen.HasValue ? item.NgayChuyen.Value.ToString("dd/MM/yyyy HH:mm") : "")</td>
+                                    <td>@item.TenNguoiLap</td>
+                                    <td>
+                                        @if (item.TrangThai == "Chờ duyệt")
+                                        {
+                                            <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i> Chờ duyệt</span>
+                                        }
+                                        else if (item.TrangThai == "Đã duyệt")
+                                        {
+                                            <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Đã duyệt</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i> Đã hủy</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="@Url.Action("ChiTietPhieuChuyen", new { id = item.MaPhieuChuyen })" class="btn btn-sm btn-outline-primary" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i> Chi tiết
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                    Không có phiếu chuyển kho nào được tìm thấy.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        @if (ViewBag.TotalPages > 1)
+        {
+            <div class="card-footer bg-white border-0 py-3">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("DanhSachPhieuChuyen", new { page = ViewBag.CurrentPage - 1, keyword = ViewBag.Keyword, trangThai = ViewBag.TrangThai })">Trước</a>
+                        </li>
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("DanhSachPhieuChuyen", new { page = i, keyword = ViewBag.Keyword, trangThai = ViewBag.TrangThai })">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("DanhSachPhieuChuyen", new { page = ViewBag.CurrentPage + 1, keyword = ViewBag.Keyword, trangThai = ViewBag.TrangThai })">Sau</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>

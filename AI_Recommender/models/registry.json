@@ -1,0 +1,33 @@
+{
+  "models": [
+    {
+      "model_id": "model_20260520_224432",
+      "created_at": "2026-05-20T22:48:25",
+      "total_prescriptions": 13089,
+      "train_count": 10471,
+      "test_count": 2618,
+      "valid_tests": 2617,
+      "hit_rates": {
+        "10": {
+          "hits": 576,
+          "total": 2617,
+          "rate": 22.01
+        },
+        "20": {
+          "hits": 695,
+          "total": 2617,
+          "rate": 26.56
+        },
+        "30": {
+          "hits": 789,
+          "total": 2617,
+          "rate": 30.15
+        }
+      },
+      "weights_url": "/models/versions/model_20260520_224432/model_weights.json",
+      "graph_url_static": "/models/versions/model_20260520_224432/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_20260520_224432/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_20260520_224432/drug_features.csv"
+    }
+  ]
+}

@@ -1,0 +1,236 @@
+@{
+    ViewBag.Title = "Tạo phiếu chuyển kho";
+    Layout = "~/Areas/Staff/Views/Shared/_Layout_Staff.cshtml";
+    var dsKho = ViewBag.DsKho as List<QL_KhamChuaBenhNgoaiTru.DBContext.KhoItem>;
+    var dsThuoc = ViewBag.DsThuoc as List<QL_KhamChuaBenhNgoaiTru.DBContext.ThuocItem>;
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 text-primary fw-bold">Lập Phiếu Chuyển Kho</h4>
+        <a href="@Url.Action("DanhSachPhieuChuyen")" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
+
+    @if (ViewBag.ErrorMsg != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.ErrorMsg
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm p-4">
+        @using (Html.BeginForm("CreatePhieuChuyen", "Kho", FormMethod.Post, new { id = "frmPhieuChuyen" }))
+        {
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Kho nguồn <span class="text-danger">*</span></label>
+                    <select name="MaKhoNguon" id="MaKhoNguon" class="form-select" required>
+                        <option value="">-- Chọn kho nguồn --</option>
+                        @if (dsKho != null)
+                        {
+                            foreach (var kho in dsKho)
+                            {
+                                <option value="@kho.MaKho">@kho.TenKho</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Kho đích <span class="text-danger">*</span></label>
+                    <select name="MaKhoDich" id="MaKhoDich" class="form-select" required>
+                        <option value="">-- Chọn kho đích --</option>
+                        @if (dsKho != null)
+                        {
+                            foreach (var kho in dsKho)
+                            {
+                                <option value="@kho.MaKho">@kho.TenKho</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Ghi chú</label>
+                    <input type="text" name="GhiChu" class="form-control" placeholder="Lý do chuyển kho..." />
+                </div>
+            </div>
+
+            <hr class="my-4" />
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0"><i class="bi bi-list-ul text-primary me-2"></i>Chi tiết chuyển kho</h5>
+                <button type="button" class="btn btn-sm btn-primary" onclick="addRow()">
+                    <i class="bi bi-plus-circle me-1"></i> Thêm mặt hàng
+                </button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width:40px">#</th>
+                            <th>Thuốc <span class="text-danger">*</span></th>
+                            <th>Mã lô <span class="text-danger">*</span></th>
+                            <th>Ngày sản xuất</th>
+                            <th>Hạn sử dụng <span class="text-danger">*</span></th>
+                            <th class="text-end">Số lượng chuyển <span class="text-danger">*</span></th>
+                            <th style="width:60px"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="chiTietContainer">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-end mt-4">
+                <button type="button" class="btn btn-success" onclick="submitForm()">
+                    <i class="bi bi-check-circle me-1"></i> Tạo phiếu chuyển
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var rowCount = 0;
+        var thuocOptions = '';
+
+        function buildThuocOptions() {
+            return '<select name="MaThuoc__IDX__" class="form-select form-select-sm thuoc-select" required>' +
+                   '<option value="">-- Chọn thuốc --</option>' + thuocOptions +
+                   '</select>';
+        }
+
+        function addRow() {
+            rowCount++;
+            var idx = '_' + rowCount;
+            var rowIndex = $('#chiTietContainer tr.ct-row').length + 1;
+            var html = '<tr class="ct-row" id="row_' + rowCount + '">' +
+                '<td class="text-center align-middle"><strong>' + rowIndex + '</strong></td>' +
+                '<td>' + buildThuocOptions().replace(/__IDX__/g, idx) + '</td>' +
+                '<td><input type="text" name="MaLo' + idx + '" class="form-control form-control-sm" placeholder="VD: LO001" readonly required /></td>' +
+                '<td><input type="date" name="NgaySanXuat' + idx + '" class="form-control form-control-sm" readonly /></td>' +
+                '<td><input type="date" name="HanSuDung' + idx + '" class="form-control form-control-sm" readonly required /></td>' +
+                '<td><input type="number" name="SoLuong' + idx + '" class="form-control form-control-sm text-end" min="1" placeholder="0" required /></td>' +
+                '<td class="text-center align-middle">' +
+                '<button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(' + rowCount + ')"><i class="bi bi-trash"></i></button>' +
+                '</td>' +
+                '</tr>';
+            $('#chiTietContainer').append(html);
+            updateRowIndex();
+        }
+
+        function removeRow(id) {
+            $('#row_' + id).remove();
+            updateRowIndex();
+        }
+
+        function updateRowIndex() {
+            $('#chiTietContainer tr.ct-row').each(function (index) {
+                $(this).find('td:first strong').text(index + 1);
+            });
+        }
+
+        $(document).on('change', '.thuoc-select', function() {
+            var option = $(this).find('option:selected');
+            var row = $(this).closest('tr');
+            
+            if (option.val()) {
+                row.find('input[name^="MaLo"]').val(option.data('malo'));
+                row.find('input[name^="NgaySanXuat"]').val(option.data('nsx'));
+                row.find('input[name^="HanSuDung"]').val(option.data('hsd'));
+                row.find('input[name^="SoLuong"]').attr('max', option.data('ton')).attr('placeholder', 'Tối đa: ' + option.data('ton'));
+            } else {
+                row.find('input[name^="MaLo"]').val('');
+                row.find('input[name^="NgaySanXuat"]').val('');
+                row.find('input[name^="HanSuDung"]').val('');
+                row.find('input[name^="SoLuong"]').removeAttr('max').attr('placeholder', '0');
+            }
+        });
+
+        $('#MaKhoNguon').change(function() {
+            var maKho = $(this).val();
+            $('#chiTietContainer').empty(); // Clear existing rows when warehouse changes
+            rowCount = 0;
+            
+            if (!maKho) {
+                thuocOptions = '';
+                return;
+            }
+            
+            $.get('@Url.Action("GetThuocTrongKho", "Kho")', { maKho: maKho }, function(res) {
+                if (res.success) {
+                    thuocOptions = '';
+                    if (res.data.length === 0) {
+                        alert('Kho này hiện không có thuốc nào tồn kho!');
+                    } else {
+                        res.data.forEach(function(t) {
+                            thuocOptions += '<option value="' + t.MaThuoc + '" ' +
+                                'data-malo="' + t.MaLo + '" ' +
+                                'data-nsx="' + t.NgaySanXuat + '" ' +
+                                'data-hsd="' + t.HanSuDung + '" ' +
+                                'data-ton="' + t.SoLuongTon + '">' +
+                                t.TenThuoc + ' (Lô: ' + t.MaLo + ' - Tồn: ' + t.SoLuongTon + ' ' + t.DonViCoBan + ')' +
+                                '</option>';
+                        });
+                        addRow(); // Automatically add a row to get started
+                    }
+                } else {
+                    alert('Lỗi tải danh sách thuốc: ' + res.message);
+                }
+            });
+        });
+
+        function submitForm() {
+            if ($('#MaKhoNguon').val() == '') {
+                alert('Vui lòng chọn kho nguồn');
+                return;
+            }
+            if ($('#MaKhoDich').val() == '') {
+                alert('Vui lòng chọn kho đích');
+                return;
+            }
+            if ($('#MaKhoNguon').val() == $('#MaKhoDich').val()) {
+                alert('Kho nguồn và kho đích không được trùng nhau!');
+                return;
+            }
+
+            if ($('#chiTietContainer tr.ct-row').length === 0) {
+                alert('Vui lòng nhập ít nhất 1 mặt hàng cần chuyển');
+                return;
+            }
+
+            var isValid = true;
+            $('#chiTietContainer tr.ct-row').each(function () {
+                var thuoc = $(this).find('select[name^="MaThuoc"]').val();
+                var sl = $(this).find('input[name^="SoLuong"]').val();
+                var malo = $(this).find('input[name^="MaLo"]').val();
+                var hsd = $(this).find('input[name^="HanSuDung"]').val();
+                var maxSl = parseInt($(this).find('input[name^="SoLuong"]').attr('max'));
+                var parsedSl = parseInt(sl);
+
+                if (!thuoc || !sl || !malo || !hsd) {
+                    isValid = false;
+                    return false;
+                }
+
+                if (parsedSl > maxSl) {
+                    alert('Số lượng chuyển không được lớn hơn số lượng tồn của lô!');
+                    isValid = false;
+                    return false;
+                }
+            });
+
+            if (!isValid) return;
+
+            $('#frmPhieuChuyen').submit();
+        }
+
+        $(document).ready(function () {
+            // Do not add row initially until source warehouse is selected
+        });
+    </script>
+}

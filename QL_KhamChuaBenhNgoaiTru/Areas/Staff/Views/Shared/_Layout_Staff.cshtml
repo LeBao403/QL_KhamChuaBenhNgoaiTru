@@ -430,6 +430,26 @@
                         </a>
                     </li>
                 }
+
+                @if (maChucVu == 13) // Nhân viên kho
+                {
+                    <div class="menu-label">Bộ phận Kho Dược</div>
+                    <li>
+                        <a href="@Url.Action("Index", "Kho", new { area = "Staff" })" class="@(ctrl == "Kho" && act == "Index" ? "active" : "")" title="Tổng quan tồn kho">
+                            <i class="bi bi-box-seam"></i> Tổng quan tồn kho
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("DanhSachPhieuNhap", "Kho", new { area = "Staff" })" class="@(ctrl == "Kho" && (act == "DanhSachPhieuNhap" || act == "Create" || act == "ChiTietPhieuNhap") ? "active" : "")" title="Quản lý nhập kho">
+                            <i class="bi bi-box-arrow-in-down"></i> Quản lý nhập kho
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("DanhSachPhieuChuyen", "Kho", new { area = "Staff" })" class="@(ctrl == "Kho" && (act == "DanhSachPhieuChuyen" || act == "CreatePhieuChuyen" || act == "ChiTietPhieuChuyen") ? "active" : "")" title="Quản lý chuyển kho">
+                            <i class="bi bi-truck"></i> Quản lý chuyển kho
+                        </a>
+                    </li>
+                }
             </ul>
 
             <div class="mt-auto p-3 border-top" style="border-color: rgba(255,255,255,0.05) !important;">
@@ -459,6 +479,7 @@
                         else if (ctrl == "BacSi") { phongBan = "Bộ phận Bác sĩ"; }
                         else if (ctrl == "CLS") { phongBan = "Bộ phận Cận lâm sàng"; }
                         else if (ctrl == "PhatThuoc") { phongBan = "Bộ phận Quầy Dược"; }
+                        else if (ctrl == "Kho") { phongBan = "Bộ phận Kho Dược"; }
                     }
                     <div class="user-info d-none d-sm-flex">
                         <span class="user-name">@hoTenNV</span>
