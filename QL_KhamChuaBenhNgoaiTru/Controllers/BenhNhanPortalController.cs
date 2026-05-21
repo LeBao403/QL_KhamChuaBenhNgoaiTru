@@ -241,7 +241,28 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
             try
             {
                 // Phí đặt lịch cố định 100k theo yêu cầu
-                int tongTien = 100000;
+                decimal tongTien = 0;
+
+                using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString))
+                {
+                    conn.Open();
+                    // Lấy tổng tiền bệnh nhân phải trả của hóa đơn này
+                    string sqlGia = "SELECT TongTienBenhNhanTra FROM HOADON WHERE MaHD = @MaHD";
+                    SqlCommand cmdGia = new SqlCommand(sqlGia, conn);
+                    cmdGia.Parameters.AddWithValue("@MaHD", maHD);
+
+                    object res = cmdGia.ExecuteScalar();
+                    if (res != null)
+                    {
+                        tongTien = Convert.ToDecimal(res);
+                    }
+                }
+
+                if (tongTien <= 0)
+                    return Json(new { success = false, message = "Số tiền thanh toán không hợp lệ (0đ)." });
+
+                // Chuyển đổi sang int vì PayOS yêu cầu amount là kiểu số nguyên
+                int tongTienInt = (int)tongTien;
 
                 string clientId = (ConfigurationManager.AppSettings["PayOS:ClientId"] ?? "").Trim();
                 string apiKey = (ConfigurationManager.AppSettings["PayOS:ApiKey"] ?? "").Trim();
@@ -255,7 +276,7 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
                 string cancelUrl = returnUrl;
                 string description = "Phi dat lich Online";
 
-                string signature = CreateSignature(tongTien, cancelUrl, description, orderCode, returnUrl, checksumKey);
+                string signature = CreateSignature(tongTienInt, cancelUrl, description, orderCode, returnUrl, checksumKey);
 
                 var requestData = new
                 {

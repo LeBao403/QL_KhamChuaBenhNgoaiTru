@@ -12,8 +12,21 @@ namespace QL_KhamChuaBenhNgoaiTru.Controllers
         // 1. TẠO URL VÀ CHUYỂN HƯỚNG SANG VNPAY
         // =================================================================
         [HttpPost]
-        public ActionResult ThanhToanVnPay(string maHoaDon, decimal tongTien)
+        public ActionResult ThanhToanVnPay(string maHoaDon)
         {
+
+            decimal tongTien = 0;
+            using (SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString))
+            {
+                conn.Open();
+                string sqlGia = "SELECT TongTienBenhNhanTra FROM HOADON WHERE MaHD = @MaHD";
+                SqlCommand cmdGia = new SqlCommand(sqlGia, conn);
+                cmdGia.Parameters.AddWithValue("@MaHD", maHoaDon);
+                object res = cmdGia.ExecuteScalar();
+                if (res != null) tongTien = Convert.ToDecimal(res);
+            }
+
+            if (tongTien <= 0) return Content("Hóa đơn không hợp lệ!");
             // Lấy thông tin từ file AppSettings.Secrets.config
             string vnp_Returnurl = ConfigurationManager.AppSettings["vnp_Returnurl"];
             string vnp_Url = ConfigurationManager.AppSettings["vnp_Url"];
