@@ -1,0 +1,265 @@
+{
+  "models": [
+    {
+      "model_id": "model_20260520_224432",
+      "created_at": "2026-05-20T22:48:25",
+      "total_prescriptions": 13089,
+      "train_count": 10471,
+      "test_count": 2618,
+      "valid_tests": 2617,
+      "hit_rates": {
+        "10": {
+          "hits": 576,
+          "total": 2617,
+          "rate": 22.01
+        },
+        "20": {
+          "hits": 695,
+          "total": 2617,
+          "rate": 26.56
+        },
+        "30": {
+          "hits": 789,
+          "total": 2617,
+          "rate": 30.15
+        }
+      },
+      "weights_url": "/models/versions/model_20260520_224432/model_weights.json",
+      "graph_url_static": "/models/versions/model_20260520_224432/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_20260520_224432/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_20260520_224432/drug_features.csv"
+    },
+    {
+      "model_id": "model_20260520_233628",
+      "created_at": "2026-05-20T23:39:17",
+      "total_prescriptions": 13089,
+      "train_count": 10471,
+      "test_count": 2618,
+      "valid_tests": 2617,
+      "hit_rates": {
+        "10": {
+          "hits": 586,
+          "total": 2617,
+          "rate": 22.39
+        },
+        "20": {
+          "hits": 707,
+          "total": 2617,
+          "rate": 27.02
+        },
+        "30": {
+          "hits": 818,
+          "total": 2617,
+          "rate": 31.26
+        }
+      },
+      "weights_url": "/models/versions/model_20260520_233628/model_weights.json",
+      "graph_url_static": "/models/versions/model_20260520_233628/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_20260520_233628/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_20260520_233628/drug_features.csv"
+    },
+    {
+      "model_id": "model_20260521_152513",
+      "created_at": "2026-05-21T16:37:09",
+      "total_prescriptions": 13089,
+      "train_count": 10471,
+      "test_count": 2618,
+      "valid_tests": 2617,
+      "hit_rates": {
+        "10": {
+          "hits": 568,
+          "total": 2617,
+          "rate": 21.7
+        },
+        "20": {
+          "hits": 670,
+          "total": 2617,
+          "rate": 25.6
+        },
+        "30": {
+          "hits": 768,
+          "total": 2617,
+          "rate": 29.35
+        }
+      },
+      "weights_url": "/models/versions/model_20260521_152513/model_weights.json",
+      "graph_url_static": "/models/versions/model_20260521_152513/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_20260521_152513/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_20260521_152513/drug_features.csv"
+    },
+    {
+      "model_id": "model_20260521_164400",
+      "created_at": "2026-05-21T18:18:09",
+      "total_prescriptions": 13089,
+      "train_count": 10471,
+      "test_count": 2618,
+      "valid_tests": 2617,
+      "hit_rates": {
+        "10": {
+          "hits": 589,
+          "total": 2617,
+          "rate": 22.51
+        },
+        "20": {
+          "hits": 695,
+          "total": 2617,
+          "rate": 26.56
+        },
+        "30": {
+          "hits": 811,
+          "total": 2617,
+          "rate": 30.99
+        }
+      },
+      "weights_url": "/models/versions/model_20260521_164400/model_weights.json",
+      "graph_url_static": "/models/versions/model_20260521_164400/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_20260521_164400/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_20260521_164400/drug_features.csv"
+    },
+    {
+      "model_id": "model_20260521_182257",
+      "created_at": "2026-05-21T18:26:50",
+      "total_prescriptions": 13089,
+      "train_count": 10471,
+      "test_count": 2618,
+      "valid_tests": 2617,
+      "hit_rates": {
+        "10": {
+          "hits": 613,
+          "total": 2617,
+          "rate": 23.42
+        },
+        "20": {
+          "hits": 713,
+          "total": 2617,
+          "rate": 27.24
+        },
+        "30": {
+          "hits": 828,
+          "total": 2617,
+          "rate": 31.64
+        }
+      },
+      "weights_url": "/models/versions/model_20260521_182257/model_weights.json",
+      "graph_url_static": "/models/versions/model_20260521_182257/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_20260521_182257/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_20260521_182257/drug_features.csv"
+    },
+    {
+      "model_id": "model_20260521_183049",
+      "created_at": "2026-05-21T18:34:24",
+      "total_prescriptions": 13089,
+      "train_count": 10471,
+      "test_count": 2618,
+      "valid_tests": 2615,
+      "hit_rates": {
+        "10": {
+          "hits": 628,
+          "total": 2615,
+          "rate": 24.02
+        },
+        "20": {
+          "hits": 726,
+          "total": 2615,
+          "rate": 27.76
+        },
+        "30": {
+          "hits": 830,
+          "total": 2615,
+          "rate": 31.74
+        }
+      },
+      "weights_url": "/models/versions/model_20260521_183049/model_weights.json",
+      "graph_url_static": "/models/versions/model_20260521_183049/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_20260521_183049/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_20260521_183049/drug_features.csv"
+    },
+    {
+      "model_id": "model_20260521_184132",
+      "created_at": "2026-05-21T18:45:31",
+      "total_prescriptions": 13089,
+      "train_count": 10471,
+      "test_count": 2618,
+      "valid_tests": 2618,
+      "hit_rates": {
+        "10": {
+          "hits": 599,
+          "total": 2618,
+          "rate": 22.88
+        },
+        "20": {
+          "hits": 709,
+          "total": 2618,
+          "rate": 27.08
+        },
+        "30": {
+          "hits": 814,
+          "total": 2618,
+          "rate": 31.09
+        }
+      },
+      "weights_url": "/models/versions/model_20260521_184132/model_weights.json",
+      "graph_url_static": "/models/versions/model_20260521_184132/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_20260521_184132/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_20260521_184132/drug_features.csv"
+    },
+    {
+      "model_id": "model_20260521_185912",
+      "created_at": "2026-05-21T19:03:20",
+      "total_prescriptions": 13089,
+      "train_count": 10471,
+      "test_count": 2618,
+      "valid_tests": 2618,
+      "hit_rates": {
+        "10": {
+          "hits": 562,
+          "total": 2618,
+          "rate": 21.47
+        },
+        "20": {
+          "hits": 655,
+          "total": 2618,
+          "rate": 25.02
+        },
+        "30": {
+          "hits": 740,
+          "total": 2618,
+          "rate": 28.27
+        }
+      },
+      "weights_url": "/models/versions/model_20260521_185912/model_weights.json",
+      "graph_url_static": "/models/versions/model_20260521_185912/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_20260521_185912/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_20260521_185912/drug_features.csv"
+    },
+    {
+      "model_id": "model_20260521_200806",
+      "created_at": "2026-05-21T20:11:47",
+      "total_prescriptions": 25689,
+      "train_count": 20551,
+      "test_count": 5138,
+      "valid_tests": 5138,
+      "hit_rates": {
+        "10": {
+          "hits": 3117,
+          "total": 5138,
+          "rate": 60.67
+        },
+        "20": {
+          "hits": 3211,
+          "total": 5138,
+          "rate": 62.5
+        },
+        "30": {
+          "hits": 3313,
+          "total": 5138,
+          "rate": 64.48
+        }
+      },
+      "weights_url": "/models/versions/model_20260521_200806/model_weights.json",
+      "graph_url_static": "/models/versions/model_20260521_200806/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_20260521_200806/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_20260521_200806/drug_features.csv"
+    }
+  ]
+}
