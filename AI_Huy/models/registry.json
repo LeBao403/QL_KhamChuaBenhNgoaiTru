@@ -260,6 +260,45 @@
       "graph_url_static": "/models/versions/model_20260521_200806/drug_graph_3d.png",
       "graph_url_interactive": "/models/versions/model_20260521_200806/drug_graph_3d.html",
       "csv_url": "/models/versions/model_20260521_200806/drug_features.csv"
+    },
+    {
+      "model_id": "model_report_20260527_120605",
+      "created_at": "2026-05-27T12:31:37",
+      "total_prescriptions": 90849,
+      "train_count": 72679,
+      "test_count": 18170,
+      "valid_tests": 18170,
+      "hit_rates": {
+        "10": {
+          "hits": 16155,
+          "total": 18170,
+          "rate": 88.91
+        },
+        "20": {
+          "hits": 16236,
+          "total": 18170,
+          "rate": 89.36
+        },
+        "30": {
+          "hits": 16323,
+          "total": 18170,
+          "rate": 89.83
+        }
+      },
+      "params": {
+        "dimensions": 64,
+        "walk_length": 10,
+        "num_walks": 80,
+        "p": 0.5,
+        "q": 2.0,
+        "window_size": 5,
+        "epochs": 50,
+        "learning_rate": 0.025
+      },
+      "weights_url": "/models/versions/model_report_20260527_120605/model_weights.json",
+      "graph_url_static": "/models/versions/model_report_20260527_120605/drug_graph_3d.png",
+      "graph_url_interactive": "/models/versions/model_report_20260527_120605/drug_graph_3d.html",
+      "csv_url": "/models/versions/model_report_20260527_120605/drug_features.csv"
     }
   ]
 }

@@ -23,7 +23,18 @@ VERSIONS_DIR.mkdir(exist_ok=True)
 
 app.mount("/models", StaticFiles(directory="models"), name="models")
 
-ai_model = CustomNode2Vec(dimensions=64, walk_length=10, num_walks=30, p=0.5, q=2.0, epochs=25, learning_rate=0.025)
+MODEL_PARAMS = {
+    "dimensions": 64,
+    "walk_length": 10,
+    "num_walks": 80,
+    "p": 0.5,
+    "q": 2.0,
+    "window_size": 5,
+    "epochs": 50,
+    "learning_rate": 0.025
+}
+
+ai_model = CustomNode2Vec(**MODEL_PARAMS)
 
 
 def _now_iso():
@@ -175,6 +186,7 @@ def api_train_model(auto_activate: bool = True):
             "test_count": metrics.get("test_count", 0),
             "valid_tests": metrics.get("valid_tests", 0),
             "hit_rates": metrics.get("hit_rates", {}),
+            "params": MODEL_PARAMS,
             "weights_url": f"/models/versions/{model_id}/model_weights.json",
             "graph_url_static": f"/models/versions/{model_id}/drug_graph_3d.png",
             "graph_url_interactive": f"/models/versions/{model_id}/drug_graph_3d.html",

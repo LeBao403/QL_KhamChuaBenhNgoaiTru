@@ -91,7 +91,7 @@ def lay_du_lieu_don_thuoc():
     ]
     
     so_toa_bom_them = 0
-    so_lan_bom = 1000
+    so_lan_bom = max(500, int(so_don_thuc_te * 0.5))
     for i, pattern in enumerate(rigid_patterns):
         for j in range(so_lan_bom):
             don_thuoc_dict[f"HACK_RIGID_{i}_{j}"] = pattern
