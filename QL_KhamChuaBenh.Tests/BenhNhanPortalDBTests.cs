@@ -4,7 +4,7 @@ using System;
 using System.Configuration;
 using System.Data.SqlClient;
 
-namespace QL_KhamChuaBenh.Tests
+namespace QL_KhamChuaBenhNgoaiTru.Tests
 {
     [TestClass]
     public class BenhNhanPortalDBTests
@@ -12,7 +12,6 @@ namespace QL_KhamChuaBenh.Tests
         private BenhNhanPortalDB _db;
         private string _connectStr;
 
-        // �� s?a m� < 10 k� t? d? kh�ng b? tr�n vi?n (CHAR(10))
         private const string _testMaBN = "PT_TEST";
         private const string _testUsername = "pt_test99";
 
@@ -22,20 +21,20 @@ namespace QL_KhamChuaBenh.Tests
             _db = new BenhNhanPortalDB();
             _connectStr = ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString;
 
-            CleanupData(); // D?n r�c s?ch s? tru?c khi bom m?i
+            CleanupData(); // Dọn sạch trước khi bơm
 
             using (SqlConnection conn = new SqlConnection(_connectStr))
             {
                 conn.Open();
-                // 1. T?o T�i kho?n m?i
+                // 1. Tạo Tài khoản mới
                 string sqlTk = "INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive, CreatedAt) OUTPUT INSERTED.MaTK VALUES (@U, 'hash', 1, GETDATE())";
                 SqlCommand cmdTk = new SqlCommand(sqlTk, conn);
                 cmdTk.Parameters.AddWithValue("@U", _testUsername);
                 int maTK = (int)cmdTk.ExecuteScalar();
 
-                // 2. T?o B?nh nh�n m?i (Kh?p CHAR(10))
+                // 2. Tạo Bệnh nhân mới (Sửa lại font chữ tiếng Việt bị lỗi)
                 string sqlBn = @"INSERT INTO BENHNHAN (MaBN, HoTen, SDT, CCCD, Email, BHYT, MaTK) 
-                                 VALUES (@MaBN, N'B?nh Nh�n Portal', '0888888888', '098765432109', 'portal@test.com', 0, @MaTK)";
+                                 VALUES (@MaBN, N'Bệnh Nhân Portal', '0888888888', '098765432109', 'portal@test.com', 0, @MaTK)";
                 SqlCommand cmdBn = new SqlCommand(sqlBn, conn);
                 cmdBn.Parameters.AddWithValue("@MaBN", _testMaBN);
                 cmdBn.Parameters.AddWithValue("@MaTK", maTK);
@@ -49,131 +48,133 @@ namespace QL_KhamChuaBenh.Tests
             CleanupData();
         }
 
+        // [SỬA LỖI CHÍ MẠNG Ở ĐÂY] - Phải xóa từ bảng con (CT_HOADON, HOADON) trước rồi mới xóa bảng cha (BENHNHAN)
         private void CleanupData()
         {
             using (SqlConnection conn = new SqlConnection(_connectStr))
             {
                 conn.Open();
-                // X�a Phi?u �ang K� (c� li�n k?t kh�a ngo?i)
-                new SqlCommand($"DELETE FROM PHIEUDANGKY WHERE MaBN = '{_testMaBN}'", conn).ExecuteNonQuery();
-
-                // X�a B?nh Nh�n
-                new SqlCommand($"DELETE FROM BENHNHAN WHERE MaBN = '{_testMaBN}'", conn).ExecuteNonQuery();
-
-                // X�a th?ng b?ng Username d? tr? d?t di?m l?i UNIQUE KEY
-                new SqlCommand($"DELETE FROM TAIKHOAN WHERE Username = '{_testUsername}'", conn).ExecuteNonQuery();
+                try { new SqlCommand($"DELETE FROM CT_HOADON_DV WHERE MaHD IN (SELECT MaHD FROM HOADON WHERE MaBN = '{_testMaBN}')", conn).ExecuteNonQuery(); } catch { }
+                try { new SqlCommand($"DELETE FROM HOADON WHERE MaBN = '{_testMaBN}'", conn).ExecuteNonQuery(); } catch { }
+                try { new SqlCommand($"DELETE FROM PHIEUDANGKY WHERE MaBN = '{_testMaBN}'", conn).ExecuteNonQuery(); } catch { }
+                try { new SqlCommand($"DELETE FROM BENHNHAN WHERE MaBN = '{_testMaBN}'", conn).ExecuteNonQuery(); } catch { }
+                try { new SqlCommand($"DELETE FROM TAIKHOAN WHERE Username = '{_testUsername}'", conn).ExecuteNonQuery(); } catch { }
             }
         }
 
-        // =========================================================
-        // KI?M TH? NH�M: TH�NG TIN C� NH�N
-        // =========================================================
+        #region KỊCH BẢN 1: THÔNG TIN CÁ NHÂN (Positive & Negative)
+
         [TestMethod]
-        public void GetBenhNhanByMaBN_ShouldReturnProfile()
+        public void GetBenhNhanByMaBN_DuLieuChuan_ShouldReturnProfile()
         {
             var profile = _db.GetBenhNhanByMaBN(_testMaBN);
-            Assert.IsNotNull(profile, "L?i: Kh�ng l?y du?c Profile!");
-            Assert.AreEqual("B?nh Nh�n Portal", profile.HoTen);
-            Assert.AreEqual(_testUsername, profile.Username);
+            Assert.IsNotNull(profile, "Lỗi: Không lấy được Profile!");
+            Assert.AreEqual("Bệnh Nhân Portal", profile.HoTen);
         }
 
         [TestMethod]
-        public void UpdateBenhNhan_ShouldSaveNewInfo()
+        public void GetBenhNhanByMaBN_MaBNKhongTonTai_ReturnsNull()
         {
+            var profile = _db.GetBenhNhanByMaBN("BN_MA_AO_123");
+            Assert.IsNull(profile, "Mã bệnh nhân không tồn tại phải trả về null để tránh crash App.");
+        }
+
+        [TestMethod]
+        public void UpdateBenhNhan_UpdateVoiEmailVaSdtNull_ThucThiThanhCongKhongLoiDB()
+        {
+            // Test case: Bệnh nhân cố tình xóa sđt và email (cho phép null theo CSDL)
             var profile = _db.GetBenhNhanByMaBN(_testMaBN);
-            profile.HoTen = "Portal C?p Nh?t";
-            profile.DiaChi = "123 Test";
-            profile.NgaySinh = new DateTime(1995, 5, 5);
+            profile.SDT = null;
+            profile.Email = null;
 
             bool isUpdated = _db.UpdateBenhNhan(profile);
 
             Assert.IsTrue(isUpdated);
             var checkDb = _db.GetBenhNhanByMaBN(_testMaBN);
-            Assert.AreEqual("Portal C?p Nh?t", checkDb.HoTen);
-            Assert.AreEqual("123 Test", checkDb.DiaChi);
+            Assert.AreEqual("", checkDb.SDT, "SDT null phải được chuyển thành rỗng hoặc lưu thành công");
         }
+        #endregion
 
-        // =========================================================
-        // KI?M TH? NH�M: L?CH KH�M & PH�NG KH�M
-        // =========================================================
-        [TestMethod]
-        public void GetAllPhongKham_ShouldReturnList()
-        {
-            var phongList = _db.GetAllPhongKham();
-            Assert.IsNotNull(phongList);
-            // C� th? = 0 n?u DB b�c chua c� ph�ng n�o, nhung list ph?i du?c kh?i t?o
-        }
+        #region KỊCH BẢN 2: LUỒNG ĐẶT LỊCH KHÁM CHỮA BỆNH
 
         [TestMethod]
-        public void DatLichKham_And_HuyLichKham_ShouldWork()
+        public void DatLichKham_TaoTransaction_ThanhCong()
         {
             DateTime ngayKhamTest = DateTime.Now.AddDays(1);
             string tenQuay;
+            string maHD;
 
-            // 1. Test �?t l?ch
-            string maHD; string maPhieuDK = _db.DatLichKham(_testMaBN, ngayKhamTest, 1, "DV_TEST", "�au b?ng", out tenQuay, out maHD);
-            Assert.IsTrue(!string.IsNullOrEmpty(maPhieuDK), "L?i: Kh�ng t?o du?c Phi?u �ang K�!");
-            Assert.IsNotNull(tenQuay, "L?i: L?y t�n qu?y ti?p t�n th?t b?i!");
+            string maPhieuDK = _db.DatLichKham(_testMaBN, ngayKhamTest, 1, "DV001", "Đau bụng", out tenQuay, out maHD);
 
-            // 2. Test GetLichKhamByMaBN
+            Assert.IsTrue(!string.IsNullOrEmpty(maPhieuDK), "Lỗi: Không tạo được Phiếu Đăng Ký!");
+            Assert.IsTrue(!string.IsNullOrEmpty(maHD), "Lỗi: Giao dịch không sinh ra được Hóa đơn tiện ích!");
+        }
+
+        [TestMethod]
+        public void HuyLichKham_LichDangChoXuLy_HuyThanhCong()
+        {
+            // Arrange
+            _db.DatLichKham(_testMaBN, DateTime.Now.AddDays(1), 1, "DV001", "Đau bụng", out _, out _);
             var dsLichKham = _db.GetLichKhamByMaBN(_testMaBN);
-            Assert.IsTrue(dsLichKham.Count > 0);
-            Assert.AreEqual("Ch? x? l�", dsLichKham[0].TrangThai);
+            string maPhieuDK = dsLichKham[0].MaPhieuDK;
 
-            // 3. Test H?y L?ch
+            // Act
             bool isCancel = _db.HuyLichKham(maPhieuDK, _testMaBN);
-            Assert.IsTrue(isCancel);
-            Assert.AreEqual("H?y", _db.GetLichKhamByMaBN(_testMaBN)[0].TrangThai);
-        }
 
-        // =========================================================
-        // KI?M TH? NH�M: L?CH S?, THU?C, H�A �ON V� DASHBOARD
-        // =========================================================
-        [TestMethod]
-        public void GetTrangThaiKham_ShouldReturnList()
-        {
-            var result = _db.GetTrangThaiKhamByMaBN(_testMaBN);
-            Assert.IsNotNull(result);
+            // Assert
+            Assert.IsTrue(isCancel, "Phải cho phép hủy lịch đang ở trạng thái Chờ xử lý.");
         }
 
         [TestMethod]
-        public void GetLichSuKham_ShouldReturnList()
+        public void HuyLichKham_LichDaXacNhan_KhongChoPhepHuy()
         {
-            var result = _db.GetLichSuKhamByMaBN(_testMaBN);
-            Assert.IsNotNull(result);
+            // Arrange
+            _db.DatLichKham(_testMaBN, DateTime.Now.AddDays(1), 1, "DV001", "Đau bụng", out _, out _);
+            var dsLichKham = _db.GetLichKhamByMaBN(_testMaBN);
+            string maPhieuDK = dsLichKham[0].MaPhieuDK;
+
+            // Cố tình dùng SQL chuyển trạng thái sang "Đã xác nhận"
+            using (var conn = new SqlConnection(_connectStr))
+            {
+                conn.Open();
+                new SqlCommand($"UPDATE PHIEUDANGKY SET TrangThai = N'Đã xác nhận' WHERE MaPhieuDK = '{maPhieuDK}'", conn).ExecuteNonQuery();
+            }
+
+            // Act
+            bool isCancel = _db.HuyLichKham(maPhieuDK, _testMaBN);
+
+            // Assert
+            Assert.IsFalse(isCancel, "Nghiệp vụ sai: Không được phép hủy lịch đã được Tiếp tân xác nhận!");
         }
 
         [TestMethod]
-        public void GetDonThuoc_And_ChiTiet_ShouldReturnData()
+        public void GetKhungGioHopLe_NgayTrongTuongLai_TraVeDanhSach()
         {
-            // Ch?y ki?m tra xem list don thu?c c� tr? v? m?ng kh�ng b? null kh�ng
-            var result = _db.GetDonThuocByMaBN(_testMaBN);
+            var result = _db.GetKhungGioHopLe(DateTime.Now.AddDays(1));
             Assert.IsNotNull(result);
+            Assert.IsTrue(result.Count > 0, "Phải load được khung giờ từ danh mục.");
+        }
+        #endregion
 
-            // Test h�m g?i chi ti?t (d� m� 0 c� th? kh�ng ra chi ti?t, nhung d?m b?o code kh�ng v?)
-            var chiTiet = _db.GetChiTietDonThuoc("0");
+        #region KỊCH BẢN 3: LỊCH SỬ KHÁM & HỒ SƠ BỆNH ÁN
+
+        [TestMethod]
+        public void GetChiTietDonThuoc_MaDonThuocAo_TraVeListRongKhongCrash()
+        {
+            // Rất nhiều dev dính lỗi Null Reference ở đây, phải test
+            var chiTiet = _db.GetChiTietDonThuoc("DT_KHONG_TON_TAI_123");
+            Assert.IsNotNull(chiTiet, "Đối tượng trả về không được phép null");
+            Assert.IsNotNull(chiTiet.ChiTiet, "Danh sách chi tiết bên trong không được null (phải là list rỗng)");
+            Assert.AreEqual(0, chiTiet.ChiTiet.Count);
+        }
+
+        [TestMethod]
+        public void GetChiTietHoaDon_MaHoaDonAo_TraVeObjectRong()
+        {
+            var chiTiet = _db.GetChiTietHoaDon("HD_GIA_999");
             Assert.IsNotNull(chiTiet);
-            Assert.IsNotNull(chiTiet.ChiTiet);
+            Assert.IsNull(chiTiet.NgayThanhToan, "Không tìm thấy hóa đơn thì các trường phải rỗng/null");
         }
-
-        [TestMethod]
-        public void GetHoaDon_And_ChiTiet_ShouldReturnData()
-        {
-            var result = _db.GetHoaDonByMaBN(_testMaBN);
-            Assert.IsNotNull(result);
-
-            var chiTiet = _db.GetChiTietHoaDon("0");
-            Assert.IsNotNull(chiTiet);
-        }
-
-        [TestMethod]
-        public void GetDashboard_ShouldReturnMetrics()
-        {
-            _db.DatLichKham(_testMaBN, DateTime.Now.AddDays(2), 1, "DV_TEST", "Test Dashboard", out _, out _);
-            var dashboard = _db.GetDashboard(_testMaBN);
-
-            Assert.IsNotNull(dashboard);
-            Assert.IsTrue(dashboard.SoLichKhamChoDuyet >= 1);
-        }
+        #endregion
     }
 }

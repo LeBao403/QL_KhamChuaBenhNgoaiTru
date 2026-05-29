@@ -6,7 +6,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 
-namespace QL_KhamChuaBenh.Tests
+namespace QL_KhamChuaBenhNgoaiTru.Tests
 {
     [TestClass]
     public class BenhNhanDBTests

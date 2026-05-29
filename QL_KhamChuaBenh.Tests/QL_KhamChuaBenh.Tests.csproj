@@ -61,7 +61,21 @@
     <Compile Include="BenhNhanDBTests.cs" />
     <Compile Include="BenhNhanPortalDBTests.cs" />
     <Compile Include="CLSDBTests.cs" />
+    <Compile Include="DashboardDBTests.cs" />
+    <Compile Include="DichVuDBTests.cs" />
+    <Compile Include="HoaDonDBTests.cs" />
+    <Compile Include="HomeDBTests.cs" />
+    <Compile Include="KhoaDBTests.cs" />
+    <Compile Include="KhoDBTests.cs" />
+    <Compile Include="KhoNhapDBTests.cs" />
+    <Compile Include="NhanVienDBTests.cs" />
+    <Compile Include="PhatThuocDBTests.cs" />
+    <Compile Include="PhongDBTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TaiKhoanDBTests.cs" />
+    <Compile Include="ThuNganDBTests.cs" />
+    <Compile Include="ThuocDBTests.cs" />
+    <Compile Include="TiepTanDBTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
