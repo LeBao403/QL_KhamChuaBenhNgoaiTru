@@ -23,6 +23,10 @@ else
         Khu vực trực: <span class="text-danger text-uppercase">@ViewBag.TenQuayHienTai</span>
     </h4>
 
+    <a href="@Url.Action("ChuyenSangKiosk", "TiepTan")" class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm fw-bold">
+        <i class="bi bi-tablet-landscape me-1"></i> Mở màn hình Kiosk
+    </a>
+
     <form action="@Url.Action("Index", "TiepTan")" method="get" class="d-flex align-items-center gap-2 m-0">
         <div class="input-group input-group-sm shadow-sm">
             <span class="input-group-text bg-white border-primary fw-bold text-muted">Từ</span>

@@ -613,10 +613,10 @@ namespace QL_KhamChuaBenhNgoaiTru.DBContext
         JOIN BENHNHAN bn ON pdk.MaBN = bn.MaBN
         JOIN PHIEUKHAMBENH pkb ON pdk.MaPhieuDK = pkb.MaPhieuDK
         JOIN PHONG p ON pkb.MaPhong = p.MaPhong
-        WHERE CAST(pdk.NgayDangKy AS DATE) >= CAST(@TuNgay AS DATE)
-          AND CAST(pdk.NgayDangKy AS DATE) <= CAST(@DenNgay AS DATE)
+        WHERE CAST(pkb.NgayLap AS DATE) >= CAST(@TuNgay AS DATE)
+          AND CAST(pkb.NgayLap AS DATE) <= CAST(@DenNgay AS DATE)
           AND pkb.TrangThai IN (N'Chờ khám', N'Đang khám', N'Hoàn thành')
-        ORDER BY pdk.NgayDangKy DESC, pkb.STT ASC"; // Ưu tiên ngày mới nhất lên đầu
+        ORDER BY pkb.NgayLap DESC, pkb.STT ASC"; // Ưu tiên ngày mới nhất lên đầu
 
                 SqlCommand cmd = new SqlCommand(sql, con);
                 cmd.Parameters.AddWithValue("@TuNgay", tuNgay);

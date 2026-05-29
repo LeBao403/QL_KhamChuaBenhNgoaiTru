@@ -13,7 +13,6 @@
         letter-spacing: -0.5px;
     }
 
-    /* Vùng Filter */
     .filter-card {
         background-color: #ffffff;
         border-radius: 12px;
@@ -58,7 +57,6 @@
             box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
         }
 
-    /* Bảng Dữ Liệu */
     .table-card {
         background-color: #ffffff;
         border-radius: 16px;
@@ -97,7 +95,6 @@
             position: relative;
         }
 
-    /* Phân trang kiểu nút Nổi */
     .custom-pagination .page-item .page-link {
         border: none;
         background-color: transparent;
@@ -128,7 +125,6 @@
         color: #cbd5e1;
     }
 
-    /* Badge Soft */
     .badge-soft-success {
         background-color: #dcfce7;
         color: #166534;
@@ -166,7 +162,7 @@
     <form action="@Url.Action("LichSuTiepNhan", "TiepTan")" method="get" class="m-0">
         <div class="row g-3 align-items-center">
             <div class="col-md-5 col-12">
-                <label class="form-label fw-bold text-muted fs-7 mb-1">Khoảng thời gian</label>
+                <label class="form-label fw-bold text-muted fs-7 mb-1">Khoảng thời gian (Ngày khám)</label>
                 <div class="input-group custom-input-group">
                     <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
                     <input type="date" name="tuNgay" class="form-control" value="@ViewBag.TuNgay">
@@ -207,11 +203,11 @@
                 <tr>
                     <th class="ps-4">Mã BN</th>
                     <th>Họ Tên & Liên hệ</th>
-                    <th>Giờ đăng ký</th>
+                    <th>Ngày khám</th>
                     <th>Kênh ĐK</th>
                     <th>Phòng Khám & STT</th>
                     <th>Trạng thái</th>
-                    <th class="text-center" style="width: 140px;">Thao tác</th>
+                    <th class="text-center" style="width: 180px;">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -220,9 +216,22 @@
                     foreach (System.Data.DataRow row in dtHistory.Rows)
                     {
                         string gioDK = Convert.ToDateTime(row["NgayDangKy"]).ToString("HH:mm - dd/MM/yy");
+                        // Lấy Ngày Khám, nếu DB của bác không có cột NgayKham thì tạm dùng NgayDangKy
+                        string ngayKham = row.Table.Columns.Contains("NgayKham") && row["NgayKham"] != DBNull.Value
+                                          ? Convert.ToDateTime(row["NgayKham"]).ToString("dd/MM/yyyy")
+                                          : Convert.ToDateTime(row["NgayDangKy"]).ToString("dd/MM/yyyy");
+
                         string hinhThuc = row["HinhThucDangKy"].ToString();
                         string badgeThinhThuc = hinhThuc == "Online" ? "badge-soft-success" : "badge-soft-primary";
                         string trangThai = row["TrangThaiPKB"].ToString();
+
+                        // Trích xuất các trường để hiển thị chi tiết (Kiểm tra tránh lỗi nếu thiếu cột)
+                        string cccd = row.Table.Columns.Contains("CCCD") ? row["CCCD"].ToString() : "";
+                        string gioiTinh = row.Table.Columns.Contains("GioiTinh") ? row["GioiTinh"].ToString() : "";
+                        string ngaySinh = row.Table.Columns.Contains("NgaySinh") && row["NgaySinh"] != DBNull.Value ? Convert.ToDateTime(row["NgaySinh"]).ToString("dd/MM/yyyy") : "";
+                        string diaChi = row.Table.Columns.Contains("DiaChi") ? row["DiaChi"].ToString() : "";
+                        string lyDo = row.Table.Columns.Contains("LyDo") ? row["LyDo"].ToString() : "";
+                        string bhyt = row.Table.Columns.Contains("BHYT") ? row["BHYT"].ToString() : "False";
 
                         <tr>
                             <td class="ps-4 fw-bold" style="color: #64748b;">@row["MaBN"]</td>
@@ -230,8 +239,13 @@
                                 <div class="fw-bold text-dark fs-6">@row["HoTen"]</div>
                                 <div class="text-muted" style="font-size: 0.85rem;"><i class="bi bi-telephone-fill me-1 opacity-50"></i>@row["SDT"]</div>
                             </td>
-                            <td class="fw-medium text-secondary">@gioDK</td>
-                            <td><span class="badge @badgeThinhThuc rounded-pill px-3">@hinhThuc</span></td>
+                            <td class="fw-medium text-primary">@ngayKham</td>
+                            <td>
+                                <div class="d-flex flex-column align-items-start">
+                                    <span class="badge @badgeThinhThuc rounded-pill px-3">@hinhThuc</span>
+                                    <small class="text-muted mt-1" style="font-size: 0.75rem;">Lập: @gioDK</small>
+                                </div>
+                            </td>
                             <td>
                                 <div class="d-flex flex-column align-items-start">
                                     <span class="fw-bold" style="color: #334155;">@row["PhongKhamChiDinh"]</span>
@@ -247,12 +261,22 @@
                                 { <span class="badge badge-soft-secondary px-3 rounded-pill"><i class="bi bi-check2-all me-1"></i>Hoàn tất</span>}
                             </td>
                             <td class="text-center">
-                                <button class="btn btn-sm btn-light border shadow-sm rounded-pill px-3 fw-bold text-primary btn-in-phieu"
-                                        data-stt="@row["STT_Kham"]"
-                                        data-phong="@row["PhongKhamChiDinh"]"
-                                        data-ten="@row["HoTen"]">
-                                    <i class="bi bi-printer me-1"></i> In lại
-                                </button>
+                                <div class="btn-group shadow-sm rounded-pill">
+                                    <button class="btn btn-sm btn-light border-end fw-bold text-info btn-chi-tiet"
+                                            data-mabn="@row["MaBN"]" data-hoten="@row["HoTen"]" data-sdt="@row["SDT"]"
+                                            data-cccd="@cccd" data-gioitinh="@gioiTinh" data-ngaysinh="@ngaySinh"
+                                            data-diachi="@diaChi" data-bhyt="@bhyt" data-lydo="@lyDo"
+                                            data-ngaykham="@ngayKham" data-hinhthuc="@hinhThuc" data-phong="@row["PhongKhamChiDinh"]"
+                                            data-stt="@row["STT_Kham"]" data-trangthai="@trangThai" data-giodk="@gioDK">
+                                        <i class="bi bi-info-circle"></i> Chi tiết
+                                    </button>
+                                    <button class="btn btn-sm btn-light fw-bold text-primary btn-in-phieu"
+                                            data-stt="@row["STT_Kham"]"
+                                            data-phong="@row["PhongKhamChiDinh"]"
+                                            data-ten="@row["HoTen"]">
+                                        <i class="bi bi-printer"></i> In
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -278,47 +302,35 @@
         <div class="card-footer bg-white border-top py-3 d-flex justify-content-center">
             <nav aria-label="Page navigation">
                 <ul class="pagination custom-pagination mb-0">
-
                     <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = ViewBag.CurrentPage - 1 })" aria-label="Previous">
-                            <i class="bi bi-chevron-left"></i>
-                        </a>
+                        <a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = ViewBag.CurrentPage - 1 })"><i class="bi bi-chevron-left"></i></a>
                     </li>
-
                     @{
                         int startPage = Math.Max(1, ViewBag.CurrentPage - 2);
                         int endPage = Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2);
                     }
-
                     @if (startPage > 1)
                     {
                         <li class="page-item"><a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = 1 })">1</a></li>
-                        if (startPage > 2)
+ if (startPage > 2)
                         {
                             <li class="page-item disabled"><span class="page-link border-0 bg-transparent">...</span></li>
-                        }
+}
                     }
-
                     @for (int i = startPage; i <= endPage; i++)
                     {
-                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                            <a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = i })">@i</a>
-                        </li>
-                    }
-
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")"><a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = i })">@i</a></li>
+}
                     @if (endPage < ViewBag.TotalPages)
                     {
                         if (endPage < ViewBag.TotalPages - 1)
                         {
                             <li class="page-item disabled"><span class="page-link border-0 bg-transparent">...</span></li>
-                        }
+ }
                         <li class="page-item"><a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = ViewBag.TotalPages })">@ViewBag.TotalPages</a></li>
-                    }
-
+}
                     <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                        <a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = ViewBag.CurrentPage + 1 })" aria-label="Next">
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
+                        <a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = ViewBag.CurrentPage + 1 })"><i class="bi bi-chevron-right"></i></a>
                     </li>
                 </ul>
             </nav>
@@ -326,14 +338,126 @@
     }
 </div>
 
+<div class="modal fade" id="modalChiTiet" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-light border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bolder text-primary"><i class="bi bi-card-checklist me-2"></i>Chi Tiết Hồ Sơ Cấp Số</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 pt-3 pb-4">
+
+                <h6 class="text-uppercase fw-bold text-muted mb-3 fs-7 border-bottom pb-2">Thông tin Bệnh nhân</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary me-3">
+                                <i class="bi bi-person-fill fs-3"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1 fw-bold text-dark" id="dt_HoTen"></h5>
+                                <span class="badge bg-secondary rounded-pill" id="dt_MaBN"></span>
+                                <span class="badge bg-success rounded-pill ms-1" id="dt_BHYT" style="display:none;"><i class="bi bi-shield-check me-1"></i>BHYT</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 border-start ps-md-4">
+                        <div class="row g-2 text-dark fs-6">
+                            <div class="col-6"><span class="text-muted d-block fs-7">Ngày sinh</span><span id="dt_NgaySinh" class="fw-medium"></span></div>
+                            <div class="col-6"><span class="text-muted d-block fs-7">Giới tính</span><span id="dt_GioiTinh" class="fw-medium"></span></div>
+                            <div class="col-6"><span class="text-muted d-block fs-7">Điện thoại</span><span id="dt_SDT" class="fw-medium"></span></div>
+                            <div class="col-6"><span class="text-muted d-block fs-7">CCCD/CMND</span><span id="dt_CCCD" class="fw-medium"></span></div>
+                            <div class="col-12"><span class="text-muted d-block fs-7">Địa chỉ</span><span id="dt_DiaChi" class="fw-medium"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="text-uppercase fw-bold text-muted mb-3 fs-7 border-bottom pb-2">Thông tin Đợt khám hiện tại</h6>
+                <div class="bg-light p-4 rounded-3 border">
+                    <div class="row g-3">
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block fs-7"><i class="bi bi-calendar2-check me-1"></i>Ngày khám</span>
+                            <span class="fw-bold text-primary fs-5" id="dt_NgayKham"></span>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block fs-7"><i class="bi bi-door-open me-1"></i>Phòng chỉ định</span>
+                            <span class="fw-bold text-dark fs-6" id="dt_Phong"></span>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block fs-7"><i class="bi bi-ticket-perforated me-1"></i>Số thứ tự</span>
+                            <span class="badge bg-danger rounded-pill fs-6 px-3" id="dt_STT"></span>
+                        </div>
+
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block fs-7"><i class="bi bi-pc-display me-1"></i>Nguồn đăng ký</span>
+                            <span class="fw-medium" id="dt_HinhThuc"></span>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block fs-7"><i class="bi bi-clock me-1"></i>Lập phiếu lúc</span>
+                            <span class="fw-medium" id="dt_GioDK"></span>
+                        </div>
+                        <div class="col-md-4 col-6">
+                            <span class="text-muted d-block fs-7"><i class="bi bi-activity me-1"></i>Trạng thái</span>
+                            <span class="fw-bold text-success" id="dt_TrangThai"></span>
+                        </div>
+
+                        <div class="col-12 mt-3 pt-3 border-top">
+                            <span class="text-muted d-block fs-7 mb-1"><i class="bi bi-chat-square-text me-1"></i>Lý do / Triệu chứng ban đầu:</span>
+                            <div class="bg-white p-2 rounded border-start border-4 border-warning fst-italic" id="dt_LyDo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer bg-light border-top-0 rounded-bottom-4">
+                <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function () {
-            // Khởi tạo Tooltip của Bootstrap cho nút Làm mới
+            // Khởi tạo Tooltip
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl)
+            });
+
+            // Gắn dữ liệu vào Modal Chi tiết
+            $('.btn-chi-tiet').click(function () {
+                var btn = $(this);
+
+                // Set text info
+                $('#dt_MaBN').text(btn.data('mabn'));
+                $('#dt_HoTen').text(btn.data('hoten'));
+                $('#dt_NgaySinh').text(btn.data('ngaysinh') || 'N/A');
+                $('#dt_GioiTinh').text(btn.data('gioitinh') || 'N/A');
+                $('#dt_SDT').text(btn.data('sdt') || 'N/A');
+                $('#dt_CCCD').text(btn.data('cccd') || 'N/A');
+                $('#dt_DiaChi').text(btn.data('diachi') || 'N/A');
+
+                $('#dt_NgayKham').text(btn.data('ngaykham'));
+                $('#dt_Phong').text(btn.data('phong'));
+                $('#dt_STT').text(btn.data('stt'));
+                $('#dt_HinhThuc').text(btn.data('hinhthuc'));
+                $('#dt_GioDK').text(btn.data('giodk'));
+                $('#dt_TrangThai').text(btn.data('trangthai'));
+                $('#dt_LyDo').text(btn.data('lydo') || 'Không có ghi chú triệu chứng ban đầu.');
+
+                // BHYT Badge toggle
+                var bhyt = btn.data('bhyt');
+                if (bhyt === 'True' || bhyt === 'true' || bhyt === true) {
+                    $('#dt_BHYT').show();
+                } else {
+                    $('#dt_BHYT').hide();
+                }
+
+                // Show modal
+                $('#modalChiTiet').modal('show');
             });
 
             // Nút In lại phiếu
@@ -345,10 +469,10 @@
                 Swal.fire({
                     title: 'ĐANG IN PHIẾU...',
                     html: `<div class="mt-2 text-start bg-light p-3 rounded border">
-                                <p class="mb-1 text-muted">Bệnh nhân: <strong class="text-dark">${ten}</strong></p>
-                                <p class="mb-1 text-muted">Phòng: <strong class="text-primary">${phong}</strong></p>
-                                <h2 class="text-center mt-3 text-success fw-bolder display-4 mb-0">${stt}</h2>
-                               </div>`,
+                                    <p class="mb-1 text-muted">Bệnh nhân: <strong class="text-dark">${ten}</strong></p>
+                                    <p class="mb-1 text-muted">Phòng: <strong class="text-primary">${phong}</strong></p>
+                                    <h2 class="text-center mt-3 text-success fw-bolder display-4 mb-0">${stt}</h2>
+                                   </div>`,
                     icon: 'info',
                     timer: 2000,
                     showConfirmButton: false

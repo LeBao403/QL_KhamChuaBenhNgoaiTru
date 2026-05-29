@@ -211,5 +211,17 @@ namespace QL_KhamChuaBenhNgoaiTru.Areas.Staff.Controllers
             }
             return Json(new { success = false, message = result.ErrorMessage });
         }
+
+
+        // Action chuyển sang màn hình Kiosk (Xóa Session nhân viên để bảo mật)
+        public ActionResult ChuyenSangKiosk()
+        {
+            // Xóa toàn bộ Session của nhân viên để bệnh nhân không thể "Back" lại trang nội bộ
+            Session.Clear();
+            Session.Abandon();
+
+            // Chuyển hướng về màn hình Lobby của Kiosk
+            return RedirectToAction("Lobby", "Kiosk", new { area = "Staff" });
+        }
     }
 }

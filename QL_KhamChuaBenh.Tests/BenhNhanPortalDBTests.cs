@@ -12,7 +12,7 @@ namespace QL_KhamChuaBenh.Tests
         private BenhNhanPortalDB _db;
         private string _connectStr;
 
-        // Ðã s?a mã < 10 ký t? d? không b? tràn vi?n (CHAR(10))
+        // ï¿½ï¿½ s?a mï¿½ < 10 kï¿½ t? d? khï¿½ng b? trï¿½n vi?n (CHAR(10))
         private const string _testMaBN = "PT_TEST";
         private const string _testUsername = "pt_test99";
 
@@ -22,20 +22,20 @@ namespace QL_KhamChuaBenh.Tests
             _db = new BenhNhanPortalDB();
             _connectStr = ConfigurationManager.ConnectionStrings["dbcs"].ConnectionString;
 
-            CleanupData(); // D?n rác s?ch s? tru?c khi bom m?i
+            CleanupData(); // D?n rï¿½c s?ch s? tru?c khi bom m?i
 
             using (SqlConnection conn = new SqlConnection(_connectStr))
             {
                 conn.Open();
-                // 1. T?o Tài kho?n m?i
+                // 1. T?o Tï¿½i kho?n m?i
                 string sqlTk = "INSERT INTO TAIKHOAN (Username, PasswordHash, IsActive, CreatedAt) OUTPUT INSERTED.MaTK VALUES (@U, 'hash', 1, GETDATE())";
                 SqlCommand cmdTk = new SqlCommand(sqlTk, conn);
                 cmdTk.Parameters.AddWithValue("@U", _testUsername);
                 int maTK = (int)cmdTk.ExecuteScalar();
 
-                // 2. T?o B?nh nhân m?i (Kh?p CHAR(10))
+                // 2. T?o B?nh nhï¿½n m?i (Kh?p CHAR(10))
                 string sqlBn = @"INSERT INTO BENHNHAN (MaBN, HoTen, SDT, CCCD, Email, BHYT, MaTK) 
-                                 VALUES (@MaBN, N'B?nh Nhân Portal', '0888888888', '098765432109', 'portal@test.com', 0, @MaTK)";
+                                 VALUES (@MaBN, N'B?nh Nhï¿½n Portal', '0888888888', '098765432109', 'portal@test.com', 0, @MaTK)";
                 SqlCommand cmdBn = new SqlCommand(sqlBn, conn);
                 cmdBn.Parameters.AddWithValue("@MaBN", _testMaBN);
                 cmdBn.Parameters.AddWithValue("@MaTK", maTK);
@@ -54,26 +54,26 @@ namespace QL_KhamChuaBenh.Tests
             using (SqlConnection conn = new SqlConnection(_connectStr))
             {
                 conn.Open();
-                // Xóa Phi?u Ðang Ký (có liên k?t khóa ngo?i)
+                // Xï¿½a Phi?u ï¿½ang Kï¿½ (cï¿½ liï¿½n k?t khï¿½a ngo?i)
                 new SqlCommand($"DELETE FROM PHIEUDANGKY WHERE MaBN = '{_testMaBN}'", conn).ExecuteNonQuery();
 
-                // Xóa B?nh Nhân
+                // Xï¿½a B?nh Nhï¿½n
                 new SqlCommand($"DELETE FROM BENHNHAN WHERE MaBN = '{_testMaBN}'", conn).ExecuteNonQuery();
 
-                // Xóa th?ng b?ng Username d? tr? d?t di?m l?i UNIQUE KEY
+                // Xï¿½a th?ng b?ng Username d? tr? d?t di?m l?i UNIQUE KEY
                 new SqlCommand($"DELETE FROM TAIKHOAN WHERE Username = '{_testUsername}'", conn).ExecuteNonQuery();
             }
         }
 
         // =========================================================
-        // KI?M TH? NHÓM: THÔNG TIN CÁ NHÂN
+        // KI?M TH? NHï¿½M: THï¿½NG TIN Cï¿½ NHï¿½N
         // =========================================================
         [TestMethod]
         public void GetBenhNhanByMaBN_ShouldReturnProfile()
         {
             var profile = _db.GetBenhNhanByMaBN(_testMaBN);
-            Assert.IsNotNull(profile, "L?i: Không l?y du?c Profile!");
-            Assert.AreEqual("B?nh Nhân Portal", profile.HoTen);
+            Assert.IsNotNull(profile, "L?i: Khï¿½ng l?y du?c Profile!");
+            Assert.AreEqual("B?nh Nhï¿½n Portal", profile.HoTen);
             Assert.AreEqual(_testUsername, profile.Username);
         }
 
@@ -94,14 +94,14 @@ namespace QL_KhamChuaBenh.Tests
         }
 
         // =========================================================
-        // KI?M TH? NHÓM: L?CH KHÁM & PHÒNG KHÁM
+        // KI?M TH? NHï¿½M: L?CH KHï¿½M & PHï¿½NG KHï¿½M
         // =========================================================
         [TestMethod]
         public void GetAllPhongKham_ShouldReturnList()
         {
             var phongList = _db.GetAllPhongKham();
             Assert.IsNotNull(phongList);
-            // Có th? = 0 n?u DB bác chua có phòng nào, nhung list ph?i du?c kh?i t?o
+            // Cï¿½ th? = 0 n?u DB bï¿½c chua cï¿½ phï¿½ng nï¿½o, nhung list ph?i du?c kh?i t?o
         }
 
         [TestMethod]
@@ -110,15 +110,15 @@ namespace QL_KhamChuaBenh.Tests
             DateTime ngayKhamTest = DateTime.Now.AddDays(1);
             string tenQuay;
 
-            // 1. Test Ð?t l?ch
-            string maHD; string maPhieuDK = _db.DatLichKham(_testMaBN, ngayKhamTest, 1, "DV_TEST", "Ðau b?ng", out tenQuay, out maHD);
-            Assert.IsTrue(!string.IsNullOrEmpty(maPhieuDK), "L?i: Không t?o du?c Phi?u Ðang Ký!");
-            Assert.IsNotNull(tenQuay, "L?i: L?y tên qu?y ti?p tân th?t b?i!");
+            // 1. Test ï¿½?t l?ch
+            string maHD; string maPhieuDK = _db.DatLichKham(_testMaBN, ngayKhamTest, 1, "DV_TEST", "ï¿½au b?ng", out tenQuay, out maHD);
+            Assert.IsTrue(!string.IsNullOrEmpty(maPhieuDK), "L?i: Khï¿½ng t?o du?c Phi?u ï¿½ang Kï¿½!");
+            Assert.IsNotNull(tenQuay, "L?i: L?y tï¿½n qu?y ti?p tï¿½n th?t b?i!");
 
             // 2. Test GetLichKhamByMaBN
             var dsLichKham = _db.GetLichKhamByMaBN(_testMaBN);
             Assert.IsTrue(dsLichKham.Count > 0);
-            Assert.AreEqual("Ch? x? lý", dsLichKham[0].TrangThai);
+            Assert.AreEqual("Ch? x? lï¿½", dsLichKham[0].TrangThai);
 
             // 3. Test H?y L?ch
             bool isCancel = _db.HuyLichKham(maPhieuDK, _testMaBN);
@@ -127,7 +127,7 @@ namespace QL_KhamChuaBenh.Tests
         }
 
         // =========================================================
-        // KI?M TH? NHÓM: L?CH S?, THU?C, HÓA ÐON VÀ DASHBOARD
+        // KI?M TH? NHï¿½M: L?CH S?, THU?C, Hï¿½A ï¿½ON Vï¿½ DASHBOARD
         // =========================================================
         [TestMethod]
         public void GetTrangThaiKham_ShouldReturnList()
@@ -146,11 +146,11 @@ namespace QL_KhamChuaBenh.Tests
         [TestMethod]
         public void GetDonThuoc_And_ChiTiet_ShouldReturnData()
         {
-            // Ch?y ki?m tra xem list don thu?c có tr? v? m?ng không b? null không
+            // Ch?y ki?m tra xem list don thu?c cï¿½ tr? v? m?ng khï¿½ng b? null khï¿½ng
             var result = _db.GetDonThuocByMaBN(_testMaBN);
             Assert.IsNotNull(result);
 
-            // Test hàm g?i chi ti?t (dù mã 0 có th? không ra chi ti?t, nhung d?m b?o code không v?)
+            // Test hï¿½m g?i chi ti?t (dï¿½ mï¿½ 0 cï¿½ th? khï¿½ng ra chi ti?t, nhung d?m b?o code khï¿½ng v?)
             var chiTiet = _db.GetChiTietDonThuoc("0");
             Assert.IsNotNull(chiTiet);
             Assert.IsNotNull(chiTiet.ChiTiet);
