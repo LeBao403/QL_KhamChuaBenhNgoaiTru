@@ -7,7 +7,6 @@ GO
 -- ======================================================================================
 -- I. QUẢN LÝ HỆ THỐNG & NHÂN SỰ (CÁC BẢNG NỀN TẢNG)
 -- ======================================================================================
-ALTER TABLE PHIEUDANGKY ADD CreatedAt DATETIME NOT NULL DEFAULT GETDATE();
 CREATE TABLE TAIKHOAN (
     MaTK INT IDENTITY(1,1) PRIMARY KEY,
     Username NVARCHAR(50) UNIQUE NOT NULL,

@@ -216,7 +216,6 @@
                     foreach (System.Data.DataRow row in dtHistory.Rows)
                     {
                         string gioDK = Convert.ToDateTime(row["NgayDangKy"]).ToString("HH:mm - dd/MM/yy");
-                        // Lấy Ngày Khám, nếu DB của bác không có cột NgayKham thì tạm dùng NgayDangKy
                         string ngayKham = row.Table.Columns.Contains("NgayKham") && row["NgayKham"] != DBNull.Value
                                           ? Convert.ToDateTime(row["NgayKham"]).ToString("dd/MM/yyyy")
                                           : Convert.ToDateTime(row["NgayDangKy"]).ToString("dd/MM/yyyy");
@@ -225,7 +224,6 @@
                         string badgeThinhThuc = hinhThuc == "Online" ? "badge-soft-success" : "badge-soft-primary";
                         string trangThai = row["TrangThaiPKB"].ToString();
 
-                        // Trích xuất các trường để hiển thị chi tiết (Kiểm tra tránh lỗi nếu thiếu cột)
                         string cccd = row.Table.Columns.Contains("CCCD") ? row["CCCD"].ToString() : "";
                         string gioiTinh = row.Table.Columns.Contains("GioiTinh") ? row["GioiTinh"].ToString() : "";
                         string ngaySinh = row.Table.Columns.Contains("NgaySinh") && row["NgaySinh"] != DBNull.Value ? Convert.ToDateTime(row["NgaySinh"]).ToString("dd/MM/yyyy") : "";
@@ -273,7 +271,8 @@
                                     <button class="btn btn-sm btn-light fw-bold text-primary btn-in-phieu"
                                             data-stt="@row["STT_Kham"]"
                                             data-phong="@row["PhongKhamChiDinh"]"
-                                            data-ten="@row["HoTen"]">
+                                            data-ten="@row["HoTen"]"
+                                            data-mabn="@row["MaBN"]">
                                         <i class="bi bi-printer"></i> In
                                     </button>
                                 </div>
@@ -312,23 +311,23 @@
                     @if (startPage > 1)
                     {
                         <li class="page-item"><a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = 1 })">1</a></li>
- if (startPage > 2)
+                        if (startPage > 2)
                         {
                             <li class="page-item disabled"><span class="page-link border-0 bg-transparent">...</span></li>
-}
+                        }
                     }
                     @for (int i = startPage; i <= endPage; i++)
                     {
                         <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")"><a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = i })">@i</a></li>
-}
+                    }
                     @if (endPage < ViewBag.TotalPages)
                     {
                         if (endPage < ViewBag.TotalPages - 1)
                         {
                             <li class="page-item disabled"><span class="page-link border-0 bg-transparent">...</span></li>
- }
+                        }
                         <li class="page-item"><a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = ViewBag.TotalPages })">@ViewBag.TotalPages</a></li>
-}
+                    }
                     <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
                         <a class="page-link" href="@Url.Action("LichSuTiepNhan", new { tuNgay = ViewBag.TuNgay, denNgay = ViewBag.DenNgay, tuKhoa = ViewBag.TuKhoa, page = ViewBag.CurrentPage + 1 })"><i class="bi bi-chevron-right"></i></a>
                     </li>
@@ -417,8 +416,35 @@
     </div>
 </div>
 
+<div class="d-none">
+    <div id="print-section">
+        <div style="width: 320px; padding: 15px; font-family: 'Courier New', Courier, monospace; color: #000; border: 1px dashed #333; margin: 0 auto; background-color: white;">
+            <h4 style="margin: 0; text-align: center; text-transform: uppercase;">PHÒNG KHÁM ĐA KHOA</h4>
+            <p style="margin: 5px 0; text-align: center; font-size: 13px;">Hotline: 1900 1234 - Cấp cứu: 115</p>
+            <hr style="border-top: 1px dashed #000;" />
+
+            <h3 style="margin: 10px 0; text-align: center; font-weight: bold;">PHIẾU KHÁM BỆNH</h3>
+            <p style="margin: 5px 0; font-size: 15px;">Bệnh nhân: <b id="print-tenbn"></b></p>
+            <p style="margin: 5px 0; font-size: 15px;">Mã BN: <span id="print-mabn"></span></p>
+
+            <hr style="border-top: 1px dashed #000;" />
+            <p style="margin: 5px 0; font-size: 15px;">Khoa: <b id="print-khoa">KHÁM BỆNH</b></p>
+            <p style="margin: 5px 0; font-size: 15px;">Phòng khám: <b id="print-phong"></b></p>
+
+            <div style="margin: 15px 0; padding: 10px; border: 2px solid #000; text-align: center;">
+                <span style="font-size: 16px; font-weight: bold;">SỐ THỨ TỰ VÀO KHÁM</span><br />
+                <span style="font-size: 55px; font-weight: bold; line-height: 1.2;" id="print-stt"></span>
+            </div>
+
+            <p style="margin: 5px 0; font-size: 12px;">Ngày in: <span id="print-date"></span></p>
+            <p style="margin: 10px 0 0 0; font-size: 13px; text-align: center; font-style: italic;">Vui lòng đến trước cửa phòng chờ gọi tên.</p>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
             // Khởi tạo Tooltip
@@ -460,22 +486,75 @@
                 $('#modalChiTiet').modal('show');
             });
 
-            // Nút In lại phiếu
+            // LOGIC IN LẠI PHIẾU BẰNG HTML2PDF
             $('.btn-in-phieu').click(function () {
-                var stt = $(this).data('stt');
-                var phong = $(this).data('phong');
-                var ten = $(this).data('ten');
+                var btn = $(this);
+                var stt = btn.data('stt');
+                var phong = btn.data('phong');
+                var ten = btn.data('ten');
+                var maBN = btn.data('mabn');
+
+                // Đổ dữ liệu vào Form Ẩn để chụp PDF
+                $('#print-tenbn').text(ten);
+                $('#print-mabn').text(maBN);
+                $('#print-phong').text(phong);
+                $('#print-stt').text(stt);
+
+                var now = new Date();
+                $('#print-date').text(now.toLocaleString('vi-VN'));
 
                 Swal.fire({
-                    title: 'ĐANG IN PHIẾU...',
-                    html: `<div class="mt-2 text-start bg-light p-3 rounded border">
-                                    <p class="mb-1 text-muted">Bệnh nhân: <strong class="text-dark">${ten}</strong></p>
-                                    <p class="mb-1 text-muted">Phòng: <strong class="text-primary">${phong}</strong></p>
-                                    <h2 class="text-center mt-3 text-success fw-bolder display-4 mb-0">${stt}</h2>
-                                   </div>`,
+                    title: 'IN LẠI PHIẾU KHÁM!',
+                    html: `<div class="mt-2 text-start bg-light p-3 rounded border border-primary shadow-sm">
+                                    <p class="mb-2 fs-5"><i class="bi bi-person text-muted me-2"></i><strong>Bệnh nhân:</strong> ${ten}</p>
+                                    <p class="mb-2 fs-5"><i class="bi bi-door-open text-primary me-2"></i><strong>Phòng:</strong> <span class="text-primary fw-bold">${phong}</span></p>
+                                    <hr class="my-3"/>
+                                    <div class="text-center">
+                                        <span class="text-muted text-uppercase fw-bold">Số Thứ Tự Vào Khám</span>
+                                        <h1 class="display-1 fw-bolder text-primary mt-2 mb-0">${stt}</h1>
+                                    </div></div>`,
                     icon: 'info',
-                    timer: 2000,
-                    showConfirmButton: false
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-download me-1"></i> Xuất file PDF',
+                    cancelButtonText: 'Đóng',
+                    confirmButtonColor: '#0d6efd',
+                    cancelButtonColor: '#6c757d',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // 1. TẠO TÊN FILE CHUẨN (Ví dụ: 12062026_KH0002_STT1.pdf)
+                        var d = new Date();
+                        var day = ("0" + d.getDate()).slice(-2);
+                        var month = ("0" + (d.getMonth() + 1)).slice(-2);
+                        var year = d.getFullYear();
+                        var dateStr = day + month + year;
+
+                        var safeMaBN = String(maBN).trim();
+                        var tenFile = dateStr + '_' + safeMaBN + '_STT' + stt + '.pdf';
+
+                        // 2. LẤY MÃ HTML BÊN TRONG THẺ
+                        var elementHTML = document.getElementById('print-section').innerHTML;
+
+                        // 3. CẤU HÌNH XUẤT PDF
+                        var opt = {
+                            margin: 0.1,
+                            filename: tenFile,
+                            image: { type: 'jpeg', quality: 1 },
+                            html2canvas: { scale: 2 },
+                            jsPDF: { unit: 'in', format: 'a5', orientation: 'portrait' }
+                        };
+
+                        // 4. THỰC THI (Truyền thẳng elementHTML vào để chống lỗi trắng trang)
+                        html2pdf().set(opt).from(elementHTML).save().then(function () {
+                            Swal.fire({
+                                title: 'Thành công!',
+                                text: 'Đã xuất phiếu in về máy.',
+                                icon: 'success',
+                                timer: 1500,
+                                showConfirmButton: false
+                            });
+                        });
+                    }
                 });
             });
         });

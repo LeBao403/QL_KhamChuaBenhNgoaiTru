@@ -8,14 +8,13 @@
 
 <style>
     /* =========================================================
-       BỘ CSS SANG TRỌNG - HIỆN ĐẠI CHO QUẦY THU NGÂN
+       BỘ CSS SANG TRỌNG - HIỆN ĐẠI CHO TRANG QUẦY THU NGÂN
        ========================================================= */
     body {
         background-color: #f4f7f6;
         font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* Scrollbar tinh tế */
     .split-panel {
         height: calc(100vh - 120px);
         overflow-y: auto;
@@ -38,7 +37,6 @@
                 background: #94a3b8;
             }
 
-    /* Card tổng thể */
     .glass-card {
         background: #ffffff;
         border-radius: 16px;
@@ -46,7 +44,6 @@
         border: 1px solid rgba(226, 232, 240, 0.8);
     }
 
-    /* List bệnh nhân bên trái */
     .patient-row {
         cursor: pointer;
         transition: all 0.2s ease-in-out;
@@ -78,7 +75,6 @@
         font-size: 1.1rem;
     }
 
-    /* Table Hóa Đơn */
     .bill-header {
         border-bottom: 2px dashed #e2e8f0;
         background-color: #fafaf9;
@@ -105,7 +101,6 @@
             background-color: #f8fafc;
         }
 
-    /* Header của từng nhóm DV/Thuốc */
     .group-header td {
         background-color: #f8fafc;
         font-size: 0.85rem;
@@ -139,7 +134,6 @@
         color: #16a34a;
     }
 
-    /* Bộ control Số lượng & Số ngày mượt mà */
     .qty-control {
         background: #ffffff;
         border: 1px solid #cbd5e1;
@@ -175,7 +169,6 @@
 
             .qty-control input:focus {
                 outline: none;
-                box-shadow: none;
             }
 
     .day-control {
@@ -231,7 +224,6 @@
             transform: rotate(-45deg);
         }
 
-    /* Khu vực thanh toán Bottom */
     .checkout-area {
         background-color: #ffffff;
         border-top: 1px solid #e2e8f0;
@@ -289,11 +281,13 @@
                                 bool hasBHYT = row["BHYT"] != DBNull.Value && Convert.ToBoolean(row["BHYT"]);
                                 string tenBN = row["HoTen"].ToString();
                                 string firstLetter = string.IsNullOrEmpty(tenBN) ? "?" : tenBN.Substring(0, 1).ToUpper();
+                                string soThe = row.Table.Columns.Contains("SoTheBHYT") && row["SoTheBHYT"] != DBNull.Value ? row["SoTheBHYT"].ToString() : "";
 
                                 <li class="list-group-item patient-row p-3"
                                     data-mahd="@row["MaHD"]" data-mapkb="@row["MaPhieuKhamBenh"]"
                                     data-mabn="@row["MaBN"]" data-hoten="@tenBN"
                                     data-bhyt="@(hasBHYT ? "CÓ" : "KHÔNG")"
+                                    data-sothe="@soThe"
                                     onclick="loadBillDetails(this)">
 
                                     <div class="d-flex align-items-center">
@@ -345,15 +339,16 @@
                     <div class="bill-header p-4">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <h4 class="fw-bold text-uppercase mb-2 text-primary" id="lblHoTen" style="letter-spacing: -0.5px;">NGUYỄN VĂN A</h4>
+                                <h4 class="fw-bold text-uppercase mb-2 text-primary" id="lblHoTen" style="letter-spacing: -0.5px;"></h4>
                                 <div class="d-flex gap-3 text-muted small">
-                                    <span><i class="bi bi-person-vcard me-1"></i>Mã BN: <strong id="lblMaBN" class="text-dark">KH0001</strong></span>
-                                    <span><i class="bi bi-shield-plus me-1"></i>Đối tượng: <strong id="lblBHYT" class="text-success">Dịch Vụ</strong></span>
+                                    <span><i class="bi bi-person-vcard me-1"></i>Mã BN: <strong id="lblMaBN" class="text-dark"></strong></span>
+                                    <span><i class="bi bi-shield-plus me-1"></i>Đối tượng: <strong id="lblBHYT" class="text-success"></strong></span>
                                 </div>
                             </div>
                             <div class="text-end">
                                 <span class="badge bg-warning bg-opacity-25 text-warning-emphasis fs-7 rounded-pill border border-warning border-opacity-50 px-3 py-2 shadow-sm"><i class="bi bi-hourglass-split me-1"></i>Chờ thanh toán</span>
-                                <p class="small text-muted mt-2 mb-0">Phiếu Khám: <strong id="lblMaPKB" class="text-dark">#123</strong> | Hóa Đơn: <strong id="lblMaHD" class="text-dark">#1</strong></p>
+                                <button class="btn btn-sm btn-outline-primary ms-2 fw-bold" id="btnInHoaDon" onclick="inHoaDon(false)"><i class="bi bi-printer me-1"></i> In Hóa Đơn</button>
+                                <p class="small text-muted mt-2 mb-0">Phiếu Khám: <strong id="lblMaPKB" class="text-dark"></strong> | Hóa Đơn: <strong id="lblMaHD" class="text-dark"></strong></p>
                             </div>
                         </div>
                     </div>
@@ -363,7 +358,7 @@
                             <thead class="sticky-top z-1 shadow-sm">
                                 <tr>
                                     <th class="text-center px-3" style="width:40px"><i class="bi bi-ui-checks"></i></th>
-                                    <th>Nội dung phát sinh</th>
+                                    <th>Nội dung</th>
                                     <th class="text-center" style="width: 140px;">SL Mua</th>
                                     <th class="text-end">Đơn giá</th>
                                     <th class="text-end text-success">BHYT Trả</th>
@@ -410,14 +405,89 @@
                         </button>
                     </div>
                 </div>
-
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-none">
+    <div id="print-invoice-section">
+        <div style="width: 760px; padding: 20px; font-family: 'Times New Roman', Times, serif; color: #000; background: #fff;">
+
+            <table style="width: 100%; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 15%; text-align: center; vertical-align: top;">
+                        <img src="@Url.Content("~/Images/Logo/app_logo.png")" style="width: 110px; height: auto;" alt="Logo" crossorigin="anonymous" />
+                    </td>
+                    <td style="width: 53%; vertical-align: top; padding-left: 10px;">
+                        <div style="font-weight: bold; text-transform: uppercase; color: #0d6efd; font-size: 16px;">PHÒNG KHÁM ĐA KHOA DIGIMED</div>
+                        <div style="font-size: 13px; margin-top: 2px;">Hệ thống Y tế Thông minh</div>
+                        <div style="font-size: 13px; margin-top: 2px;">Địa chỉ: 786 Nguyễn Kiệm, Quận Gò Vấp, TP.HCM</div>
+                    </td>
+                    <td style="width: 32%; vertical-align: top; text-align: right; font-size: 13px;">
+                        <div>Ký hiệu: <strong>1C26TBB</strong></div>
+                        <div style="margin-top: 2px;">Số hóa đơn: <strong id="prt-mahd" style="color: #dc3545;"></strong></div>
+                        <div style="margin-top: 2px;">Mã Phiếu khám: <strong id="prt-mapkb"></strong></div>
+                    </td>
+                </tr>
+            </table>
+
+            <div style="text-align: center; font-weight: bold; margin: 15px 0; font-size: 20px;">HÓA ĐƠN THU TIỀN VIỆN PHÍ</div>
+
+            <table style="width: 100%; margin-bottom: 10px; font-size: 14px; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 65%; padding: 3px 0;">Họ tên người bệnh: <strong id="prt-hoten" style="text-transform: uppercase; font-size: 15px;"></strong></td>
+                    <td style="width: 35%; padding: 3px 0;">Mã BN: <strong id="prt-mabn"></strong></td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding: 3px 0;">Đối tượng khám: <strong id="prt-doituong" style="color: #198754;"></strong></td>
+                </tr>
+            </table>
+
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 13px;">
+                <thead style="background-color: #f1f1f1; color: #000;">
+                    <tr>
+                        <th style="border: 1px solid #000; padding: 8px 5px; text-align: center; width: 5%;">STT</th>
+                        <th style="border: 1px solid #000; padding: 8px 5px; text-align: left; width: 40%;">NỘI DUNG PHÁT SINH</th>
+                        <th style="border: 1px solid #000; padding: 8px 5px; text-align: center; width: 5%;">SL</th>
+                        <th style="border: 1px solid #000; padding: 8px 5px; text-align: right; width: 15%;">ĐƠN GIÁ</th>
+                        <th style="border: 1px solid #000; padding: 8px 5px; text-align: right; width: 15%;">BHYT TRẢ</th>
+                        <th style="border: 1px solid #000; padding: 8px 5px; text-align: right; width: 20%;">THÀNH TIỀN</th>
+                    </tr>
+                </thead>
+                <tbody id="prt-tbody"></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" style="border: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; font-size: 13px;">TỔNG SỐ TIỀN:</td>
+                        <td style="border: 1px solid #000; padding: 8px; text-align: right; font-weight: bold; color: #000; font-size: 15px;" id="prt-tongtien"></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div style="font-size: 13px; font-style: italic; margin-bottom: 20px;">(Bằng chữ: <strong id="prt-bangchu"></strong>)</div>
+
+            <table style="width: 100%; text-align: center; font-size: 14px; border-collapse: collapse; margin-top: 10px;">
+                <tr>
+                    <td style="width: 50%; vertical-align: top;">
+                        <div style="font-weight: bold;">Người nộp tiền</div>
+                        <div style="font-style: italic; font-size: 12px; margin-top: 3px;">(Ký, ghi rõ họ tên)</div>
+                    </td>
+                    <td style="width: 50%; vertical-align: top;">
+                        <div id="prt-ngaylap" style="font-style: italic; font-size: 13px; margin-bottom: 3px;"></div>
+                        <div style="font-weight: bold;">Người thu tiền</div>
+                        <div style="font-style: italic; font-size: 12px; margin-top: 3px;">(Ký, ghi rõ họ tên)</div>
+                        <div style="margin-top: 60px; font-weight: bold; font-size: 15px;" id="prt-tennv">@Html.Raw(Session["HoTenNV"] ?? "Thu Ngân")</div>
+                    </td>
+                </tr>
+            </table>
+            <div style="height: 10px;"></div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         $(document).ready(function () {
             $("#searchPatient").on("keyup", function() {
@@ -428,7 +498,6 @@
             });
         });
 
-        // TÍNH LẠI TỔNG TIỀN MỖI KHI TICK/BỎ TICK HOẶC ĐỔI SỐ LƯỢNG
         function tinhLaiTongTien() {
             let tongTien = 0;
             let soMonConLai = 0;
@@ -452,9 +521,6 @@
             }
         }
 
-        // ---------------------------------------------------------
-        // HÀM XỬ LÝ NHẬP SỐ LƯỢNG / SỐ NGÀY (CÓ CHẶN KIỂU SỐ NGUYÊN)
-        // ---------------------------------------------------------
         window.changeQty = function(maCTHD, delta, maxQty, donGiaKhach) {
             let input = $('#qty_' + maCTHD);
             let currentVal = parseInt(input.val());
@@ -474,22 +540,20 @@
             let inputQty = $('#qty_' + maCTHD);
             let inputDay = $('#day_' + maCTHD);
 
-            // Ép kiểu INT để cấm ngày thập phân (VD: 1.5 ngày)
             let targetDays = parseInt(inputDay.val());
             let dailyDose = parseFloat(inputQty.data('dailydose'));
             let maxQty = parseInt(inputQty.data('max'));
-            let maxDays = parseInt(inputDay.attr('max')); // Số ngày kê gốc
+            let maxDays = parseInt(inputDay.attr('max'));
             let donGiaKhach = parseFloat(inputQty.data('dongia'));
 
             if (isNaN(targetDays) || targetDays < 1) targetDays = 1;
 
-            // Chặn trần: Nếu gõ lố ngày gốc -> Kéo về maxDays
             if (targetDays > maxDays) {
                 targetDays = maxDays;
                 Swal.fire({ toast: true, position: 'top-end', icon: 'warning', title: `Bác sĩ chỉ kê tối đa ${maxDays} ngày!`, showConfirmButton: false, timer: 2500 });
             }
 
-            inputDay.val(targetDays); // Update lại UI nếu bị ép trần
+            inputDay.val(targetDays);
 
             if (dailyDose > 0) {
                 let calculatedQty = Math.ceil(dailyDose * targetDays);
@@ -529,9 +593,6 @@
             tinhLaiTongTien();
         }
 
-        // ---------------------------------------------------------
-        // LOAD CHI TIẾT TỪ C# VÀ RENDER BẢNG (GIAO DIỆN MỚI)
-        // ---------------------------------------------------------
         window.loadBillDetails = function(element) {
             $('.patient-row').removeClass('active');
             $(element).addClass('active');
@@ -541,11 +602,19 @@
 
             let maHD = $(element).data('mahd');
             let maPKB = $(element).data('mapkb');
+            let soTheBHYT = $(element).data('sothe');
 
             $('#lblMaHD').text('#' + maHD);
             $('#lblMaBN').text($(element).data('mabn'));
             $('#lblHoTen').text($(element).data('hoten'));
-            $('#lblBHYT').text($(element).data('bhyt') === "CÓ" ? "Bảo Hiểm Y Tế (BHYT)" : "Khám Dịch Vụ");
+
+            // Xử lý TEXT BHYT hiển thị
+            let isBHYT = $(element).data('bhyt') === "CÓ";
+            let txtBHYT = isBHYT ? "Bảo Hiểm Y Tế" : "Khám Dịch Vụ";
+            $('#lblBHYT').text(txtBHYT);
+
+            // Lưu kèm Số BHYT vào DOM để tý nữa in
+            $('#lblBHYT').attr('data-sothe', isBHYT ? soTheBHYT : 'Không áp dụng');
 
             $('#hdnMaHD').val(maHD);
             $('#hdnMaPKB').val(maPKB);
@@ -596,7 +665,6 @@
                                     let donGiaKhach = (item.SoLuongGoc > 0) ? (item.TienBenhNhan / item.SoLuongGoc) : 0;
                                     let dailyDose = item.LiSang + item.LiTrua + item.LiChieu + item.LiToi;
 
-                                    // UI Nhập liệu MỚI (Sang trọng, dồn khối)
                                     soLuongHtml = `
                                         <div class="d-flex flex-column gap-2 align-items-end pe-2">
                                             <div class="qty-control shadow-sm">
@@ -661,7 +729,7 @@
                                     <td colspan="6" class="fw-bold text-success py-2 px-4">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <span><span class="group-icon icon-thuoc"><i class="bi bi-capsule"></i></span> ĐƠN THUỐC NGOẠI TRÚ</span>
-                                            <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill fw-normal px-2"><i class="bi bi-pencil-square me-1"></i>Được phép chỉnh sửa số ngày mua</span>
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill fw-normal px-2"><i class="bi bi-pencil-square me-1"></i>Được phép chỉnh sửa số lượng</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -678,9 +746,6 @@
             });
         };
 
-        // ---------------------------------------------------------
-        // GOM DATA VÀ SUBMIT THANH TOÁN
-        // ---------------------------------------------------------
         window.xuLyThanhToan = function() {
             let maHD = $('#hdnMaHD').val();
             let maPKB = $('#hdnMaPKB').val();
@@ -790,8 +855,20 @@
             }, function (res) {
                 if (res.success) {
                     Swal.fire({
-                        title: 'ĐÃ THU TIỀN!', html: `Hóa đơn đã chốt xong qua <strong>${phuongThuc}</strong>.`, icon: 'success', timer: 2000, showConfirmButton: false
-                    }).then(() => { location.reload(); });
+                        title: 'ĐÃ THU TIỀN!',
+                        html: `Hóa đơn đã chốt xong qua <strong>${phuongThuc}</strong>. Bạn có muốn xuất biên lai không?`,
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="bi bi-printer me-1"></i> Xuất PDF',
+                        cancelButtonText: 'Đóng',
+                        confirmButtonColor: '#198754'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            inHoaDon(true);
+                        } else {
+                            location.reload();
+                        }
+                    });
                 } else {
                     Swal.fire('Lỗi hệ thống', res.message, 'error');
                     btn.prop('disabled', false).html('<i class="bi bi-check2-circle me-2 fs-4 align-middle"></i>XÁC NHẬN THU TIỀN');
@@ -799,6 +876,146 @@
             }).fail(function() {
                 Swal.fire('Lỗi kết nối', 'Không thể kết nối đến server.', 'error');
                 btn.prop('disabled', false).html('<i class="bi bi-check2-circle me-2 fs-4 align-middle"></i>XÁC NHẬN THU TIỀN');
+            });
+        }
+
+        // HÀM CHUYỂN SỐ TIỀN VNĐ SANG CHỮ CHUẨN KẾ TOÁN (SỬA LỖI UNDEFINED)
+        const chuSo = [" không ", " một ", " hai ", " ba ", " bốn ", " năm ", " sáu ", " bảy ", " tám ", " chín "];
+        const tien = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
+
+        function docTienBangChu(soTien) {
+            if (soTien == 0) return "Không đồng";
+            let str = "";
+            let isNegative = soTien < 0;
+            soTien = Math.abs(soTien);
+            let s = soTien.toString();
+            let group = [];
+            while (s.length > 0) {
+                group.push(s.slice(Math.max(0, s.length - 3)));
+                s = s.slice(0, Math.max(0, s.length - 3));
+            }
+            for (let i = 0; i < group.length; i++) {
+                let num = parseInt(group[i]);
+                if (num > 0) {
+                    let text = doc3So(group[i]);
+                    str = text + tien[i] + str;
+                }
+            }
+            str = str.trim();
+            str = str.charAt(0).toUpperCase() + str.slice(1);
+            if (isNegative) str = "Âm " + str;
+            return str.replace(/  +/g, ' ') + " đồng.";
+        }
+
+        function doc3So(so) {
+            let str = "";
+            let tram = Math.floor(so / 100);
+            let chuc = Math.floor((so % 100) / 10);
+            let donVi = so % 10;
+            if (tram > 0) {
+                str += chuSo[tram] + "trăm";
+                if (chuc == 0 && donVi > 0) str += " lẻ";
+            }
+            if (chuc > 1) {
+                str += chuSo[chuc] + "mươi";
+                if (donVi == 1) str += " mốt";
+            } else if (chuc == 1) {
+                str += " mười";
+                if (donVi == 1) str += " một";
+            }
+            if (donVi == 5 && chuc >= 1) {
+                str += " lăm";
+            } else if (donVi > 1 || (donVi == 1 && chuc == 0)) {
+                str += chuSo[donVi];
+            }
+            return str;
+        }
+
+        // HÀM XUẤT BIÊN LAI PDF THEO KHỔ A4 DỌC CHUẨN
+        window.inHoaDon = function(reloadAfter = false) {
+            // Đổ DATA vào Form In
+            $('#print-invoice-section #prt-hoten').text($('#lblHoTen').text());
+            $('#print-invoice-section #prt-mabn').text($('#lblMaBN').text());
+
+            // SỬA: LẤY MÃ TRỰC TIẾP TỪ BIẾN HIDDEN (Khắc phục lỗi mất số Hóa đơn)
+            let maHDFix = $('#hdnMaHD').val() || '';
+            let maPKBFix = $('#hdnMaPKB').val() || '';
+
+            $('#print-invoice-section #prt-mahd').text(maHDFix);
+            $('#print-invoice-section #prt-mapkb').text(maPKBFix);
+
+            // BHYT VÀ SỐ THẺ
+            let txtBHYT = $('#lblBHYT').text();
+            let soTheBHYT = $('#lblBHYT').attr('data-sothe') || 'Không áp dụng';
+            $('#print-invoice-section #prt-doituong').text(txtBHYT + (soTheBHYT !== 'Không áp dụng' ? ' - Số: ' + soTheBHYT : ''));
+
+            let tbody = '';
+            let stt = 1;
+            let tongTienHD = 0;
+
+            // QUÉT UI LẤY DỮ LIỆU IN (ĐÃ SỬA MÀU SỐ TIỀN VỀ ĐEN HẾT)
+            $('#tbChiTiet tr').each(function() {
+                if($(this).hasClass('group-header')) return;
+                if($(this).hasClass('text-decoration-line-through')) return; // Bỏ khoản Hủy
+                if($(this).find('.bi-check-lg').length > 0) return; // Bỏ khoản Đã Thanh Toán trước đó
+
+                // CHỈ LẤY DÒNG CÓ CHECKBOX ĐANG ĐƯỢC CHECK (Vừa thanh toán xong)
+                if($(this).find('.chk-item').length > 0 && !$(this).find('.chk-item').is(':checked')) return;
+
+                let ten = $(this).find('td:eq(1) div.fw-bold').text();
+                if(!ten) return;
+
+                let sl = $(this).find('input[id^="qty_"]').val() || $(this).find('td:eq(2) span').text() || '1';
+                let donGia = $(this).find('td:eq(3)').text().trim();
+                let bhyt = $(this).find('td:eq(4)').text().trim();
+                let thanhTienText = $(this).find('td:eq(5)').text().trim();
+
+                let tienVal = parseInt(thanhTienText.replace(/\D/g, '')) || 0;
+                tongTienHD += tienVal;
+
+                // THIẾT KẾ DÒNG IN VỚI VIỀN MÀU ĐEN CƠ BẢN
+                tbody += `<tr>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${stt++}</td>
+                    <td style="border: 1px solid #000; padding: 6px; font-weight: bold;">${ten}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${sl}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: right;">${donGia}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: right; color: #000;">${bhyt}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; color: #000;">${thanhTienText}</td>
+                </tr>`;
+            });
+
+            if(stt === 1) {
+                Swal.fire('Chú ý', 'Không có khoản dịch vụ nào vừa thanh toán để in!', 'warning');
+                return;
+            }
+
+            $('#prt-tbody').html(tbody);
+            $('#prt-tongtien').text(tongTienHD.toLocaleString('vi-VN') + ' ₫');
+            $('#prt-bangchu').text(docTienBangChu(tongTienHD));
+
+            let now = new Date();
+            $('#prt-ngaylap').text(`TP.HCM, ngày ${now.getDate().toString().padStart(2, '0')} tháng ${(now.getMonth()+1).toString().padStart(2, '0')} năm ${now.getFullYear()}`);
+
+            // Render PDF (Khắc phục hoàn toàn lỗi trang trắng bằng innerHTML, ép margin lề sát viền trên 0.2 inch = ~5mm)
+            var elementHTML = document.getElementById('print-invoice-section').innerHTML;
+
+            // SỬA: Format lại tên file (NgayThangNam_MaBN_MaHD.pdf)
+            var dayStr = now.getDate().toString().padStart(2, '0') + (now.getMonth()+1).toString().padStart(2, '0') + now.getFullYear().toString();
+            var maBNFormat = $('#lblMaBN').text().trim();
+            var tenFile = `${dayStr}_${maBNFormat}_${maHDFix}.pdf`;
+
+            var opt = {
+                margin: [0.1, 0, 0.1, 0],
+                filename: tenFile,
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(elementHTML).save().then(function() {
+                if (reloadAfter) {
+                    setTimeout(function() { location.reload(); }, 500);
+                }
             });
         }
     </script>

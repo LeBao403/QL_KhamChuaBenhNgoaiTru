@@ -516,20 +516,29 @@
                                             let qrImageUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(resQR.qrString);
                                             let checkInterval;
 
+                                            // [ĐÃ SỬA] THÊM TÊN DỊCH VỤ VÀ SỐ TIỀN VÀO GIAO DIỆN QUÉT QR
                                             Swal.fire({
                                                 title: 'Thanh Toán Phí Đặt Lịch',
                                                 html: `
                                                     <div class="mb-3 text-muted">Mở App Ngân hàng quét mã VietQR để thanh toán</div>
-                                                    <div class="border rounded p-3 bg-light d-inline-block">
+
+                                                    <div class="bg-light border border-primary border-opacity-25 rounded-3 p-3 mb-3 text-start shadow-sm mx-auto" style="max-width: 280px;">
+                                                        <div class="text-muted small fw-bold text-uppercase mb-1">Nội dung thanh toán:</div>
+                                                        <div class="fw-bold text-dark fs-6 mb-2"><i class="bi bi-calendar-check me-2 text-primary"></i>Phí dịch vụ đặt lịch khám</div>
+                                                        <div class="text-muted small fw-bold text-uppercase mb-1">Số tiền cần thanh toán:</div>
+                                                        <div class="text-danger fw-black fs-3">100.000 ₫</div>
+                                                    </div>
+
+                                                    <div class="border rounded p-3 bg-white d-inline-block shadow-sm">
                                                         <img src="${qrImageUrl}" alt="QR Code" style="width: 250px; height: 250px; object-fit: contain;" />
                                                     </div>
-                                                    <div class="mt-3 text-primary">
-                                                        <div class="spinner-grow spinner-grow-sm me-1" role="status"></div> Hệ thống đang chờ bạn quét mã...
+                                                    <div class="mt-3 text-primary fw-bold">
+                                                        <div class="spinner-grow spinner-grow-sm me-1" role="status"></div> Hệ thống đang chờ nhận tiền...
                                                     </div>
                                                 `,
                                                 showCancelButton: true,
                                                 showConfirmButton: false,
-                                                cancelButtonText: 'Hủy đăng ký',
+                                                cancelButtonText: 'Hủy giao dịch',
                                                 cancelButtonColor: '#dc3545',
                                                 allowOutsideClick: false,
                                                 didOpen: () => {
@@ -546,7 +555,7 @@
                                                                 if (resCheck.success && resCheck.isPaid) {
                                                                     clearInterval(checkInterval);
 
-                                                                    // ĐÃ BỔ SUNG: BÁO RÕ TÊN QUẦY TẠI ĐÂY
+                                                                    // BÁO RÕ TÊN QUẦY TẠI ĐÂY
                                                                     Swal.fire({
                                                                         title: 'Tuyệt vời!',
                                                                         html: `Thanh toán thành công.<br/>Vui lòng đến <strong class="text-primary text-uppercase">${resDatLich.tenQuay}</strong> để làm thủ tục.`,
@@ -570,7 +579,6 @@
                                                         didOpen: () => { Swal.showLoading(); }
                                                     });
 
-                                                    // Lưu ý: Bác phải chắc chắn đã copy cái hàm HuyDatLichOnline vào Controller nhé!
                                                     $.ajax({
                                                         url: '@Url.Action("HuyDatLichOnline", "BenhNhanPortal")',
                                                         type: 'POST',

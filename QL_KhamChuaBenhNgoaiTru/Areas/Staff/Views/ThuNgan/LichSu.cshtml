@@ -266,7 +266,7 @@
                                     </td>
                                     <td class="text-center pe-4 text-nowrap">
                                         <button class="btn btn-sm btn-light border shadow-sm rounded-pill fw-bold text-primary px-3 text-nowrap"
-                                                onclick="xemChiTiet('@row["MaHD"]', '@row["HoTen"]', '@row["MaBN"]', '@(row["MaPhieuKhamBenh"] != DBNull.Value ? row["MaPhieuKhamBenh"] : "")')"
+                                                onclick="xemChiTiet('@row["MaHD"]', '@row["HoTen"]', '@row["MaBN"]', '@(row["MaPhieuKhamBenh"] != DBNull.Value ? row["MaPhieuKhamBenh"] : "")', '@row["TrangThaiThanhToan"]')"
                                                 data-bs-toggle="tooltip" title="Xem chi tiết Hóa Đơn">
                                             <i class="bi bi-eye me-1"></i> Chi tiết
                                         </button>
@@ -310,10 +310,83 @@
     </div>
 </div>
 
+<div class="d-none">
+    <div id="print-invoice-section">
+        <div style="width: 760px; padding: 20px; font-family: 'Times New Roman', Times, serif; color: #000; background: #fff;">
+
+            <table style="width: 100%; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 12%; text-align: center; vertical-align: top;">
+                        <img src="@Url.Content("~/Images/Logo/app_logo.png")" style="width: 80px; height: auto;" alt="Logo" crossorigin="anonymous" />
+                    </td>
+                    <td style="width: 53%; vertical-align: top; padding-left: 10px;">
+                        <div style="font-weight: bold; text-transform: uppercase; color: #0d6efd; font-size: 16px;">PHÒNG KHÁM ĐA KHOA DIGIMED</div>
+                        <div style="font-size: 13px; margin-top: 2px;">Hệ thống Y tế Thông minh</div>
+                        <div style="font-size: 13px; margin-top: 2px;">Địa chỉ: 786 Nguyễn Kiệm, Quận Gò Vấp, TP.HCM</div>
+                    </td>
+                    <td style="width: 35%; vertical-align: top; text-align: right; font-size: 13px;">
+                        <div>Ký hiệu: <strong>1C26TBB</strong></div>
+                        <div style="margin-top: 2px;">Số hóa đơn: <strong id="prt-mahd" style="color: #dc3545;"></strong></div>
+                        <div style="margin-top: 2px;">Mã Phiếu khám: <strong id="prt-mapkb"></strong></div>
+                    </td>
+                </tr>
+            </table>
+
+            <div id="prt-title" style="text-align: center; font-weight: bold; margin: 15px 0; font-size: 20px;">HÓA ĐƠN THU TIỀN VIỆN PHÍ</div>
+
+            <table style="width: 100%; margin-bottom: 10px; font-size: 14px; border-collapse: collapse;">
+                <tr>
+                    <td style="width: 65%; padding: 3px 0;">Họ tên người bệnh: <strong id="prt-hoten" style="text-transform: uppercase; font-size: 15px;"></strong></td>
+                    <td style="width: 35%; padding: 3px 0;">Mã BN: <strong id="prt-mabn"></strong></td>
+                </tr>
+            </table>
+
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 13px;">
+                <thead style="background-color: #f1f1f1;">
+                    <tr>
+                        <th style="border: 1px solid #000; padding: 6px 4px; text-align: center; width: 5%;">STT</th>
+                        <th style="border: 1px solid #000; padding: 6px 4px; text-align: left; width: 40%;">Nội dung</th>
+                        <th style="border: 1px solid #000; padding: 6px 4px; text-align: center; width: 5%;">SL</th>
+                        <th style="border: 1px solid #000; padding: 6px 4px; text-align: right; width: 15%;">Đơn giá</th>
+                        <th style="border: 1px solid #000; padding: 6px 4px; text-align: right; width: 15%;">BHYT Trả</th>
+                        <th style="border: 1px solid #000; padding: 6px 4px; text-align: right; width: 20%;">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody id="prt-tbody"></tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5" style="border: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; font-size: 13px;">TỔNG SỐ TIỀN:</td>
+                        <td style="border: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; color: #dc2626; font-size: 14px;" id="prt-tongtien"></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <div style="font-size: 13px; font-style: italic; margin-bottom: 20px;">(Bằng chữ: <strong id="prt-bangchu"></strong>)</div>
+
+            <table style="width: 100%; text-align: center; font-size: 14px; border-collapse: collapse; margin-top: 10px;">
+                <tr>
+                    <td style="width: 50%; vertical-align: top;">
+                        <div style="font-weight: bold;">Người nộp tiền</div>
+                        <div style="font-style: italic; font-size: 12px; margin-top: 3px;">(Ký, ghi rõ họ tên)</div>
+                    </td>
+                    <td style="width: 50%; vertical-align: top;">
+                        <div id="prt-ngaylap" style="font-style: italic; font-size: 13px; margin-bottom: 3px;"></div>
+                        <div style="font-weight: bold;">Người thu tiền</div>
+                        <div style="font-style: italic; font-size: 12px; margin-top: 3px;">(Ký, ghi rõ họ tên)</div>
+                        <div style="margin-top: 60px; font-weight: bold; font-size: 15px;" id="prt-tennv">@Html.Raw(Session["HoTenNV"] ?? "Thu Ngân")</div>
+                    </td>
+                </tr>
+            </table>
+            <div style="height: 10px;"></div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/vn.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -361,14 +434,69 @@
                     $('#tableUpdateArea').html($(data).find('#tableUpdateArea').html());
                     window.history.pushState({path: url}, '', url);
 
-                    // Re-init tooltips
                     $('[data-bs-toggle="tooltip"]').tooltip();
                 });
             }
         });
 
-        // XEM CHI TIẾT ĐÃ ĐƯỢC PHÂN NHÓM VÀ THIẾT KẾ UI BIÊN LAI (RECEIPT)
-        function xemChiTiet(maHD, tenBN, maBN, maPKB) {
+        // ========================================================
+        // HÀM CHUYỂN SỐ TIỀN VNĐ SANG CHỮ
+        // ========================================================
+        const chuSo = [" không ", " một ", " hai ", " ba ", " bốn ", " năm ", " sáu ", " bảy ", " tám ", " chín "];
+        const tien = ["", " nghìn", " triệu", " tỷ", " nghìn tỷ", " triệu tỷ"];
+
+        function docTienBangChu(soTien) {
+            if (soTien == 0) return "Không đồng";
+            let str = "";
+            let isNegative = soTien < 0;
+            soTien = Math.abs(soTien);
+            let s = soTien.toString();
+            let group = [];
+            while (s.length > 0) {
+                group.push(s.slice(Math.max(0, s.length - 3)));
+                s = s.slice(0, Math.max(0, s.length - 3));
+            }
+            for (let i = 0; i < group.length; i++) {
+                let num = parseInt(group[i]);
+                if (num > 0) {
+                    let text = doc3So(group[i]);
+                    str = text + tien[i] + str;
+                }
+            }
+            str = str.trim();
+            str = str.charAt(0).toUpperCase() + str.slice(1);
+            if (isNegative) str = "Âm " + str;
+            return str.replace(/  +/g, ' ') + " đồng.";
+        }
+
+        function doc3So(so) {
+            let str = "";
+            let tram = Math.floor(so / 100);
+            let chuc = Math.floor((so % 100) / 10);
+            let donVi = so % 10;
+            if (tram > 0) {
+                str += chuSo[tram] + "trăm";
+                if (chuc == 0 && donVi > 0) str += " lẻ";
+            }
+            if (chuc > 1) {
+                str += chuSo[chuc] + "mươi";
+                if (donVi == 1) str += " mốt";
+            } else if (chuc == 1) {
+                str += " mười";
+                if (donVi == 1) str += " một";
+            }
+            if (donVi == 5 && chuc >= 1) {
+                str += " lăm";
+            } else if (donVi > 1 || (donVi == 1 && chuc == 0)) {
+                str += chuSo[donVi];
+            }
+            return str;
+        }
+
+        // =====================================================================
+        // XEM CHI TIẾT ĐÃ ĐƯỢC PHÂN NHÓM VÀ THIẾT KẾ UI BIÊN LAI CÓ NÚT IN LẠI
+        // =====================================================================
+        function xemChiTiet(maHD, tenBN, maBN, maPKB, trangThaiHD) {
             Swal.fire({
                 title: 'Đang tải dữ liệu...',
                 allowOutsideClick: false,
@@ -380,7 +508,7 @@
                     let total = 0;
                     let nhomKham = []; let nhomCLS = []; let nhomThuoc = [];
 
-                    // Chia nhóm dữ liệu
+                    // Chia nhóm dữ liệu và chỉ tính tiền cho những khoản KHÔNG BỊ HỦY
                     res.data.forEach(item => {
                         let tenDV = item.TenDV.toLowerCase();
                         if (item.LoaiItem === "THUOC") nhomThuoc.push(item);
@@ -390,7 +518,11 @@
                         if (item.TrangThai !== "Hủy") total += item.TienBenhNhan;
                     });
 
-                    // Khung thông tin tổng quan (Dải Header Gradient)
+                    // CẤU TRÚC LẠI NÚT IN THEO TRẠNG THÁI
+                    let btnInHTML = trangThaiHD === 'Đã thanh toán'
+                        ? `<button class="btn btn-light text-primary btn-sm fw-bold shadow-sm" onclick="inHoaDonLichSu('${maHD}', '${tenBN}', '${maBN}', '${maPKB}', ${total}, false)"><i class="bi bi-printer me-1"></i> In Lại Hóa Đơn</button>`
+                        : `<button class="btn btn-outline-light text-white btn-sm fw-bold shadow-sm" onclick="inHoaDonLichSu('${maHD}', '${tenBN}', '${maBN}', '${maPKB}', ${total}, true)"><i class="bi bi-x-circle me-1"></i> In Phiếu Hủy</button>`;
+
                     let infoHtml = `
                         <div class="receipt-header text-start">
                             <div class="d-flex justify-content-between align-items-center px-4 py-4" style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);">
@@ -401,16 +533,18 @@
                                 </div>
                                 <div class="text-end">
                                     <div class="text-white-50 small fw-bold mb-1 tracking-wider text-uppercase">Mã Hóa Đơn</div>
-                                    <h3 class="fw-black mb-1 text-white">#${maHD}</h3>
-                                    <div class="text-white opacity-75 small">PKB: <strong class="text-white">${maPKB ? '#' + maPKB : 'N/A'}</strong></div>
+                                    <div class="d-flex justify-content-end align-items-center gap-2 mb-1">
+                                        <h3 class="fw-black mb-0 text-white">#${maHD}</h3>
+                                        ${btnInHTML}
+                                    </div>
+                                    <div class="text-white opacity-75 small mt-2">PKB: <strong class="text-white">${maPKB ? '#' + maPKB : 'N/A'}</strong></div>
                                 </div>
                             </div>
                         </div>
                     `;
 
-                    // Bảng chi tiết
                     let tableHtml = `
-                        <div class="px-4 py-4 text-start">
+                        <div class="px-4 py-4 text-start" id="viewChiTietData">
                             <div class="table-responsive rounded-4 border shadow-sm">
                                 <table class="table table-hover align-middle mb-0" style="font-size: 0.95rem">
                                     <thead class="bg-light text-muted small text-uppercase" style="border-bottom: 2px solid #e2e8f0;">
@@ -448,7 +582,8 @@
                             }
                         }
 
-                        return `<tr class="${rowCls}">
+                        // Nhét luôn các DATA ẩn vào dòng để tý nữa đọc cho dễ
+                        return `<tr class="${rowCls} print-item-row" data-ten="${item.TenDV}" data-sl="${item.SoLuong || 1}" data-gia="${item.DonGia}" data-bhyt="${item.TienBHYT}" data-tien="${item.TienBenhNhan}" data-huy="${isHuy ? '1' : '0'}">
                                     <td class="ps-4 py-3 border-bottom">${textDV}</td>
                                     <td class="text-end fw-bolder ${isHuy ? 'text-muted' : 'text-primary'} fs-5 py-3 border-bottom ${textDeco}">${isHuy ? '0' : item.TienBenhNhan.toLocaleString('vi-VN')} ₫</td>
                                     <td class="text-center pe-4 py-3 border-bottom">${badge}</td>
@@ -468,7 +603,6 @@
                         nhomThuoc.forEach(item => tableHtml += renderRow(item));
                     }
 
-                    // Cụm Tổng tiền phong cách dập nổi
                     tableHtml += `</tbody></table></div>
                             <div class="mt-4 p-4 rounded-4 shadow-sm d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe;">
                                 <div class="d-flex align-items-center">
@@ -493,6 +627,87 @@
                     Swal.fire('Lỗi', 'Không lấy được chi tiết: ' + res.message, 'error');
                 }
             });
+        }
+
+        // ========================================================
+        // HÀM XUẤT BIÊN LAI PDF TỪ MÀN HÌNH LỊCH SỬ
+        // ========================================================
+        window.inHoaDonLichSu = function(maHD, tenBN, maBN, maPKB, tongTienHD, laHuy) {
+
+            // 1. Gán thông tin Header
+            $('#prt-hoten').text(tenBN);
+            $('#prt-mabn').text(maBN);
+            $('#prt-mahd').text(maHD.replace('#', ''));
+            $('#prt-mapkb').text(maPKB ? maPKB.replace('#', '') : '');
+
+            if(laHuy) {
+                $('#prt-title').text('HÓA ĐƠN HỦY DỊCH VỤ');
+                $('#prt-title').css('color', '#dc3545');
+            } else {
+                $('#prt-title').text('HÓA ĐƠN THU TIỀN VIỆN PHÍ');
+                $('#prt-title').css('color', '#000');
+            }
+
+            let tbody = '';
+            let stt = 1;
+
+            // 2. Bóc tách dữ liệu từ Popup Chi Tiết hiện tại (Tránh gọi thêm API thừa)
+            $('.print-item-row').each(function() {
+                let isHuyRow = $(this).data('huy') === '1';
+
+                // Nếu là in hóa đơn thanh toán bình thường -> Bỏ các dòng Hủy đi
+                if(!laHuy && isHuyRow) return;
+
+                // Nếu là in hóa đơn HỦY -> Bỏ các dòng đã thu đi
+                if(laHuy && !isHuyRow) return;
+
+                let ten = $(this).data('ten');
+                let sl = $(this).data('sl');
+                let donGia = parseFloat($(this).data('gia') || 0).toLocaleString('vi-VN') + ' ₫';
+                let bhyt = parseFloat($(this).data('bhyt') || 0).toLocaleString('vi-VN') + ' ₫';
+                let thanhTienText = parseFloat($(this).data('tien') || 0).toLocaleString('vi-VN') + ' ₫';
+
+                tbody += `<tr>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${stt++}</td>
+                    <td style="border: 1px solid #000; padding: 6px; font-weight: bold;">${ten}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${sl}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: right;">${donGia}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: right; color: #000;">${bhyt}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: right; font-weight: bold; color: #000;">${thanhTienText}</td>
+                </tr>`;
+            });
+
+            if(stt === 1) {
+                Swal.fire('Chú ý', 'Không có khoản dịch vụ nào hợp lệ để in!', 'warning');
+                return;
+            }
+
+            $('#prt-tbody').html(tbody);
+
+            // Xử lý Tổng Tiền
+            if(laHuy) tongTienHD = 0; // Hóa đơn hủy thì tổng tiền hiển thị 0đ
+            $('#prt-tongtien').text(tongTienHD.toLocaleString('vi-VN') + ' ₫');
+            $('#prt-bangchu').text(docTienBangChu(tongTienHD));
+
+            let now = new Date();
+            $('#prt-ngaylap').text(`TP.HCM, ngày ${now.getDate().toString().padStart(2, '0')} tháng ${(now.getMonth()+1).toString().padStart(2, '0')} năm ${now.getFullYear()}`);
+
+            // 3. Render PDF
+            var elementHTML = document.getElementById('print-invoice-section').innerHTML;
+
+            var maBNFormat = maBN.trim();
+            var typeStr = laHuy ? 'Huy_' : '';
+            var tenFile = 'HoaDon_' + typeStr + maHD + '_' + maBNFormat + '.pdf';
+
+            var opt = {
+                margin: [0.1, 0, 0.1, 0],
+                filename: tenFile,
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(elementHTML).save();
         }
     </script>
 }

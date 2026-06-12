@@ -1,9 +1,9 @@
 {
-  "IsAutoTrainEnabled": false,
-  "TrainTime": "23:57",
+  "IsAutoTrainEnabled": true,
+  "TrainTime": "10:03",
   "ScheduleCycle": "Daily",
   "LastTrainDate": null,
   "AutoActivateAfterTrain": true,
-  "LastError": null,
-  "LastErrorAt": null
+  "LastError": "Unable to connect to the remote server",
+  "LastErrorAt": "2026-06-12T19:06:17.6437549+07:00"
 }
