@@ -25,9 +25,9 @@ class ApiService {
     if (configured.isNotEmpty) return configured;
 
     if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8080';
+      return 'https://10.0.2.2:44326';
     }
-    return 'http://localhost:8080';
+    return 'https://localhost:44326';
   }
 
   static String resolveUrl(String path) {
