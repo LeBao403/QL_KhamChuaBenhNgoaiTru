@@ -20,15 +20,15 @@ class ApiService {
   //  - Thiết bị thật   → http://<IP_LAN_máy_tính>:<port>
   //
   // IIS Express HTTP port: 8080 (dùng HTTP để tránh SSL cert tự ký trong dev)
-  static String get baseUrl {
-    const configured = String.fromEnvironment('API_BASE_URL');
-    if (configured.isNotEmpty) return configured;
+    static String get baseUrl {
+      const configured = String.fromEnvironment('API_BASE_URL');
+      if (configured.isNotEmpty) return configured;
 
-    if (Platform.isAndroid) {
-      return 'https://10.0.2.2:44326';
+      if (Platform.isAndroid) {
+        return 'https://10.0.2.2:44326';
+      }
+      return 'https://localhost:44326';
     }
-    return 'https://localhost:44326';
-  }
 
   static String resolveUrl(String path) {
     final trimmed = path.trim();
@@ -130,6 +130,19 @@ class ApiService {
     return h;
   }
 
+  Future<Map<String, String>> _getHeadersWithToken({Map<String, String>? extra}) async {
+    final h = _headers(extra: extra); // Lấy header cũ có chứa Cookie
+
+    // Đọc JWT token từ bộ nhớ (Sửa chữ 'jwt_token' bằng đúng cái key ở Bước 1)
+    final token = await _secureStorage.read(key: 'jwt_token'); 
+    
+    // Nếu có token thì nhét nó vào Header dạng Bearer
+    if (token != null && token.isNotEmpty) {
+      h['Authorization'] = 'Bearer $token';
+    }
+    return h;
+  } 
+
   // ── HTTP methods ───────────────────────────────────────────────────────────
   Future<http.Response> get(
     String path, {
@@ -142,14 +155,13 @@ class ApiService {
     if (queryParams != null && queryParams.isNotEmpty) {
       uri = uri.replace(queryParameters: queryParams);
     }
+    final requestHeaders = await _getHeadersWithToken();
 
     Object? lastError;
     for (var attempt = 0; attempt <= retries; attempt++) {
       final sw = Stopwatch()..start();
       try {
-        final response =
-            await _client.get(uri, headers: _headers()).timeout(timeout);
-        sw.stop();
+        final response = await _client.get(uri, headers: requestHeaders).timeout(timeout);
         _logRequest('GET', path, response.statusCode, sw.elapsed, attempt);
         await _updateCookies(response);
         return response;
@@ -179,13 +191,14 @@ class ApiService {
   }) async {
     await loadCookies();
     final uri = Uri.parse('$baseUrl$path');
+    final requestHeaders = await _getHeadersWithToken();
 
     Object? lastError;
     for (var attempt = 0; attempt <= retries; attempt++) {
       final sw = Stopwatch()..start();
       try {
         final response = await _client
-            .post(uri, headers: _headers(), body: body)
+            .post(uri, headers: requestHeaders, body: body) 
             .timeout(timeout);
         sw.stop();
         _logRequest('POST', path, response.statusCode, sw.elapsed, attempt);
@@ -259,3 +272,5 @@ class ApiService {
     return cookies.where((cookie) => cookie.isNotEmpty).toList();
   }
 }
+
+

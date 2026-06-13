@@ -75,6 +75,23 @@ class AuthService {
         final user = UserModel.fromJson(json['user']);
         _currentUser = user;
         await _saveUserToPrefs(user);
+
+        // --- ĐOẠN CODE THÊM MỚI: LẤY VÀ LƯU JWT TOKEN ---
+        final token = json['token'];
+        if (token != null && token.toString().isNotEmpty) {
+          // Lưu token vào Secure Storage với key là 'jwt_token' (khớp với api_service)
+          await _secureStorage.write(key: 'jwt_token', value: token.toString());
+          
+          // In ra Terminal để kiểm tra
+          print('==================================================');
+          print('ĐĂNG NHẬP THÀNH CÔNG!');
+          print('JWT TOKEN NHẬN ĐƯỢC: $token');
+          print('==================================================');
+        } else {
+          print('LỖI: Server báo success nhưng KHÔNG CÓ TOKEN trả về!');
+        }
+        // --------------------------------------------------
+
         return ApiResult.ok(user);
       }
 
@@ -169,8 +186,12 @@ class AuthService {
     _currentUser = null;
     await _clearUserFromPrefs();
     await _api.clearCookies();
+    
+    // XÓA JWT TOKEN KHI ĐĂNG XUẤT
+    await _secureStorage.delete(key: 'jwt_token');
+    print('Đã xóa JWT Token khỏi thiết bị!');
   }
-
+  
   Future<void> updateLocalUser(UserModel updated) async {
     _currentUser = updated;
     await _saveUserToPrefs(updated);
