@@ -481,7 +481,7 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
+                        <div class="mb-3 position-relative">
                             <label class="form-label fw-bold">Triệu chứng lâm sàng / Khám thực thể:</label>
                             <textarea name="TrieuChung" id="TrieuChung" class="form-control" rows="3" placeholder="Nhập triệu chứng, dấu hiệu bệnh lý..."></textarea>
                         </div>
@@ -537,12 +537,12 @@
                             <div class="section-header blue mt-3">
                                 <i class="fas fa-diagnoses"></i> Kết Luận và Kê Đơn Thuốc
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 position-relative">
                                 <label class="form-label fw-bold">Kết luận bệnh (Nhập tay):</label>
                                 <input type="text" name="KetLuan" id="KetLuan" class="form-control" placeholder="Ví dụ: Viêm họng cấp / Theo dõi viêm loét dạ dày..." />
                             </div>
 
-                            <div class="mb-3">
+                            <div class="mb-3 position-relative">
                                 <label class="form-label fw-bold">Chẩn đoán theo danh mục Bệnh (Chọn để thêm tự động):</label>
                                 <select id="cboBenh" class="form-select select2" data-placeholder="-- Tìm kiếm và chọn bệnh --">
                                     <option value=""></option>
@@ -604,6 +604,7 @@
                                     <thead class="table-success">
                                         <tr>
                                             <th class="text-start">Tên Thuốc</th>
+                                            <th width="100px" class="text-end">Đơn giá</th>
                                             <th width="70px">Sáng</th>
                                             <th width="70px">Trưa</th>
                                             <th width="70px">Chiều</th>
@@ -660,7 +661,7 @@
                     { "PrintDocumentMaBNElementId", "printMaBN" },
                     { "PrintDocumentCodeLabel", "M&#227; PK:" },
                     { "PrintDocumentCodeElementId", "printMaPK" }
-                    });
+                        });
     }
 
     <div class="row mb-4">
@@ -817,6 +818,11 @@
 
         // Hàm thêm Dòng Thuốc (Cho phép nhập số thập phân step="0.5")
         function AddThuocRow(t, skipSuggest) {
+            var giaHiThi = '0 đ';
+            if (t.GiaBan || t.Gia) {
+                var gia = parseFloat(t.GiaBan || t.Gia);
+                giaHiThi = new Intl.NumberFormat('vi-VN').format(gia) + ' đ';
+            }
             var tr = `
         <tr>
             <td class="text-start align-middle">
@@ -824,6 +830,7 @@
                 <input type="hidden" name="DonThuoc[${thuocIndex}].MaThuoc" value="${t.MaThuoc}" />
                 <strong class="text-success">${t.TenThuoc}</strong>
             </td>
+            <td class="text-end align-middle fw-bold text-danger">${giaHiThi}</td>
             <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Sang" value="${t.Sang || 0}" min="0"></td>
             <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Trua" value="${t.Trua || 0}" min="0"></td>
             <td><input type="number" step="0.5" class="form-control form-control-sm text-center input-calc" name="DonThuoc[${thuocIndex}].Chieu" value="${t.Chieu || 0}" min="0"></td>
@@ -1065,7 +1072,6 @@
             showPage(currentPage);
         }
 
-        // Cập nhật giao diện khi chọn/tiếp nhận bệnh nhân
         // Cập nhật giao diện khi chọn/tiếp nhận bệnh nhân
         function ResetFormAndBindData(resData) {
             $('#MaPhieuKhamBenh').val(resData.MaPhieuKhamBenh);
@@ -1338,7 +1344,7 @@
                 $('#tbDichVu th:last-child, #tbDichVu td:last-child').show();
             }
         }
-        // HÀM VẼ GIAO DIỆN LỊCH SỬ (Không có tiền/hóa đơn)
+
         // HÀM VẼ GIAO DIỆN LỊCH SỬ (Không có tiền/hóa đơn, Bổ sung Hành chính/Sinh hiệu đầy đủ)
         function RenderHistoryPanel(data) {
             var dsBenhKemTheo = (data.DanhSachBenh || []).map(b => b.TenBenh).join(', ');
@@ -1484,6 +1490,7 @@
                 LoadDanhSachChoKham();
             }, 2000);
             // --- KẾT THÚC CẬP NHẬT ---
+
             // Khởi tạo Select2
             $('#cboBenh, #cboTimBenhNhan, #cboLichSuKham, #cboDichVu').select2({ width: '100%', theme: "classic", allowClear: true });
             ApplyBHYTFilter();
@@ -1499,7 +1506,6 @@
             setupPagination('body-dang-kham', 'page-dang-kham', 5);
             setupPagination('body-da-kham', 'page-da-kham', 5);
 
-            // Bật / Tắt Yêu cầu CLS
             // Bật / Tắt Yêu cầu CLS
             $('#chkCLS').change(function () {
                 var isDangDiCLS = (currentTrangThai === 'Chờ thanh toán' || currentTrangThai === 'Chờ cận lâm sàng');
@@ -1533,14 +1539,31 @@
                 }
             });
 
+            // TỰ ĐỘNG XÓA BÁO LỖI KHI BÁC SĨ BẮT ĐẦU NHẬP LIỆU
+            $('#TrieuChung, #KetLuan').on('input', function () {
+                $(this).removeClass('is-invalid');
+                $(this).siblings('.error-ui').remove();
+
+                // Nếu đang nhập Kết luận, thì xóa luôn báo lỗi của ô Chọn danh mục bệnh (Vì chỉ cần 1 trong 2)
+                if ($(this).attr('id') === 'KetLuan') {
+                    $('#cboBenh').next('.select2-container').find('.select2-selection').removeClass('border border-danger');
+                    $('#cboBenh').siblings('.error-ui').remove();
+                }
+            });
+
             // SỰ KIỆN COMBOBOX CHỌN BỆNH
             $('#cboBenh').on('select2:select', function (e) {
+                // Đã chọn danh mục bệnh thì tự động xóa lỗi viền đỏ
+                $(this).next('.select2-container').find('.select2-selection').removeClass('border border-danger');
+                $(this).siblings('.error-ui').remove();
+                $('#KetLuan').removeClass('is-invalid');
+                $('#KetLuan').siblings('.error-ui').remove();
+
                 var id = e.params.data.id;
                 var text = e.params.data.text;
                 var ten = text.substring(text.indexOf(']') + 2);
                 AddBenhRow(id, ten);
                 $(this).val(null).trigger('change');
-
             });
 
             // SỰ KIỆN COMBOBOX CHỌN THUỐC
@@ -1550,9 +1573,10 @@
 
                 // Lấy tên nguyên bản từ HTML
                 var ten = element.attr('data-tenthuoc');
+                var gia = element.attr('data-gia');
                 if (!ten) ten = e.params.data.text.replace(/^★\s*/, '').split(' - ')[0];
 
-                AddThuocRow({ MaThuoc: id, TenThuoc: ten }, false);
+                AddThuocRow({ MaThuoc: id, TenThuoc: ten, GiaBan: gia }, false);
                 $(this).val(null).trigger('change.select2');
             });
 
@@ -1589,9 +1613,6 @@
                     $(this).val(max);
                 }
             });
-
-
-
 
             $('#cboTimBenhNhan').select2();
             $('#cboLichSuKham').select2();
@@ -1645,6 +1666,8 @@
             // SỰ KIỆN TÍNH TOÁN SỐ LƯỢNG THUỐC TỰ ĐỘNG
             $(document).on('input change', '.input-calc', function (e) {
                 var row = $(this).closest('tr');
+                row.find('.input-calc').removeClass('border border-danger is-invalid');
+                row.find('.tong-sl').removeClass('bg-danger text-white is-invalid').addClass('bg-warning text-dark');
                 var sangElem = row.find('input[name*=".Sang"]');
                 var truaElem = row.find('input[name*=".Trua"]');
                 var chieuElem = row.find('input[name*=".Chieu"]');
@@ -1730,23 +1753,95 @@
             });
 
             // SỰ KIỆN NÚT HOÀN THÀNH - IN & LƯU
-            // SỰ KIỆN NÚT HOÀN THÀNH - IN & LƯU
             $('#btnHoanThanh').on('click', function (e) {
-                // KIỂM TRA SỐ LƯỢNG THUỐC
+                // 0. Làm sạch các thông báo lỗi cũ trên UI trước khi check lại
+                $('#TrieuChung, #KetLuan').removeClass('is-invalid');
+                $('#cboBenh').next('.select2-container').find('.select2-selection').removeClass('border border-danger');
+                $('.error-ui').remove();
+
+                // Các biến để kiểm soát trạng thái lỗi tổng hợp
+                var isValid = true;
+                var firstErrorElement = null; // Dùng để xác định vị trí cuộn màn hình lên vị trí lỗi đầu tiên
+                var errorMessages = []; // Chứa danh sách các lỗi
+
+                // 1. KIỂM TRA BẮT BUỘC NHẬP TRIỆU CHỨNG
+                var trieuChung = $('#TrieuChung').val().trim();
+                if (trieuChung === '') {
+                    // Tô đỏ viền và in chữ báo lỗi
+                    $('#TrieuChung').addClass('is-invalid').after('<div class="invalid-feedback fw-bold error-ui"><i class="fas fa-exclamation-triangle"></i> Vui lòng nhập triệu chứng lâm sàng / dấu hiệu thực thể!</div>');
+
+                    isValid = false;
+                    errorMessages.push('Chưa nhập <b>Triệu chứng lâm sàng</b>');
+                    if (!firstErrorElement) firstErrorElement = $('#TrieuChung');
+                }
+
+                // KIỂM TRA KHI LÀM ĐƠN THUỐC
                 if (!$('#chkCLS').is(':checked')) {
+
+                    // 2. KIỂM TRA KẾT LUẬN BỆNH HOẶC DANH MỤC BỆNH (Bắt buộc 1 trong 2)
+                    var ketLuan = $('#KetLuan').val().trim();
+                    var soBenhDaChon = $('#tbBenhDaChon tbody tr').length;
+
+                    if (ketLuan === '' && soBenhDaChon === 0) {
+                        // Tô đỏ ô nhập tay
+                        $('#KetLuan').addClass('is-invalid').after('<div class="invalid-feedback fw-bold error-ui"><i class="fas fa-exclamation-triangle"></i> Vui lòng nhập kết luận bệnh...</div>');
+
+                        // Tô đỏ UI của ô Select2
+                        $('#cboBenh').next('.select2-container').find('.select2-selection').addClass('border border-danger');
+                        $('#cboBenh').next('.select2-container').after('<div class="text-danger small mt-1 fw-bold error-ui"><i class="fas fa-exclamation-triangle"></i> ...Hoặc chọn ít nhất 1 bệnh từ danh mục!</div>');
+
+                        isValid = false;
+                        errorMessages.push('Chưa có <b>Kết luận chẩn đoán</b> (Nhập tay hoặc Chọn từ danh mục)');
+                        if (!firstErrorElement) firstErrorElement = $('#vungKetLuan');
+                    }
+
+                    // 3. KIỂM TRA SỐ LƯỢNG THUỐC
                     var soLoaiThuoc = $('#tbDonThuoc tbody tr').length;
                     if (soLoaiThuoc > 0) {
-                        var isInvalid = false;
+                        var isInvalidQty = false;
                         $('#tbDonThuoc tbody tr').each(function () {
-                            var sl = parseFloat($(this).find('.tong-sl').val()) || 0;
-                            if (sl <= 0) { isInvalid = true; }
+                            var slInput = $(this).find('.tong-sl');
+                            var sl = parseFloat(slInput.val()) || 0;
+
+                            if (sl <= 0) {
+                                isInvalidQty = true;
+
+                                // Tô đỏ ô Tổng số lượng
+                                slInput.removeClass('bg-warning text-dark').addClass('bg-danger text-white is-invalid');
+                                // Tô viền đỏ tất cả các ô Sáng/Trưa/Chiều/Tối/Ngày của dòng thuốc này
+                                $(this).find('.input-calc').addClass('border border-danger is-invalid');
+                            }
                         });
 
-                        if (isInvalid) {
-                            alert("Cảnh báo: Có thuốc trong đơn đang có số lượng bằng 0. Vui lòng kiểm tra lại đơn thuốc trước khi lưu!");
-                            return false;
+                        if (isInvalidQty) {
+                            isValid = false;
+                            errorMessages.push('Có thuốc trong đơn đang có <b>Số lượng bằng 0</b>');
+                            if (!firstErrorElement) firstErrorElement = $('#tbDonThuoc');
                         }
                     }
+                }
+
+                // 4. TỔNG HỢP LỖI VÀ CHẶN LƯU NẾU CÓ LỖI
+                if (!isValid) {
+                    var htmlErrors = '<ul class="text-start text-danger mt-3 mb-0" style="list-style: square;"><li>' + errorMessages.join('</li><li class="mt-2">') + '</li></ul>';
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Thiếu thông tin!',
+                        html: 'Vui lòng bổ sung các thông tin sau trước khi lưu:' + htmlErrors,
+                        confirmButtonColor: '#0d6efd'
+                    }).then(() => {
+                        // Cuộn màn hình tới phần tử bị lỗi ĐẦU TIÊN
+                        $('html, body').animate({ scrollTop: firstErrorElement.offset().top - 150 }, 500);
+
+                        if (firstErrorElement.attr('id') === 'TrieuChung') {
+                            $('#TrieuChung').focus();
+                        } else if (firstErrorElement.attr('id') === 'vungKetLuan') {
+                            $('#KetLuan').focus();
+                        }
+                    });
+
+                    return false;
                 }
 
                 // CẬP NHẬT HEADER BẢNG IN (Phân chia 4 cột Sáng/Trưa/Chiều/Tối)
@@ -1820,10 +1915,10 @@
                         tbodyHtml += `<tr>
                             <td class="text-center">${stt++}</td>
                             <td><strong>${tenThuoc}</strong></td>
-                            <td class="text-center fw-bold text-primary">${sang > 0 ? sang : ''}</td>
-                            <td class="text-center fw-bold text-primary">${trua > 0 ? trua : ''}</td>
-                            <td class="text-center fw-bold text-primary">${chieu > 0 ? chieu : ''}</td>
-                            <td class="text-center fw-bold text-primary">${toi > 0 ? toi : ''}</td>
+                            <td class="text-center fw-bold text-primary">${sang > 0 ? sang : '0'}</td>
+                            <td class="text-center fw-bold text-primary">${trua > 0 ? trua : '0'}</td>
+                            <td class="text-center fw-bold text-primary">${chieu > 0 ? chieu : '0'}</td>
+                            <td class="text-center fw-bold text-primary">${toi > 0 ? toi : '0'}</td>
                             <td class="text-center">${soNgay}</td>
                             <td class="text-center fw-bold text-danger">${sl}</td>
                             <td>${cachDung}</td>
@@ -1868,4 +1963,4 @@
             // $('#cboDichVu').select2();
         }
     </script>
-}
+}   

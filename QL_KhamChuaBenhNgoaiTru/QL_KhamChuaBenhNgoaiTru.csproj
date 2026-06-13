@@ -308,8 +308,6 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\QL_KhamChuaBenhNgoaiTru.dll" />
-    <Content Include="bin\QL_KhamChuaBenhNgoaiTru.pdb" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-grid.rtl.css" />
