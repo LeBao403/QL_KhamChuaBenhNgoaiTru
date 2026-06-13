@@ -454,6 +454,7 @@ class _BookingScreenState extends State<BookingScreen>
   }
 
   // ── Step 0: Date ──────────────────────────────────────────────────────────
+  // ── Step 0: Date ──────────────────────────────────────────────────────────
   Widget _buildStepDate() {
     final now = DateTime.now();
     final dates = List.generate(14, (i) => now.add(Duration(days: i + 1)));
@@ -468,7 +469,8 @@ class _BookingScreenState extends State<BookingScreen>
                 fontWeight: FontWeight.w700,
                 color: AppTheme.textDark)),
         const SizedBox(height: 4),
-        const Text('Bệnh viện làm việc Thứ 2 đến Thứ 6',
+        // Đã cập nhật text thông báo làm việc cả tuần
+        const Text('Bệnh viện làm việc từ Thứ 2 đến Chủ nhật', 
             style: TextStyle(color: AppTheme.textMuted, fontSize: 13)),
         const SizedBox(height: 20),
         GridView.builder(
@@ -483,7 +485,8 @@ class _BookingScreenState extends State<BookingScreen>
           itemCount: dates.length,
           itemBuilder: (_, i) {
             final date = dates[i];
-            final isWeekend = date.weekday >= 6;
+            // Đã bỏ logic block Thứ 7, Chủ nhật (cho phép isWeekend luôn false)
+            final isWeekend = false; 
             final isSelected = _selectedDate != null &&
                 _selectedDate!.day == date.day &&
                 _selectedDate!.month == date.month;
@@ -749,9 +752,7 @@ class _BookingScreenState extends State<BookingScreen>
                   items: _filteredServices.map((sv) {
                     return DropdownMenuItem<ServiceModel>(
                       value: sv,
-                      child: Text(
-                        '${sv.tenDV}${sv.giaDichVu > 0 ? ' — ${_fmtCurrency(sv.giaDichVu)}' : ''}',
-                      ),
+                      child: Text(sv.tenDV),
                     );
                   }).toList(),
                   onChanged: (sv) => setState(() => _selectedService = sv),
